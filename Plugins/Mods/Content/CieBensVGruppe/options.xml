@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Options>
+    <AvailableOptions>
+        <Option Name="TransmissionType" SetSchema="true">
+            <OptionValue Value="Auto" SchemaName="../Plugins/Mods/Content/CieBensVGruppe/AwdAuto.xml" />
+            <OptionValue Value="Manual" SchemaName="../Plugins/Mods/Content/CieBensVGruppe/AwdManual.xml" />
+        </Option>
+    </AvailableOptions>
+</Options>

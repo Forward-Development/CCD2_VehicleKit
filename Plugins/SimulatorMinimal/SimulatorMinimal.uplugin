@@ -1,0 +1,28 @@
+{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "SimulatorMinimal",
+	"Description": "",
+	"Category": "Other",
+	"CreatedBy": "Forward Development",
+	"CreatedByURL": "",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"SupportURL": "",
+	"EngineVersion": "5.8.0",
+	"CanContainContent": true,
+	"Installed": true,
+	"Modules": [
+		{
+			"Name": "SimulatorMinimal",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "SimulatorMinimalEditor",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
+		}
+	]
+}

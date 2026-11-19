@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Vehicle>
+	<Components>
+		<!-- Uncategorized -->
+		<Component Name="Steering" Class="Steering2Ackermann" />
+		<Component Name="IgnitionKey" Class="IgnitionKeyProcessor" />
+		<Component Name="AbsTcs" Class="AbsTcs" /> <!-- должна быть до Idler-а, так как выставляет ему ввод -->
+		<Component Name="Turbocharger" Class="Turbocharger" />
+		<Component Name="Idler" Class="FuelControllerComputer" />
+		<Component Name="Battery" Class="Battery" />
+		<Component Name="FuelTank" Class="Tank" />
+		<Component Name="OilTank" Class="Tank" />
+		<Component Name="Speedometer" Class="Speedometer" />
+		<Component Name="GearBoxLogic" Class="GearBoxAutomaticLogic" />
+		<!-- Electric circuits -->
+		<Component Name="BatteryElectricCircuit" Class="ElectricCircuit" />
+		<Component Name="GeneratorElectricCircuit" Class="ElectricCircuit" />
+		<Component Name="IgnitionElectricCircuit" Class="ElectricCircuit" />
+		<Component Name="CarElectrics" Class="CarElectrics" />
+		<!-- Torque trains -->
+		<Component Name="Starter" Class="EngineElectric" />
+		<Component Name="StarterRelay" Class="Relay" />
+		<Component Name="StarterGear" Class="Reducer" />
+		<Component Name="StarterBendix" Class="Bendix" />
+		<Component Name="Engine" Class="EngineDiesel" />
+		<Component Name="Generator" Class="Generator" />
+		<Component Name="GearBoxAutomaticPump" Class="Pump" />
+		<Component Name="TorqueConverter" Class="HydraulicTorqueConverter" />
+		<Component Name="GearBoxAutomatic" Class="GearBoxAutomatic" />
+		<Component Name="DifferentialAxle" Class="DifferentialOpen" />
+		<Component Name="FrontAxisRelay" Class="Relay" />
+		<Component Name="DifferentialWheelFront" Class="DifferentialOpen" />
+		<Component Name="DifferentialWheelBack" Class="DifferentialOpen" />
+		<Component Name="BrakeFrontLeft" Class="BrakeFriction" />
+		<Component Name="BrakeFrontRight" Class="BrakeFriction" />
+		<Component Name="BrakeBackLeft" Class="BrakeFriction" />
+		<Component Name="BrakeBackRight" Class="BrakeFriction" />
+		<Component Name="WheelFrontLeft" Class="WheelRaycast" />
+		<Component Name="WheelFrontRight" Class="WheelRaycast" />
+		<Component Name="WheelBackLeft" Class="WheelRaycast" />
+		<Component Name="WheelBackRight" Class="WheelRaycast" />
+		<!-- Output -->
+		<Component Name="PowerSteering" Class="PowerSteering" />
+		<!-- Body forces -->
+		<Component Name="SuspensionFrontLeft" Class="Suspension1Spring" />
+		<Component Name="SuspensionFrontRight" Class="Suspension1Spring" />
+		<Component Name="SuspensionBackLeft" Class="Suspension1Spring" />
+		<Component Name="SuspensionBackRight" Class="Suspension1Spring" />
+		<Component Name="Aerodynamics" Class="AerodynamicsCarSimple" />
+	</Components>
+	<Links>
+		<!-- Torque trains -->
+		<Link Holder="Starter" Reference="StarterRelay" />
+		<Link Holder="StarterRelay" Reference="StarterGear" />
+		<Link Holder="StarterGear" Reference="StarterBendix" />
+		<Link Holder="StarterBendix" Reference="Engine" />
+		<Link Holder="Engine" Reference="Generator" />
+		<Link Holder="Generator" Reference="GearBoxAutomaticPump" />
+		<Link Holder="GearBoxAutomaticPump" Reference="TorqueConverter" />
+		<Link Holder="TorqueConverter" Reference="GearBoxAutomatic" />
+		<Link Holder="GearBoxAutomatic" Reference="DifferentialAxle" />
+		<Link Holder="GearBoxLogic" Reference="GearBoxAutomatic" />
+		<Link Holder="DifferentialAxle" Reference="FrontAxisRelay" />
+		<Link Holder="DifferentialAxle" Reference="DifferentialWheelBack" />
+		<Link Holder="FrontAxisRelay" Reference="DifferentialWheelFront" />
+		<Link Holder="DifferentialWheelFront" Reference="BrakeFrontLeft" />
+		<Link Holder="DifferentialWheelFront" Reference="BrakeFrontRight" />
+		<Link Holder="DifferentialWheelBack" Reference="BrakeBackLeft" />
+		<Link Holder="DifferentialWheelBack" Reference="BrakeBackRight" />
+		<Link Holder="BrakeFrontLeft" Reference="WheelFrontLeft" />
+		<Link Holder="BrakeFrontRight" Reference="WheelFrontRight" />
+		<Link Holder="BrakeBackLeft" Reference="WheelBackLeft" />
+		<Link Holder="BrakeBackRight" Reference="WheelBackRight" />
+		<!-- Suspension -->
+		<Link Holder="SuspensionFrontLeft" Reference="WheelFrontLeft" />
+		<Link Holder="SuspensionFrontRight" Reference="WheelFrontRight" />
+		<Link Holder="SuspensionBackLeft" Reference="WheelBackLeft" />
+		<Link Holder="SuspensionBackRight" Reference="WheelBackRight" />
+		<Link Holder="Steering" Reference="SuspensionFrontLeft" />
+		<Link Holder="Steering" Reference="SuspensionFrontRight" />
+		<!-- Input processors & boost -->
+		<Link Holder="Turbocharger" Reference="Engine" />
+		<Link Holder="Idler" Reference="Engine" />
+		<Link Holder="Idler" Reference="Starter" />
+		<Link Holder="Idler" Reference="Speedometer" />
+		<Link Holder="IgnitionKey" Reference="Starter" />
+		<Link Holder="IgnitionKey" Reference="StarterRelay" />
+		<Link Holder="IgnitionKey" Reference="GearBoxLogic" />
+		<Link Holder="IgnitionKey" Reference="Idler" />
+		<Link Holder="IgnitionKey" Reference="IgnitionElectricCircuit" />
+		<Link Holder="IgnitionKey" Reference="GeneratorElectricCircuit" />
+		<Link Holder="AbsTcs" Reference="Idler" />
+		<Link Holder="AbsTcs" Reference="BrakeFrontLeft" />
+		<Link Holder="AbsTcs" Reference="BrakeFrontRight" />
+		<Link Holder="AbsTcs" Reference="BrakeBackLeft" />
+		<Link Holder="AbsTcs" Reference="BrakeBackRight" />
+		<Link Holder="GearBoxAutomatic" Reference="TorqueConverter" />
+		<Link Holder="GearBoxAutomatic" Reference="Engine" />
+		<!-- Electrics -->
+		<Link Holder="BatteryElectricCircuit" Reference="Battery" />
+		<Link Holder="BatteryElectricCircuit" Reference="IgnitionElectricCircuit" />
+		<Link Holder="BatteryElectricCircuit" Reference="GeneratorElectricCircuit" />
+		<Link Holder="BatteryElectricCircuit" Reference="CarElectrics" />
+		<Link Holder="GeneratorElectricCircuit" Reference="Generator" />
+		<Link Holder="IgnitionElectricCircuit" Reference="CarElectrics" />
+		<Link Holder="IgnitionElectricCircuit" Reference="Starter" />
+		<Link Holder="IgnitionElectricCircuit" Reference="AbsTcs" />
+		<Link Holder="CarElectrics" Reference="Generator" />
+		<Link Holder="CarElectrics" Reference="Battery" />
+		<Link Holder="CarElectrics" Reference="GearBoxLogic" />
+		<Link Holder="CarElectrics" Reference="FuelTank" />
+		<Link Holder="CarElectrics" Reference="Engine" />
+		<Link Holder="CarElectrics" Reference="Speedometer" />
+		<Link Holder="CarElectrics" Reference="AbsTcs" />
+		<Link Holder="CarElectrics" Reference="WheelFrontLeft" />
+		<Link Holder="CarElectrics" Reference="WheelFrontRight" />
+		<Link Holder="CarElectrics" Reference="WheelBackLeft" />
+		<Link Holder="CarElectrics" Reference="WheelBackRight" />
+		<!-- Hydraulics -->
+		<Link Holder="GearBoxAutomaticPump" Reference="OilTank" />
+		<Link Holder="GearBoxAutomaticPump" Reference="GearBoxAutomatic" />
+		<!-- Fuel feed -->
+		<Link Holder="Engine" Reference="FuelTank" />
+		<!-- Output -->
+		<Link Holder="Speedometer" Reference="DifferentialAxle" />
+		<Link Holder="PowerSteering" Reference="Steering" />
+		<Link Holder="PowerSteering" Reference="Engine" />
+	</Links>
+	<OutputElements>
+		<Element Name="Speed" Type="Real" Component="Speedometer" />
+		<Element Name="Mileage" Type="Real" Component="Speedometer" />
+		<Element Name="SessionMileage" Type="Real" Component="Speedometer" />
+		<Element Name="RPM" Type="Real" Component="Engine" />
+		<Element Name="ThermostatBeginTemperature" Type="Real" Component="Engine" />
+		<Element Name="RPMLimit" Type="Real" Component="Engine" />
+		<Element Name="StableRPM" Type="Real" Component="Engine" />
+		<Element Name="Combustion" Type="Boolean" Component="Engine" />
+		<Element Name="CoolantTemperature" Type="Real" Component="Engine" />
+		<Element Name="CoolantLevel" Type="Real" Component="Engine" />
+		<Element Name="OilTemperature" Type="Real" Component="Engine" />
+		<Element Name="OilPressure" Type="Real" Component="Engine" />
+		<Element Name="AFRRatio" Type="Real" Component="Engine" />
+		<Element Name="FuelConsumedTotal" Type="Real" Component="Engine" />
+		<Element Name="FuelConsumedPerSecond" Type="Real" Component="Engine" />
+		<Element Name="OilLowPressure" Type="Real" Component="Engine" />
+		<Element Name="EngineLoad" Type="Real" Component="Engine" InternalName="Load" />
+		<Element Name="EngineMaxTorque" Type="Real" Component="Engine" InternalName="MaxTorque" />
+		<Element Name="StarterRPM" Type="Real" Component="Starter" InternalName="RPM" />
+		<Element Name="StarterBendixRPM" Type="Real" Component="StarterBendix" InternalName="RPM" />
+		<Element Name="StarterRelayEnabled" Type="Boolean" Component="StarterRelay" InternalName="Enabled" />
+		<Element Name="AutoShifterState" Type="Integer" Component="GearBoxLogic" />
+		<Element Name="AutoShifterCurrentGear" Type="Integer" Component="GearBoxLogic" />
+		<Element Name="AutoShifterTargetGear" Type="Integer" Component="GearBoxLogic" />
+		<Element Name="AutoShifterMaxGear" Type="Integer" Component="GearBoxLogic" />
+		<Element Name="BatteryActive" Type="Boolean" Component="Battery" />
+		<Element Name="Amperage" Type="Real" Component="Battery" />
+		<Element Name="LowBeamIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="LowBeamIconIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="HighBeamIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="HighBeamIconIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="ParkingLightsIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="ParkingLightsIconIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="FrontFogLightsIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="RearFogLightsIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="StopLightIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="ReverseLightIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="LeftTurnLightIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="RightTurnLightIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="LeftTurnLightIconIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="RightTurnLightIconIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="HazardLightIconIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="DashboardIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="SafetyBeltIconIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="SafetyBeltBeeperVolume" Type="Real" Component="CarElectrics" />
+		<Element Name="ParkingBrakeIconIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="BatteryIconIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="FrontWindshieldWiperPhase" Type="Real" Component="CarElectrics" />
+		<Element Name="BackWindshieldWiperPhase" Type="Real" Component="CarElectrics" />
+		<Element Name="FrontWindshieldWiperSpeed" Type="Real" Component="CarElectrics" />
+		<Element Name="BackWindshieldWiperSpeed" Type="Real" Component="CarElectrics" />
+		<Element Name="FrontWindshieldWiperForward" Type="Boolean" Component="CarElectrics" />
+		<Element Name="TurnSignal" Type="Boolean" Component="CarElectrics" />
+		<Element Name="HornVolume" Type="Real" Component="CarElectrics" />
+		<Element Name="BeeperVolume" Type="Real" Component="CarElectrics" />
+		<Element Name="FuelIconIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="DashboardFuel" Type="Real" Component="CarElectrics" InternalName="Fuel" />
+		<Element Name="DashboardSpeed" Type="Real" Component="CarElectrics" InternalName="Speed" />
+		<Element Name="DashboardRPM" Type="Real" Component="CarElectrics" InternalName="RPM" />
+		<Element Name="DashboardCoolantTemperature" Type="Real" Component="CarElectrics" InternalName="CoolantTemperature" />
+		<Element Name="DashboardOilPressure" Type="Real" Component="CarElectrics" InternalName="OilPressure" />
+		<Element Name="DashboardVoltage" Type="Real" Component="CarElectrics" InternalName="Voltage" />
+		<Element Name="DashboardAmperage" Type="Real" Component="CarElectrics" InternalName="Amperage" />
+		<Element Name="OilIconIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="OverheatIconIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="CheckIconsIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="AbsDisableIconIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="AbsActiveIconIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="TcsDisableIconIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="TcsActiveIconIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="AirbagIconIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="ExhaustSystemIconIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="AbsActive" Type="Boolean" Component="AbsTcs" />
+		<Element Name="TcsActive" Type="Boolean" Component="AbsTcs" />
+		<Element Name="AbsEnabled" Type="Boolean" Component="AbsTcs" />
+		<Element Name="TcsEnabled" Type="Boolean" Component="AbsTcs" />
+		<Element Name="Voltage" Type="Real" Component="IgnitionElectricCircuit" />
+		<Element Name="FuelVolume" Type="Real" Component="FuelTank" InternalName="LiquidVolume" />
+		<Element Name="FuelVolumeMax" Type="Real" Component="FuelTank" InternalName="Volume" />
+		<Element Name="FuelRelative" Type="Real" Component="FuelTank" InternalName="LiquidRelativeVolume" />
+		<Element Name="FrontWheelsWorkingPressure" Type="Real" Component="WheelFrontLeft" InternalName="WorkingPressure" />
+		<Element Name="WheelPressureFrontLeft" Type="Real" Component="WheelFrontLeft" InternalName="Pressure" />
+		<Element Name="WheelPressureFrontRight" Type="Real" Component="WheelFrontRight" InternalName="Pressure" />
+		<Element Name="OverheatTemperature" Type="Real" Component="Engine" />
+		<Element Name="PowerSteeringIconIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="EmergencyStopIconIntensity" Type="Real" Component="CarElectrics" />
+		<Element Name="ForceFeedbackTorque" Type="Real" Component="PowerSteering" InternalName="Torque" />
+		<Element Name="ForceFeedbackFriction" Type="Real" Component="PowerSteering" InternalName="Friction" />
+		<Element Name="ForceFeedbackDamping" Type="Real" Component="PowerSteering" InternalName="Damping" />
+		<Element Name="ForceFeedbackSlipAngle" Type="Real" Component="PowerSteering" InternalName="SlipAngle" />
+		<Element Name="ForceFeedbackInertia" Type="Real" Component="PowerSteering" InternalName="Inertia" />
+		<Element Name="EngineVibrationFrequency" Type="Real" Component="Engine" InternalName="VibrationFrequency" />
+		<Element Name="EngineVibrationAmplitude" Type="Real" Component="Engine" InternalName="VibrationAmplitude" />
+		<Element Name="BrokenCoolingSystem" Type="Boolean" Component="Engine" />
+
+		<!-- Обороты колёс. TODO Вынести в PhysicsInterface -->
+		<Element Name="WheelRpmFrontLeft" Type="Real" Component="WheelFrontLeft" InternalName="RPM" />
+		<Element Name="WheelRpmFrontRight" Type="Real" Component="WheelFrontRight" InternalName="RPM" />
+		<Element Name="WheelRpmBackLeft" Type="Real" Component="WheelBackLeft" InternalName="RPM" />
+		<Element Name="WheelRpmBackRight" Type="Real" Component="WheelBackRight" InternalName="RPM" />
+	</OutputElements>
+	<StateElements>
+		<Element Name="FuelVolume" Type="Real" Component="FuelTank" InternalName="LiquidVolume" />
+		<Element Name="CoolantLevel" Type="Real" Component="Engine" />
+		<Element Name="CoolantTemperature" Type="Real" Component="Engine" />
+		<Element Name="FuelChamberTemperature" Type="Real" Component="Engine" />
+		<Element Name="WheelPressureFrontLeft" Type="Real" Component="WheelFrontLeft" InternalName="Pressure" />
+		<Element Name="WheelPressureFrontRight" Type="Real" Component="WheelFrontRight" InternalName="Pressure" />
+		<Element Name="Mileage" Type="Real" Component="Speedometer" />
+		<Element Name="SessionMileage" Type="Real" Component="Speedometer" />
+		<Element Name="AutoShifterState" Type="Integer" Component="GearBoxLogic" InternalName="State" />
+		<Element Name="DriveShaftVelocity" Type="Real" Component="DifferentialAxle" InternalName="AngularVelocity" />
+		<Element Name="BrokenCoolingSystem" Type="Boolean" Component="Engine" />
+	</StateElements>
+	<InputElements>
+		<Element Name="Battery" Type="Boolean" DefaultValue="true" />
+		<Element Name="Accelerator" Type="Real" />
+		<Element Name="Brake" Type="Real" />
+		<Element Name="ParkingBrake" Type="Real" />
+		<Element Name="Steering" Type="Real" />
+		<Element Name="AutoShifterState" Type="Integer" />
+		<Element Name="AutoShifterMaxGear" Type="Integer" />
+		<Element Name="Ignition" Type="Integer" />
+		<Element Name="AWD" Type="Boolean" DefaultValue="true" />
+		<Element Name="DifferentialAxleLock" Type="Boolean" DefaultValue="false" />
+		<Element Name="DifferentialWheelLock" Type="Boolean" DefaultValue="false" />
+		<Element Name="LowBeam" Type="Boolean" />
+		<Element Name="HighBeam" Type="Boolean" />
+		<Element Name="HighBeamUnfixed" Type="Boolean" />
+		<Element Name="ParkingLights" Type="Boolean" />
+		<Element Name="FrontFogLights" Type="Boolean" />
+		<Element Name="RearFogLights" Type="Boolean" />
+		<Element Name="LeftTurnLight" Type="Boolean" />
+		<Element Name="RightTurnLight" Type="Boolean" />
+		<Element Name="HazardLight" Type="Boolean" />
+		<Element Name="Horn" Type="Boolean" />
+		<Element Name="SafetyBelt" Type="Boolean" />
+		<Element Name="FrontWindshieldWiper" Type="Integer" />
+		<Element Name="BackWindshieldWiper" Type="Integer" />
+		<Element Name="EnableABS" Type="Boolean" DefaultValue="true" />
+		<Element Name="EnableTCS" Type="Boolean" DefaultValue="true" />
+		<Element Name="PerfectWheels" Type="Boolean" DefaultValue="false" />
+		<Element Name="UnlimitedBattery" Type="Boolean" />
+		<Element Name="UnlimitedFuelTank" Type="Boolean" />
+		<Element Name="FuelLeak" Type="Real" />
+		<Element Name="BrokenLighting" Type="Boolean" />
+		<Element Name="BrokenSteering" Type="Boolean" />
+		<Element Name="CoolantLeak" Type="Boolean" />
+		<Element Name="BrokenBrake" Type="Boolean" />
+		<Element Name="BlowoutTyreFrontLeft" Type="Boolean" />
+		<Element Name="BlowoutTyreFrontRight" Type="Boolean" />
+		<Element Name="BrokenPowerSteering" Type="Boolean" />
+		<Element Name="MileageMultiplier" Type="Real" DefaultValue="1.0" />
+	</InputElements>
+	<InputProcessors>
+		<Processor Input="Battery" Component="Battery" />
+		<Processor Input="Accelerator" Component="AbsTcs" />
+		<Processor Input="Accelerator" Component="Turbocharger" InternalName="Throttle" />
+		<Processor Input="Accelerator" Component="GearBoxAutomatic" />
+		<Processor Input="Accelerator" Component="GearBoxLogic" />
+		<Processor Input="Brake" Component="AbsTcs" />
+		<Processor Input="Brake" Component="CarElectrics" />
+		<Processor Input="Brake" Component="GearBoxLogic" />
+		<Processor Input="ParkingBrake" Component="BrakeBackLeft" />
+		<Processor Input="ParkingBrake" Component="BrakeBackRight" />
+		<Processor Input="ParkingBrake" Component="CarElectrics" />
+		<Processor Input="Steering" Component="Steering" />
+		<Processor Input="AutoShifterState" Component="GearBoxLogic" />
+		<Processor Input="AutoShifterMaxGear" Component="GearBoxLogic" />
+		<Processor Input="Ignition" Component="IgnitionKey" />
+		<Processor Input="AWD" Component="FrontAxisRelay" InternalName="Enable" />
+		<Processor Input="DifferentialAxleLock" Component="DifferentialAxle" InternalName="Lock" />
+		<Processor Input="DifferentialWheelLock" Component="DifferentialWheelFront" InternalName="Lock" />
+		<Processor Input="DifferentialWheelLock" Component="DifferentialWheelBack" InternalName="Lock" />
+		<Processor Input="LowBeam" Component="CarElectrics" />
+		<Processor Input="HighBeam" Component="CarElectrics" />
+		<Processor Input="HighBeamUnfixed" Component="CarElectrics" />
+		<Processor Input="ParkingLights" Component="CarElectrics" />
+		<Processor Input="FrontFogLights" Component="CarElectrics" />
+		<Processor Input="RearFogLights" Component="CarElectrics" />
+		<Processor Input="LeftTurnLight" Component="CarElectrics" />
+		<Processor Input="RightTurnLight" Component="CarElectrics" />
+		<Processor Input="HazardLight" Component="CarElectrics" />
+		<Processor Input="Horn" Component="CarElectrics" />
+		<Processor Input="FrontWindshieldWiper" Component="CarElectrics" />
+		<Processor Input="BackWindshieldWiper" Component="CarElectrics" />
+		<Processor Input="SafetyBelt" Component="CarElectrics" />
+		<Processor Input="EnableABS" Component="AbsTcs" />
+		<Processor Input="EnableTCS" Component="AbsTcs" />
+		<Processor Input="PerfectWheels" Component="WheelFrontLeft" InternalName="NoSlip" />
+		<Processor Input="PerfectWheels" Component="WheelFrontRight" InternalName="NoSlip" />
+		<Processor Input="PerfectWheels" Component="WheelBackLeft" InternalName="NoSlip" />
+		<Processor Input="PerfectWheels" Component="WheelBackRight" InternalName="NoSlip" />
+		<Processor Input="UnlimitedBattery" Component="Battery" InternalName="EnableUnlimited" />
+		<Processor Input="UnlimitedFuelTank" Component="FuelTank" InternalName="EnableUnlimited" />
+		<Processor Input="FuelLeak" Component="FuelTank" InternalName="DrainSpeed" />
+		<Processor Input="BrokenLighting" Component="CarElectrics" />
+		<Processor Input="BrokenSteering" Component="Steering" />
+		<Processor Input="CoolantLeak" Component="Engine" InternalName="CoolantLeak" />
+		<Processor Input="BrokenBrake" Component="BrakeFrontLeft" />
+		<Processor Input="BrokenBrake" Component="BrakeFrontRight" />
+		<Processor Input="BrokenBrake" Component="BrakeBackLeft" />
+		<Processor Input="BrokenBrake" Component="BrakeBackRight" />
+		<Processor Input="BrokenBrake" Component="CarElectrics" />
+		<Processor Input="BlowoutTyreFrontLeft" Component="WheelFrontLeft" InternalName="Blowout" />
+		<Processor Input="BlowoutTyreFrontRight" Component="WheelFrontRight" InternalName="Blowout" />
+		<Processor Input="BrokenPowerSteering" Component="CarElectrics" />
+		<Processor Input="BrokenPowerSteering" Component="PowerSteering" InternalName="Broken" />
+		<Processor Input="MileageMultiplier" Component="Speedometer" InternalName="MileageMultiplier" />
+		<Processor Input="MileageMultiplier" Component="Engine" InternalName="FuelConsumptionMultiplier" />
+	</InputProcessors>
+</Vehicle>

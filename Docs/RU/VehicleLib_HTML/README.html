@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Руководство по настройке физики автомобилей в City Car Driving 2.0</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({ startOnLoad: true });</script>
+    <style>
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 32px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1f2328;
+            background-color: #ffffff;
+        }
+        h1, h2, h3, h4 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        h1 {
+            font-size: 2em;
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid #d0d7de;
+        }
+        h2 {
+            font-size: 1.5em;
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid #d0d7de;
+        }
+        h3 {
+            font-size: 1.25em;
+        }
+        hr {
+            height: 0.25em;
+            padding: 0;
+            margin: 24px 0;
+            background-color: #d0d7de;
+            border: 0;
+        }
+        a {
+            color: #0969da;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 16px 0;
+        }
+        th, td {
+            border: 1px solid #d0d7de;
+            padding: 8px 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background: #f6f8fa;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background: #f6f8fa;
+        }
+        .text-center {
+            text-align: center;
+        }
+        code {
+            background: #eff1f3;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+            font-size: 85%;
+        }
+        pre {
+            background: #f6f8fa;
+            padding: 14px;
+            border-radius: 6px;
+            overflow-x: auto;
+            border: 1px solid #d0d7de;
+        }
+        pre code {
+            background: transparent;
+            padding: 0;
+            font-size: 100%;
+        }
+        pre.mermaid {
+            background: #ffffff;
+            text-align: center;
+        }
+        .alert {
+            padding: 12px 16px;
+            margin: 16px 0;
+            border-left: 4px solid;
+            border-radius: 6px;
+            background: #f6f8fa;
+        }
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .alert-note {
+            border-left-color: #0969da;
+            background-color: #ddf4ff;
+        }
+        .alert-note .alert-title { color: #0969da; }
+        .alert-tip {
+            border-left-color: #1a7f37;
+            background-color: #dafbe1;
+        }
+        .alert-tip .alert-title { color: #1a7f37; }
+        .alert-important {
+            border-left-color: #8250df;
+            background-color: #fbefff;
+        }
+        .alert-important .alert-title { color: #8250df; }
+        .alert-warning {
+            border-left-color: #9a6700;
+            background-color: #fff8c5;
+        }
+        .alert-warning .alert-title { color: #9a6700; }
+        .alert-caution {
+            border-left-color: #cf222e;
+            background-color: #ffebe9;
+        }
+        .alert-caution .alert-title { color: #cf222e; }
+    </style>
+</head>
+<body>
+
+<h1 id="руководство-по-настройке-физики-автомобилей-в-city-car-driving-20">Руководство по настройке физики автомобилей в City Car Driving 2.0</h1>
+
+<p><strong>Навигация:</strong> <strong>README</strong> | <a href="./00_Quick_Start.html">00. Быстрый старт</a> | <a href="./01_Architecture_and_Config.html">01. Архитектура и конфиги</a> | <a href="./02_Named_IO_and_States.html">02. Именованный ввод/вывод</a> | <a href="./03_Components_TorqueTrain.html">03. Трансмиссия</a> | <a href="./04_Components_Electrics.html">04. Электрика</a> | <a href="./05_Components_Chassis_and_Subsystems.html">05. Шасси и подсистемы</a></p>
+
+<hr>
+
+<p>Добро пожаловать в практическое руководство и справочник для мододелов по настройке физики автомобилей в проекте <strong>City Car Driving 2.0</strong> на базе Unreal Engine 5.</p>
+
+<p>В <strong>City Car Driving 2.0</strong> вся физика силового агрегата, трансмиссии, подвески, шин, тормозов, рулевого управления и бортовой электрики настраивается декларативно через текстовые файлы конфигурации (<code>Vehicle.ini</code>, <code>options.xml</code>, <code>.xml</code>-схемы и <code>.csv</code>-таблицы кривых) и свойства ассетов в редакторе Unreal Engine 5.</p>
+
+<hr>
+
+<h2 id="1-оглавление-документации">1. Оглавление документации</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th class="text-center">№</th>
+            <th>Раздел</th>
+            <th>Содержание</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="text-center"><strong>—</strong></td>
+            <td><strong><a href="./README.html">README.md</a></strong> <em>(текущий файл)</em></td>
+            <td>Устройство файлов физики мода, справочник всех 46 поддерживаемых в CCD 2.0 классов компонентов (<code>Class="..."</code> в XML) со стандартными именами секций в <code>Vehicle.ini</code> и таблица единиц измерения.</td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>00</strong></td>
+            <td><strong><a href="./00_Quick_Start.html">00_Quick_Start.md</a></strong></td>
+            <td><strong>Быстрый старт:</strong> состав файлов мода и правила путей, настройка кузова <code>Body</code> (<code>Override Mass</code>, <code>Center Of Mass Offset</code>) и колёс в Blueprint, выбор XML-схемы и <code>options.xml</code>, пошаговые формулы расчёта подвески, шин, <code>Engine.csv</code>, КПП и контрольный чек-лист из 5 тестов.</td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>01</strong></td>
+            <td><strong><a href="./01_Architecture_and_Config.html">01_Architecture_and_Config.md</a></strong></td>
+            <td>Разрешение путей к файлам мода и ресурсам игры, синтаксис <code>Vehicle.ini</code> и <code>options.xml</code>, разбор 6 стандартных XML-схем <code>Common/Vehicles/MotorCars/Schemes/*.xml</code>, создание своей схемы (на примере <code>EngineDiesel</code> + <code>Turbocharger</code>), форматы таблиц <code>.csv</code> (<code>Engine.csv</code>) и сцепка с прицепом (<code>&lt;VehicleAttachment&gt;</code>).</td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>02</strong></td>
+            <td><strong><a href="./02_Named_IO_and_States.html">02_Named_IO_and_States.md</a></strong></td>
+            <td>Устройство секций <code>&lt;InputElements&gt;</code>, <code>&lt;InputProcessors&gt;</code>, <code>&lt;OutputElements&gt;</code> и <code>&lt;StateElements&gt;</code>, полные таблицы стандартных входов/выходов/состояний в CCD 2.0 и сводный справочник всех внутренних имён (<code>InternalName</code>) по всем 46 поддерживаемым классам компонентов.</td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>03</strong></td>
+            <td><strong><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></strong></td>
+            <td>Справочник параметров <code>.ini</code> для двигателей и силовой передачи: ДВС (<code>EngineGazoline</code>, <code>EngineDiesel</code>), стартер (<code>EngineElectric</code>, <code>Bendix</code>), сцепление (<code>ClutchFriction</code>), ГДТ (<code>HydraulicTorqueConverter</code>), КПП (<code>GearBox</code>, <code>GearBoxAutomatic</code>), дифференциалы (<code>DifferentialOpen</code>), тормоза (<code>BrakeFriction*</code>), шины (<code>WheelRaycast</code>) и агрегаты (<code>Generator</code>, <code>Pump</code>, <code>Compressor</code>).</td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>04</strong></td>
+            <td><strong><a href="./04_Components_Electrics.html">04_Components_Electrics.md</a></strong></td>
+            <td>Справочник бортовой электросети: электрические цепи (<code>ElectricCircuit</code>), аккумулятор (<code>Battery</code>), одиночные потребители (<code>ElectricElement</code>) и комплексный блок кузовной электрики, фар, дворников и приборной панели (<code>CarElectrics</code>).</td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>05</strong></td>
+            <td><strong><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></strong></td>
+            <td>Справочник шасси и подсистем: подвеска (<code>Suspension1Spring</code>), рулевое управление (<code>Steering2Ackermann</code>), пневматика и турбонаддув (<code>Turbocharger</code>), баки (<code>Tank</code>), аэродинамика (<code>AerodynamicsCarSimple</code>), контроллеры (<code>FuelControllerComputer</code>, <code>AbsTcs</code>, <code>GearBoxAutomaticLogic</code>, <code>IgnitionKeyProcessor</code>) и телеметрия (<code>Speedometer</code>, <code>PowerSteering</code>, <code>FuelConsumptionMeter</code>).</td>
+        </tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h2 id="2-из-каких-файлов-состоит-физика-автомобиля-в-city-car-driving-20">2. Из каких файлов состоит физика автомобиля в City Car Driving 2.0</h2>
+
+<p>В папке плагина мода (<code>Plugins/Mods/Content/&lt;ИмяМода&gt;/</code>) рядом с ассетами Unreal Engine (<code>V_&lt;ИмяМода&gt;.uasset</code>, <code>DA_&lt;ИмяМода&gt;.uasset</code>, <code>ST_&lt;ИмяМода&gt;.uasset</code>) располагаются конфигурационные файлы физики, которые могут ссылаться как на общие ресурсы игры в <code>Content/Common/Vehicles/MotorCars/</code>, так и на собственные файлы внутри папки мода.</p>
+
+<pre class="mermaid">
+flowchart TD
+    DA["DA_&lt;ModName&gt;.uasset&lt;br/&gt;(Выбор КПП и комплектации в меню)"] --&gt;|"Опции (например, TransmissionType=Auto)"| OPT["options.xml&lt;br/&gt;(Папка мода)"]
+    BP["V_&lt;ModName&gt;.uasset&lt;br/&gt;(Меш Body, масса, ЦТ, колёса)"] --&gt;|"Физическое тело кузова"| SIM["Физическая модель автомобиля"]
+    OPT --&gt;|"SetSchema='true' (или DefaultSchema)"| XML["XML-схема автомобиля&lt;br/&gt;(Common/.../Schemes/*.xml или локальная)"]
+    OPT --&gt;|"Постфиксы секций .Опция.Значение"| INI["Vehicle.ini&lt;br/&gt;(Папка мода)"]
+    XML --&gt;|"Состав компонентов и связей"| SIM
+    INI --&gt;|"Параметры секций [ИмяКомпонента]"| SIM
+    INI --&gt;|"Пути к таблицам кривых"| CSV["Engine.csv (в папке мода)&lt;br/&gt;+ общие таблицы Common/.../Tables/*.csv"]
+    CSV --&gt; SIM
+</pre>
+
+<table>
+    <thead>
+        <tr>
+            <th>Файл</th>
+            <th>Где лежит</th>
+            <th>Назначение</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong><code>Vehicle.ini</code></strong></td>
+            <td><code>Plugins/Mods/Content/&lt;ИмяМода&gt;/Vehicle.ini</code></td>
+            <td><strong>Обязательный</strong> главный файл настроек. Содержит секцию <code>[Vehicle]</code> (<code>DefaultSchema</code>) и секции <code>[ИмяКомпонента]</code> с параметрами каждого узла из XML-схемы, а также секции переопределения под комплектации <code>[ИмяКомпонента.Опция.Значение]</code>.</td>
+        </tr>
+        <tr>
+            <td><strong><code>options.xml</code></strong></td>
+            <td><code>Plugins/Mods/Content/&lt;ИмяМода&gt;/options.xml</code></td>
+            <td>Определяет доступные опции комплектации (<code>&lt;AvailableOptions&gt;</code>, например <code>TransmissionType</code> со значениями <code>Auto</code> и <code>Manual</code>), их совместимость (<code>&lt;Compatibilities&gt;</code>) и переключает файл XML-схемы при <code>SetSchema="true"</code>.</td>
+        </tr>
+        <tr>
+            <td><strong>Схема <code>.xml</code></strong></td>
+            <td><code>Content/Common/Vehicles/MotorCars/Schemes/*.xml</code> <em>(или папка мода)</em></td>
+            <td>Корневой тег <code>&lt;Vehicle&gt;</code>. Определяет список компонентов (<code>&lt;Components&gt;</code>), связи между ними (<code>&lt;Links&gt;</code>), каналы телеметрии (<code>&lt;OutputElements&gt;</code>), состояния (<code>&lt;StateElements&gt;</code>) и управление (<code>&lt;InputElements&gt;</code>, <code>&lt;InputProcessors&gt;</code>).</td>
+        </tr>
+        <tr>
+            <td><strong><code>Engine.csv</code></strong></td>
+            <td><code>Plugins/Mods/Content/&lt;ИмяМода&gt;/Engine.csv</code></td>
+            <td>Двумерная таблица крутящего момента и механических потерь двигателя по оборотам (<code>RPM</code>) и проценту нажатия педали газа (<code>0..100%</code>), подключаемая через параметр <code>PowerCurves</code> в секции <code>[Engine]</code>.</td>
+        </tr>
+        <tr>
+            <td><strong>Общие таблицы <code>.csv</code></strong></td>
+            <td><code>Content/Common/Vehicles/MotorCars/Tables/*.csv</code></td>
+            <td>Стандартные 1D- и 2D-таблицы прогрессии пружин (<code>SpringProgression.csv</code>), вибраций ДВС (<code>EngineVibration.csv</code>), сцепления шин (<code>WheelForceLat.csv</code>, <code>WheelForceLon.csv</code>), углов развала и сопротивления качению.</td>
+        </tr>
+        <tr>
+            <td><strong>Схема сцепки <code>.xml</code></strong></td>
+            <td>По пути сцепки автопоезда <em>(опционально)</em></td>
+            <td>Корневой тег <code>&lt;VehicleAttachment&gt;</code>. Описывает межмашинные связи <code>&lt;MasterLinks&gt;</code> и <code>&lt;SlaveLinks&gt;</code> при сцепке тягача с прицепом.</td>
+        </tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h2 id="3-справочник-всех-46-классов-компонентов-class-в-xml">3. Справочник всех 46 классов компонентов (<code>Class="..."</code> в XML)</h2>
+
+<p>Атрибут <code>Class</code> в теге <code>&lt;Component Name="..." Class="..." /&gt;</code> задаёт тип узла, а атрибут <code>Name</code> — имя его секции <code>[Name]</code> в <code>Vehicle.ini</code>.</p>
+
+<table>
+    <thead>
+        <tr>
+            <th class="text-center">№</th>
+            <th>Класс в XML (<code>Class</code>)</th>
+            <th>Стандартная секция <code>[Name]</code> в <code>Vehicle.ini</code> (CCD 2.0)</th>
+            <th>Назначение компонента</th>
+            <th>Раздел документации</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="text-center"><strong>1</strong></td>
+            <td><code>EngineGazoline</code></td>
+            <td><code>[Engine]</code></td>
+            <td>Бензиновый ДВС с искровым зажиганием (используется во всех 6 базовых схемах, в т.ч. как универсальный ДВС при комбинации опций КПП и двигателя).</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>2</strong></td>
+            <td><code>EngineDiesel</code></td>
+            <td><code>[Engine]</code></td>
+            <td>Дизельный ДВС с воспламенением от сжатия (для локальных дизельных схем).</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>3</strong></td>
+            <td><code>EngineElectric</code></td>
+            <td><code>[Starter]</code></td>
+            <td>Электродвигатель постоянного тока (стартер).</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>4</strong></td>
+            <td><code>ExternalVelocityMotor</code></td>
+            <td><em>(кастомная секция)</em></td>
+            <td>Приводной мотор с внешней уставкой оборотов <code>ShaftRpm</code> по кривой <code>TorqueCurve</code>.</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>5</strong></td>
+            <td><code>ClutchFriction</code></td>
+            <td><code>[Clutch]</code> <em>(в <code>*Manual.xml</code>)</em></td>
+            <td>Фрикционное сцепление МКПП.</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>6</strong></td>
+            <td><code>HydraulicTorqueConverter</code></td>
+            <td><code>[TorqueConverter]</code> <em>(в <code>*Auto.xml</code>)</em></td>
+            <td>Гидротрансформатор (ГДТ) АКПП с муфтой блокировки.</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>7</strong></td>
+            <td><code>VariableTorqueConverter</code></td>
+            <td><em>(кастомная секция)</em></td>
+            <td>Вариатор с плавно изменяемым передаточным числом.</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>8</strong></td>
+            <td><code>Bendix</code></td>
+            <td><code>[StarterBendix]</code></td>
+            <td>Обгонная муфта (бендикс) стартера.</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>9</strong></td>
+            <td><code>GearBox</code></td>
+            <td><code>[GearBox]</code> <em>(в <code>*Manual.xml</code>)</em></td>
+            <td>Механическая коробка передач (МКПП) или раздаточная коробка.</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>10</strong></td>
+            <td><code>GearBoxAutomatic</code></td>
+            <td><code>[GearBoxAutomatic]</code> <em>(в <code>*Auto.xml</code>)</em></td>
+            <td>Планетарная АКПП с автоматическим переключением ступеней и управлением ГДТ.</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>11</strong></td>
+            <td><code>DifferentialOpen</code></td>
+            <td><code>[DifferentialAxle]</code>, <code>[DifferentialWheelFront]</code>, <code>[DifferentialWheelBack]</code> <em>(в <code>Awd*</code>)</em>; <code>[Differential]</code> <em>(в <code>Fwd*</code>, <code>Rwd*</code>)</em></td>
+            <td>Симметричный межосевой или межколёсный дифференциал с главной парой <code>GearRatio</code> и блокировкой <code>Locked</code>.</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>12</strong></td>
+            <td><code>Reducer</code></td>
+            <td><code>[StarterGear]</code></td>
+            <td>Понижающий редуктор с постоянным передаточным числом <code>GearRatio</code>.</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>13</strong></td>
+            <td><code>Relay</code></td>
+            <td><code>[StarterRelay]</code>, <code>[FrontAxisRelay]</code> <em>(в <code>Awd*</code>)</em></td>
+            <td>Разобщительная муфта (реле стартера или муфта подключения передней оси).</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>14</strong></td>
+            <td><code>Retarder</code></td>
+            <td><em>(кастомная секция)</em></td>
+            <td>Трансмиссионный тормоз-замедлитель (ретардер грузовиков и автобусов).</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>15</strong></td>
+            <td><code>BrakeFriction</code></td>
+            <td><code>[BrakeFrontLeft]</code>, <code>[BrakeFrontRight]</code>, <code>[BrakeBackLeft]</code>, <code>[BrakeBackRight]</code></td>
+            <td>Колёсный тормозной механизм (рабочий + стояночный тормоз).</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>16</strong></td>
+            <td><code>BrakeFrictionPneumatic</code></td>
+            <td><em>(кастомная секция)</em></td>
+            <td>Пневматический тормозной механизм с энергоаккумулятором.</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>17</strong></td>
+            <td><code>WheelRaycast</code></td>
+            <td><code>[WheelFrontLeft]</code>, <code>[WheelFrontRight]</code>, <code>[WheelBackLeft]</code>, <code>[WheelBackRight]</code></td>
+            <td>Рейкастовая модель колеса и пневматической шины.</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>18</strong></td>
+            <td><code>Compressor</code></td>
+            <td><em>(кастомная секция)</em></td>
+            <td>Воздушный компрессор пневмосистемы.</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>19</strong></td>
+            <td><code>Generator</code></td>
+            <td><code>[Generator]</code></td>
+            <td>Генератор переменного тока бортовой сети.</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a>, <a href="./04_Components_Electrics.html">04_Components_Electrics.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>20</strong></td>
+            <td><code>Pump</code></td>
+            <td><code>[GearBoxAutomaticPump]</code> <em>(в <code>*Auto.xml</code>)</em></td>
+            <td>Масляный насос АКПП.</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a>, <a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>21</strong></td>
+            <td><code>ElectricCircuit</code></td>
+            <td><code>[BatteryElectricCircuit]</code>, <code>[GeneratorElectricCircuit]</code>, <code>[IgnitionElectricCircuit]</code></td>
+            <td>Параллельная электрическая цепь (узел бортовой сети).</td>
+            <td><a href="./04_Components_Electrics.html">04_Components_Electrics.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>22</strong></td>
+            <td><code>Battery</code></td>
+            <td><code>[Battery]</code></td>
+            <td>Аккумуляторная батарея (АКБ).</td>
+            <td><a href="./04_Components_Electrics.html">04_Components_Electrics.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>23</strong></td>
+            <td><code>ElectricElement</code></td>
+            <td><em>(кастомная секция)</em></td>
+            <td>Одиночный резистивный электропотребитель.</td>
+            <td><a href="./04_Components_Electrics.html">04_Components_Electrics.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>24</strong></td>
+            <td><code>CarElectrics</code></td>
+            <td><code>[CarElectrics]</code></td>
+            <td>Блок кузовной электрики: фары, поворотники, дворники, приборка, зуммеры.</td>
+            <td><a href="./04_Components_Electrics.html">04_Components_Electrics.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>25</strong></td>
+            <td><code>Suspension1Spring</code></td>
+            <td><code>[SuspensionFrontLeft]</code>, <code>[SuspensionFrontRight]</code>, <code>[SuspensionBackLeft]</code>, <code>[SuspensionBackRight]</code></td>
+            <td>Пружинно-амортизаторная подвеска колеса с прогрессией и углами развала.</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>26</strong></td>
+            <td><code>Suspension1Constant</code></td>
+            <td><em>(кастомная секция)</em></td>
+            <td>Жёсткая подвеска с постоянной нагрузкой (для рельсового транспорта).</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>27</strong></td>
+            <td><code>Steering2Ackermann</code></td>
+            <td><code>[Steering]</code></td>
+            <td>Рулевая трапеция Аккермана двухколёсной управляемой оси.</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>28</strong></td>
+            <td><code>SteeringSimple</code></td>
+            <td><em>(кастомная секция)</em></td>
+            <td>Упрощённый механизм поворота колеса без трапеции Аккермана.</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>29</strong></td>
+            <td><code>Receiver</code></td>
+            <td><em>(кастомная секция)</em></td>
+            <td>Воздушный ресивер (баллон сжатого воздуха).</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>30</strong></td>
+            <td><code>ValveMultiCircuit</code></td>
+            <td><em>(кастомная секция)</em></td>
+            <td>Многоконтурный защитный клапан пневмосистемы.</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>31</strong></td>
+            <td><code>ActuatorPneumatic1Chamber</code></td>
+            <td><em>(кастомная секция)</em></td>
+            <td>Однокамерный пневмопривод с пружинным возвратом.</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>32</strong></td>
+            <td><code>ActuatorPneumatic2Chamber</code></td>
+            <td><em>(кастомная секция)</em></td>
+            <td>Двухкамерный пневмоцилиндр (привод дверей автобуса и др.).</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>33</strong></td>
+            <td><code>Turbocharger</code></td>
+            <td><code>[Turbocharger]</code> <em>(в локальных турбо-схемах)</em></td>
+            <td>Турбокомпрессор ДВС с настройкой буста и турболага <code>LagTime</code>.</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>34</strong></td>
+            <td><code>Tank</code></td>
+            <td><code>[FuelTank]</code>, <code>[OilTank]</code> <em>(в <code>*Auto.xml</code>)</em></td>
+            <td>Топливный или масляный бак.</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>35</strong></td>
+            <td><code>AerodynamicsCarSimple</code></td>
+            <td><code>[Aerodynamics]</code></td>
+            <td>Аэродинамическое сопротивление (<code>DragCoeff</code>) и прижимная сила (<code>LiftCoeff</code>).</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>36</strong></td>
+            <td><code>ExternalThruster</code></td>
+            <td><em>(кастомная секция)</em></td>
+            <td>Внешний линейный толкатель (трастер).</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>37</strong></td>
+            <td><code>FuelControllerComputer</code></td>
+            <td><code>[Idler]</code></td>
+            <td>ЭБУ подачи топлива, холостого хода (<code>IdleRpm</code>, <code>WarmupRpm</code>) и отсечки скорости.</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>38</strong></td>
+            <td><code>FuelControllerMechanical</code></td>
+            <td><em>(кастомная секция)</em></td>
+            <td>Карбюраторный контроллер подачи топлива с ручным «подсосом» (<code>Choke</code>).</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>39</strong></td>
+            <td><code>AbsTcs</code></td>
+            <td><code>[AbsTcs]</code></td>
+            <td>Блок ABS, антипробуксовочной системы (TCS) и распределителя тормозов (EBD).</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>40</strong></td>
+            <td><code>ClutchInputProcessor</code></td>
+            <td><code>[ClutchPedal]</code> <em>(в <code>*Manual.xml</code>)</em></td>
+            <td>Преобразователь хода педали сцепления (<code>Power</code>).</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>41</strong></td>
+            <td><code>GearBoxAutomaticLogic</code></td>
+            <td><code>[GearBoxLogic]</code> <em>(в <code>*Auto.xml</code>)</em></td>
+            <td>Селектор режимов АКПП легкового автомобиля (<code>P</code>, <code>R</code>, <code>N</code>, <code>D</code>).</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>42</strong></td>
+            <td><code>GearBoxAutomaticLogicBus</code></td>
+            <td><em>(кастомная секция)</em></td>
+            <td>Кнопочный селектор АКПП автобуса (<code>D</code>, <code>N</code>, <code>R</code>) с автонейтралью.</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>43</strong></td>
+            <td><code>IgnitionKeyProcessor</code></td>
+            <td><code>[IgnitionKey]</code></td>
+            <td>Замок зажигания (<code>0 = Off</code>, <code>1 = Ignition</code>, <code>2 = Starter</code>).</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>44</strong></td>
+            <td><code>Speedometer</code></td>
+            <td><code>[Speedometer]</code></td>
+            <td>Датчик скорости и одометр (<code>MetersPerRotation</code>).</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>45</strong></td>
+            <td><code>PowerSteering</code></td>
+            <td><code>[PowerSteering]</code></td>
+            <td>Гидро-/электроусилитель руля и расчёт обратной связи Force Feedback.</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>46</strong></td>
+            <td><code>FuelConsumptionMeter</code></td>
+            <td><em>(кастомная секция)</em></td>
+            <td>Маршрутный компьютер среднего расхода топлива.</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h2 id="4-единицы-измерения-в-vehicleini-csv-и-unreal-engine-5">4. Единицы измерения в <code>Vehicle.ini</code>, <code>.csv</code> и Unreal Engine 5</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Величина</th>
+            <th>В <code>Vehicle.ini</code> и таблицах <code>.csv</code></th>
+            <th>В каналах вывода (<code>OutputElements</code>)</th>
+            <th>В редакторе Unreal Engine 5</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Координаты, размеры, радиусы, ход подвески</strong></td>
+            <td><strong>метры ($\text{м}$)</strong> <em>(диаметры клапанов пневматики <code>*Diameter</code> — в $\text{мм}$)</em></td>
+            <td>метры ($\text{м}$)</td>
+            <td><strong>сантиметры ($\text{см}$)</strong> ($1\text{ м} = 100\text{ см}$)</td>
+        </tr>
+        <tr>
+            <td><strong>Система координат кузова (<code>Mount</code> и др.)</strong></td>
+            <td>Правая СК: <strong><code>X</code> — вперёд, <code>Y</code> — влево, <code>Z</code> — вверх</strong> (м)</td>
+            <td>—</td>
+            <td>Левая СК: <strong><code>X</code> — вперёд, <code>Y</code> — вправо, <code>Z</code> — вверх</strong> (см)</td>
+        </tr>
+        <tr>
+            <td><strong>Скорость движения</strong></td>
+            <td>$\text{м/с}$ <em>(кроме <code>SpeedLimit</code> в <code>[Idler]</code> и <code>SafetyBelt*Speed</code> в <code>[CarElectrics]</code> — там $\text{км/ч}$)</em></td>
+            <td><strong>$\text{м/с}$</strong> (<code>Speed</code> и <code>DashboardSpeed</code>; для перевода в $\text{км/ч}$ умножьте на $3.6$)</td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td><strong>Частота вращения валов</strong></td>
+            <td><strong>$\text{об/мин}$ (<code>RPM</code>)</strong> <em>(кроме <code>StaticFrictionTorqueMaxAngVelocity</code> в <code>[Wheel*]</code> — там $\text{рад/с}$)</em></td>
+            <td><strong>$\text{об/мин}$ (<code>RPM</code>)</strong> <em>(в состоянии <code>AngularVelocity</code> — $\text{рад/с}$)</em></td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td><strong>Углы (поворот колёс, развал, увод шин)</strong></td>
+            <td><strong>градусы ($^\circ$)</strong></td>
+            <td><code>WheelSteeringAngle</code> — град.; <code>MaxSteeringAngle</code> — рад.</td>
+            <td>градусы ($^\circ$)</td>
+        </tr>
+        <tr>
+            <td><strong>Масса и момент инерции</strong></td>
+            <td>килограммы ($\text{кг}$), $\text{кг}\cdot\text{м}^2$</td>
+            <td>$\text{кг}\cdot\text{м}^2$ (<code>ForceFeedbackInertia</code>)</td>
+            <td>масса <code>Body</code> в <strong>$\text{кг}$</strong> (<code>Override Mass</code>), <code>COMNudge</code> в <strong>$\text{см}$</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Сила, жёсткость, крутящий момент</strong></td>
+            <td>$\text{Н}$, $\text{Н/м}$ (<code>SpringCoeff</code>), $\text{Н}\cdot\text{с/м}$ (<code>DampCoeff</code>), $\text{Н}\cdot\text{м}$</td>
+            <td>$\text{Н}\cdot\text{м}$ (<code>MaxTorque</code>, <code>Load</code>, <code>ForceFeedbackTorque</code>)</td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td><strong>Давление (шины, масло, пневматика)</strong></td>
+            <td><strong>бары ($\text{бар}$)</strong> <em>(в шинах и компрессоре — избыточное; в ресиверах — абсолютное)</em></td>
+            <td><strong>бары ($\text{бар}$)</strong></td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td><strong>Объём и расход топлива</strong></td>
+            <td><strong>литры ($\text{л}$)</strong>; <code>AveragingDistance</code> — $\text{км}$, <code>AveragingStep</code> — $\text{м}$</td>
+            <td>объём — $\text{л}$, секундный расход — $\text{л/с}$, средний в <code>FuelConsumptionMeter</code> — <strong>$\text{л/м}$</strong> (<code>* 1e5</code> = л/100 км)</td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td><strong>Температура и электрика</strong></td>
+            <td>$^\circ\text{C}$; Вольты ($\text{В}$), Амперы ($\text{А}$), Омы ($\text{Ом}$), ёмкость АКБ — $\text{А}\cdot\text{ч}$</td>
+            <td>$^\circ\text{C}$, $\text{В}$, $\text{А}$</td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td><strong>Положение педалей и дросселя</strong></td>
+            <td>Доля <strong><code>0.0 .. 1.0</code></strong> в <code>.ini</code> и входах; проценты <strong><code>0 .. 100</code></strong> в 1-м столбце <code>Engine.csv</code></td>
+            <td>—</td>
+            <td>—</td>
+        </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

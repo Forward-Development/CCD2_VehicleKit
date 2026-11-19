@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>01. Конфигурационные файлы, схемы и таблицы в City Car Driving 2.0</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({ startOnLoad: true });</script>
+    <style>
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 32px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1f2328;
+            background-color: #ffffff;
+        }
+        h1, h2, h3, h4 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        h1 {
+            font-size: 2em;
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid #d0d7de;
+        }
+        h2 {
+            font-size: 1.5em;
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid #d0d7de;
+        }
+        h3 {
+            font-size: 1.25em;
+        }
+        hr {
+            height: 0.25em;
+            padding: 0;
+            margin: 24px 0;
+            background-color: #d0d7de;
+            border: 0;
+        }
+        a {
+            color: #0969da;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 16px 0;
+        }
+        th, td {
+            border: 1px solid #d0d7de;
+            padding: 8px 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background: #f6f8fa;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background: #f6f8fa;
+        }
+        .text-center {
+            text-align: center;
+        }
+        code {
+            background: #eff1f3;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+            font-size: 85%;
+        }
+        pre {
+            background: #f6f8fa;
+            padding: 14px;
+            border-radius: 6px;
+            overflow-x: auto;
+            border: 1px solid #d0d7de;
+        }
+        pre code {
+            background: transparent;
+            padding: 0;
+            font-size: 100%;
+        }
+        pre.mermaid {
+            background: #ffffff;
+            text-align: center;
+        }
+        .alert {
+            padding: 12px 16px;
+            margin: 16px 0;
+            border-left: 4px solid;
+            border-radius: 6px;
+            background: #f6f8fa;
+        }
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .alert-note {
+            border-left-color: #0969da;
+            background-color: #ddf4ff;
+        }
+        .alert-note .alert-title { color: #0969da; }
+        .alert-tip {
+            border-left-color: #1a7f37;
+            background-color: #dafbe1;
+        }
+        .alert-tip .alert-title { color: #1a7f37; }
+        .alert-important {
+            border-left-color: #8250df;
+            background-color: #fbefff;
+        }
+        .alert-important .alert-title { color: #8250df; }
+        .alert-warning {
+            border-left-color: #9a6700;
+            background-color: #fff8c5;
+        }
+        .alert-warning .alert-title { color: #9a6700; }
+        .alert-caution {
+            border-left-color: #cf222e;
+            background-color: #ffebe9;
+        }
+        .alert-caution .alert-title { color: #cf222e; }
+    </style>
+</head>
+<body>
+
+<h1 id="01-конфигурационные-файлы-схемы-и-таблицы-в-city-car-driving-20">01. Конфигурационные файлы, схемы и таблицы в City Car Driving 2.0</h1>
+
+<p><strong>Навигация:</strong> <a href="./README.html">README</a> | <a href="./00_Quick_Start.html">00. Быстрый старт</a> | <strong>01. Архитектура и конфиги</strong> | <a href="./02_Named_IO_and_States.html">02. Именованный ввод/вывод</a> | <a href="./03_Components_TorqueTrain.html">03. Трансмиссия</a> | <a href="./04_Components_Electrics.html">04. Электрика</a> | <a href="./05_Components_Chassis_and_Subsystems.html">05. Шасси и подсистемы</a></p>
+
+<hr>
+
+<h2 id="1-файлы-мода-и-разрешение-путей-в-city-car-driving-20">1. Файлы мода и разрешение путей в City Car Driving 2.0</h2>
+
+<p>В проекте <strong>City Car Driving 2.0</strong> ассеты и конфигурационные файлы модифицированного автомобиля располагаются в папке плагина мода:<br>
+<code>Plugins/Mods/Content/&lt;ИмяМода&gt;/</code> (например, <code>Plugins/Mods/Content/CieBensVGruppe/</code>).</p>
+
+<p>Набор файлов в папке мода включает:</p>
+<ul>
+    <li><strong><code>V_&lt;ИмяМода&gt;.uasset</code></strong> — Blueprint-прототип автомобиля (содержит 3D-меши кузова <code>Body</code>, колёс <code>Wheel*</code>, подвесок <code>Suspension*</code>, фар, приборной панели и настройки их физики/контроллеров).</li>
+    <li><strong><code>DA_&lt;ИмяМода&gt;.uasset</code></strong> — карточка автомобиля для меню выбора транспорта (связывает комплектации в UI с опциями из <code>options.xml</code>).</li>
+    <li><strong><code>ST_&lt;ИмяМода&gt;.uasset</code></strong> — таблица строк локализации (<code>StringTable</code>).</li>
+    <li><strong><code>Vehicle.ini</code></strong> — главный конфигурационный файл параметров всех физических узлов.</li>
+    <li><strong><code>options.xml</code></strong> — описание комплектаций (например, выбор АКПП/МКПП и переключение XML-схемы).</li>
+    <li><strong><code>Engine.csv</code></strong> — таблица крутящего момента и механических потерь двигателя.</li>
+    <li><em>(Опционально)</em> собственные файлы XML-схем (<code>.xml</code>) и таблиц кривых (<code>.csv</code>).</li>
+</ul>
+
+<h3 id="правила-указания-путей-в-vehicleini-и-optionsxml">Правила указания путей в <code>Vehicle.ini</code> и <code>options.xml</code></h3>
+<p>Все пути к файлам схем (<code>.xml</code>) и таблиц кривых (<code>.csv</code>), записанные внутри <code>Vehicle.ini</code> и <code>options.xml</code>, отсчитываются <strong>относительно корневой директории <code>Content/</code> основного проекта игры City Car Driving 2.0</strong>:</p>
+
+<ol>
+    <li>
+        <strong>Обращение к стандартным общим ресурсам игры (<code>Content/Common/Vehicles/MotorCars/...</code>):</strong><br>
+        Записывается напрямую без начального слэша:
+<pre><code class="language-ini">DefaultSchema = Common/Vehicles/MotorCars/Schemes/AwdAuto.xml
+ProgressionCurve = Common/Vehicles/MotorCars/Tables/SpringProgression.csv
+ForceCurveLateral = Common/Vehicles/MotorCars/Tables/WheelForceLat.csv</code></pre>
+    </li>
+    <li>
+        <strong>Обращение к собственным файлам внутри папки мода (<code>Plugins/Mods/Content/&lt;ИмяМода&gt;/...</code>):</strong><br>
+        Чтобы выйти из папки <code>Content/</code> основного проекта в папку плагина <code>Plugins/Mods/Content/&lt;ИмяМода&gt;/</code>, используйте относительный путь <code>../Plugins/Mods/Content/&lt;ИмяМода&gt;/...</code>:
+<pre><code class="language-ini">PowerCurves = ../Plugins/Mods/Content/CieBensVGruppe/Engine.csv</code></pre>
+    </li>
+</ol>
+
+<div class="alert alert-note">
+    <div class="alert-title">Примечание (NOTE)</div>
+    <p>При создании нового мода убедитесь, что в секции <code>[Engine]</code> параметр <code>PowerCurves</code> указывает на файл <code>Engine.csv</code> в папке вашего мода (<code>../Plugins/Mods/Content/&lt;ИмяМода&gt;/Engine.csv</code>).</p>
+</div>
+
+<hr>
+
+<h2 id="2-синтаксис-vehicleini-и-система-опций-optionsxml">2. Синтаксис <code>Vehicle.ini</code> и система опций <code>options.xml</code></h2>
+
+<h3 id="21-секция-vehicle-и-секции-компонентов-имякомпонента">2.1. Секция <code>[Vehicle]</code> и секции компонентов <code>[ИмяКомпонента]</code></h3>
+<p>Файл <code>Vehicle.ini</code> чувствителен к регистру символов (и в заголовках секций, и в именах параметров) и сохраняется в кодировке <strong>UTF-8</strong>.</p>
+<ul>
+    <li>
+        Системная секция <strong><code>[Vehicle]</code></strong> содержит только один параметр — <strong><code>DefaultSchema</code></strong> (путь к XML-схеме по умолчанию, если схема не переопределена опцией в <code>options.xml</code>):
+<pre><code class="language-ini">[Vehicle]
+DefaultSchema = Common/Vehicles/MotorCars/Schemes/AwdAuto.xml</code></pre>
+    </li>
+    <li>Каждая остальная секция <strong><code>[ИмяКомпонента]</code></strong> соответствует атрибуту <code>Name="..."</code> конкретного компонента из XML-схемы (например, <code>[Engine]</code>, <code>[Idler]</code>, <code>[GearBoxAutomatic]</code>, <code>[SuspensionFrontLeft]</code>).</li>
+</ul>
+
+<div class="alert alert-important">
+    <div class="alert-title">Важно (IMPORTANT)</div>
+    <p><strong>Где задаются масса и центр тяжести автомобиля?</strong><br>
+    В <code>Vehicle.ini</code> нет параметров массы и центра тяжести кузова — они настраиваются непосредственно на корневом физическом компоненте <strong><code>Body</code></strong> (<code>StaticMeshComponent</code>) внутри Blueprint автомобиля <code>V_&lt;ИмяМода&gt;.uasset</code> в редакторе Unreal Engine 5:</p>
+    <ol>
+        <li><strong>Подрессоренная масса (<code>Override Mass</code>):</strong> в разделе <strong>Physics</strong> компонента <code>Body</code> обязательно включите галочку <strong><code>Override Mass</code></strong> и укажите в поле <strong><code>Mass in Kg</code></strong> подрессоренную массу кузова (снаряжённую массу автомобиля за вычетом массы четырёх колёс: $M_{\text{body}} = M_{\text{curb}} - 4 \cdot M_{\text{wheel}}$). Если оставить <code>Override Mass</code> выключенным, UE5 рассчитает массу из объёма коллизии по нелинейной формуле $1000 \cdot V^{0.75}$, что занижает массу крупных автомобилей почти вдвое.</li>
+        <li><strong>Смещение центра масс (<code>Center Of Mass Offset</code> / <code>COMNudge</code>):</strong> задаётся в разделе <strong>Physics</strong> в <strong>сантиметрах</strong> как относительное смещение $(\Delta X, \Delta Y, \Delta Z)$ от автоматически вычисленного геометрического центра объёма коллизионных оболочек кузова ($\text{COM}_{\text{final}} = \text{COM}_{\text{auto}} + \text{Center Of Mass Offset}$).</li>
+        <li><strong>Физический материал коллизии:</strong> в ассете <code>StaticMesh</code> кузова <code>Body</code> должен быть назначен <strong><code>Simple Collision Physical Material</code></strong>, а на всех остальных компонентах и мешах в Blueprint (колёсах, подвесках, стёклах, деталях салона) должен стоять профиль коллизии <strong><code>NoCollision</code></strong>.</li>
+    </ol>
+</div>
+
+<h3 id="22-система-комплектаций-optionsxml-и-переопределение-секций-в-vehicleini">2.2. Система комплектаций <code>options.xml</code> и переопределение секций в <code>Vehicle.ini</code></h3>
+<p>Файл <code>options.xml</code> в папке мода позволяет использовать один <code>Vehicle.ini</code> для нескольких комплектаций автомобиля (например, версий с АКПП и МКПП или с разными двигателями):</p>
+
+<pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;Options&gt;
+    &lt;AvailableOptions&gt;
+        &lt;!-- Только ОДНА опция в файле может иметь атрибут SetSchema="true" --&gt;
+        &lt;Option Name="TransmissionType" SetSchema="true"&gt;
+            &lt;OptionValue Value="Auto"   SchemaName="Common/Vehicles/MotorCars/Schemes/AwdAuto.xml" /&gt;
+            &lt;OptionValue Value="Manual" SchemaName="Common/Vehicles/MotorCars/Schemes/AwdManual.xml" /&gt;
+        &lt;/Option&gt;
+
+        &lt;!-- Дополнительная опция двигателя (без смены XML-схемы) --&gt;
+        &lt;Option Name="EngineType" SetSchema="false"&gt;
+            &lt;OptionValue Value="1.6TD" /&gt;
+            &lt;OptionValue Value="1.8I" /&gt;
+        &lt;/Option&gt;
+    &lt;/AvailableOptions&gt;
+
+    &lt;!-- Опциональный блок запрета несовместимых комбинаций --&gt;
+    &lt;Compatibilities&gt;
+        &lt;Compatibility FirstOptionType="EngineType" FirstOptionValue="1.6TD"
+                       SecondOptionType="TransmissionType" SecondOptionValue="Manual"
+                       Enable="false" /&gt;
+    &lt;/Compatibilities&gt;
+&lt;/Options&gt;</code></pre>
+
+<div class="alert alert-tip">
+    <div class="alert-title">Совет (TIP)</div>
+    <p><strong>Как настроить сразу две коробки передач (АКПП/МКПП) и два типа двигателя (Бензин/Дизель):</strong><br>
+    Поскольку атрибут <code>SetSchema="true"</code> в <code>options.xml</code> может быть только у <strong>одной</strong> опции, привяжите <code>SetSchema="true"</code> к выбору КПП (<code>TransmissionType</code>: <code>*Auto.xml</code> и <code>*Manual.xml</code>), а для двигателей используйте <code>Class="EngineGazoline"</code> из стандартных схем как универсальный базовый ДВС. Тип двигателя (бензиновый или дизельный) в этом случае полностью задаётся через секции <code>[Engine.EngineType.1.8I]</code> и <code>[Engine.EngineType.1.6TD]</code> в <code>Vehicle.ini</code> за счёт разных таблиц крутящего момента <code>PowerCurves</code>, рабочих оборотов <code>RpmLimit</code> и холостого хода <code>[Idler.EngineType.*]</code> (подробно см. в <a href="./03_Components_TorqueTrain.html#21-бензиновый-и-дизельный-двс-engine">разделе 2.1 документа 03</a>).</p>
+</div>
+
+<p>Чтобы переопределить отдельные параметры компонента только для конкретной выбранной опции, добавьте в <code>Vehicle.ini</code> секцию вида <strong><code>[ИмяКомпонента.ИмяОпции.ЗначениеОпции]</code></strong>:</p>
+<pre><code class="language-ini">[DifferentialAxle.TransmissionType.Manual]
+Inertia = 1e-4
+GearRatio = 3.45
+Locked = false
+
+[DifferentialAxle.TransmissionType.Auto]
+Inertia = 1e-4
+GearRatio = 3.267
+Locked = false
+
+[Speedometer.TransmissionType.Manual]
+MetersPerRotation = 0.6408
+
+[Speedometer.TransmissionType.Auto]
+MetersPerRotation = 0.6768</code></pre>
+<p>При загрузке автомобиля сначала читаются ключи из базовой секции <code>[ИмяКомпонента]</code>, а затем поверх них накладываются ключи из активных секций <code>[ИмяКомпонента.ИмяОпции.ЗначениеОпции]</code>.</p>
+
+<h3 id="23-критические-правила-и-ограничения-синтаксиса-vehicleini">2.3. Критические правила и ограничения синтаксиса <code>Vehicle.ini</code></h3>
+
+<div class="alert alert-caution">
+    <div class="alert-title">Осторожно (CAUTION)</div>
+    <p><strong>Два главных правила <code>.ini</code>, нарушение которых ломает загрузку физики:</strong></p>
+    <ol>
+        <li>
+            <strong>Разделитель списков и 3D-векторов — строго точка с запятой <code>;</code> БЕЗ пробела перед <code>;</code>!</strong><br>
+            Запятые <code>,</code> для разделения чисел в векторах (<code>Mount</code>) и массивах (<code>Gears</code>, <code>ShiftAccelerator</code>, <code>OptimalRpm</code>) <strong>не поддерживаются</strong>. При этом комбинация <strong>«пробел перед <code>;</code>» (<code>" ;"</code>)</strong> воспринимается парсером <code>.ini</code> как начало комментария до конца строки и обрезает остальные числа!
+            <ul>
+                <li>
+                    <strong>ПРАВИЛЬНО</strong> (слитно перед <code>;</code>, пробел или табуляция <em>после</em> <code>;</code> разрешены):
+<pre><code class="language-ini">Mount = 1.63; 0.85; 0.4455
+Gears = -3.416; 4.377; 2.859; 1.921; 1.368; 1.000; 0.820; 0.728</code></pre>
+                </li>
+                <li>
+                    <strong>ОШИБКА</strong> (запятые или пробел перед <code>;</code>):
+<pre><code class="language-ini">Mount = 1.63, 0.85, 0.4455     ; ОШИБКА: запятые не парсятся!
+Mount = 1.63 ; 0.85 ; 0.4455   ; ОШИБКА: пробел перед ';' отрежет 0.85 и 0.4455!</code></pre>
+                </li>
+            </ul>
+        </li>
+        <li>
+            <strong>Лимиты длины заголовка секции и строки:</strong>
+            <ul>
+                <li>Длина имени секции внутри квадратных скобок <code>[...]</code> (включая <code>.ИмяОпции.ЗначениеОпции</code>) <strong>не должна превышать 49 символов</strong> (<code>50</code> байт с терминатором). Более длинные заголовки обрезаются, и опция не срабатывает.</li>
+                <li>Длина одной строки в <code>Vehicle.ini</code> <strong>не должна превышать 400 символов</strong>.</li>
+            </ul>
+        </li>
+    </ol>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>Тип параметра в <code>.ini</code></th>
+            <th>Правила записи</th>
+            <th>Пример</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Вещественное число (<code>Real</code>)</strong></td>
+            <td>Десятичная точка <code>.</code> (не запятая!). Допустима запись <code>1e-4</code>.</td>
+            <td><code>SpringCoeff = 45000.0</code></td>
+        </tr>
+        <tr>
+            <td><strong>Целое число (<code>Integer</code>)</strong></td>
+            <td>Целое число со знаком.</td>
+            <td><code>StartingGear = -1</code></td>
+        </tr>
+        <tr>
+            <td><strong>Логический флаг (<code>Boolean</code>)</strong></td>
+            <td><code>true</code> / <code>false</code> (также <code>1</code> / <code>0</code>, <code>yes</code> / <code>no</code>, <code>on</code> / <code>off</code>).</td>
+            <td><code>Locked = false</code></td>
+        </tr>
+        <tr>
+            <td><strong>Строка (<code>String</code>)</strong></td>
+            <td>Путь или имя <strong>без кавычек</strong>.</td>
+            <td><code>BodyName = Body</code></td>
+        </tr>
+        <tr>
+            <td><strong>3D-вектор (<code>Vector3</code>)</strong></td>
+            <td>Ровно 3 числа через <code>;</code> без пробела перед <code>;</code>.</td>
+            <td><code>Mount = -1.59; -0.85; 0.4589</code></td>
+        </tr>
+        <tr>
+            <td><strong>Массив чисел</strong></td>
+            <td>Числа по порядку через <code>;</code> без пробела перед <code>;</code>. В парных таблицах (<code>ShiftAccelerator</code>, <code>OilPressureRPM</code>) аргументы должны идти строго по возрастанию.</td>
+            <td><code>OilPressureRPM = 0; 750; 4600</code></td>
+        </tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h2 id="3-стандартные-xml-схемы-легковых-автомобилей-в-city-car-driving-20">3. Стандартные XML-схемы легковых автомобилей в City Car Driving 2.0</h2>
+
+<p>В директории <code>Common/Vehicles/MotorCars/Schemes/</code> расположены <strong>6 готовых схем</strong> для всех комбинаций типа привода и коробки передач:</p>
+<ul>
+    <li><strong>Полный привод (AWD):</strong> <code>AwdAuto.xml</code> (АКПП), <code>AwdManual.xml</code> (МКПП)</li>
+    <li><strong>Передний привод (FWD):</strong> <code>FwdAuto.xml</code> (АКПП), <code>FwdManual.xml</code> (МКПП)</li>
+    <li><strong>Задний привод (RWD):</strong> <code>RwdAuto.xml</code> (АКПП), <code>RwdManual.xml</code> (МКПП)</li>
+</ul>
+
+<h3 id="31-полный-перечень-секций-имякомпонента-в-vehicleini-для-стандартных-схем">3.1. Полный перечень секций <code>[ИмяКомпонента]</code> в <code>Vehicle.ini</code> для стандартных схем</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>Подсистема</th>
+            <th>Секции в <code>Vehicle.ini</code> (<code>[Name]</code>)</th>
+            <th>Класс (<code>Class</code> в XML)</th>
+            <th>В каких схемах присутствует</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Двигатель, топливо и охлаждение</strong></td>
+            <td><code>[Engine]</code><br><code>[Idler]</code><br><code>[FuelTank]</code></td>
+            <td><code>EngineGazoline</code><br><code>FuelControllerComputer</code><br><code>Tank</code></td>
+            <td>Во всех 6 схемах</td>
+        </tr>
+        <tr>
+            <td><strong>Замок зажигания и пуск (стартер)</strong></td>
+            <td><code>[IgnitionKey]</code><br><code>[Starter]</code><br><code>[StarterRelay]</code><br><code>[StarterGear]</code><br><code>[StarterBendix]</code></td>
+            <td><code>IgnitionKeyProcessor</code><br><code>EngineElectric</code><br><code>Relay</code><br><code>Reducer</code><br><code>Bendix</code></td>
+            <td>Во всех 6 схемах</td>
+        </tr>
+        <tr>
+            <td><strong>Бортовая электросеть и приборка</strong></td>
+            <td><code>[Battery]</code><br><code>[Generator]</code><br><code>[BatteryElectricCircuit]</code><br><code>[GeneratorElectricCircuit]</code><br><code>[IgnitionElectricCircuit]</code><br><code>[CarElectrics]</code></td>
+            <td><code>Battery</code><br><code>Generator</code><br><code>ElectricCircuit</code><br><code>ElectricCircuit</code><br><code>ElectricCircuit</code><br><code>CarElectrics</code></td>
+            <td>Во всех 6 схемах <em>(для цепей <code>[*ElectricCircuit]</code> секции в <code>.ini</code> не требуются)</em></td>
+        </tr>
+        <tr>
+            <td><strong>Коробка передач: АКПП (<code>*Auto.xml</code>)</strong></td>
+            <td><strong><code>[GearBoxAutomatic]</code></strong><br><code>[TorqueConverter]</code><br><code>[GearBoxLogic]</code><br><code>[GearBoxAutomaticPump]</code><br><code>[OilTank]</code></td>
+            <td><code>GearBoxAutomatic</code><br><code>HydraulicTorqueConverter</code><br><code>GearBoxAutomaticLogic</code><br><code>Pump</code><br><code>Tank</code></td>
+            <td><strong>Только в <code>AwdAuto</code>, <code>FwdAuto</code>, <code>RwdAuto</code></strong></td>
+        </tr>
+        <tr>
+            <td><strong>Коробка передач: МКПП (<code>*Manual.xml</code>)</strong></td>
+            <td><strong><code>[GearBox]</code></strong><br><code>[Clutch]</code><br><code>[ClutchPedal]</code></td>
+            <td><code>GearBox</code><br><code>ClutchFriction</code><br><code>ClutchInputProcessor</code></td>
+            <td><strong>Только в <code>AwdManual</code>, <code>FwdManual</code>, <code>RwdManual</code></strong></td>
+        </tr>
+        <tr>
+            <td><strong>Дифференциалы: полный привод (<code>Awd*</code>)</strong></td>
+            <td><strong><code>[DifferentialAxle]</code></strong> <em>(межосевой)</em><br><strong><code>[FrontAxisRelay]</code></strong> <em>(муфта пер. оси)</em><br><strong><code>[DifferentialWheelFront]</code></strong> <em>(передний)</em><br><strong><code>[DifferentialWheelBack]</code></strong> <em>(задний)</em></td>
+            <td><code>DifferentialOpen</code><br><code>Relay</code><br><code>DifferentialOpen</code><br><code>DifferentialOpen</code></td>
+            <td><strong>Только в <code>AwdAuto</code> и <code>AwdManual</code></strong> <em>(спидометр подключён к <code>DifferentialAxle</code>)</em></td>
+        </tr>
+        <tr>
+            <td><strong>Дифференциал: монопривод (<code>Fwd*</code>, <code>Rwd*</code>)</strong></td>
+            <td><strong><code>[Differential]</code></strong></td>
+            <td><code>DifferentialOpen</code></td>
+            <td><strong>Только в <code>FwdAuto</code>, <code>FwdManual</code>, <code>RwdAuto</code>, <code>RwdManual</code></strong></td>
+        </tr>
+        <tr>
+            <td><strong>Подвеска (4 стойки)</strong></td>
+            <td><code>[SuspensionFrontLeft]</code><br><code>[SuspensionFrontRight]</code><br><strong><code>[SuspensionBackLeft]</code></strong><br><strong><code>[SuspensionBackRight]</code></strong></td>
+            <td><code>Suspension1Spring</code></td>
+            <td>Во всех 6 схемах</td>
+        </tr>
+        <tr>
+            <td><strong>Колёса / шины (4 шт.)</strong></td>
+            <td><code>[WheelFrontLeft]</code><br><code>[WheelFrontRight]</code><br><strong><code>[WheelBackLeft]</code></strong><br><strong><code>[WheelBackRight]</code></strong></td>
+            <td><code>WheelRaycast</code></td>
+            <td>Во всех 6 схемах</td>
+        </tr>
+        <tr>
+            <td><strong>Тормозные механизмы (4 шт.) + ABS</strong></td>
+            <td><code>[BrakeFrontLeft]</code><br><code>[BrakeFrontRight]</code><br><strong><code>[BrakeBackLeft]</code></strong><br><strong><code>[BrakeBackRight]</code></strong><br><code>[AbsTcs]</code></td>
+            <td><code>BrakeFriction</code><br><code>BrakeFriction</code><br><code>BrakeFriction</code><br><code>BrakeFriction</code><br><code>AbsTcs</code></td>
+            <td>Во всех 6 схемах</td>
+        </tr>
+        <tr>
+            <td><strong>Рулевое, ГУР/FFB, спидометр, кузов</strong></td>
+            <td><code>[Steering]</code><br><code>[PowerSteering]</code><br><code>[Speedometer]</code><br><code>[Aerodynamics]</code></td>
+            <td><code>Steering2Ackermann</code><br><code>PowerSteering</code><br><code>Speedometer</code><br><code>AerodynamicsCarSimple</code></td>
+            <td>Во всех 6 схемах</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="alert alert-warning">
+    <div class="alert-title">Внимание (WARNING)</div>
+    <p><strong>Четыре важные особенности именования секций и мешей в City Car Driving 2.0:</strong></p>
+    <ol>
+        <li>
+            <strong>Задняя ось именуется через <code>Back</code>, а НЕ <code>Rear</code> (обязательно для Blueprint и стандартных схем):</strong>
+            <ul>
+                <li>В Blueprint прототипа (<code>V_&lt;ИмяМода&gt;</code>) и в XML-схеме визуальные и физические узлы колёс и ступиц <strong>обязаны</strong> называться <code>SuspensionFrontLeft/Right</code>, <strong><code>SuspensionBackLeft/Right</code></strong>, <code>WheelFrontLeft/Right</code>, <strong><code>WheelBackLeft/Right</code></strong> — по этим именам игра сливает компоненты мода с базовым шаблоном автомобиля и связывает 3D-меши колёс с физикой.</li>
+                <li>В стандартных XML-схемах секции задних тормозов также названы <strong><code>[BrakeBackLeft]</code></strong> и <strong><code>[BrakeBackRight]</code></strong> (если в <code>Vehicle.ini</code> написать <code>Rear</code>, секции не совпадут с XML-схемой и останутся со значениями по умолчанию).</li>
+            </ul>
+        </li>
+        <li>
+            <strong>Разные имена секций дифференциала в стандартных схемах AWD и FWD/RWD:</strong><br>
+            В готовых схемах <code>AwdAuto.xml</code> и <code>AwdManual.xml</code> межосевой дифференциал назван <strong><code>[DifferentialAxle]</code></strong>, а межколёсные — <code>[DifferentialWheelFront]</code> и <code>[DifferentialWheelBack]</code>. В моноприводных же схемах (<code>Fwd*.xml</code>, <code>Rwd*.xml</code>) единственный дифференциал назван <strong><code>[Differential]</code></strong>. <em>(В собственной XML-схеме дифференциал можно назвать произвольно, главное — совпадение <code>Name</code> в XML и <code>[Name]</code> в <code>Vehicle.ini</code>).</em>
+        </li>
+        <li>
+            <strong>Разные имена секций АКПП и МКПП в стандартных схемах:</strong><br>
+            В стандартных схемах <code>*Auto.xml</code> коробка передач имеет имя <strong><code>[GearBoxAutomatic]</code></strong>, а в <code>*Manual.xml</code> — <strong><code>[GearBox]</code></strong>. <em>(В собственной XML-схеме имя секции определяется атрибутом <code>Name</code> компонента в XML).</em>
+        </li>
+        <li>
+            <strong>Имя физического меша кузова — <code>Body</code> (<code>BodyName = Body</code>):</strong><br>
+            Корневой физический <code>StaticMeshComponent</code> кузова в Blueprint шаблона автомобиля обязан называться <strong><code>Body</code></strong>. В секциях <code>[Suspension*]</code> и <code>[Aerodynamics]</code> параметр <code>BodyName</code> по умолчанию уже равен <code>"Body"</code>, поэтому при использовании меша <code>Body</code> указывать <code>BodyName = Body</code> рекомендуется для наглядности (но указывать любое другое имя, которого нет среди физических мешей/костей в Blueprint, нельзя).
+        </li>
+    </ol>
+</div>
+
+<hr>
+
+<h2 id="4-устройство-xml-схемы-vehicle-и-создание-собственной-схемы-мода">4. Устройство XML-схемы <code>&lt;Vehicle&gt;</code> и создание собственной схемы мода</h2>
+
+<p>Любой XML-файл схемы автомобиля имеет корневой тег <strong><code>&lt;Vehicle&gt;</code></strong> и состоит из 6 разделов:</p>
+
+<pre><code class="language-xml">&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;Vehicle&gt;
+    &lt;!-- 1. Список компонентов: Name задаёт имя секции [Name] в Vehicle.ini, Class — тип узла --&gt;
+    &lt;Components&gt;
+        &lt;Component Name="Turbocharger" Class="Turbocharger" /&gt;
+        &lt;Component Name="Engine" Class="EngineDiesel" /&gt;
+        &lt;Component Name="Idler" Class="FuelControllerComputer" /&gt;
+    &lt;/Components&gt;
+    &lt;!-- 2. Направленные связи между компонентами (от ведущего/владельца Holder к ведомому Reference) --&gt;
+    &lt;Links&gt;
+        &lt;Link Holder="Turbocharger" Reference="Engine" /&gt;
+        &lt;Link Holder="IgnitionKey" Reference="Idler" /&gt;
+        &lt;Link Holder="BatteryElectricCircuit" Reference="IgnitionElectricCircuit" Connected="false" /&gt;
+        &lt;Link Holder="CarElectrics" Reference="GearBox" StartIconGearBox="true" /&gt;
+    &lt;/Links&gt;
+    &lt;!-- 3. Выходные каналы телеметрии и приборной панели --&gt;
+    &lt;OutputElements&gt;
+        &lt;Element Name="RPM" Type="Real" Component="Engine" /&gt;
+        &lt;Element Name="DashboardRPM" Type="Real" Component="CarElectrics" InternalName="RPM" /&gt;
+    &lt;/OutputElements&gt;
+    &lt;!-- 4. Внутренние состояния для мгновенной установки из игры --&gt;
+    &lt;StateElements&gt;
+        &lt;Element Name="FuelVolume" Type="Real" Component="FuelTank" InternalName="LiquidVolume" /&gt;
+    &lt;/StateElements&gt;
+    &lt;!-- 5. Внешние каналы управления --&gt;
+    &lt;InputElements&gt;
+        &lt;Element Name="Accelerator" Type="Real" /&gt;
+        &lt;Element Name="Ignition" Type="Integer" /&gt;
+    &lt;/InputElements&gt;
+    &lt;!-- 6. Маршрутизация каналов ввода в компоненты --&gt;
+    &lt;InputProcessors&gt;
+        &lt;Processor Input="Accelerator" Component="AbsTcs" /&gt;
+        &lt;Processor Input="Accelerator" Component="Turbocharger" InternalName="Throttle" /&gt;
+        &lt;Processor Input="Ignition" Component="IgnitionKey" /&gt;
+    &lt;/InputProcessors&gt;
+&lt;/Vehicle&gt;</code></pre>
+
+<h3 id="пошаговый-рецепт-перевод-схемы-на-настоящий-дизель-enginediesel-с-турбиной-turbocharger">Пошаговый рецепт: перевод схемы на настоящий дизель <code>EngineDiesel</code> с турбиной <code>Turbocharger</code></h3>
+<p>Все 6 стандартных схем в <code>Common/Vehicles/MotorCars/Schemes/</code> используют бензиновый класс <code>EngineGazoline</code> без турбокомпрессора. Чтобы сделать для мода полноценный турбодизель:</p>
+
+<ol>
+    <li><strong>Скопируйте базовую схему</strong> (например, <code>AwdAuto.xml</code> и/или <code>AwdManual.xml</code>) из <code>Content/Common/Vehicles/MotorCars/Schemes/</code> в папку вашего мода <code>Plugins/Mods/Content/&lt;ИмяМода&gt;/</code>.</li>
+    <li><strong>В <code>&lt;Components&gt;</code></strong> замените <code>&lt;Component Name="Engine" Class="EngineDiesel" /&gt;</code> и добавьте <code>&lt;Component Name="Turbocharger" Class="Turbocharger" /&gt;</code> (перед <code>Idler</code> и <code>Engine</code>).</li>
+    <li><strong>В <code>&lt;Links&gt;</code> обязательно удалите связь <code>&lt;Link Holder="IgnitionElectricCircuit" Reference="Engine" /&gt;</code></strong> (дизелю не нужна цепь искрового зажигания; если оставить эту связь, схема не загрузится!).</li>
+    <li><strong>В <code>&lt;Links&gt;</code> сохраните связь <code>&lt;Link Holder="IgnitionKey" Reference="Idler" /&gt;</code></strong> (именно она перекрывает подачу топлива при повороте ключа в <code>0</code> и глушит дизель) и добавьте <strong><code>&lt;Link Holder="Turbocharger" Reference="Engine" /&gt;</code></strong>.</li>
+    <li><strong>В <code>&lt;InputProcessors&gt;</code></strong> добавьте <strong><code>&lt;Processor Input="Accelerator" Component="Turbocharger" InternalName="Throttle" /&gt;</code></strong>.</li>
+    <li><strong>Пропишите локальные схемы в <code>options.xml</code> и <code>Vehicle.ini</code></strong> (<code>../Plugins/Mods/Content/&lt;ИмяМода&gt;/AwdAuto.xml</code>) и добавьте секцию <code>[Turbocharger]</code> в <code>Vehicle.ini</code> (<code>MinRpm</code>, <code>RefRpm</code>, <code>RefCompressionRatio</code>, <code>LagTime = 0.08..0.10</code>).</li>
+</ol>
+
+<hr>
+
+<h2 id="5-форматы-таблиц-кривых-csv-и-устройство-enginecsv">5. Форматы таблиц кривых <code>.csv</code> и устройство <code>Engine.csv</code></h2>
+
+<p>Во всех файлах <code>.csv</code> разделителем ячеек служит <strong>точка с запятой <code>;</code></strong>, а разделителем дробной части числа — <strong>строго точка <code>.</code></strong> (запятая вроде <code>8,8</code> приведёт к ошибке чтения!). Узлы аргументов должны идти строго по возрастанию без дубликатов.</p>
+
+<h3 id="51-стандартные-общие-таблицы-в-commonvehiclesmotorcarstables">5.1. Стандартные общие таблицы в <code>Common/Vehicles/MotorCars/Tables/</code></h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>Файл таблицы в <code>Common/Vehicles/MotorCars/Tables/</code></th>
+            <th class="text-center">Формат</th>
+            <th>Где подключается в <code>Vehicle.ini</code> и что задаёт</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong><code>SpringProgression.csv</code></strong></td>
+            <td class="text-center">1D (2 строки)</td>
+            <td><code>[Suspension*]</code> $\rightarrow$ <code>ProgressionCurve</code>: относительное сжатие пружины <code>[0..1]</code> $\rightarrow$ множитель жёсткости <code>[1.0..2.5]</code>.</td>
+        </tr>
+        <tr>
+            <td><strong><code>EngineVibration.csv</code></strong></td>
+            <td class="text-center">1D (2 строки)</td>
+            <td><code>[Engine]</code> $\rightarrow$ <code>VibrationCurve</code>: нормированные обороты <code>RPM / IdleRpm</code> $\rightarrow$ амплитуда вибрации ДВС.</td>
+        </tr>
+        <tr>
+            <td><strong><code>WheelForceLat.csv</code></strong></td>
+            <td class="text-center">1D (2 строки)</td>
+            <td><code>[Wheel*]</code> $\rightarrow$ <code>ForceCurveLateral</code>: угол бокового увода шины (град., <code>[0..180]</code>) $\rightarrow$ поперечная сила на нагрузке <code>ForceCurveLoad</code>.</td>
+        </tr>
+        <tr>
+            <td><strong><code>WheelForceLon.csv</code></strong></td>
+            <td class="text-center">1D (2 строки)</td>
+            <td><code>[Wheel*]</code> $\rightarrow$ <code>ForceCurveLongitudinal</code>: продольное скольжение шины (<code>%</code>, <code>[0..200]</code>) $\rightarrow$ продольная сила на нагрузке <code>ForceCurveLoad</code>.</td>
+        </tr>
+        <tr>
+            <td><strong><code>WheelAlignTorque.csv</code></strong></td>
+            <td class="text-center">1D (2 строки)</td>
+            <td><code>[Wheel*]</code> $\rightarrow$ <code>AligningTorqueCurve</code>: угол увода (град.) $\rightarrow$ стабилизирующий момент шины. <em>Внимание: в точке максимума <code>WheelForceLat.csv</code> (<code>10°</code>) значение в <code>WheelAlignTorque.csv</code> обязано быть строго равно <code>0</code>!</em></td>
+        </tr>
+        <tr>
+            <td><strong><code>WheelStaticAligningTorque.csv</code></strong></td>
+            <td class="text-center">1D (2 строки)</td>
+            <td><code>[Wheel*]</code> $\rightarrow$ <code>StaticAligningTorqueCurve</code>: нормированный угол <code>[-1..1]</code> $\rightarrow$ статический возвращающий момент на месте.</td>
+        </tr>
+        <tr>
+            <td><strong><code>WheelRollingResistance.csv</code></strong></td>
+            <td class="text-center">2D (матрица)</td>
+            <td><code>[Wheel*]</code> $\rightarrow$ <code>RollingResistanceCurves</code>: строка 1 — относительное давление в шине <code>P / WorkingPressure</code> (<code>[0..1.5]</code>); столбец 1 — рыхлость покрытия (<code>[0..1]</code>); ячейки — множитель сопротивления качению.</td>
+        </tr>
+        <tr>
+            <td><strong><code>WheelSagToCamberCurve.csv</code></strong></td>
+            <td class="text-center">1D (2 строки)</td>
+            <td><code>[Suspension*]</code> $\rightarrow$ <code>SagToCamberCurve</code>: обжатие подвески <code>[0..1]</code> $\rightarrow$ базовый угол развала колеса (град.).</td>
+        </tr>
+        <tr>
+            <td><strong><code>WheelSteerToCamberCurve.csv</code></strong></td>
+            <td class="text-center">1D (2 строки)</td>
+            <td><code>[Suspension*]</code> $\rightarrow$ <code>SteerToCamberCurve</code>: угол поворота колеса <code>[-30..30]</code> (град.) $\rightarrow$ добавочный развал (град.).</td>
+        </tr>
+        <tr>
+            <td><strong><code>WheelCamberToSlipAngle.csv</code></strong></td>
+            <td class="text-center">1D (2 строки)</td>
+            <td><code>[Wheel*]</code> $\rightarrow$ <code>CamberToSlipAngleCurve</code>: угол развала <code>[-5..5]</code> (град.) $\rightarrow$ смещение угла увода (град.).</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3 id="52-формат-одномерных-таблиц-1d-csv">5.2. Формат одномерных таблиц (1D <code>.csv</code>)</h3>
+<p>Состоит ровно из <strong>2 строк</strong> с одинаковым числом столбцов (не менее 2 точек):</p>
+<ul>
+    <li><strong>Строка 1:</strong> значения аргумента $X_0; X_1; \dots; X_{n-1}$ по возрастанию.</li>
+    <li><strong>Строка 2:</strong> значения функции $Y_0; Y_1; \dots; Y_{n-1}$.</li>
+</ul>
+<pre><code class="language-csv">0;0.55;0.7;0.85;0.95;1
+1;1;1.06;1.3;1.7;2.5</code></pre>
+
+<h3 id="53-точный-формат-таблицы-двигателя-enginecsv-powercurves">5.3. Точный формат таблицы двигателя <code>Engine.csv</code> (<code>PowerCurves</code>)</h3>
+<p>Файл <code>Engine.csv</code>, подключаемый через параметр <code>PowerCurves</code> в секции <code>[Engine]</code>, объединяет в себе 2D-карту индикаторного момента сгорания и 1D-кривую механических потерь (торможения двигателем):</p>
+
+<ol>
+    <li><strong>Строка 1 (шапка оборотов <code>RPM</code>):</strong> первая ячейка — текст <code>thr/rpm</code> (или <code>0</code>), далее по возрастанию идут значения оборотов <code>RPM</code> (например, <code>0; 50; 250; 500; ...; 5500</code>).</li>
+    <li>
+        <strong>Строки 2..M (карта момента по положению педали газа):</strong>
+        <ul>
+            <li>Первая ячейка каждой строки — <strong>процент нажатия педали газа от <code>0</code> до <code>100</code></strong> (<code>0; 5; 10; 20; 40; 60; 80; 100</code>). При загрузке эти числа автоматически делятся на <code>100.0</code>, превращаясь в долю открытия дросселя <code>[0.0 .. 1.0]</code>.</li>
+            <li>Остальные ячейки строки — индикаторный крутящий момент сгорания в <strong>$\text{Н}\cdot\text{м}$</strong> при данных оборотах.</li>
+        </ul>
+    </li>
+    <li>
+        <strong>Последняя строка (сразу после строки <code>100</code>):</strong>
+        <ul>
+            <li>Первая ячейка — <code>0</code> (или <code>Friction</code>), остальные ячейки — <strong>положительный момент внутренних механических потерь (торможения двигателем) $F(\text{RPM}) &gt; 0$ в $\text{Н}\cdot\text{м}$</strong> для каждого столбца оборотов. В последнем столбце за границей отсечки (<code>5500</code> или <code>8000 RPM</code>) обычно ставится заградительное значение <code>10000</code>.</li>
+        </ul>
+    </li>
+</ol>
+
+<pre><code class="language-csv">thr/rpm;0;50;250;500;750;1000;1500;2000;2500;3000;3500;4000;4500;5500
+0;0;0;0;0;0;0;0;0;0;0;0;0;0;0
+5;0;15;25;150;32;24;20;18;16;14;12;10;6;0
+10;0;18;38;180;58;46;42;38;35;31;27;22;14;0
+20;0;20;50;162;115;105;98;92;85;76;66;54;34;0
+40;0;20;62;168;172;178;175;165;152;138;122;100;65;1
+60;0;20;70;174;212;228;222;200;180;162;142;116;76;1.5
+80;0;20;76;180;242;252;240;202;182;162;141;115;78;2
+100;0;20;80;184;260;265;242;202;184;162;141;122;88;2.5
+0;12;15;20;24;28;35;48;58;68;78;88;98;110;10000</code></pre>
+
+<div class="alert alert-important">
+    <div class="alert-title">Важно (IMPORTANT)</div>
+    <p><strong>Три важнейших правила расчёта <code>Engine.csv</code>:</strong></p>
+    <ol>
+        <li>
+            <strong>Вычитание строки трения из всех строк:</strong> На каждом кадре физическая модель двигателя вычитает последнюю строку механических потерь $F(\text{RPM})$ из момента сгорания <strong>даже при 100% нажатии газа</strong>:
+            $$T_{\text{маховик}}(\text{Throttle}, \text{RPM}) = T_{\text{таблица}}(\text{Throttle}, \text{RPM}) - F(\text{RPM}).$$
+            Поэтому, чтобы получить на маховике паспортный крутящий момент $T_{\text{DIN}}(\text{RPM})$ (например, $440\text{ Н}\cdot\text{м}$), для атмосферного мотора в строку <code>100</code> нужно записывать <strong>сумму</strong> $T_{\text{100}}(\text{RPM}) = T_{\text{DIN}}(\text{RPM}) + F(\text{RPM})$.
+        </li>
+        <li>
+            <strong>Пересчёт таблицы при использовании <code>Turbocharger</code>:</strong> Если к двигателю подключён компонент <code>Turbocharger</code>, он умножает момент сгорания из таблицы (до вычитания трения!) на коэффициент наддува:
+            $$\text{ratio}(\text{RPM}, \text{thr}) = 1 + (\text{RefCompressionRatio} - 1)\sqrt{\frac{\max(0,\; \text{RPM}\cdot\text{thr} - \text{MinRpm})}{\text{RefRpm} - \text{MinRpm}}}.$$
+            Поэтому при наличии <code>Turbocharger</code> каждая ячейка строк <code>0..100</code> (при $\text{thr} = \text{процент}/100$) вычисляется как $\big(T_{\text{целевой}}(\text{RPM}, \text{thr}) + F(\text{RPM})\big) / \text{ratio}(\text{RPM}, \text{thr})$, а последняя строка трения $F(\text{RPM})$ оставляется без деления!
+        </li>
+        <li>
+            <strong>Удержание холостого хода под нагрузкой («анти-столл горб» — особенность симуляции <code>[Idler]</code>):</strong> В текущей реализации регулятор холостого хода <code>FuelControllerComputer</code> (<code>[Idler]</code>) работает в разомкнутом цикле — он подбирает открытие заслонки только для компенсации собственного трения ДВС $F(\text{IdleRpm})$ и не увеличивает газ при просадке оборотов ниже <code>IdleRpm</code> от внешней нагрузки (гидротрансформатора в <code>D</code>, сцепления или генератора). Поэтому в таблице <code>Engine.csv</code> в строке <code>5%</code> на колонке <code>IdleRpm</code> (<code>750 RPM</code>) задают момент чуть выше трения $F(750)$, а на соседней нижней колонке (<code>500 RPM</code>) делают крутой подъём момента («анти-столл горб» в строках <code>5%–20%</code>), чтобы при просадке оборотов под нагрузкой крутящий момент резко возрастал и не давал мотору заглохнуть.
+        </li>
+    </ol>
+</div>
+
+<hr>
+
+<h2 id="6-сцепка-тягача-с-прицепом-vehicleattachment">6. Сцепка тягача с прицепом (<code>&lt;VehicleAttachment&gt;</code>)</h2>
+
+<p>Для динамического объединения тягача (<code>Master</code>) и прицепа (<code>Slave</code>) используется отдельный XML-файл схемы сцепки с корневым тегом <strong><code>&lt;VehicleAttachment&gt;</code></strong>:</p>
+
+<pre><code class="language-xml">&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;VehicleAttachment&gt;
+    &lt;!-- MasterLinks: Holder ищется в схеме тягача, Reference — в схеме прицепа --&gt;
+    &lt;MasterLinks&gt;
+        &lt;Link Holder="BatteryElectricCircuit" Reference="TrailerElectricCircuit" Connected="true" /&gt;
+        &lt;Link Holder="TractorMultiCircuitValve" Reference="TrailerAirReceiver" /&gt;
+    &lt;/MasterLinks&gt;
+
+    &lt;!-- SlaveLinks: Holder ищется в схеме прицепа, Reference — в схеме тягача --&gt;
+    &lt;SlaveLinks&gt;
+    &lt;/SlaveLinks&gt;
+&lt;/VehicleAttachment&gt;</code></pre>
+
+<p>При сцепке все одноимённые каналы управления (<code>Brake</code>, <code>ParkingBrake</code>, <code>LeftTurnLight</code>, <code>RightTurnLight</code>, <code>HazardLight</code>, <code>ParkingLights</code>, <code>LowBeam</code>) автоматически синхронно передаются от тягача во все прицепленные секции автопоезда.</p>
+
+</body>
+</html>

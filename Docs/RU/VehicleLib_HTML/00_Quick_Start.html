@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>00. Быстрый старт: настройка физики автомобиля в City Car Driving 2.0</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({ startOnLoad: true });</script>
+    <style>
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 32px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1f2328;
+            background-color: #ffffff;
+        }
+        h1, h2, h3, h4 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        h1 {
+            font-size: 2em;
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid #d0d7de;
+        }
+        h2 {
+            font-size: 1.5em;
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid #d0d7de;
+        }
+        h3 {
+            font-size: 1.25em;
+        }
+        hr {
+            height: 0.25em;
+            padding: 0;
+            margin: 24px 0;
+            background-color: #d0d7de;
+            border: 0;
+        }
+        a {
+            color: #0969da;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 16px 0;
+        }
+        th, td {
+            border: 1px solid #d0d7de;
+            padding: 8px 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background: #f6f8fa;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background: #f6f8fa;
+        }
+        .text-center {
+            text-align: center;
+        }
+        code {
+            background: #eff1f3;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+            font-size: 85%;
+        }
+        pre {
+            background: #f6f8fa;
+            padding: 14px;
+            border-radius: 6px;
+            overflow-x: auto;
+            border: 1px solid #d0d7de;
+        }
+        pre code {
+            background: transparent;
+            padding: 0;
+            font-size: 100%;
+        }
+        pre.mermaid {
+            background: #ffffff;
+            text-align: center;
+        }
+        .alert {
+            padding: 12px 16px;
+            margin: 16px 0;
+            border-left: 4px solid;
+            border-radius: 6px;
+            background: #f6f8fa;
+        }
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .alert-note {
+            border-left-color: #0969da;
+            background-color: #ddf4ff;
+        }
+        .alert-note .alert-title { color: #0969da; }
+        .alert-tip {
+            border-left-color: #1a7f37;
+            background-color: #dafbe1;
+        }
+        .alert-tip .alert-title { color: #1a7f37; }
+        .alert-important {
+            border-left-color: #8250df;
+            background-color: #fbefff;
+        }
+        .alert-important .alert-title { color: #8250df; }
+        .alert-warning {
+            border-left-color: #9a6700;
+            background-color: #fff8c5;
+        }
+        .alert-warning .alert-title { color: #9a6700; }
+        .alert-caution {
+            border-left-color: #cf222e;
+            background-color: #ffebe9;
+        }
+        .alert-caution .alert-title { color: #cf222e; }
+        ul.checklist {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        ul.checklist li {
+            margin-bottom: 10px;
+        }
+        ul.checklist input[type="checkbox"] {
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<h1 id="00-быстрый-старт-настройка-физики-автомобиля-в-city-car-driving-20">00. Быстрый старт: настройка физики автомобиля в City Car Driving 2.0</h1>
+
+<p><strong>Навигация:</strong> <a href="./README.html">README</a> | <strong>00. Быстрый старт</strong> | <a href="./01_Architecture_and_Config.html">01. Архитектура и конфиги</a> | <a href="./02_Named_IO_and_States.html">02. Именованный ввод/вывод</a> | <a href="./03_Components_TorqueTrain.html">03. Трансмиссия</a> | <a href="./04_Components_Electrics.html">04. Электрика</a> | <a href="./05_Components_Chassis_and_Subsystems.html">05. Шасси и подсистемы</a></p>
+
+<hr>
+
+<p>Этот раздел представляет собой краткое практическое руководство по сборке и инженерному расчёту физики модифицированного автомобиля в <strong>City Car Driving 2.0</strong> с нуля. Подробные справочники по каждому компоненту и каналу телеметрии приведены в разделах <a href="./01_Architecture_and_Config.html">01</a>–<a href="./05_Components_Chassis_and_Subsystems.html">05</a>.</p>
+
+<hr>
+
+<h2 id="1-состав-файлов-физики-и-правила-путей-vehicleini-optionsxml-enginecsv-xml">1. Состав файлов физики и правила путей (<code>Vehicle.ini</code>, <code>options.xml</code>, <code>Engine.csv</code>, <code>*.xml</code>)</h2>
+
+<p>В папке плагина мода <code>Plugins/Mods/Content/&lt;ИмяМода&gt;/</code> рядом с ассетами Unreal Engine 5 (<code>V_&lt;ИмяМода&gt;.uasset</code>, <code>DA_&lt;ИмяМода&gt;.uasset</code>, <code>ST_&lt;ИмяМода&gt;.uasset</code>) размещаются текстовые файлы физической конфигурации в кодировке <strong>UTF-8</strong>:</p>
+<ul>
+    <li><strong><code>Vehicle.ini</code></strong> — главный конфигурационный файл с параметрами всех узлов автомобиля;</li>
+    <li><strong><code>options.xml</code></strong> — описание доступных комплектаций (переключение АКПП/МКПП, выбор двигателя);</li>
+    <li><strong><code>Engine.csv</code></strong> — двумерная таблица крутящего момента и механических потерь ДВС;</li>
+    <li><em>(Опционально)</em> локальные файлы XML-схем (<code>AwdAuto.xml</code>, <code>AwdManual.xml</code> и др.) и таблиц кривых (<code>.csv</code>).</li>
+</ul>
+
+<h3 id="11-правила-разрешения-путей-от-папки-content">1.1. Правила разрешения путей от папки <code>Content/</code></h3>
+<p>Все пути внутри <code>Vehicle.ini</code> и <code>options.xml</code> отсчитываются <strong>относительно корневой директории <code>Content/</code> основного проекта игры</strong>:</p>
+<ol>
+    <li>
+        <strong>Общие ресурсы базовой игры (<code>Content/Common/Vehicles/MotorCars/...</code>):</strong> записываются напрямую без ведущего слэша:
+<pre><code class="language-ini">DefaultSchema = Common/Vehicles/MotorCars/Schemes/AwdAuto.xml
+ProgressionCurve = Common/Vehicles/MotorCars/Tables/SpringProgression.csv</code></pre>
+    </li>
+    <li>
+        <strong>Собственные файлы внутри папки мода (<code>Plugins/Mods/Content/&lt;ИмяМода&gt;/...</code>):</strong> требуют выхода из <code>Content/</code> через <code>../Plugins/Mods/Content/&lt;ИмяМода&gt;/...</code>:
+<pre><code class="language-ini">PowerCurves = ../Plugins/Mods/Content/CieBensVGruppe/Engine.csv</code></pre>
+    </li>
+</ol>
+
+<h3 id="12-критические-правила-синтаксиса-vehicleini-и-csv">1.2. Критические правила синтаксиса <code>Vehicle.ini</code> и <code>.csv</code></h3>
+
+<div class="alert alert-caution">
+    <div class="alert-title">Осторожно (CAUTION)</div>
+    <p><strong>Три правила синтаксиса, нарушение которых ломает чтение параметров:</strong></p>
+    <ol>
+        <li>
+            <strong>Разделитель списков и 3D-векторов — строго точка с запятой <code>;</code> БЕЗ пробела перед <code>;</code>!</strong><br>
+            Запятые <code>,</code> не поддерживаются, а комбинация «пробел перед <code>;</code>» (<code>" ;"</code>) воспринимается парсером <code>.ini</code> как начало комментария до конца строки и отбрасывает все последующие числа:
+<pre><code class="language-ini">Mount = 1.63; 0.85; 0.4455                                  ; ПРАВИЛЬНО
+Gears = -3.416; 4.377; 2.859; 1.921; 1.368; 1.000; 0.820    ; ПРАВИЛЬНО
+Mount = 1.63 ; 0.85 ; 0.4455                                ; ОШИБКА: пробел перед ';' обрежет 0.85 и 0.4455!</code></pre>
+        </li>
+        <li><strong>Десятичный разделитель — строго точка <code>.</code></strong> (как в <code>Vehicle.ini</code>, так и во всех <code>.csv</code>-таблицах).</li>
+        <li><strong>Лимит длины заголовка секции — не более <code>49</code> символов</strong> внутри квадратных скобок <code>[...]</code> (включая постфиксы опций <code>.ИмяОпции.ЗначениеОпции</code>), лимит длины одной строки — не более <code>400</code> символов.</li>
+    </ol>
+</div>
+
+<p>Подробное описание синтаксиса <code>.ini</code> и форматов таблиц приведено в <a href="./01_Architecture_and_Config.html">разделе 01. Архитектура и конфиги</a>.</p>
+
+<hr>
+
+<h2 id="2-обязательные-требования-к-физическому-кузову-body-и-узлам-колёс-в-blueprint">2. Обязательные требования к физическому кузову <code>Body</code> и узлам колёс в Blueprint</h2>
+
+<p>Масса кузова, его центр тяжести и иерархия колёс задаются непосредственно в Blueprint автомобиля <code>V_&lt;ИмяМода&gt;.uasset</code> в редакторе Unreal Engine 5:</p>
+
+<pre class="mermaid">
+flowchart TD
+    Root["DefaultSceneRoot (Scale = 1, 1, 1)"] --&gt; Body["Body (StaticMeshComponent)&lt;br/&gt;Collision: BlockAllDynamic + Simple Collision Physical Material&lt;br/&gt;Override Mass = true, Center Of Mass Offset (см)"]
+    Root --&gt; SuspFL["SuspensionFrontLeft (Location в см, NoCollision)"]
+    Root --&gt; SuspFR["SuspensionFrontRight (Location в см, NoCollision)"]
+    Root --&gt; SuspBL["SuspensionBackLeft (Location в см, NoCollision)"]
+    Root --&gt; SuspBR["SuspensionBackRight (Location в см, NoCollision)"]
+    SuspFL --&gt; WheelFL["WheelFrontLeft (Location = 0, 0, 0, NoCollision)"]
+    SuspFR --&gt; WheelFR["WheelFrontRight (Location = 0, 0, 0, NoCollision)"]
+    SuspBL --&gt; WheelBL["WheelBackLeft (Location = 0, 0, 0, NoCollision)"]
+    SuspBR --&gt; WheelBR["WheelBackRight (Location = 0, 0, 0, NoCollision)"]
+</pre>
+
+<ol>
+    <li>
+        <strong>Корневой меш кузова <code>Body</code> и масштаб <code>Scale = (1, 1, 1)</code>:</strong>
+        <ul>
+            <li>Единственным физическим мешем кузова обязан быть <code>StaticMeshComponent</code> с именем <strong><code>Body</code></strong>, в ассете которого созданы выпуклые коллизионные оболочки (<code>Simple Collision</code>) и назначен <strong><code>Simple Collision Physical Material</code></strong>.</li>
+            <li>На всех остальных компонентах и мешах в Blueprint (колёсах, суппортах подвески, стёклах, деталях салона и кузова) обязательно должен стоять профиль коллизии <strong><code>NoCollision</code></strong> (<code>Receives Decals = False</code>).</li>
+            <li>У актора и <strong>всех</strong> его компонентов в Blueprint должен быть установлен единичный масштаб <strong><code>Scale = (1.0, 1.0, 1.0)</code></strong> (оси экспорта FBX: <code>-X Forward</code>, <code>Z Up</code>).</li>
+        </ul>
+    </li>
+    <li>
+        <strong>Обязательные имена узлов подвески и колёс (задняя ось — строго <code>Back</code>, а не <code>Rear</code>!):</strong>
+        <ul>
+            <li>Суппорты подвески: <strong><code>SuspensionFrontLeft</code></strong>, <strong><code>SuspensionFrontRight</code></strong>, <strong><code>SuspensionBackLeft</code></strong>, <strong><code>SuspensionBackRight</code></strong> (в их свойстве <code>Location</code> задаются координаты центров колёс в сантиметрах).</li>
+            <li>Меши колёс (дочерние к соответствующим <code>Suspension*</code> с <code>Location = (0, 0, 0)</code>): <strong><code>WheelFrontLeft</code></strong>, <strong><code>WheelFrontRight</code></strong>, <strong><code>WheelBackLeft</code></strong>, <strong><code>WheelBackRight</code></strong>.</li>
+        </ul>
+    </li>
+    <li>
+        <strong>Подрессоренная масса кузова (<code>Override Mass</code>):</strong>
+        <ul>
+            <li>В разделе <strong>Physics</strong> компонента <code>Body</code> обязательно включите галочку <strong><code>Override Mass</code></strong> и укажите в поле <strong><code>Mass in Kg</code></strong> подрессоренную массу кузова (снаряжённую массу автомобиля с водителем за вычетом массы четырёх колёс):
+            $$M_{\text{body}} = M_{\text{curb}} - 4 \cdot M_{\text{wheel}}$$</li>
+            <li>Если оставить <code>Override Mass</code> выключенным, физический движок рассчитает массу из объёма коллизии $V$ по нелинейной формуле $M_{\text{auto}} = 1000 \cdot V^{0.75}$, что занижает массу средних и крупных автомобилей почти вдвое.</li>
+        </ul>
+    </li>
+    <li>
+        <strong>Смещение центра масс (<code>Center Of Mass Offset</code> в сантиметрах):</strong>
+        <ul>
+            <li>Вектор <strong><code>Center Of Mass Offset</code></strong> (<code>COMNudge</code>) на компоненте <code>Body</code> задаётся в <strong>сантиметрах (<code>см</code>)</strong> и представляет собой <strong>относительное смещение</strong> $(\Delta X, \Delta Y, \Delta Z)$ от автоматически вычисленного геометрического центра объёма коллизии $\text{COM}_{\text{auto}}$:
+            $$\text{COM}_{\text{final}} = \text{COM}_{\text{auto}} + \text{Center Of Mass Offset}$$</li>
+            <li>Чтобы получить паспортную продольную развесовку (где $w_{\text{front}}$ — доля нагрузки на переднюю ось, например <code>0.54</code> для <code>54% / 46%</code>), рассчитайте целевую координату $X_{\text{target}}$ между осями $X_{\text{front}}$ и $X_{\text{back}}$ (в <code>см</code>) и вычтите из неё $X_{\text{auto}}$:
+            $$X_{\text{target}} = X_{\text{back}} + w_{\text{front}} \cdot (X_{\text{front}} - X_{\text{back}}), \qquad \Delta X = X_{\text{target}} - X_{\text{auto}}$$</li>
+            <li>Аналогично задайте $\Delta Y = -Y_{\text{auto}}$ (для устранения поперечного крена) и $\Delta Z = Z_{\text{target}} - Z_{\text{auto}}$ (у высоких кузовов — хэтчбеков, кроссоверов и минивэнов — геометрический центр коллизии $Z_{\text{auto}}$ задран вверх, поэтому смещение $\Delta Z$ должно быть отрицательным).</li>
+        </ul>
+    </li>
+</ol>
+
+<hr>
+
+<h2 id="3-выбор-xml-схемы-и-настройка-комплектаций-optionsxml">3. Выбор XML-схемы и настройка комплектаций (<code>options.xml</code>)</h2>
+
+<h3 id="31-отличия-6-стандартных-xml-схем-commonvehiclesmotorcarsschemesxml">3.1. Отличия 6 стандартных XML-схем (<code>Common/Vehicles/MotorCars/Schemes/*.xml</code>)</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th>Признак / Узел</th>
+            <th>Схемы с АКПП (<code>*Auto.xml</code>)</th>
+            <th>Схемы с МКПП (<code>*Manual.xml</code>)</th>
+            <th>Схемы полного привода (<code>Awd*.xml</code>)</th>
+            <th>Схемы монопривода (<code>Fwd*.xml</code>, <code>Rwd*.xml</code>)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Файлы схем</strong></td>
+            <td><code>AwdAuto.xml</code>, <code>FwdAuto.xml</code>, <code>RwdAuto.xml</code></td>
+            <td><code>AwdManual.xml</code>, <code>FwdManual.xml</code>, <code>RwdManual.xml</code></td>
+            <td><code>AwdAuto.xml</code>, <code>AwdManual.xml</code></td>
+            <td><code>FwdAuto.xml</code>, <code>FwdManual.xml</code>, <code>RwdAuto.xml</code>, <code>RwdManual.xml</code></td>
+        </tr>
+        <tr>
+            <td><strong>Секции КПП и сцепления / ГДТ в <code>Vehicle.ini</code></strong></td>
+            <td><strong><code>[GearBoxAutomatic]</code></strong>, <code>[TorqueConverter]</code>, <code>[GearBoxLogic]</code>, <code>[GearBoxAutomaticPump]</code>, <code>[OilTank]</code></td>
+            <td><strong><code>[GearBox]</code></strong>, <code>[Clutch]</code>, <code>[ClutchPedal]</code></td>
+            <td>Зависит от <code>Auto</code> / <code>Manual</code></td>
+            <td>Зависит от <code>Auto</code> / <code>Manual</code></td>
+        </tr>
+        <tr>
+            <td><strong>Секции дифференциалов в <code>Vehicle.ini</code></strong></td>
+            <td>Зависит от типа привода</td>
+            <td>Зависит от типа привода</td>
+            <td><strong><code>[DifferentialAxle]</code></strong> <em>(главная пара)</em>, <code>[FrontAxisRelay]</code>, <strong><code>[DifferentialWheelFront]</code></strong>, <strong><code>[DifferentialWheelBack]</code></strong></td>
+            <td><strong><code>[Differential]</code></strong> <em>(единственный дифференциал с главной парой)</em></td>
+        </tr>
+        <tr>
+            <td><strong>Секции задних тормозов, колёс и подвески</strong></td>
+            <td><code>[BrakeBackLeft/Right]</code>, <code>[WheelBackLeft/Right]</code>, <code>[SuspensionBackLeft/Right]</code></td>
+            <td><code>[BrakeBackLeft/Right]</code>, <code>[WheelBackLeft/Right]</code>, <code>[SuspensionBackLeft/Right]</code></td>
+            <td>Задняя ось всегда с суффиксом <strong><code>Back</code></strong></td>
+            <td>Задняя ось всегда с суффиксом <strong><code>Back</code></strong></td>
+        </tr>
+        <tr>
+            <td><strong>Как игра определяет тип КПП (АКПП vs МКПП)</strong></td>
+            <td>В <code>&lt;InputElements&gt;</code> присутствует вход <strong><code>AutoShifterState</code></strong></td>
+            <td>Вход <code>AutoShifterState</code> отсутствует (есть <code>GearBoxState</code> и <code>Clutch</code>)</td>
+            <td>—</td>
+            <td>—</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3 id="32-комбинация-двух-опций-в-optionsxml-кпп--двигатель">3.2. Комбинация двух опций в <code>options.xml</code> (КПП + Двигатель)</h3>
+<p>В <code>options.xml</code> атрибут <strong><code>SetSchema="true"</code> может быть установлен только у одной опции</strong>. Если у автомобиля есть и выбор КПП (<code>Auto</code> / <code>Manual</code>), и выбор двигателя (например, бензиновый и дизельный), назначьте <code>SetSchema="true"</code> опции <code>TransmissionType</code>, а <code>EngineGazoline</code> из стандартных схем используйте как универсальный базовый ДВС, переключая его характеристики и таблицу <code>PowerCurves</code> через секции <code>[Engine.EngineType.*]</code> и <code>[Idler.EngineType.*]</code> в <code>Vehicle.ini</code>:</p>
+
+<pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;Options&gt;
+    &lt;AvailableOptions&gt;
+        &lt;Option Name="TransmissionType" SetSchema="true"&gt;
+            &lt;OptionValue Value="Auto"   SchemaName="Common/Vehicles/MotorCars/Schemes/AwdAuto.xml" /&gt;
+            &lt;OptionValue Value="Manual" SchemaName="Common/Vehicles/MotorCars/Schemes/AwdManual.xml" /&gt;
+        &lt;/Option&gt;
+        &lt;Option Name="EngineType" SetSchema="false"&gt;
+            &lt;OptionValue Value="2.0I" /&gt;
+            &lt;OptionValue Value="2.2TD" /&gt;
+        &lt;/Option&gt;
+    &lt;/AvailableOptions&gt;
+&lt;/Options&gt;</code></pre>
+
+<h3 id="33-краткий-рецепт-локальной-схемы-с-enginediesel--turbocharger">3.3. Краткий рецепт локальной схемы с <code>EngineDiesel</code> + <code>Turbocharger</code></h3>
+<p>Если вам нужна собственная схема с классом дизеля <code>EngineDiesel</code> и турбокомпрессором <code>Turbocharger</code>:</p>
+<ol>
+    <li>Скопируйте базовую схему (<code>AwdAuto.xml</code> / <code>AwdManual.xml</code>) в папку мода <code>Plugins/Mods/Content/&lt;ИмяМода&gt;/</code>.</li>
+    <li>В <code>&lt;Components&gt;</code> замените класс <code>Engine</code> на <code>Class="EngineDiesel"</code> и добавьте <code>&lt;Component Name="Turbocharger" Class="Turbocharger" /&gt;</code>.</li>
+    <li>В <code>&lt;Links&gt;</code> <strong>обязательно удалите</strong> связь <code>&lt;Link Holder="IgnitionElectricCircuit" Reference="Engine" /&gt;</code>, <strong>сохраните</strong> связь <code>&lt;Link Holder="IgnitionKey" Reference="Idler" /&gt;</code> (она глушит дизель при повороте ключа в <code>0</code>) и добавьте <code>&lt;Link Holder="Turbocharger" Reference="Engine" /&gt;</code>.</li>
+    <li>В <code>&lt;InputProcessors&gt;</code> добавьте <code>&lt;Processor Input="Accelerator" Component="Turbocharger" InternalName="Throttle" /&gt;</code>, а в <code>Vehicle.ini</code> добавьте секцию <code>[Turbocharger]</code> с <code>LagTime = 0.08..0.10</code> (эффективная постоянная времени сглаживания буста в игре равна $\tau_{\text{eff}} = 4 \cdot \text{LagTime} \approx 0.32..0.40\text{ с}$).</li>
+</ol>
+
+<p>Подробные примеры схем и таблица всех входов/выходов приведены в разделах <a href="./01_Architecture_and_Config.html">01. Архитектура и конфиги</a> и <a href="./02_Named_IO_and_States.html">02. Именованный ввод/вывод</a>.</p>
+
+<hr>
+
+<h2 id="4-пошаговый-расчёт-ключевых-параметров-vehicleini-и-enginecsv">4. Пошаговый расчёт ключевых параметров <code>Vehicle.ini</code> и <code>Engine.csv</code></h2>
+
+<h3 id="шаг-1-геометрия-рулевого-steering-и-шины-wheel">Шаг 1. Геометрия рулевого <code>[Steering]</code> и шины <code>[Wheel*]</code></h3>
+<ol>
+    <li><strong>Колёсная база (<code>InteraxleDistance</code> в <code>[Steering]</code>):</strong> возьмите продольные координаты $X_{\text{front,cm}}$ и $X_{\text{back,cm}}$ узлов <code>SuspensionFront*</code> и <code>SuspensionBack*</code> из Blueprint (в <code>см</code>) и переведите расстояние между осями в <strong>метры</strong>:
+    $$\text{InteraxleDistance} = \frac{X_{\text{front,cm}} - X_{\text{back,cm}}}{100}$$</li>
+    <li><strong>Статический радиус колеса (<code>Radius</code> в <code>[Wheel*]</code>):</strong> измерьте свободный радиус 3D-меша колеса и вычтите статический прогиб шины под нагрузкой ($8{-}12\text{ мм}$). Например, при диаметре меша $710\text{ мм}$ ($R_{\text{free}} = 0.355\text{ м}$) задайте <code>Radius = 0.345</code> м.</li>
+    <li>
+        <strong>Балансировка поворачиваемости (<code>ForceCurveLoad</code> в <code>[Wheel*]</code>):</strong>
+        <ul>
+            <li>На передних колёсах (<code>[WheelFrontLeft/Right]</code>) задайте <code>ForceCurveLoad</code> равным статической вертикальной нагрузке переднего колеса: $\text{ForceCurveLoad}_{\text{front}} \approx F_{\text{stat,f}} = m_{\text{f}} \cdot 9.81$.</li>
+            <li>На задних колёсах (<code>[WheelBackLeft/Right]</code>) задайте <code>ForceCurveLoad</code> на <strong>$5{-}15\%$ выше</strong> статической вертикальной нагрузки заднего колеса $F_{\text{stat,r}} = m_{\text{r}} \cdot 9.81$, чтобы обеспечить автомобилю естественный запас устойчивости задней оси против срыва в занос.</li>
+        </ul>
+    </li>
+</ol>
+
+<h3 id="шаг-2-подвеска-suspensionfront-и-suspensionback">Шаг 2. Подвеска <code>[SuspensionFront*]</code> и <code>[SuspensionBack*]</code></h3>
+<ol>
+    <li><strong>Точка верхнего крепления пружины <code>Mount</code> (перевод из левой СК UE5 в <code>см</code> в правую СК физики в <code>м</code>):</strong><br>
+    Задайте полный ход подвески <code>Length</code> (например, <code>0.20</code> м спереди и <code>0.22</code> м сзади) и целевую относительную просадку в статике <code>NormalSag = 0.33</code>. Чтобы колёса в покое встали точно в координаты центров арок $(X_{\text{UE}}, Y_{\text{UE}}, Z_{\text{UE}})$ из Blueprint, рассчитайте <code>Mount</code> по формуле:
+    $$\text{Mount} = \left(\frac{X_{\text{UE}}}{100};\quad -\frac{Y_{\text{UE}}}{100};\quad \frac{Z_{\text{UE}}}{100} + (1 - \text{NormalSag}) \cdot \text{Length}\right)$$
+    <em>(Обратите внимание на инверсию знака $Y$: в <code>Vehicle.ini</code> для левых колёс $Y &gt; 0$, для правых $Y &lt; 0$).</em></li>
+    <li><strong>Жёсткость пружины <code>SpringCoeff</code>, преднатяг <code>PreloadForce</code> и амортизатор <code>DampCoeff</code>:</strong><br>
+    Стандартная таблица прогрессии <code>Common/Vehicles/MotorCars/Tables/SpringProgression.csv</code> в точке <code>NormalSag = 0.33</code> имеет эффективный множитель жёсткости <strong><code>0.654</code></strong>. Поэтому для точного попадания в <code>SpringSag = 0.33</code> под статической нагрузкой колеса $F_{\text{stat}} = m_{\text{corner}} \cdot 9.81$ параметры связаны соотношениями:
+    $$F_{\text{stat}} = \text{PreloadForce} + 0.654 \cdot \text{SpringCoeff} \cdot \text{Length} \cdot \text{NormalSag}, \qquad \text{DampCoeff} \approx (0.65 \dots 0.75) \cdot 2\sqrt{\text{SpringCoeff} \cdot m_{\text{corner}}}$$</li>
+</ol>
+
+<h3 id="шаг-3-двигатель-engine-регулятор-хх-idler-и-таблица-enginecsv">Шаг 3. Двигатель <code>[Engine]</code>, регулятор ХХ <code>[Idler]</code> и таблица <code>Engine.csv</code></h3>
+<ol>
+    <li><strong>Компенсация вычитания строки механических потерь $F(\text{RPM})$:</strong><br>
+    В таблице <code>Engine.csv</code> последняя строка (с меткой <code>0</code> после строки <code>100</code>) задаёт положительный момент механических потерь $F(\text{RPM}) &gt; 0$. Двигатель <strong>всегда вычитает $F(\text{RPM})$ из интерполированного момента сгорания при любом положении педали газа, включая <code>100%</code></strong>. Поэтому для получения на валу паспортного момента $T_{\text{паспорт}}(\text{RPM})$ в строку <code>100%</code> необходимо закладывать сумму:
+    $$T_{100}(\text{RPM}) = T_{\text{паспорт}}(\text{RPM}) + F(\text{RPM})$$
+    Если в схеме используется компонент <strong><code>[Turbocharger]</code></strong>, дополнительно разделите каждую ячейку сгорания $(r, c)$ на коэффициент наддува при соответствующем положении дросселя $\text{thr} = \text{row\_pct} / 100$:
+    $$\text{ratio}(\text{RPM}, \text{thr}) = 1 + (\text{RefCompressionRatio} - 1)\sqrt{\frac{\max(0,\; \text{RPM}\cdot\text{thr} - \text{MinRpm})}{\text{RefRpm} - \text{MinRpm}}}, \qquad T_{\text{CSV}}(\text{RPM}, \text{thr}) = \frac{T_{\text{target}}(\text{RPM}, \text{thr}) + F(\text{RPM})}{\text{ratio}(\text{RPM}, \text{thr})}$$
+    <em>(Последнюю строку механических потерь $F(\text{RPM})$ на $\text{ratio}$ делить не нужно!)</em></li>
+    <li><strong>Формирование «анти-столл горба» на колонке <code>500 RPM</code> в строках <code>5%–10%</code>:</strong><br>
+    Регулятор холостого хода <code>[Idler]</code> работает по разомкнутой схеме: он вычисляет положение дросселя так, чтобы при <code>IdleRpm</code> момент сгорания ровно уравновешивал только внутреннее трение $F(\text{IdleRpm})$, и не увеличивает подачу газа при просадке оборотов под внешней нагрузкой (при включении <code>D</code> в АКПП на тормозе или смыкании сцепления). Чтобы мотор уверенно держал холостой ход под нагрузкой, в строках малого газа (<code>5%</code> и <code>10%</code>) сделайте выраженный подъём крутящего момента на колонке <strong><code>500 RPM</code></strong> (в <code>3–5</code> раз выше момента на колонке <code>750 RPM</code>).</li>
+</ol>
+
+<h3 id="шаг-4-кпп-дифференциалы-и-спидометр">Шаг 4. КПП, дифференциалы и спидометр</h3>
+<ol>
+    <li>
+        <strong>МКПП (<code>[Clutch]</code>, <code>[GearBox]</code>):</strong>
+        <ul>
+            <li>В <code>[Clutch]</code> задайте <code>MaxTorque</code> с запасом $1.4{-}1.6$ от пикового момента двигателя.</li>
+            <li>В <code>[GearBox]</code> первый элемент массива <code>Gears</code> — задняя передача (отрицательное число), далее — передние передачи по порядку (<code>StartingGear = -1</code>). Для чёткого включения первой передачи с места задайте параметры синхронизаторов: <code>MaxRPMDiffToShift = 200..250</code>, <code>SynchronizerMaxFrictionTorque = 10..15</code>.</li>
+        </ul>
+    </li>
+    <li>
+        <strong>АКПП (<code>[TorqueConverter]</code>, <code>[GearBoxAutomatic]</code>):</strong>
+        <ul>
+            <li>В <code>[GearBoxAutomatic]</code> задайте квадратичный коэффициент потерь первичного вала <strong><code>RotationalFrictionQuadCoeff = 2.0e-4 .. 3.0e-4</code></strong> (<code>RotationalFrictionConstant = 1.5</code>).</li>
+            <li>В таблицах переключений по педали газа <code>ShiftAccelerator = 0; 0.1; ...; 1</code> согласуйте пороги переключения вверх <strong><code>MaxRpm</code></strong> с оборотами скольжения гидротрансформатора и задайте достаточно широкий допуск блокировки <strong><code>TorqueConverterLockDiff</code></strong> (<code>650..2100</code>), чтобы муфта блокировки ГДТ замыкалась после каждого переключения.</li>
+            <li>Чтобы двигатель не глох при экстренном торможении «в пол» в режиме <code>D</code>, настройте своевременное размыкание муфты ГДТ: <strong><code>UnlockTorqueConverterRpm = 1200..1250</code></strong> (<code>LockTorqueConverterRpm = 1350..1400</code>) и <strong><code>TorqueConverterLockTime = 0.25..0.30</code></strong>.</li>
+        </ul>
+    </li>
+    <li>
+        <strong>Дифференциалы и спидометр (<code>[Speedometer]</code>):</strong>
+        <ul>
+            <li>Для автомобилей с постоянным полным приводом (<code>Awd*.xml</code>) во всех трёх дифференциалах (<code>[DifferentialAxle]</code>, <code>[DifferentialWheelFront]</code>, <code>[DifferentialWheelBack]</code>) устанавливайте <strong><code>Locked = false</code></strong>, а передаточное число главной пары <code>GearRatio</code> задавайте в <code>[DifferentialAxle]</code>.</li>
+            <li>В <code>[Speedometer]</code> рассчитайте путь в метрах за один оборот вала главной передачи по статическому радиусу колеса $R_{\text{wheel}}$ и передаточному числу главной пары $i_{\text{diff}}$:
+            $$\text{MetersPerRotation} = \frac{2\pi R_{\text{wheel}}}{i_{\text{diff}}}$$
+            <em>(При необходимости штатного завышения показаний спидометра на $+2\%$ умножьте полученное значение на <code>1.02</code>).</em></li>
+        </ul>
+    </li>
+</ol>
+
+<h3 id="шаг-5-бортовая-электрика-carelectrics">Шаг 5. Бортовая электрика <code>[CarElectrics]</code></h3>
+<p>В секции <code>[CarElectrics]</code> для всех используемых на автомобиле световых приборов, индикаторов приборной панели, моторов стеклоочистителей и электрических стрелок <strong>обязательно задайте положительное электрическое сопротивление <code>&lt;Префикс&gt;_Resistance &gt; 0</code></strong> (например, <code>100</code> Ом для сигнальных ламп и стрелок, <code>4</code> Ома для галогенных ламп фар и дворников). Любой элемент с сопротивлением по умолчанию <code>0.0</code> Ом считается неподключённым к бортовой сети и не будет работать при включении зажигания.</p>
+
+<p>Подробные таблицы параметров всех компонентов приведены в разделах <a href="./03_Components_TorqueTrain.html">03. Трансмиссия</a>, <a href="./04_Components_Electrics.html">04. Электрика</a> и <a href="./05_Components_Chassis_and_Subsystems.html">05. Шасси и подсистемы</a>.</p>
+
+<hr>
+
+<h2 id="5-контрольный-чек-лист-проверки-автомобиля-5-базовых-тестов">5. Контрольный чек-лист проверки автомобиля (5 базовых тестов)</h2>
+
+<p>Перед завершением настройки проверьте автомобиль по 5 контрольным сценариям на ровной горизонтальной площадке:</p>
+
+<ul class="checklist">
+    <li><input type="checkbox" disabled> <strong>1. Статическая посадка (<code>SpringSag</code> и углы кузова):</strong> после спавна автомобиль стоит ровно и неподвижно (<code>Pitch</code> и <code>Roll</code> около <code>0°</code>), колёса находятся строго по центрам колёсных арок, а выход относительного сжатия подвески <code>SpringSag</code> на всех четырёх стойках составляет около <strong><code>0.33</code></strong> (<code>0.32..0.34</code>).</li>
+    <li><input type="checkbox" disabled> <strong>2. Пуск и глушение ключом (<code>0 -&gt; 1 -&gt; 2 -&gt; 1 -&gt; 0</code>):</strong> при включении зажигания (<code>1</code>) загораются контрольные лампы приборной панели, но двигатель сам не запускается; в положении стартера (<code>2</code>) на <code>P</code> или <code>N</code> двигатель запускается за <code>0.4–0.7 с</code> и выходит на обороты холостого хода (<code>WarmupRpm</code> / <code>IdleRpm</code>), а в режимах <code>D</code> и <code>R</code> стартер заблокирован. При повороте ключа обратно в <code>0</code> подача топлива прекращается и двигатель полностью останавливается (<code>RPM = 0</code>).</li>
+    <li><input type="checkbox" disabled> <strong>3. Холостой ход в <code>D</code> на тормозе и разгон <code>0–100 км/ч</code>:</strong> при переводе селектора АКПП из <code>N</code> в <code>D</code> с удерживаемой педалью тормоза обороты плавно снижаются на <code>60–100 об/мин</code> и стабильно держатся без провала ниже <code>MinStableRpm</code>. При отпускании тормоза автомобиль плавно начинает катиться (<code>Creep</code>), а при разгоне с места в полный газ время достижения <code>100 км/ч</code> соответствует паспортным характеристикам.</li>
+    <li><input type="checkbox" disabled> <strong>4. Накат, кикдаун и экстренное торможение со <code>100</code> до <code>0 км/ч</code> в <code>D</code>:</strong> при плавном движении коробка своевременно доходит до высшей передачи и блокирует ГДТ; при отпускании педали газа на скорости наблюдается плавное торможение двигателем; при резком нажатии газа в пол (<code>Kick-Down</code>) АКПП сбрасывает 2–3 передачи вниз; при экстренном торможении «в пол» со <code>100 км/ч</code> до полной остановки <code>0 км/ч</code> в режиме <code>D</code> муфта ГДТ вовремя размыкается и <strong>двигатель не глохнет</strong>.</li>
+    <li><input type="checkbox" disabled> <strong>5. Работа комплектации с МКПП и точность приборов:</strong> при выборе механической коробки передач в меню настроек автомобиль плавно трогается на одном сцеплении, все передачи от первой до высшей и задней чётко включаются синхронизаторами, а показания спидометра и тахометра соответствуют фактической скорости и оборотам отсечки <code>RpmLimit</code>.</li>
+</ul>
+
+</body>
+</html>

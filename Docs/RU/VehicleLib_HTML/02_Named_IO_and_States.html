@@ -1,0 +1,2099 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02. Именованные входы, выходы и состояния в XML-схемах City Car Driving 2.0</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '$$', right: '$$', display: true}, {left: '$', right: '$', display: false}]});"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({ startOnLoad: true });</script>
+    <style>
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 32px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1f2328;
+            background-color: #ffffff;
+        }
+        h1, h2, h3, h4 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        h1 { font-size: 2em; padding-bottom: 0.3em; border-bottom: 1px solid #d0d7de; }
+        h2 { font-size: 1.5em; padding-bottom: 0.3em; border-bottom: 1px solid #d0d7de; }
+        h3 { font-size: 1.25em; }
+        h4 { font-size: 1em; }
+        a { color: #0969da; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        hr {
+            height: 0.25em;
+            padding: 0;
+            margin: 24px 0;
+            background-color: #d0d7de;
+            border: 0;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 16px 0;
+            font-size: 0.95em;
+        }
+        th, td {
+            border: 1px solid #d0d7de;
+            padding: 8px 12px;
+            vertical-align: top;
+        }
+        th {
+            background: #f6f8fa;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background: #f6f8fa;
+        }
+        code {
+            background: #eff1f3;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 85%;
+        }
+        pre {
+            background: #f6f8fa;
+            padding: 14px;
+            border-radius: 6px;
+            overflow-x: auto;
+            border: 1px solid #d0d7de;
+        }
+        pre code {
+            background: transparent;
+            padding: 0;
+            font-size: 85%;
+        }
+        pre.mermaid {
+            background: #ffffff;
+            text-align: center;
+        }
+        .alert {
+            padding: 12px 16px;
+            margin: 16px 0;
+            border-left: 4px solid;
+            border-radius: 4px;
+            background: #f6f8fa;
+        }
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .alert-note { border-left-color: #0969da; background: #ddf4ff; }
+        .alert-note .alert-title { color: #0969da; }
+        .alert-tip { border-left-color: #1a7f37; background: #dafbe1; }
+        .alert-tip .alert-title { color: #1a7f37; }
+        .alert-important { border-left-color: #8250df; background: #fbefff; }
+        .alert-important .alert-title { color: #8250df; }
+        .alert-warning { border-left-color: #9a6700; background: #fff8c5; }
+        .alert-warning .alert-title { color: #9a6700; }
+        .alert-caution { border-left-color: #cf222e; background: #ffebe9; }
+        .alert-caution .alert-title { color: #cf222e; }
+        .text-left { text-align: left; }
+        .text-center { text-align: center; }
+        ul, ol { padding-left: 2em; }
+        li + li { margin-top: 0.25em; }
+    </style>
+</head>
+<body>
+
+<h1 id="02-именованные-входы-выходы-и-состояния-в-xml-схемах-city-car-driving-20">02. Именованные входы, выходы и состояния в XML-схемах City Car Driving 2.0</h1>
+
+<p><strong>Навигация:</strong> <a href="./README.html">README</a> | <a href="./00_Quick_Start.html">00. Быстрый старт</a> | <a href="./01_Architecture_and_Config.html">01. Архитектура и конфиги</a> | <strong>02. Именованный ввод/вывод</strong> | <a href="./03_Components_TorqueTrain.html">03. Трансмиссия</a> | <a href="./04_Components_Electrics.html">04. Электрика</a> | <a href="./05_Components_Chassis_and_Subsystems.html">05. Шасси и подсистемы</a></p>
+
+<hr>
+
+<h2 id="1-устройство-секций-inputelements-inputprocessors-outputelements-и-stateelements">1. Устройство секций <code>&lt;InputElements&gt;</code>, <code>&lt;InputProcessors&gt;</code>, <code>&lt;OutputElements&gt;</code> и <code>&lt;StateElements&gt;</code></h2>
+
+<p>Связь между игровой логикой City Car Driving 2.0 (управлением игрока, ИИ-трафиком, приборной панелью, внешней светотехникой, звуками FMOD, контролем ПДД и Force Feedback) и физическими компонентами автомобиля задаётся в XML-схеме (<code>&lt;Vehicle&gt;</code>) через 4 секции:</p>
+
+<pre class="mermaid">
+flowchart LR
+    GAME["City Car Driving 2.0 (UE5 / Blueprints)"] --&gt;|"Команды управления"| IE["&lt;InputElements&gt;&lt;br/&gt;Name, Type, DefaultValue"]
+    IE --&gt; IP["&lt;InputProcessors&gt;&lt;br/&gt;Input -&gt; Component + InternalName"]
+    IP --&gt; COMP["Физические компоненты&lt;br/&gt;(&lt;Components&gt;)"]
+    GAME --&gt;|"Мгновенная установка"| SE["&lt;StateElements&gt;&lt;br/&gt;Name -&gt; Component + InternalName"]
+    SE --&gt; COMP
+    COMP --&gt; OE["&lt;OutputElements&gt;&lt;br/&gt;Name -&gt; Component + InternalName"]
+    OE --&gt;|"Телеметрия, стрелки, лампы, звук"| GAME
+    OE -.-&gt;|"ConnectedToOutput / DefaultValueFromOutput"| IE
+</pre>
+
+<h3 id="11-атрибуты-тегов-name-component-и-internalname">1.1. Атрибуты тегов: <code>Name</code>, <code>Component</code> и <code>InternalName</code></h3>
+
+<p>В каждом элементе ввода/вывода участвуют три атрибута:</p>
+<ul>
+    <li><strong><code>Component</code></strong> — <strong>имя экземпляра компонента</strong> из раздела <code>&lt;Components&gt;&lt;Component Name="..." Class="..." /&gt;&lt;/Components&gt;</code> вашей XML-схемы. Имя <code>Component</code> в системе ввода/вывода <strong>не ограничено</strong> (кроме обязательных имён стоек подвески <code>SuspensionFrontLeft/Right</code>, <code>SuspensionBackLeft/Right</code> и колёс <code>WheelFrontLeft/Right</code>, <code>WheelBackLeft/Right</code>, которые привязываются к 3D-мешам в Blueprint). Остальные узлы в собственной XML-схеме можно называть произвольно, главное — чтобы атрибут <code>Component="..."</code> и заголовок секции <code>[ИмяКомпонента]</code> в <code>Vehicle.ini</code> ссылались на это имя.</li>
+    <li><strong><code>InternalName</code></strong> — <strong>внутреннее имя канала класса (<code>Class</code>)</strong>. Оно жёстко задано реализацией соответствующего <code>Class</code> и <strong>обязано точно совпадать</strong> со списком поддерживаемых классом входов/выходов/состояний (см. <a href="#3-справочник-внутренних-имён-internalname-по-классам-компонентов">Раздел 3</a>). Если атрибут <code>InternalName</code> в XML опущен, он автоматически принимается равным внешнему имени <code>Name</code> (или <code>Input</code>).</li>
+    <li><strong><code>Name</code></strong> (или <strong><code>Input</code></strong> в <code>&lt;InputProcessors&gt;</code>) — <strong>внешнее имя канала автомобиля</strong>, по которому к физике обращается игра City Car Driving 2.0 и Blueprints. Обязательные внешние имена каналов приведены в таблицах Раздела 2.</li>
+</ul>
+
+<table>
+    <thead>
+        <tr>
+            <th class="text-left">Секция и тег в XML</th>
+            <th class="text-left">Атрибуты</th>
+            <th class="text-left">Назначение</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="text-left"><strong><code>&lt;OutputElements&gt;</code></strong><br><code>&lt;Element ... /&gt;</code></td>
+            <td class="text-left"><code>Name</code>, <code>Type</code> (<code>Real</code>/<code>Integer</code>/<code>Boolean</code>), <code>Component</code>, <code>InternalName</code> <em>(опц.)</em></td>
+            <td class="text-left">Выводит физическую величину, положение стрелки или яркость индикатора из компонента <code>Component</code> наружу под именем <code>Name</code>.</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>&lt;StateElements&gt;</code></strong><br><code>&lt;Element ... /&gt;</code></td>
+            <td class="text-left"><code>Name</code>, <code>Type</code> (<code>Real</code>/<code>Integer</code>/<code>Boolean</code>), <code>Component</code>, <code>InternalName</code> <em>(опц.)</em></td>
+            <td class="text-left">Позволяет игре мгновенно задать внутреннее состояние компонента (объём топлива, температуру ДВС, пробег, передачу) при спавне, заправке или перезапуске.</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>&lt;InputElements&gt;</code></strong><br><code>&lt;Element ... /&gt;</code></td>
+            <td class="text-left"><code>Name</code>, <code>Type</code> (<code>Real</code>/<code>Integer</code>/<code>Boolean</code>), <code>DefaultValue</code> <em>(опц.)</em>, <code>DefaultValueFromOutput</code> <em>(опц.)</em>, <code>ConnectedToOutput</code> <em>(опц.)</em></td>
+            <td class="text-left">Объявляет внешний канал управления и способ его начальной инициализации.</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>&lt;InputProcessors&gt;</code></strong><br><code>&lt;Processor ... /&gt;</code></td>
+            <td class="text-left"><code>Input</code>, <code>Component</code>, <code>InternalName</code> <em>(опц.)</em></td>
+            <td class="text-left">Подписывает компонент <code>Component</code> на изменения канала ввода <code>Input</code>.</td>
+        </tr>
+    </tbody>
+</table>
+
+<h3 id="12-начальные-значения-входов-и-автосвязка-connectedtooutput">1.2. Начальные значения входов и автосвязка <code>ConnectedToOutput</code></h3>
+
+<p>В теге <code>&lt;Element&gt;</code> секции <code>&lt;InputElements&gt;</code> поддерживаются три атрибута инициализации (в порядке возрастания приоритета):</p>
+<ol>
+    <li><strong><code>DefaultValue="..."</code></strong> — однократно подаёт указанное константное значение при создании автомобиля (например, <code>DefaultValue="true"</code> для <code>Battery</code>, <code>EnableABS</code>, <code>EnableTCS</code>).</li>
+    <li><strong><code>DefaultValueFromOutput="ИмяВыхода"</code></strong> — при создании автомобиля однократно копирует начальное значение из указанного <code>&lt;OutputElements&gt;</code> того же типа (например, в <code>*Manual.xml</code> вход <code>Gear</code> берёт стартовую передачу <code>DefaultValueFromOutput="Gear"</code>). Вход остаётся доступным для управления из игры.</li>
+    <li><strong><code>ConnectedToOutput="ИмяВыхода"</code></strong> — автоматически копирует значение указанного выхода в этот вход <strong>на каждом кадре симуляции</strong> и скрывает вход из списка внешних входов. Используется для прямой передачи сигнала от одного компонента к другому без участия игры:</li>
+</ol>
+
+<pre><code class="language-xml">&lt;OutputElements&gt;
+    &lt;Element Name="RetarderActive" Type="Boolean" Component="Retarder" InternalName="Enabled" /&gt;
+&lt;/OutputElements&gt;
+&lt;InputElements&gt;
+    &lt;Element Name="RetarderIndicatorInput" Type="Boolean" ConnectedToOutput="RetarderActive" /&gt;
+&lt;/InputElements&gt;
+&lt;InputProcessors&gt;
+    &lt;Processor Input="RetarderIndicatorInput" Component="CarElectrics" InternalName="Retarder" /&gt;
+&lt;/InputProcessors&gt;</code></pre>
+
+<hr>
+
+<h2 id="2-стандартные-и-обязательные-входы-состояния-и-выходы-в-city-car-driving-20">2. Стандартные и обязательные входы, состояния и выходы в City Car Driving 2.0</h2>
+
+<div class="alert alert-important">
+    <div class="alert-title">Important</div>
+    <p><strong>Шесть ключевых правил работы с каналами ввода/вывода в City Car Driving 2.0:</strong></p>
+    <ol>
+        <li><strong>Определение типа КПП по наличию входа <code>AutoShifterState</code>:</strong> контроллеры салона, селектора и звука (<code>BP_VehicleInteriorController_Transmission</code>, <code>BP_CarSound</code>) проверяют наличие входа <code>HasInput("AutoShifterState")</code>. Если вход <code>AutoShifterState</code> объявлен в схеме — машина считается оснащённой <strong>АКПП</strong>, если отсутствует — <strong>МКПП</strong>.</li>
+        <li><strong>Педаль газа называется <code>Accelerator</code> (а не <code>Throttle</code>):</strong> во всех схемах CCD 2.0 внешний вход газа имеет имя <strong><code>Accelerator</code></strong> (<code>0.0 .. 1.0</code>). Имя <code>Throttle</code> используется только как <code>InternalName</code> внутри компонента <code>Turbocharger</code>.</li>
+        <li><strong>Инверсия педали сцепления <code>Clutch</code> (<code>*Manual.xml</code>):</strong> значение <strong><code>0.0</code></strong> означает <strong>полностью выжатую педаль</strong> (сцепление разомкнуто), а <strong><code>1.0</code></strong> — <strong>полностью отпущенную педаль</strong> (сцепление замкнуто).</li>
+        <li><strong>Ключ зажигания <code>Ignition</code> и блокировка стартера:</strong> принимает значения <strong><code>0</code></strong> (<code>Off</code> — выключено), <strong><code>1</code></strong> (<code>Ignition</code> — зажигание включено), <strong><code>2</code></strong> (<code>Starter</code> — пуск стартера). В схемах с АКПП (<code>*Auto.xml</code>) замок зажигания связан с <code>GearBoxLogic</code> и <strong>разрешает работу стартера (<code>2</code>) только в положениях <code>P (0)</code> или <code>N (2)</code></strong>.</li>
+        <li><strong>Управление КПП (<code>AutoShifterState</code> в <code>*Auto.xml</code> против <code>Gear</code> в <code>*Manual.xml</code>):</strong>
+            <ul>
+                <li>В <code>*Auto.xml</code> селектор управляется входом <strong><code>AutoShifterState</code></strong>: <strong><code>0 = P</code></strong>, <strong><code>1 = R</code></strong>, <strong><code>2 = N</code></strong>, <strong><code>3 = D</code></strong>. Для вывода из <code>P (0)</code> должен быть нажат тормоз (<code>Brake &gt;= ShiftMinBrake</code>, по умолчанию <code>0.1</code>).</li>
+                <li>В <code>*Manual.xml</code> используется вход <strong><code>Gear</code></strong>: внутри <code>GearBox</code> индекс <strong><code>-1</code></strong> — нейтраль (<code>N</code>), <strong><code>0</code></strong> — задний ход (<code>R</code>), <strong><code>1..N-1</code></strong> — передачи вперёд <em>(игровой контроллер CCD 2.0 автоматически переводит <code>-1 = R</code>, <code>0 = N</code>, <code>1..N = вперёд</code> в индексы <code>GearBox</code> при наличии выхода <code>EnableNeutralInput = true</code>)</em>.</li>
+            </ul>
+        </li>
+        <li><strong>Единицы скорости <code>Speed</code> и <code>DashboardSpeed</code>:</strong> оба выхода возвращают скорость строго в <strong>метрах в секунду ($\text{м/с}$)</strong> (<code>1 м/с = 3.6 км/ч</code>).</li>
+    </ol>
+</div>
+
+<h3 id="21-входные-каналы-inputelements-и-inputprocessors--один-вход-на-строку">2.1. Входные каналы (<code>&lt;InputElements&gt;</code> и <code>&lt;InputProcessors&gt;</code>) — один вход на строку</h3>
+
+<p>В столбце <strong>«Статус в CCD 2.0»</strong> отмечены <strong>обязательные</strong> каналы, имена которых жёстко зашиты в коде управления, ИИ-трафика и Blueprint-компонентах игры.</p>
+
+<table>
+    <thead>
+        <tr>
+            <th class="text-left">Внешнее имя <code>Name</code></th>
+            <th class="text-center"><code>Type</code></th>
+            <th class="text-center">По умолч.</th>
+            <th class="text-left">Куда направляется (<code>Component</code> $\rightarrow$ <code>InternalName</code>)</th>
+            <th class="text-center">Схемы</th>
+            <th class="text-left">Статус в CCD 2.0 (где используется)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="text-left"><strong><code>Accelerator</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>AbsTcs</code>; в <code>*Auto</code>: + <code>GearBoxAutomatic</code>, <code>GearBoxLogic</code>; с турбиной: + <code>Turbocharger</code> (<code>Throttle</code>)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left"><strong>Обязательный</strong> (управление игрока/ИИ, звук нагрузки ДВС <code>BP_CarSound</code>, <code>BP_TrafficSound</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Brake</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>AbsTcs</code>, <code>CarElectrics</code>; в <code>*Auto</code>: + <code>GearBoxLogic</code></td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left"><strong>Обязательный</strong> (управление игрока/ИИ, стоп-сигналы, разблокировка селектора АКПП из <code>P</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>ParkingBrake</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>BrakeBackLeft</code>, <code>BrakeBackRight</code>, <code>CarElectrics</code></td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left"><strong>Обязательный</strong> (стояночный тормоз игрока/ИИ, звук ручника в <code>BP_CarSound</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Clutch</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>ClutchPedal</code> (<code>Clutch</code>, <code>0.0</code> = выжато, <code>1.0</code> = отпущено)</td>
+            <td class="text-center"><code>*Manual</code></td>
+            <td class="text-left"><strong>Обязательный для МКПП</strong> (педаль сцепления игрока и ИИ)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Steering</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>Steering</code> (<code>Steering</code>, <code>-1.0..+1.0</code>)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left"><strong>Обязательный</strong> (рулевое управление игрока/ИИ, вращение 3D-руля и рук в <code>BP_SteeringWheel</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Ignition</code></strong></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>IgnitionKey</code> (<code>Ignition</code>, <code>0=Off, 1=On, 2=Start</code>)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left"><strong>Обязательный</strong> (замок зажигания, экран БК в <code>BP_VehicleDashboard</code>, звук ДВС в <code>BP_CarSound</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>AutoShifterState</code></strong></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>GearBoxLogic</code> (<code>AutoShifterState</code>, <code>0=P, 1=R, 2=N, 3=D</code>)</td>
+            <td class="text-center"><code>*Auto</code></td>
+            <td class="text-left"><strong>Обязательный для АКПП</strong> (селектор АКПП; по <code>HasInput("AutoShifterState")</code> игра отличает АКПП от МКПП!)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>AutoShifterMaxGear</code></strong></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>GearBoxLogic</code> (<code>AutoShifterMaxGear</code>, <code>0..N</code>)</td>
+            <td class="text-center"><code>*Auto</code></td>
+            <td class="text-left"><strong>Обязательный для АКПП</strong> (ручное ограничение диапазона ступеней АКПП)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Gear</code></strong></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td class="text-center"><code>FromOutput="Gear"</code></td>
+            <td class="text-left"><code>GearBox</code> (<code>Gear</code>)</td>
+            <td class="text-center"><code>*Manual</code></td>
+            <td class="text-left"><strong>Обязательный для МКПП</strong> (переключение передач МКПП, звук рычага КПП в <code>BP_CarSound</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>SafetyBelt</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>CarElectrics</code> (<code>SafetyBelt</code>)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left"><strong>Обязательный</strong> (ремень безопасности, анимация в <code>BP_SteeringWheel</code>, звук в <code>BP_CarSound</code>, контроль ПДД)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Horn</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>CarElectrics</code> (<code>Horn</code>)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left"><strong>Обязательный</strong> (звуковой сигнал / клаксон игрока и ИИ)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>LowBeam</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>CarElectrics</code> (<code>LowBeam</code>)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left"><strong>Обязательный</strong> (ближний свет фар игрока/ИИ, звук тумблера в <code>BP_CarSound</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>HighBeam</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>CarElectrics</code> (<code>HighBeam</code>)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left"><strong>Обязательный</strong> (фиксированный дальний свет фар, звук подрулевого рычажка в <code>BP_CarSound</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>HighBeamUnfixed</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>CarElectrics</code> (<code>HighBeamUnfixed</code>)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left">Стандартный (моргание дальним светом фар)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>ParkingLights</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>CarElectrics</code> (<code>ParkingLights</code>)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left"><strong>Обязательный</strong> (габаритные огни, звук выключателя света в <code>BP_CarSound</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>FrontFogLights</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>CarElectrics</code> (<code>FrontFogLights</code>)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left"><strong>Обязательный</strong> (передние ПТФ, звук кнопки в <code>BP_CarSound</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>RearFogLights</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>CarElectrics</code> (<code>RearFogLights</code>)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left"><strong>Обязательный</strong> (задние ПТФ, звук кнопки в <code>BP_CarSound</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>LeftTurnLight</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>CarElectrics</code> (<code>LeftTurnLight</code>)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left"><strong>Обязательный</strong> (левый поворотник игрока/ИИ, звук рычажка в <code>BP_CarSound</code>, проверка ПДД <code>EG_TurningLights</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>RightTurnLight</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>CarElectrics</code> (<code>RightTurnLight</code>)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left"><strong>Обязательный</strong> (правый поворотник игрока/ИИ, звук рычажка в <code>BP_CarSound</code>, проверка ПДД <code>EG_TurningLights</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>HazardLight</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>CarElectrics</code> (<code>HazardLight</code>)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left"><strong>Обязательный</strong> (аварийная сигнализация игрока и ИИ)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>FrontWindshieldWiper</code></strong></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>CarElectrics</code> (<code>FrontWindshieldWiper</code>, <code>0..3</code>)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left"><strong>Обязательный</strong> (режим передних дворников <code>0..3</code>, звук переключателя в <code>BP_CarSound</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>BackWindshieldWiper</code></strong></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>CarElectrics</code> (<code>BackWindshieldWiper</code>, <code>0..3</code>)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left"><strong>Обязательный</strong> (режим заднего дворника <code>0..3</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>EnableABS</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center"><code>true</code></td>
+            <td class="text-left"><code>AbsTcs</code> (<code>EnableABS</code>)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left"><strong>Обязательный</strong> (включение/отключение ABS в настройках и читах)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>EnableTCS</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center"><code>true</code></td>
+            <td class="text-left"><code>AbsTcs</code> (<code>EnableTCS</code>)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left"><strong>Обязательный</strong> (включение/отключение TCS в настройках)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>AWD</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center"><code>true</code></td>
+            <td class="text-left"><code>FrontAxisRelay</code> (<code>Enable</code>)</td>
+            <td class="text-center"><code>Awd*</code></td>
+            <td class="text-left"><strong>Обязательный для подключаемого AWD</strong> (тумблер полного привода)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>DifferentialAxleLock</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center"><code>false</code></td>
+            <td class="text-left"><code>DifferentialAxle</code> (<code>Lock</code>)</td>
+            <td class="text-center"><code>Awd*</code></td>
+            <td class="text-left">Стандартный в <code>Awd*.xml</code> <em>(в игровом контроллере зашито имя <code>AxleDiffLock</code>)</em></td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>DifferentialWheelLock</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center"><code>false</code></td>
+            <td class="text-left"><code>DifferentialWheelFront</code> (<code>Lock</code>), <code>DifferentialWheelBack</code> (<code>Lock</code>)</td>
+            <td class="text-center"><code>Awd*</code></td>
+            <td class="text-left">Стандартный в <code>Awd*.xml</code> <em>(в игровом контроллере зашиты <code>FrontDiffLock</code> / <code>BackDiffLock</code>)</em></td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Battery</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center"><code>true</code></td>
+            <td class="text-left"><code>Battery</code> (<code>Battery</code>)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left"><strong>Обязательный</strong> (<code>DefaultValue="true"</code> включает массу АКБ при спавне)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>MileageMultiplier</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-center"><code>1.0</code></td>
+            <td class="text-left"><code>Speedometer</code> (<code>MileageMultiplier</code>), <code>Engine</code> (<code>FuelConsumptionMultiplier</code>)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left"><strong>Обязательный</strong> (множитель пробега/расхода, читается в <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>UnlimitedFuelTank</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>FuelTank</code> (<code>EnableUnlimited</code>)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left"><strong>Обязательный</strong> (режим бесконечного топлива в игре)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>UnlimitedBattery</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>Battery</code> (<code>EnableUnlimited</code>)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left">Стандартный (бесконечный заряд АКБ)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>PerfectWheels</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center"><code>false</code></td>
+            <td class="text-left"><code>WheelFrontLeft..BackRight</code> (<code>NoSlip</code>)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left"><strong>Обязательный</strong> (режим идеального сцепления шин без скольжения)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>FuelLeak</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>FuelTank</code> (<code>DrainSpeed</code>, л/с)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left"><strong>Обязательный</strong> (неисправность: утечка топлива)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>CoolantLeak</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>Engine</code> (<code>CoolantLeak</code>)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left"><strong>Обязательный</strong> (неисправность: утечка ОЖ)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>BrokenSteering</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>Steering</code> (<code>BrokenSteering</code>)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left"><strong>Обязательный</strong> (неисправность: отказ рулевого управления)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>BrokenPowerSteering</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>CarElectrics</code> (<code>BrokenPowerSteering</code>), <code>PowerSteering</code> (<code>Broken</code>)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left"><strong>Обязательный</strong> (неисправность: отказ усилителя руля ГУР/ЭУР)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>BrokenLighting</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>CarElectrics</code> (<code>BrokenLighting</code>)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left">Стандартный (неисправность: отказ внешнего освещения)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>BrokenBrake</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>BrakeFrontLeft..BackRight</code> (<code>BrokenBrake</code>), <code>CarElectrics</code> (<code>BrokenBrake</code>)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left">Стандартный в <code>*.xml</code> <em>(система повреждений также ищет <code>BrokenFrontLeftBrake..BackRightBrake</code>)</em></td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>BlowoutTyreFrontLeft</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>WheelFrontLeft</code> (<code>Blowout</code>)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left">Стандартный в <code>*.xml</code> <em>(система повреждений также ищет <code>BlowoutFrontLeftWheel</code>)</em></td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>BlowoutTyreFrontRight</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td class="text-left"><code>WheelFrontRight</code> (<code>Blowout</code>)</td>
+            <td class="text-center">Все 6</td>
+            <td class="text-left">Стандартный в <code>*.xml</code> <em>(система повреждений также ищет <code>BlowoutFrontRightWheel</code>)</em></td>
+        </tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h3 id="22-канал-состояний-stateelements--одно-состояние-на-строку">2.2. Канал состояний (<code>&lt;StateElements&gt;</code>) — одно состояние на строку</h3>
+
+<table>
+    <thead>
+        <tr>
+            <th class="text-left">Внешнее имя <code>Name</code></th>
+            <th class="text-center"><code>Type</code></th>
+            <th class="text-left"><code>Component</code> в XML</th>
+            <th class="text-left"><code>InternalName</code></th>
+            <th class="text-center">Ед. изм.</th>
+            <th class="text-left">Статус в CCD 2.0 (где используется)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="text-left"><strong><code>FuelVolume</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>FuelTank</code></td>
+            <td class="text-left"><code>LiquidVolume</code></td>
+            <td class="text-center">л (<code>0..Volume</code>)</td>
+            <td class="text-left"><strong>Обязательный</strong> (заправка на АЗС в <code>BP_CarFuelTank</code> / <code>BP_Vehicle_FuelTank</code>, сохранение топлива, читы)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Mileage</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Speedometer</code></td>
+            <td class="text-left"><code>Mileage</code></td>
+            <td class="text-center">м</td>
+            <td class="text-left"><strong>Обязательный</strong> (установка сохранённого общего пробега автомобиля при спавне)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>SessionMileage</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Speedometer</code></td>
+            <td class="text-left"><code>SessionMileage</code></td>
+            <td class="text-center">м</td>
+            <td class="text-left"><strong>Обязательный</strong> (сброс и инициализация суточного пробега)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>AutoShifterState</code></strong></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td class="text-left"><code>GearBoxLogic</code></td>
+            <td class="text-left"><code>State</code></td>
+            <td class="text-center"><code>0=P..3=D</code></td>
+            <td class="text-left"><strong>Обязательный для АКПП</strong> (мгновенная установка режима АКПП при спавне с работающим/заглушенным ДВС)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Gear</code></strong></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td class="text-left"><code>GearBox</code></td>
+            <td class="text-left"><code>Gear</code></td>
+            <td class="text-center"><code>-1..N-1</code></td>
+            <td class="text-left"><strong>Обязательный для МКПП</strong> (мгновенная установка передачи МКПП при спавне)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>CoolantTemperature</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Engine</code></td>
+            <td class="text-left"><code>CoolantTemperature</code></td>
+            <td class="text-center">$^\circ\text{C}$</td>
+            <td class="text-left"><strong>Обязательный</strong> (установка начальной температуры прогретого/холодного ДВС при старте)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>FuelChamberTemperature</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Engine</code></td>
+            <td class="text-left"><code>FuelChamberTemperature</code></td>
+            <td class="text-center">$^\circ\text{C}$</td>
+            <td class="text-left"><strong>Обязательный</strong> (прогрев камеры сгорания при спавне заведённого автомобиля)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>CoolantLevel</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Engine</code></td>
+            <td class="text-left"><code>CoolantLevel</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left">Стандартный (начальный уровень охлаждающей жидкости)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>BrokenCoolingSystem</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left"><code>Engine</code></td>
+            <td class="text-left"><code>BrokenCoolingSystem</code></td>
+            <td class="text-center">флаг</td>
+            <td class="text-left"><strong>Обязательный</strong> (неисправность системы охлаждения / термостата)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>WheelPressureFrontLeft</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>WheelFrontLeft</code></td>
+            <td class="text-left"><code>Pressure</code></td>
+            <td class="text-center">бар (изб.)</td>
+            <td class="text-left">Стандартный (начальное давление в передней левой шине)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>WheelPressureFrontRight</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>WheelFrontRight</code></td>
+            <td class="text-left"><code>Pressure</code></td>
+            <td class="text-center">бар (изб.)</td>
+            <td class="text-left">Стандартный (начальное давление в передней правой шине)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>DriveShaftVelocity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>DifferentialAxle</code> (<code>Awd*</code>) / <code>Differential</code> (<code>Fwd*</code>, <code>Rwd*</code>)</td>
+            <td class="text-left"><code>AngularVelocity</code></td>
+            <td class="text-center">рад/с</td>
+            <td class="text-left">Стандартный (начальная угловая скорость карданного вала)</td>
+        </tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h3 id="23-выходные-каналы-outputelements--один-выход-на-строку">2.3. Выходные каналы (<code>&lt;OutputElements&gt;</code>) — один выход на строку</h3>
+
+<h4 id="a-движение-двигатель-кпп-топливо-и-электросеть">A. Движение, двигатель, КПП, топливо и электросеть</h4>
+
+<table>
+    <thead>
+        <tr>
+            <th class="text-left">Внешнее имя <code>Name</code></th>
+            <th class="text-center"><code>Type</code></th>
+            <th class="text-left"><code>Component</code></th>
+            <th class="text-left"><code>InternalName</code></th>
+            <th class="text-center">Ед. изм.</th>
+            <th class="text-left">Статус в CCD 2.0 (где используется)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="text-left"><strong><code>Speed</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Speedometer</code></td>
+            <td class="text-left"><code>Speed</code></td>
+            <td class="text-center"><strong>м/с</strong></td>
+            <td class="text-left"><strong>Обязательный</strong> (скорость машины для ИИ, HUD, звуков ветра/шин, <code>BP_VehicleDashboard</code>, <code>BP_VehicleListener</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Mileage</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Speedometer</code></td>
+            <td class="text-left"><code>Mileage</code></td>
+            <td class="text-center">м</td>
+            <td class="text-left"><strong>Обязательный</strong> (общий пробег на экране одометра в <code>BP_VehicleDashboard</code> и проверка ПДД <code>EG_TurningLights</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>SessionMileage</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Speedometer</code></td>
+            <td class="text-left"><code>SessionMileage</code></td>
+            <td class="text-center">м</td>
+            <td class="text-left"><strong>Обязательный</strong> (суточный пробег и расчёт среднего расхода топлива в <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>RPM</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Engine</code></td>
+            <td class="text-left"><code>RPM</code></td>
+            <td class="text-center">об/мин</td>
+            <td class="text-left"><strong>Обязательный</strong> (обороты ДВС для ИИ, HUD, FMOD-звука двигателя в <code>BP_CarSound</code> / <code>BP_TrafficSound</code>, <code>BP_VehicleListener</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>RPMLimit</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Engine</code></td>
+            <td class="text-left"><code>RPMLimit</code></td>
+            <td class="text-center">об/мин</td>
+            <td class="text-left"><strong>Обязательный</strong> (отсечка оборотов для логики переключения передач и тахометра HUD)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>StableRPM</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Engine</code></td>
+            <td class="text-left"><code>StableRPM</code></td>
+            <td class="text-center">об/мин</td>
+            <td class="text-left"><strong>Обязательный</strong> (минимальные устойчивые обороты ХХ для логики трогания и анти-столла)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Combustion</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left"><code>Engine</code></td>
+            <td class="text-left"><code>Combustion</code></td>
+            <td class="text-center">флаг</td>
+            <td class="text-left"><strong>Обязательный</strong> (флаг работы двигателя <code>IsEngineRunning</code> для звука <code>BP_CarSound</code>, ГУР и игровой логики)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>EngineLoad</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Engine</code></td>
+            <td class="text-left"><code>Load</code></td>
+            <td class="text-center">$\text{Н}\cdot\text{м}$</td>
+            <td class="text-left"><strong>Обязательный</strong> (текущий момент нагрузки ДВС для телеметрии и звука)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>EngineMaxTorque</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Engine</code></td>
+            <td class="text-left"><code>MaxTorque</code></td>
+            <td class="text-center">$\text{Н}\cdot\text{м}$</td>
+            <td class="text-left"><strong>Обязательный</strong> (максимальный момент ДВС для расчёта относительной нагрузки)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>EngineVibrationFrequency</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Engine</code></td>
+            <td class="text-left"><code>VibrationFrequency</code></td>
+            <td class="text-center">Гц</td>
+            <td class="text-left"><strong>Обязательный</strong> (частота вибрации ДВС для геймпада и руля Force Feedback)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>EngineVibrationAmplitude</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Engine</code></td>
+            <td class="text-left"><code>VibrationAmplitude</code></td>
+            <td class="text-center">м</td>
+            <td class="text-left"><strong>Обязательный</strong> (амплитуда вибрации ДВС для геймпада и руля Force Feedback)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>CoolantTemperature</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Engine</code></td>
+            <td class="text-left"><code>CoolantTemperature</code></td>
+            <td class="text-center">$^\circ\text{C}$</td>
+            <td class="text-left"><strong>Обязательный</strong> (температура ОЖ для игровой логики и HUD)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>CoolantLevel</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Engine</code></td>
+            <td class="text-left"><code>CoolantLevel</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left">Стандартный (уровень охлаждающей жидкости)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>ThermostatBeginTemperature</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Engine</code></td>
+            <td class="text-left"><code>ThermostatBeginTemperature</code></td>
+            <td class="text-center">$^\circ\text{C}$</td>
+            <td class="text-left"><strong>Обязательный</strong> (порог рабочей температуры ОЖ)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>OverheatTemperature</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Engine</code></td>
+            <td class="text-left"><code>OverheatTemperature</code></td>
+            <td class="text-center">$^\circ\text{C}$</td>
+            <td class="text-left"><strong>Обязательный</strong> (порог перегрева двигателя)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>OilTemperature</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Engine</code></td>
+            <td class="text-left"><code>OilTemperature</code></td>
+            <td class="text-center">$^\circ\text{C}$</td>
+            <td class="text-left"><strong>Обязательный</strong> (температура моторного масла)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>OilPressure</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Engine</code></td>
+            <td class="text-left"><code>OilPressure</code></td>
+            <td class="text-center">бар</td>
+            <td class="text-left"><strong>Обязательный</strong> (текущее давление масла ДВС)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>OilLowPressure</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Engine</code></td>
+            <td class="text-left"><code>OilLowPressure</code></td>
+            <td class="text-center">бар</td>
+            <td class="text-left"><strong>Обязательный</strong> (аварийный порог давления масла)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>AFRRatio</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Engine</code></td>
+            <td class="text-left"><code>AFRRatio</code></td>
+            <td class="text-center">$\lambda$</td>
+            <td class="text-left">Стандартный (коэффициент избытка воздуха топливовоздушной смеси)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>FuelConsumedTotal</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Engine</code></td>
+            <td class="text-left"><code>FuelConsumedTotal</code></td>
+            <td class="text-center">л</td>
+            <td class="text-left"><strong>Обязательный</strong> (суммарно израсходованное топливо для расчёта <code>AvgEconomy</code> в <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>FuelConsumedPerSecond</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Engine</code></td>
+            <td class="text-left"><code>FuelConsumedPerSecond</code></td>
+            <td class="text-center">л/с</td>
+            <td class="text-left"><strong>Обязательный</strong> (мгновенный расход топлива для бортового компьютера <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>BrokenCoolingSystem</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left"><code>Engine</code></td>
+            <td class="text-left"><code>BrokenCoolingSystem</code></td>
+            <td class="text-center">флаг</td>
+            <td class="text-left">Стандартный (флаг поломки системы охлаждения)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>StarterRPM</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Starter</code></td>
+            <td class="text-left"><code>RPM</code></td>
+            <td class="text-center">об/мин</td>
+            <td class="text-left">Стандартный (обороты вала электростартера)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>StarterBendixRPM</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>StarterBendix</code></td>
+            <td class="text-left"><code>RPM</code></td>
+            <td class="text-center">об/мин</td>
+            <td class="text-left">Стандартный (обороты выходной шестерни бендикса)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>StarterRelayEnabled</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left"><code>StarterRelay</code></td>
+            <td class="text-left"><code>Enabled</code></td>
+            <td class="text-center">флаг</td>
+            <td class="text-left">Стандартный (состояние втягивающего реле стартера)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>AutoShifterState</code></strong></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td class="text-left"><code>GearBoxLogic</code></td>
+            <td class="text-left"><code>AutoShifterState</code></td>
+            <td class="text-center"><code>0=P..3=D</code></td>
+            <td class="text-left"><strong>Обязательный для АКПП</strong> (положение селектора АКПП для HUD, <code>BP_VehicleDashboard</code>, звука заднего хода в <code>BP_CarSound</code> и анимации рычага)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>AutoShifterCurrentGear</code></strong></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td class="text-left"><code>GearBoxLogic</code></td>
+            <td class="text-left"><code>AutoShifterCurrentGear</code></td>
+            <td class="text-center"><code>-1..N-1</code></td>
+            <td class="text-left"><strong>Обязательный для АКПП</strong> (текущая ступень АКПП для HUD и <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>AutoShifterTargetGear</code></strong></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td class="text-left"><code>GearBoxLogic</code></td>
+            <td class="text-left"><code>AutoShifterTargetGear</code></td>
+            <td class="text-center"><code>-1..N-1</code></td>
+            <td class="text-left"><strong>Обязательный для АКПП</strong> (целевая ступень АКПП при переключении)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>AutoShifterMaxGear</code></strong></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td class="text-left"><code>GearBoxLogic</code></td>
+            <td class="text-left"><code>AutoShifterMaxGear</code></td>
+            <td class="text-center"><code>0..N</code></td>
+            <td class="text-left"><strong>Обязательный для АКПП</strong> (ограничение верхней передачи АКПП для HUD)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Gear</code></strong></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td class="text-left"><code>GearBox</code></td>
+            <td class="text-left"><code>Gear</code></td>
+            <td class="text-center"><code>-1..N-1</code></td>
+            <td class="text-left"><strong>Обязательный для МКПП</strong> (включённая передача МКПП для HUD, <code>BP_VehicleDashboard</code> и анимации кулисы)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>GearRatio</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>GearBox</code></td>
+            <td class="text-left"><code>GearRatio</code></td>
+            <td class="text-center">число</td>
+            <td class="text-left"><strong>Обязательный для МКПП</strong> (текущее передаточное число КПП)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>GearCount</code></strong></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td class="text-left"><code>GearBox</code></td>
+            <td class="text-left"><code>GearCount</code></td>
+            <td class="text-center">шт.</td>
+            <td class="text-left"><strong>Обязательный для МКПП</strong> (общее число ступеней в массиве <code>Gears</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>BatteryActive</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left"><code>Battery</code></td>
+            <td class="text-left"><code>BatteryActive</code></td>
+            <td class="text-center">флаг</td>
+            <td class="text-left">Стандартный (состояние подключения АКБ)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Amperage</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Battery</code></td>
+            <td class="text-left"><code>Amperage</code></td>
+            <td class="text-center">А</td>
+            <td class="text-left">Стандартный (ток разряда <code>&gt;0</code> / заряда <code>&lt;0</code> аккумулятора)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Voltage</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>IgnitionElectricCircuit</code></td>
+            <td class="text-left"><code>Voltage</code></td>
+            <td class="text-center">В</td>
+            <td class="text-left"><strong>Обязательный</strong> (напряжение в цепи зажигания)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>FuelVolume</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>FuelTank</code></td>
+            <td class="text-left"><code>LiquidVolume</code></td>
+            <td class="text-center">л</td>
+            <td class="text-left"><strong>Обязательный</strong> (остаток топлива в баке для <code>BP_CarFuelTank</code>, <code>BP_Vehicle_FuelTank</code>, <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>FuelVolumeMax</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>FuelTank</code></td>
+            <td class="text-left"><code>Volume</code></td>
+            <td class="text-center">л</td>
+            <td class="text-left"><strong>Обязательный</strong> (полная ёмкость бака для АЗС <code>BP_CarFuelTank</code>, <code>BP_VehicleDashboard</code> и читов)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>FuelRelative</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>FuelTank</code></td>
+            <td class="text-left"><code>LiquidRelativeVolume</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left">Стандартный (относительный уровень топлива в баке)</td>
+        </tr>
+    </tbody>
+</table>
+
+<h4 id="b-шасси-шины-тормоза-abstcs-и-обратная-связь-на-руле-force-feedback">B. Шасси, шины, тормоза (ABS/TCS) и обратная связь на руле (Force Feedback)</h4>
+
+<table>
+    <thead>
+        <tr>
+            <th class="text-left">Внешнее имя <code>Name</code></th>
+            <th class="text-center"><code>Type</code></th>
+            <th class="text-left"><code>Component</code></th>
+            <th class="text-left"><code>InternalName</code></th>
+            <th class="text-center">Ед. изм.</th>
+            <th class="text-left">Статус в CCD 2.0 (где используется)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="text-left"><strong><code>ForceFeedbackTorque</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>PowerSteering</code></td>
+            <td class="text-left"><code>Torque</code></td>
+            <td class="text-center">$\text{Н}\cdot\text{м}$</td>
+            <td class="text-left"><strong>Обязательный</strong> (возвращающий момент на руле для модуля Force Feedback)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>ForceFeedbackFriction</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>PowerSteering</code></td>
+            <td class="text-left"><code>Friction</code></td>
+            <td class="text-center">$\text{Н}\cdot\text{м}$</td>
+            <td class="text-left"><strong>Обязательный</strong> (сухое трение на рулевом валу для Force Feedback)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>ForceFeedbackDamping</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>PowerSteering</code></td>
+            <td class="text-left"><code>Damping</code></td>
+            <td class="text-center">$\text{Н}\cdot\text{м}\cdot\text{с/рад}$</td>
+            <td class="text-left"><strong>Обязательный</strong> (вязкое демпфирование руля для Force Feedback)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>ForceFeedbackSlipAngle</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>PowerSteering</code></td>
+            <td class="text-left"><code>SlipAngle</code></td>
+            <td class="text-center"><code>-1.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (нормированный угол увода передних шин для Force Feedback)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>ForceFeedbackInertia</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>PowerSteering</code></td>
+            <td class="text-left"><code>Inertia</code></td>
+            <td class="text-center">$\text{кг}\cdot\text{м}^2$</td>
+            <td class="text-left"><strong>Обязательный</strong> (приведённая инерция рулевого управления для Force Feedback)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>AbsActive</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left"><code>AbsTcs</code></td>
+            <td class="text-left"><code>AbsActive</code></td>
+            <td class="text-center">флаг</td>
+            <td class="text-left">Стандартный (флаг активного срабатывания ABS в данный момент)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>TcsActive</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left"><code>AbsTcs</code></td>
+            <td class="text-left"><code>TcsActive</code></td>
+            <td class="text-center">флаг</td>
+            <td class="text-left">Стандартный (флаг активного срабатывания TCS в данный момент)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>AbsEnabled</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left"><code>AbsTcs</code></td>
+            <td class="text-left"><code>AbsEnabled</code></td>
+            <td class="text-center">флаг</td>
+            <td class="text-left">Стандартный (система ABS исправна и включена)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>TcsEnabled</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left"><code>AbsTcs</code></td>
+            <td class="text-left"><code>TcsEnabled</code></td>
+            <td class="text-center">флаг</td>
+            <td class="text-left">Стандартный (система TCS исправна и включена)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>FrontWheelsWorkingPressure</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>WheelFrontLeft</code></td>
+            <td class="text-left"><code>WorkingPressure</code></td>
+            <td class="text-center">бар</td>
+            <td class="text-left">Стандартный (номинальное рабочее давление передних шин)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>WheelPressureFrontLeft</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>WheelFrontLeft</code></td>
+            <td class="text-left"><code>Pressure</code></td>
+            <td class="text-center">бар</td>
+            <td class="text-left">Стандартный (текущее давление в передней левой шине)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>WheelPressureFrontRight</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>WheelFrontRight</code></td>
+            <td class="text-left"><code>Pressure</code></td>
+            <td class="text-center">бар</td>
+            <td class="text-left">Стандартный (текущее давление в передней правой шине)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>WheelRpmFrontLeft</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>WheelFrontLeft</code></td>
+            <td class="text-left"><code>RPM</code></td>
+            <td class="text-center">об/мин</td>
+            <td class="text-left">Стандартный (обороты переднего левого колеса)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>WheelRpmFrontRight</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>WheelFrontRight</code></td>
+            <td class="text-left"><code>RPM</code></td>
+            <td class="text-center">об/мин</td>
+            <td class="text-left">Стандартный (обороты переднего правого колеса)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>WheelRpmBackLeft</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>WheelBackLeft</code></td>
+            <td class="text-left"><code>RPM</code></td>
+            <td class="text-center">об/мин</td>
+            <td class="text-left">Стандартный (обороты заднего левого колеса)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>WheelRpmBackRight</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>WheelBackRight</code></td>
+            <td class="text-left"><code>RPM</code></td>
+            <td class="text-center">об/мин</td>
+            <td class="text-left">Стандартный (обороты заднего правого колеса)</td>
+        </tr>
+    </tbody>
+</table>
+
+<h4 id="c-стрелки-приборки-внешний-свет-индикаторы-дворники-и-звук-componentcarelectrics">C. Стрелки приборки, внешний свет, индикаторы, дворники и звук (<code>Component="CarElectrics"</code>)</h4>
+
+<table>
+    <thead>
+        <tr>
+            <th class="text-left">Внешнее имя <code>Name</code></th>
+            <th class="text-center"><code>Type</code></th>
+            <th class="text-left"><code>InternalName</code> в <code>CarElectrics</code></th>
+            <th class="text-center">Ед. изм.</th>
+            <th class="text-left">Статус в CCD 2.0 (где используется)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="text-left"><strong><code>DashboardSpeed</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Speed</code></td>
+            <td class="text-center"><strong>м/с</strong></td>
+            <td class="text-left"><strong>Обязательный</strong> (стрелка спидометра <code>SpeedArrow</code> / <code>ArrowSpeedometr</code> и цифровой спидометр в <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>DashboardRPM</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>RPM</code></td>
+            <td class="text-center">об/мин</td>
+            <td class="text-left"><strong>Обязательный</strong> (стрелка тахометра <code>RPMArrow</code> / <code>ArrowRPM</code> в <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>DashboardFuel</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Fuel</code></td>
+            <td class="text-center">л</td>
+            <td class="text-left"><strong>Обязательный</strong> (стрелка уровня топлива <code>FuelArrow</code> / <code>ArrowFuelLevel</code> в <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>DashboardCoolantTemperature</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>CoolantTemperature</code></td>
+            <td class="text-center">$^\circ\text{C}$</td>
+            <td class="text-left"><strong>Обязательный</strong> (стрелка температуры ОЖ <code>CoolantTemperatureArrow</code> / <code>ArrowCoolantTemperature</code> в <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>DashboardOilPressure</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>OilPressure</code></td>
+            <td class="text-center">бар</td>
+            <td class="text-left">Стандартный (стрелка манометра масла ДВС)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>DashboardVoltage</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Voltage</code></td>
+            <td class="text-center">В</td>
+            <td class="text-left">Стандартный (стрелка вольтметра бортсети)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>DashboardAmperage</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>Amperage</code></td>
+            <td class="text-center">А</td>
+            <td class="text-left"><strong>Обязательный</strong> (стрелка амперметра в <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>DashboardIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>DashboardIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (подсветка шкал приборки, стрелок и кнопок салона в <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>LowBeamIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>LowBeamIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (фары и слот материала <code>LowBeam</code> в <code>BP_VehicleExternalLight</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>HighBeamIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>HighBeamIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (фары и слот материала <code>HighBeam</code> в <code>BP_VehicleExternalLight</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>ParkingLightsIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>ParkingLightsIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (слоты материалов <code>ParkingLights</code> и <code>LicensePlates</code> в <code>BP_VehicleExternalLight</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>FrontFogLightsIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>FrontFogLightsIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (фары и слот <code>FrontFogLights</code> в <code>BP_VehicleExternalLight</code>, иконка <code>FrontFogLightsIcon</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>RearFogLightsIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>RearFogLightsIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (фонарь и слот <code>RearFogLights</code> в <code>BP_VehicleExternalLight</code>, иконка <code>RearFogLightsIcon</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>StopLightIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>StopLightIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (фонари и слот материала <code>StopLight</code> в <code>BP_VehicleExternalLight</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>ReverseLightIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>ReverseLightIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (фонари и слот материала <code>ReverseLight</code> в <code>BP_VehicleExternalLight</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>LeftTurnLightIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>LeftTurnLightIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (мигание левых поворотников и слота <code>LeftTurnLight</code> в <code>BP_VehicleExternalLight</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>RightTurnLightIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>RightTurnLightIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (мигание правых поворотников и слота <code>RightTurnLight</code> в <code>BP_VehicleExternalLight</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>LowBeamIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>LowBeamIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (слот индикатора <code>LowBeamIcon</code> в <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>HighBeamIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>HighBeamIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (слот индикатора <code>HighBeamIcon</code> в <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>ParkingLightsIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>ParkingLightsIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (слот индикатора <code>ParkingLightsIcon</code> в <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>LeftTurnLightIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>LeftTurnLightIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (слот <code>LeftTurnLightIcon</code> в <code>BP_VehicleDashboard</code> + звук щелчков реле в <code>BP_CarSound</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>RightTurnLightIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>RightTurnLightIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (слот <code>RightTurnLightIcon</code> в <code>BP_VehicleDashboard</code> + звук щелчков реле в <code>BP_CarSound</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>HazardLightIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>HazardLightIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (подсветка кнопки аварийки <code>HazardLightIcon</code> в <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>SafetyBeltIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>SafetyBeltIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (слот индикатора ремня <code>SafetyBeltIcon</code> в <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>ParkingBrakeIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>ParkingBrakeIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (слот индикатора ручника <code>ParkingBrakeIcon</code> в <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>BatteryIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>BatteryIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (слот индикатора АКБ <code>BatteryIcon</code> в <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>FuelIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>FuelIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (слот резерва топлива <code>FuelIcon</code> в <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>OilIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>OilIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (слот аварийного давления масла <code>OilIcon</code> в <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>OverheatIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>OverheatIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (слот перегрева ОЖ <code>OverheatIcon</code> в <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>CheckIconsIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>CheckIconsIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (слот самодиагностики <code>CheckIcons</code> при включении зажигания в <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>AbsDisableIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>AbsDisableIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (слот индикатора <code>AbsIcon</code> в <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>AbsActiveIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>AbsActiveIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (слот индикатора <code>AbsIcon</code> в <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>TcsDisableIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>TcsDisableIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (слот индикатора <code>TCSDisableIcon</code> в <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>TcsActiveIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>TcsActiveIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (слот индикатора <code>TCSActiveIcon</code> в <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>AirbagIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>AirbagIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (слот индикатора <code>AirbagIcon</code> в <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>ExhaustSystemIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>ExhaustSystemIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (слот индикатора <code>ExhaustSystemIcon</code> / Check Engine в <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>PowerSteeringIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>PowerSteeringIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (слот индикатора <code>PowerSteeringIcon</code> в <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>EmergencyStopIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>EmergencyStopIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (слот индикатора <code>EmergencyStopIcon</code> в <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>FrontWindshieldWiperPhase</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>FrontWindshieldWiperPhase</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (анимация передних дворников в <code>BP_VehicleWipersController</code>, очистка капель <code>BP_VehicleWindshieldController</code>, звук в <code>BP_CarSound</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>BackWindshieldWiperPhase</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>BackWindshieldWiperPhase</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (анимация заднего дворника в <code>BP_VehicleWipersController</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>FrontWindshieldWiperSpeed</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>FrontWindshieldWiperSpeed</code></td>
+            <td class="text-center">цикл/с</td>
+            <td class="text-left">Стандартный (скорость взмаха передних дворников)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>BackWindshieldWiperSpeed</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>BackWindshieldWiperSpeed</code></td>
+            <td class="text-center">цикл/с</td>
+            <td class="text-left">Стандартный (скорость взмаха заднего дворника)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>FrontWindshieldWiperForward</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left"><code>FrontWindshieldWiperForward</code></td>
+            <td class="text-center">флаг</td>
+            <td class="text-left">Стандартный (направление хода щёток передних дворников)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>TurnSignal</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left"><code>TurnSignal</code></td>
+            <td class="text-center">флаг</td>
+            <td class="text-left">Стандартный (состояние реле-прерывателя поворотников)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>HornVolume</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>HornVolume</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (громкость клаксона: при <code>&gt; 0.1</code> включает FMOD-событие гудка в <code>BP_CarSound</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>SafetyBeltBeeperVolume</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>SafetyBeltBeeperVolume</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left"><strong>Обязательный</strong> (громкость зуммера непристёгнутого ремня: при <code>&gt; 0.1</code> включает звук в <code>BP_CarSound</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>BeeperVolume</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left"><code>BeeperVolume</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td class="text-left">Стандартный (громкость аварийного зуммера приборной панели)</td>
+        </tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h2 id="3-справочник-внутренних-имён-internalname-по-классам-компонентов">3. Справочник внутренних имён (<code>InternalName</code>) по классам компонентов</h2>
+
+<h3 id="31-доступные-входы-inputprocessors-по-классам-class">3.1. Доступные входы (<code>&lt;InputProcessors&gt;</code>) по классам <code>Class</code></h3>
+
+<table>
+    <thead>
+        <tr>
+            <th class="text-left">Класс компонента (<code>Class</code>)</th>
+            <th class="text-left"><code>InternalName</code> входа</th>
+            <th class="text-center">Тип</th>
+            <th class="text-left">Назначение и диапазон</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="text-left"><strong><code>EngineGazoline</code></strong>, <strong><code>EngineDiesel</code></strong></td>
+            <td class="text-left"><code>FuelConsumptionMultiplier</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Множитель расхода топлива (<code>1.0</code> по умолчанию)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>EngineGazoline</code></strong>, <strong><code>EngineDiesel</code></strong></td>
+            <td class="text-left"><code>CoolantLeak</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left">Пробоина радиатора / утечка ОЖ</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>EngineGazoline</code></strong>, <strong><code>EngineDiesel</code></strong></td>
+            <td class="text-left"><code>BrokenCoolingSystem</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left">Заклинивание термостата (отказ охлаждения)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>EngineGazoline</code></strong>, <strong><code>EngineDiesel</code></strong></td>
+            <td class="text-left"><code>OilLevel</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left">Утечка моторного масла</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>ExternalVelocityMotor</code></strong></td>
+            <td class="text-left"><code>ShaftRpm</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Целевые обороты вала (об/мин)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>VariableTorqueConverter</code></strong></td>
+            <td class="text-left"><code>GearRatio</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Текущее передаточное число вариатора</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>GearBox</code></strong></td>
+            <td class="text-left"><code>Gear</code></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td class="text-left">Индекс включаемой передачи (<code>-1</code> = нейтраль, <code>0..N-1</code> = ступени <code>Gears</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>GearBoxAutomatic</code></strong></td>
+            <td class="text-left"><code>Accelerator</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Педаль газа <code>0.0..1.0</code> (для расчёта переключений по <code>OptimalRpm</code> и блокировки ГДТ)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>DifferentialOpen</code></strong></td>
+            <td class="text-left"><code>Lock</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left">Принудительная блокировка дифференциала (при <code>DisableInput = false</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Relay</code></strong></td>
+            <td class="text-left"><code>Enable</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left">Смыкание (<code>true</code>) / размыкание (<code>false</code>) муфты</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Retarder</code></strong></td>
+            <td class="text-left"><code>Enabled</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left">Разрешение работы гидравлического ретардера</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Retarder</code></strong></td>
+            <td class="text-left"><code>Brake</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Плавное тормозное усилие <code>0.0..1.0</code> (при <code>DiscreteInput = false</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Retarder</code></strong></td>
+            <td class="text-left"><code>BrakeStage</code></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td class="text-left">Ступень торможения <code>0..N</code> (при <code>DiscreteInput = true</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>BrakeFriction</code></strong>, <strong><code>BrakeFrictionPneumatic</code></strong></td>
+            <td class="text-left"><code>Brake</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Рабочий тормоз <code>0.0..1.0</code></td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>BrakeFriction</code></strong>, <strong><code>BrakeFrictionPneumatic</code></strong></td>
+            <td class="text-left"><code>ParkingBrake</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Стояночный тормоз <code>0.0..1.0</code></td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>BrakeFriction</code></strong>, <strong><code>BrakeFrictionPneumatic</code></strong></td>
+            <td class="text-left"><code>BrokenBrake</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left">Отказ тормозного механизма</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>WheelRaycast</code></strong></td>
+            <td class="text-left"><code>Blowout</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left">Прокол / разрыв шины</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>WheelRaycast</code></strong></td>
+            <td class="text-left"><code>NoSlip</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left">Режим идеального сцепления без скольжения</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Generator</code></strong>, <strong><code>PowerSteering</code></strong></td>
+            <td class="text-left"><code>Broken</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left">Отказ генератора / отказ усилителя руля</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>ElectricCircuit</code></strong></td>
+            <td class="text-left"><code>Master</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left">Подключение цепи к её родительской мастер-цепи</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Battery</code></strong></td>
+            <td class="text-left"><code>Battery</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left">Выключатель массы АКБ (<code>true</code> = подключена)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Battery</code></strong></td>
+            <td class="text-left"><code>EnableUnlimited</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left">Бесконечный заряд аккумулятора</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>ElectricElement</code></strong></td>
+            <td class="text-left"><code>Enabled</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left">Включение одиночного электропотребителя</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>CarElectrics</code></strong></td>
+            <td class="text-left"><code>Brake</code>, <code>ParkingBrake</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Сигналы педали тормоза и ручника <code>0.0..1.0</code></td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>CarElectrics</code></strong></td>
+            <td class="text-left"><code>FrontWindshieldWipersTimeDelay</code>, <code>BackWindshieldWipersTimeDelay</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Пауза прерывистого режима дворников (с)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>CarElectrics</code></strong></td>
+            <td class="text-left"><code>FrontWindshieldWiper</code>, <code>BackWindshieldWiper</code></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td class="text-left">Режим работы дворников (<code>0</code> = выкл., <code>1</code> = прерыв., <code>2</code> = норм., <code>3</code> = быстр.)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>CarElectrics</code></strong></td>
+            <td class="text-left"><code>LowBeam</code>, <code>HighBeam</code>, <code>HighBeamUnfixed</code>, <code>ParkingLights</code>, <code>FrontFogLights</code>, <code>RearFogLights</code>, <code>LeftTurnLight</code>, <code>RightTurnLight</code>, <code>HazardLight</code>, <code>Horn</code>, <code>SafetyBelt</code>, <code>BrokenLighting</code>, <code>BrokenBrake</code>, <code>BrokenPowerSteering</code>, <code>ShutdownEngine</code>, <code>Retarder</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left">Включение соответствующих световых приборов, клаксона, ремня, индикаторов и отказов</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>FuelControllerComputer</code></strong></td>
+            <td class="text-left"><code>Accelerator</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Педаль газа <code>0.0..1.0</code></td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>FuelControllerComputer</code></strong></td>
+            <td class="text-left"><code>FuelFeed</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left">Разрешение подачи топлива от замка зажигания</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>FuelControllerMechanical</code></strong></td>
+            <td class="text-left"><code>Accelerator</code>, <code>Choke</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Педаль газа <code>0.0..1.0</code> и воздушная заслонка (подсос) <code>0.0..1.0</code></td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>FuelControllerMechanical</code></strong></td>
+            <td class="text-left"><code>FuelFeed</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left">Разрешение подачи топлива</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>AbsTcs</code></strong></td>
+            <td class="text-left"><code>Brake</code>, <code>Accelerator</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Входы педалей тормоза и газа <code>0.0..1.0</code></td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>AbsTcs</code></strong></td>
+            <td class="text-left"><code>EnableABS</code>, <code>EnableTCS</code>, <code>Enabled</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left">Включение ABS, TCS и электропитания блока</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>ClutchInputProcessor</code></strong></td>
+            <td class="text-left"><code>Clutch</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Педаль сцепления (<code>0.0</code> = выжата, <code>1.0</code> = отпущена)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>GearBoxAutomaticLogic</code></strong></td>
+            <td class="text-left"><code>Accelerator</code>, <code>Brake</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Сигналы педалей газа и тормоза <code>0.0..1.0</code></td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>GearBoxAutomaticLogic</code></strong></td>
+            <td class="text-left"><code>AutoShifterState</code>, <code>AutoShifterMaxGear</code></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td class="text-left">Режим селектора (<code>0=P, 1=R, 2=N, 3=D</code>) и ограничение ступени (<code>0..N</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>GearBoxAutomaticLogicBus</code></strong></td>
+            <td class="text-left"><code>ReverseLock</code> <em>(+ все входы <code>GearBoxAutomaticLogic</code>)</em></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left">Блокировка включения заднего хода автобуса</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>IgnitionKeyProcessor</code></strong></td>
+            <td class="text-left"><code>Ignition</code></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td class="text-left">Положение ключа (<code>0 = Off</code>, <code>1 = Ignition</code>, <code>2 = Starter</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Speedometer</code></strong></td>
+            <td class="text-left"><code>MileageMultiplier</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Множитель намотки пробега</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Steering2Ackermann</code></strong>, <strong><code>SteeringSimple</code></strong></td>
+            <td class="text-left"><code>Steering</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Положение руля (<code>-1.0</code> = влево, <code>+1.0</code> = вправо)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Steering2Ackermann</code></strong>, <strong><code>SteeringSimple</code></strong></td>
+            <td class="text-left"><code>BrokenSteering</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left">Поломка рулевого механизма</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>ActuatorPneumatic1Chamber/2Chamber</code></strong></td>
+            <td class="text-left"><code>Position</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Целевое положение штока/поршня <code>0.0..1.0</code></td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Turbocharger</code></strong></td>
+            <td class="text-left"><code>Throttle</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Открытие дросселя <code>0.0..1.0</code> для расчёта наддува</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Tank</code></strong></td>
+            <td class="text-left"><code>DrainSpeed</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Скорость утечки (<code>&gt; 0</code>) или заправки (<code>&lt; 0</code>), л/с</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Tank</code></strong></td>
+            <td class="text-left"><code>EnableUnlimited</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left">Бесконечный запас жидкости в баке</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>ExternalThruster</code></strong></td>
+            <td class="text-left"><code>Power</code></td>
+            <td class="text-center"><code>Real</code> / <code>Boolean</code></td>
+            <td class="text-left">Относительная тяга внешнего толкателя <code>[-1.0..1.0]</code></td>
+        </tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h3 id="32-доступные-выходы-outputelements-по-классам-class">3.2. Доступные выходы (<code>&lt;OutputElements&gt;</code>) по классам <code>Class</code></h3>
+
+<table>
+    <thead>
+        <tr>
+            <th class="text-left">Класс компонента (<code>Class</code>)</th>
+            <th class="text-left"><code>InternalName</code> выхода</th>
+            <th class="text-center">Тип</th>
+            <th class="text-left">Описание и единицы измерения</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="text-left"><strong>Узлы силовой передачи</strong> <em>(кроме <code>BrakeFrictionPneumatic</code>)</em></td>
+            <td class="text-left"><code>RPM</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Частота вращения вала компонента (об/мин)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>EngineGazoline</code></strong>, <strong><code>EngineDiesel</code></strong></td>
+            <td class="text-left"><code>RPM</code>, <code>RPMLimit</code>, <code>StableRPM</code>, <code>OptimalRpmMin</code>, <code>OptimalRpmMax</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Текущие, предельные, минимальные устойчивые и оптимальные обороты (об/мин)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>EngineGazoline</code></strong>, <strong><code>EngineDiesel</code></strong></td>
+            <td class="text-left"><code>CoolantTemperature</code>, <code>ThermostatBeginTemperature</code>, <code>OverheatTemperature</code>, <code>OilTemperature</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Температуры ОЖ, начала открытия термостата, перегрева и масла ($^\circ\text{C}$)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>EngineGazoline</code></strong>, <strong><code>EngineDiesel</code></strong></td>
+            <td class="text-left"><code>CoolantLevel</code>, <code>OilPressure</code>, <code>OilLowPressure</code>, <code>AFRRatio</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Уровень ОЖ (<code>0..1</code>), давление масла и его аварийный порог (бар), коэффициент $\lambda$</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>EngineGazoline</code></strong>, <strong><code>EngineDiesel</code></strong></td>
+            <td class="text-left"><code>Load</code>, <code>MaxTorque</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Текущий и максимальный крутящий момент ДВС ($\text{Н}\cdot\text{м}$)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>EngineGazoline</code></strong>, <strong><code>EngineDiesel</code></strong></td>
+            <td class="text-left"><code>FuelConsumedTotal</code>, <code>FuelConsumedPerSecond</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Суммарный (л) и мгновенный (л/с) расход топлива</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>EngineGazoline</code></strong>, <strong><code>EngineDiesel</code></strong></td>
+            <td class="text-left"><code>VibrationFrequency</code>, <code>VibrationAmplitude</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Частота (Гц) и амплитуда (м) вибрации двигателя</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>EngineGazoline</code></strong>, <strong><code>EngineDiesel</code></strong></td>
+            <td class="text-left"><code>Combustion</code>, <code>BrokenCoolingSystem</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left">Флаг работы ДВС (наличия вспышек) и флаг поломки охлаждения</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>ExternalVelocityMotor</code></strong></td>
+            <td class="text-left"><code>RPM</code>, <code>ShaftRpm</code>, <code>Position</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Обороты вала, целевые обороты (об/мин) и угловое положение (<code>-1..1</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>VariableTorqueConverter</code></strong>, <strong><code>Reducer</code></strong></td>
+            <td class="text-left"><code>RPM</code>, <code>OutRPM</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Обороты входного и выходного валов (об/мин)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>GearBox</code></strong></td>
+            <td class="text-left"><code>RPM</code>, <code>GearRatio</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Обороты вала (об/мин) и текущее передаточное число</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>GearBox</code></strong></td>
+            <td class="text-left"><code>Gear</code>, <code>GearCount</code></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td class="text-left">Индекс включённой передачи (<code>-1..N-1</code>) и общее число передач</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>GearBox</code></strong></td>
+            <td class="text-left"><code>EnableNeutralInput</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left">Разрешён ли индекс <code>-1</code> для нейтрали</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>DifferentialOpen</code></strong></td>
+            <td class="text-left"><code>RPM</code> (<code>Real</code>), <code>Locked</code> (<code>Boolean</code>)</td>
+            <td class="text-center">смеш.</td>
+            <td class="text-left">Обороты корпуса дифференциала и статус его блокировки</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Relay</code></strong></td>
+            <td class="text-left"><code>RPM</code> (<code>Real</code>), <code>Enabled</code> (<code>Boolean</code>)</td>
+            <td class="text-center">смеш.</td>
+            <td class="text-left">Обороты муфты и статус её включения</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Retarder</code></strong></td>
+            <td class="text-left"><code>RPM</code>, <code>RelativeTorque</code> (<code>Real</code>), <code>Enabled</code>, <code>DiscreteInput</code> (<code>Boolean</code>)</td>
+            <td class="text-center">смеш.</td>
+            <td class="text-left">Обороты, относительный тормозной момент и флаги режима ретардера</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>BrakeFrictionPneumatic</code></strong></td>
+            <td class="text-left"><code>MinPressure</code>, <code>MinWorkPressure</code>, <code>WorkPressure</code>, <code>SpringLockMinPressure</code>, <code>SpringLockWorkPressure</code>, <code>PressureLevel</code>, <code>AirFlowIntensityLevel</code>, <code>PressureLevelSpringLock</code>, <code>AirFlowIntensityLevelSpringLock</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Давления (бар) и уровни перепуска воздуха рабочей тормозной камеры и пружинного энергоаккумулятора</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>WheelRaycast</code></strong></td>
+            <td class="text-left"><code>RPM</code>, <code>WorkingPressure</code>, <code>LowPressure</code>, <code>Pressure</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Обороты колеса (об/мин), номинальное, аварийное и текущее давление в шине (бар)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Pump</code></strong>, <strong><code>Receiver</code></strong></td>
+            <td class="text-left"><code>RPM</code> <em>(только <code>Pump</code>)</em>, <code>Pressure</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Обороты насоса (об/мин) и абсолютное давление в контуре (бар)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>ElectricCircuit</code></strong></td>
+            <td class="text-left"><code>Voltage</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Напряжение электрической цепи (В)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Battery</code></strong></td>
+            <td class="text-left"><code>Amperage</code>, <code>VoltageMin</code>, <code>CapacityRelative</code> (<code>Real</code>), <code>BatteryActive</code> (<code>Boolean</code>)</td>
+            <td class="text-center">смеш.</td>
+            <td class="text-left">Ток АКБ (А), минимальное напряжение (В), уровень заряда (<code>0..1</code>) и флаг активности</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>ElectricElement</code></strong></td>
+            <td class="text-left"><code>Intensity</code> (<code>Real</code>), <code>Enabled</code> (<code>Boolean</code>)</td>
+            <td class="text-center">смеш.</td>
+            <td class="text-left">Относительная мощность работы (<code>0..1</code>) и статус включения</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>AbsTcs</code></strong></td>
+            <td class="text-left"><code>Intensity</code> (<code>Real</code>), <code>Enabled</code>, <code>AbsActive</code>, <code>TcsActive</code>, <code>AbsEnabled</code>, <code>TcsEnabled</code> (<code>Boolean</code>)</td>
+            <td class="text-center">смеш.</td>
+            <td class="text-left">Статусы готовности и активного вмешательства систем ABS и TCS</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>GearBoxAutomaticLogic</code></strong>, <strong><code>GearBoxAutomaticLogicBus</code></strong></td>
+            <td class="text-left"><code>AutoShifterState</code>, <code>CurrentState</code>, <code>AutoShifterMaxGear</code>, <code>AutoShifterCurrentGear</code>, <code>AutoShifterTargetGear</code></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td class="text-left">Выбранный и фактический режим (<code>0=P..3=D</code>), лимит ступени, текущая и целевая передачи</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>FuelConsumptionMeter</code></strong></td>
+            <td class="text-left"><code>AverageFuelConsumption</code>, <code>SessionAverageFuelConsumption</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Скользящий и сессионный средний расход в <strong>л/м</strong> <em>(для л/100 км умножить на <code>100000</code>)</em></td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>PowerSteering</code></strong></td>
+            <td class="text-left"><code>Torque</code>, <code>Friction</code>, <code>Damping</code>, <code>SlipAngle</code>, <code>Inertia</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Параметры силовой обратной связи (Force Feedback) на рулевом валу</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Speedometer</code></strong></td>
+            <td class="text-left"><code>Speed</code>, <code>Mileage</code>, <code>SessionMileage</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Скорость автомобиля (<strong>м/с</strong>), общий и суточный пробег (м)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Steering2Ackermann</code></strong></td>
+            <td class="text-left"><code>MaxSteeringAngle</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Средний максимальный угол поворота управляемых колёс (рад)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Suspension1Spring</code></strong></td>
+            <td class="text-left"><code>SpringSag</code>, <code>WheelSteeringAngle</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Относительное сжатие пружины (<code>0..1</code>) и угол поворота колеса (град.)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>ActuatorPneumatic1/2Chamber</code></strong></td>
+            <td class="text-left"><code>WorkPressure</code>, <code>MaxVolumePressure</code>, <code>Position</code>, <code>PressureLeft</code>, <code>PressureRight</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Давления в камерах (бар) и положение поршня (<code>0..1</code>, для <code>2Chamber</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Tank</code></strong></td>
+            <td class="text-left"><code>LiquidVolume</code>, <code>Volume</code>, <code>LiquidRelativeVolume</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Текущий объём (л), полная ёмкость (л) и доля заполнения (<code>0..1</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>CarElectrics</code></strong> <em>(стрелки)</em></td>
+            <td class="text-left"><code>Fuel</code>, <code>Speed</code> (м/с), <code>RPM</code>, <code>CoolantTemperature</code>, <code>OilPressure</code>, <code>GearBoxOilPressure</code>, <code>Voltage</code>, <code>Amperage</code>, <code>PneumoPressure0</code>, <code>PneumoPressure1</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Показания стрелочных указателей приборной панели (в <code>.ini</code> настраиваются с префиксами <code>&lt;Имя&gt;Needle_</code>, <code>RpmNeedle_</code>, <code>OilNeedle_</code>, <code>GearBoxOilNeedle_</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>CarElectrics</code></strong> <em>(внешний свет и подсветка)</em></td>
+            <td class="text-left"><code>LowBeamIntensity</code>, <code>HighBeamIntensity</code>, <code>ParkingLightsIntensity</code>, <code>FrontFogLightsIntensity</code>, <code>RearFogLightsIntensity</code>, <code>StopLightIntensity</code>, <code>ReverseLightIntensity</code>, <code>ParkingBrakeLightIntensity</code>, <code>RetarderLightIntensity</code>, <code>LeftTurnLightIntensity</code>, <code>RightTurnLightIntensity</code>, <code>DashboardIntensity</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Яркость внешних световых приборов и подсветки приборной панели (<code>0.0..1.0</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>CarElectrics</code></strong> <em>(основные иконки приборки)</em></td>
+            <td class="text-left"><code>LowBeamIconIntensity</code>, <code>HighBeamIconIntensity</code>, <code>ParkingLightsIconIntensity</code>, <code>LeftTurnLightIconIntensity</code>, <code>RightTurnLightIconIntensity</code>, <code>HazardLightIconIntensity</code>, <code>SafetyBeltIconIntensity</code>, <code>ParkingBrakeIconIntensity</code>, <code>BatteryIconIntensity</code>, <code>FuelIconIntensity</code>, <code>OilIconIntensity</code>, <code>OverheatIconIntensity</code>, <code>CheckIconsIntensity</code>, <code>AbsDisableIconIntensity</code>, <code>AbsActiveIconIntensity</code>, <code>TcsDisableIconIntensity</code>, <code>TcsActiveIconIntensity</code>, <code>AirbagIconIntensity</code>, <code>ExhaustSystemIconIntensity</code>, <code>PowerSteeringIconIntensity</code>, <code>EmergencyStopIconIntensity</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Яркость 21 стандартной контрольной лампы приборной панели легкового автомобиля (<code>0.0..1.0</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>CarElectrics</code></strong> <em>(доп. иконки грузовиков/автобусов/AWD)</em></td>
+            <td class="text-left"><code>HighOilPressureIconIntensity</code>, <code>GearBoxOilIconIntensity</code>, <code>GearBoxOilHighPressureIconIntensity</code>, <code>StartControlIconIntensity</code>, <code>HeaterControlIconIntensity</code>, <code>DoorIcon0Intensity..DoorIcon3Intensity</code>, <code>RetarderIconIntensity</code>, <code>GearBoxIconNIntensity</code>, <code>GearBoxIconRIntensity</code>, <code>GearBoxIconDIntensity</code>, <code>GearBoxIcon1Intensity</code>, <code>GearBoxIcon2Intensity</code>, <code>BrakeOilLowLevelIconIntensity</code>, <code>LowTirePressureIconIntensity</code>, <code>OverdriveAWDIconIntensity</code>, <code>DownshiftAWDIconIntensity</code>, <code>LowPressureIcon0Intensity..3Intensity</code>, <code>LowPressureIconIntensity</code>, <code>ShutdownEngineIconIntensity</code>, <code>DiffLockIcon0Intensity..2Intensity</code>, <code>DriveAxisIcon0Intensity..2Intensity</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Яркость специализированных контрольных ламп (<code>0.0..1.0</code>; для работы любого элемента в <code>[CarElectrics]</code> должно быть задано <code>&lt;Префикс&gt;_Resistance &gt; 0</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>CarElectrics</code></strong> <em>(дворники, звук и флаги)</em></td>
+            <td class="text-left"><code>FrontWindshieldWiperPhase</code>, <code>BackWindshieldWiperPhase</code>, <code>FrontWindshieldWiperSpeed</code>, <code>BackWindshieldWiperSpeed</code>, <code>HornVolume</code>, <code>BeeperVolume</code>, <code>SafetyBeltBeeperVolume</code>, <code>EnvironmentTemperature</code> (<code>Real</code>); <code>TurnSignal</code>, <code>ParkingBrakeLight</code>, <code>HighBeam</code>, <code>FrontWindshieldWiperForward</code> (<code>Boolean</code>)</td>
+            <td class="text-center">смеш.</td>
+            <td class="text-left">Фазы (<code>0..1</code>) и скорости дворников, громкости звуковых сигналов (<code>0..1</code>), внешняя температура ($^\circ\text{C}$) и логические флаги</td>
+        </tr>
+    </tbody>
+</table>
+
+<hr>
+
+<h3 id="33-доступные-состояния-stateelements-по-классам-class">3.3. Доступные состояния (<code>&lt;StateElements&gt;</code>) по классам <code>Class</code></h3>
+
+<table>
+    <thead>
+        <tr>
+            <th class="text-left">Класс компонента (<code>Class</code>)</th>
+            <th class="text-left"><code>InternalName</code> состояния</th>
+            <th class="text-center">Тип</th>
+            <th class="text-left">Назначение и диапазон</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="text-left"><strong>Все узлы силовой передачи</strong></td>
+            <td class="text-left"><code>AngularVelocity</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Мгновенная установка угловой скорости вала (рад/с)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong>Узлы силовой передачи</strong> <em>(кроме ДВС)</em></td>
+            <td class="text-left"><code>Jammed</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left">Механическое заклинивание вала</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>EngineGazoline</code></strong>, <strong><code>EngineDiesel</code></strong></td>
+            <td class="text-left"><code>CoolantLevel</code>, <code>OilLevel</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Уровень охлаждающей жидкости и моторного масла (<code>0.0..1.0</code>)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>EngineGazoline</code></strong>, <strong><code>EngineDiesel</code></strong></td>
+            <td class="text-left"><code>CoolantTemperature</code>, <code>OilTemperature</code>, <code>FuelChamberTemperature</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Температура ОЖ, масла и камеры сгорания ($^\circ\text{C}$)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>EngineGazoline</code></strong>, <strong><code>EngineDiesel</code></strong></td>
+            <td class="text-left"><code>BrokenCoolingSystem</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-left">Поломка системы охлаждения / термостата</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>GearBox</code></strong></td>
+            <td class="text-left"><code>Gear</code></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td class="text-left">Мгновенное включение передачи (<code>-1..N-1</code>) в обход синхронизаторов</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>GearBoxAutomaticLogic</code></strong>, <strong><code>GearBoxAutomaticLogicBus</code></strong></td>
+            <td class="text-left"><code>State</code></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td class="text-left">Мгновенный перевод селектора и АКПП в режим <code>0=P, 1=R, 2=N, 3=D</code></td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>WheelRaycast</code></strong></td>
+            <td class="text-left"><code>Pressure</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Избыточное давление воздуха в шине (бар)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Speedometer</code></strong></td>
+            <td class="text-left"><code>Mileage</code>, <code>SessionMileage</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Общий и суточный пробег по одометру (м)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>Tank</code></strong></td>
+            <td class="text-left"><code>LiquidVolume</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-left">Текущий объём жидкости в баке (<code>0..Volume</code>, л)</td>
+        </tr>
+        <tr>
+            <td class="text-left"><strong><code>FuelConsumptionMeter</code></strong></td>
+            <td class="text-left"><code>AverageFuelConsumption</code>, <code>SessionMileage</code>, <code>SessionFuelConsumed</code> (<code>Real</code>), <code>IsEnabled</code> (<code>Boolean</code>)</td>
+            <td class="text-center">смеш.</td>
+            <td class="text-left">Средний расход (л/м; <code>&lt; 0</code> сбрасывает буфер), пробег сессии (м), расход сессии (л) и флаг активности</td>
+        </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

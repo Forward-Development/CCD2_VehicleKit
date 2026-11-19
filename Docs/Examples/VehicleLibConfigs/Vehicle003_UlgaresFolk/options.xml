@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+ 
+<Options>
+
+    <AvailableOptions>
+		<Option Name="EngineType">
+            <OptionValue Value="1.6TD" />
+            <OptionValue Value="1.8I" />
+        </Option>
+		<Option Name="TransmissionType" SetSchema="true">
+            <OptionValue Value="Auto"	SchemaName="Common/Vehicles/MotorCars/Schemes/FwdAuto.xml" />
+            <OptionValue Value="Manual"	SchemaName="Common/Vehicles/MotorCars/Schemes/FwdManual.xml" />
+        </Option>
+    </AvailableOptions>
+	
+</Options>

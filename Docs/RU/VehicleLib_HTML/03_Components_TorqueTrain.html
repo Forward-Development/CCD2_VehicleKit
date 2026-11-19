@@ -1,0 +1,1727 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>03. Компоненты силовой передачи и двигателей в City Car Driving 2.0</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      throwOnError: false
+    });"></script>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true });
+  </script>
+  <style>
+    body {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 32px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #1f2328;
+      background-color: #ffffff;
+    }
+    h1, h2, h3, h4 {
+      margin-top: 24px;
+      margin-bottom: 16px;
+      font-weight: 600;
+      line-height: 1.25;
+    }
+    h1 {
+      font-size: 2em;
+      padding-bottom: 0.3em;
+      border-bottom: 1px solid #d0d7de;
+    }
+    h2 {
+      font-size: 1.5em;
+      padding-bottom: 0.3em;
+      border-bottom: 1px solid #d0d7de;
+    }
+    h3 {
+      font-size: 1.25em;
+    }
+    a {
+      color: #0969da;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    hr {
+      height: 0.25em;
+      padding: 0;
+      margin: 24px 0;
+      background-color: #d0d7de;
+      border: 0;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 16px 0;
+      font-size: 0.95em;
+    }
+    th, td {
+      border: 1px solid #d0d7de;
+      padding: 8px 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #f6f8fa;
+      font-weight: 600;
+    }
+    tr:nth-child(even) {
+      background: #f6f8fa;
+    }
+    td.center, th.center {
+      text-align: center;
+    }
+    code {
+      background: #eff1f3;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 0.9em;
+    }
+    pre {
+      background: #f6f8fa;
+      padding: 14px;
+      border-radius: 6px;
+      overflow-x: auto;
+      border: 1px solid #d0d7de;
+      line-height: 1.45;
+    }
+    pre code {
+      background: transparent;
+      padding: 0;
+      border-radius: 0;
+      font-size: 0.9em;
+    }
+    pre.mermaid {
+      background: #ffffff;
+      text-align: center;
+    }
+    .alert {
+      padding: 12px 16px;
+      margin: 16px 0;
+      border-left: 4px solid;
+      border-radius: 4px;
+      background: #f6f8fa;
+    }
+    .alert-title {
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .alert-note {
+      border-left-color: #0969da;
+      background-color: #ddf4ff;
+    }
+    .alert-note .alert-title {
+      color: #0969da;
+    }
+    .alert-tip {
+      border-left-color: #1a7f37;
+      background-color: #dafbe1;
+    }
+    .alert-tip .alert-title {
+      color: #1a7f37;
+    }
+    .alert-important {
+      border-left-color: #8250df;
+      background-color: #fbefff;
+    }
+    .alert-important .alert-title {
+      color: #8250df;
+    }
+    .alert-warning {
+      border-left-color: #9a6700;
+      background-color: #fff8c5;
+    }
+    .alert-warning .alert-title {
+      color: #9a6700;
+    }
+    .alert-caution {
+      border-left-color: #cf222e;
+      background-color: #ffebe9;
+    }
+    .alert-caution .alert-title {
+      color: #cf222e;
+    }
+    ul, ol {
+      padding-left: 2em;
+    }
+    li + li {
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<h1 id="03-компоненты-силовой-передачи-и-двигателей-в-city-car-driving-20">03. Компоненты силовой передачи и двигателей в City Car Driving 2.0</h1>
+
+<p><strong>Навигация:</strong> <a href="./README.html">README</a> | <a href="./00_Quick_Start.html">00. Быстрый старт</a> | <a href="./01_Architecture_and_Config.html">01. Архитектура и конфиги</a> | <a href="./02_Named_IO_and_States.html">02. Именованный ввод/вывод</a> | <strong>03. Трансмиссия</strong> | <a href="./04_Components_Electrics.html">04. Электрика</a> | <a href="./05_Components_Chassis_and_Subsystems.html">05. Шасси и подсистемы</a></p>
+
+<h2 id="содержание">Содержание</h2>
+<ol>
+  <li><a href="#1-сборка-цепочки-трансмиссии-в-xml-links-и-общие-параметры-валов-в-vehicleini">Сборка цепочки трансмиссии в XML (<code>&lt;Links&gt;</code>) и общие параметры валов в <code>Vehicle.ini</code></a></li>
+  <li><a href="#2-двигатели-enginegazoline-enginediesel-engineelectric-externalvelocitymotor">Двигатели (<code>EngineGazoline</code>, <code>EngineDiesel</code>, <code>EngineElectric</code>, <code>ExternalVelocityMotor</code>)</a></li>
+  <li><a href="#3-сцепление-гидротрансформатор-и-бендикс-clutchfriction-hydraulictorqueconverter-variabletorqueconverter-bendix">Сцепление, гидротрансформатор и бендикс (<code>ClutchFriction</code>, <code>HydraulicTorqueConverter</code>, <code>VariableTorqueConverter</code>, <code>Bendix</code>)</a></li>
+  <li><a href="#4-коробки-передач-и-узлы-трансмиссии-gearbox-gearboxautomatic-differentialopen-reducer-relay-retarder">Коробки передач и узлы трансмиссии (<code>GearBox</code>, <code>GearBoxAutomatic</code>, <code>DifferentialOpen</code>, <code>Reducer</code>, <code>Relay</code>, <code>Retarder</code>)</a></li>
+  <li><a href="#5-тормозные-механизмы-и-колёса-brakefriction-brakefrictionpneumatic-wheelraycast">Тормозные механизмы и колёса (<code>BrakeFriction</code>, <code>BrakeFrictionPneumatic</code>, <code>WheelRaycast</code>)</a></li>
+  <li><a href="#6-навесные-агрегаты-generator-pump-compressor-и-готовый-пример-vehicleini">Навесные агрегаты (<code>Generator</code>, <code>Pump</code>, <code>Compressor</code>) и готовый пример <code>Vehicle.ini</code></a></li>
+</ol>
+
+<hr>
+
+<h2 id="1-сборка-цепочки-трансмиссии-в-xml-links-и-общие-параметры-валов-в-vehicleini">1. Сборка цепочки трансмиссии в XML (<code>&lt;Links&gt;</code>) и общие параметры валов в <code>Vehicle.ini</code></h2>
+
+<p>В XML-схемах автомобиля (<code>Common/Vehicles/MotorCars/Schemes/*.xml</code>) все узлы силовой передачи соединяются направленными связями от ведущего вала к ведомому:</p>
+<pre><code class="language-xml">&lt;Link Holder="ВедущийКомпонент" Reference="ВедомыйКомпонент" /&gt;</code></pre>
+<p>Крутящий момент передаётся сверху вниз по цепочке <code>Holder -&gt; Reference</code>, а угловая скорость вращения (обороты валов) и приведённый момент инерции рассчитываются в обратном направлении — от колёс к двигателю.</p>
+
+<pre class="mermaid">
+flowchart LR
+    Starter["Starter<br/>(EngineElectric)"] --> SRelay["StarterRelay<br/>(Relay)"] --> SGear["StarterGear<br/>(Reducer)"] --> Bendix["StarterBendix<br/>(Bendix)"] --> Engine["Engine<br/>(EngineGazoline / EngineDiesel)"]
+    Engine --> Gen["Generator<br/>(Generator)"]
+    Engine --> Pump["GearBoxAutomaticPump<br/>(Pump, только *Auto.xml)"]
+    Engine --> TC["Clutch / TorqueConverter"] --> GB["GearBox / GearBoxAutomatic"] --> Diff["Differential / DifferentialAxle<br/>(DifferentialOpen)"]
+    Diff --> Brakes["BrakeFront* / BrakeBack*<br/>(BrakeFriction)"] --> Wheels["WheelFront* / WheelBack*<br/>(WheelRaycast)"]
+</pre>
+
+<h3 id="различия-цепочки-после-кпп-в-стандартных-схемах-city-car-driving-20">Различия цепочки после КПП в стандартных схемах City Car Driving 2.0</h3>
+<ul>
+  <li><strong>Передний привод (<code>FwdAuto.xml</code>, <code>FwdManual.xml</code>):</strong> КПП соединена с одним компонентом <code>&lt;Component Name="Differential" Class="DifferentialOpen" /&gt;</code>, который раздаёт момент на <code>BrakeFrontLeft</code> и <code>BrakeFrontRight</code>. Задние тормоза <code>BrakeBackLeft/Right</code> соединены только со своими колёсами <code>WheelBackLeft/Right</code>.</li>
+  <li><strong>Задний привод (<code>RwdAuto.xml</code>, <code>RwdManual.xml</code>):</strong> КПП соединена с <code>&lt;Component Name="Differential" Class="DifferentialOpen" /&gt;</code>, который раздаёт момент на <code>BrakeBackLeft</code> и <code>BrakeBackRight</code>.</li>
+  <li><strong>Полный привод (<code>AwdAuto.xml</code>, <code>AwdManual.xml</code>):</strong> КПП соединена с межосевым дифференциалом <strong><code>DifferentialAxle</code></strong> (<code>Class="DifferentialOpen"</code>), от которого две ветви идут на:
+    <ol>
+      <li>Муфту подключения переднего моста <code>FrontAxisRelay</code> (<code>Class="Relay"</code>) $\to$ передний дифференциал <code>DifferentialWheelFront</code> $\to$ <code>BrakeFrontLeft</code> и <code>BrakeFrontRight</code>.</li>
+      <li>Задний дифференциал <code>DifferentialWheelBack</code> $\to$ <code>BrakeBackLeft</code> и <code>BrakeBackRight</code>.</li>
+    </ol>
+  </li>
+</ul>
+
+<h3 id="сводный-реестр-20-компонентов-силовой-передачи-и-двигателей">Сводный реестр 20 компонентов силовой передачи и двигателей</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th class="center">№</th>
+      <th><code>Class="..."</code> в XML</th>
+      <th>Стандартная секция в <code>Vehicle.ini</code></th>
+      <th>Назначение компонента</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="center">1</td>
+      <td><code>EngineGazoline</code></td>
+      <td><code>[Engine]</code></td>
+      <td>Бензиновый ДВС с искровым зажиганием от электросети (также используется как универсальный ДВС при комбинации опций КПП и двигателя)</td>
+    </tr>
+    <tr>
+      <td class="center">2</td>
+      <td><code>EngineDiesel</code></td>
+      <td><code>[Engine]</code></td>
+      <td>Дизельный ДВС с воспламенением от сжатия</td>
+    </tr>
+    <tr>
+      <td class="center">3</td>
+      <td><code>EngineElectric</code></td>
+      <td><code>[Starter]</code></td>
+      <td>Электродвигатель постоянного тока (стартер)</td>
+    </tr>
+    <tr>
+      <td class="center">4</td>
+      <td><code>ExternalVelocityMotor</code></td>
+      <td><code>[...]</code></td>
+      <td>Сервомотор привода механизмов с внешней уставкой оборотов</td>
+    </tr>
+    <tr>
+      <td class="center">5</td>
+      <td><code>ClutchFriction</code></td>
+      <td><code>[Clutch]</code></td>
+      <td>Фрикционное сцепление (в схемах <code>*Manual.xml</code>)</td>
+    </tr>
+    <tr>
+      <td class="center">6</td>
+      <td><code>HydraulicTorqueConverter</code></td>
+      <td><code>[TorqueConverter]</code></td>
+      <td>Гидротрансформатор АКПП с муфтой блокировки (в <code>*Auto.xml</code>)</td>
+    </tr>
+    <tr>
+      <td class="center">7</td>
+      <td><code>VariableTorqueConverter</code></td>
+      <td><code>[...]</code></td>
+      <td>Вариатор с плавно изменяемым передаточным числом</td>
+    </tr>
+    <tr>
+      <td class="center">8</td>
+      <td><code>Bendix</code></td>
+      <td><code>[StarterBendix]</code></td>
+      <td>Обгонная муфта (бендикс) стартера</td>
+    </tr>
+    <tr>
+      <td class="center">9</td>
+      <td><code>GearBox</code></td>
+      <td><code>[GearBox]</code></td>
+      <td>Механическая ступенчатая КПП или раздаточная коробка</td>
+    </tr>
+    <tr>
+      <td class="center">10</td>
+      <td><code>GearBoxAutomatic</code></td>
+      <td><code>[GearBoxAutomatic]</code></td>
+      <td>Планетарная гидромеханическая АКПП (в <code>*Auto.xml</code>)</td>
+    </tr>
+    <tr>
+      <td class="center">11</td>
+      <td><code>DifferentialOpen</code></td>
+      <td><code>[Differential]</code>, <code>[DifferentialAxle]</code>, <code>[DifferentialWheelFront/Back]</code></td>
+      <td>Симметричный межколёсный или межосевой дифференциал с блокировкой</td>
+    </tr>
+    <tr>
+      <td class="center">12</td>
+      <td><code>Reducer</code></td>
+      <td><code>[StarterGear]</code></td>
+      <td>Механический редуктор с постоянным передаточным числом</td>
+    </tr>
+    <tr>
+      <td class="center">13</td>
+      <td><code>Relay</code></td>
+      <td><code>[StarterRelay]</code>, <code>[FrontAxisRelay]</code></td>
+      <td>Разобщительная муфта (механическое реле 1:1)</td>
+    </tr>
+    <tr>
+      <td class="center">14</td>
+      <td><code>Retarder</code></td>
+      <td><code>[Retarder]</code></td>
+      <td>Трансмиссионный гидродинамический тормоз-замедлитель</td>
+    </tr>
+    <tr>
+      <td class="center">15</td>
+      <td><code>BrakeFriction</code></td>
+      <td><code>[BrakeFrontLeft/Right]</code>, <code>[BrakeBackLeft/Right]</code></td>
+      <td>Колёсный фрикционный тормозной механизм</td>
+    </tr>
+    <tr>
+      <td class="center">16</td>
+      <td><code>BrakeFrictionPneumatic</code></td>
+      <td><code>[BrakeFrontLeft/Right]</code>, <code>[BrakeBackLeft/Right]</code></td>
+      <td>Пневматический тормоз с пружинным энергоаккумулятором (грузовики/автобусы)</td>
+    </tr>
+    <tr>
+      <td class="center">17</td>
+      <td><code>WheelRaycast</code></td>
+      <td><code>[WheelFrontLeft/Right]</code>, <code>[WheelBackLeft/Right]</code></td>
+      <td>Рейкастовое пневматическое колесо с кривыми Пацейки</td>
+    </tr>
+    <tr>
+      <td class="center">18</td>
+      <td><code>Generator</code></td>
+      <td><code>[Generator]</code></td>
+      <td>Автомобильный генератор с регулятором напряжения</td>
+    </tr>
+    <tr>
+      <td class="center">19</td>
+      <td><code>Pump</code></td>
+      <td><code>[GearBoxAutomaticPump]</code></td>
+      <td>Приводной масляный/гидравлический насос</td>
+    </tr>
+    <tr>
+      <td class="center">20</td>
+      <td><code>Compressor</code></td>
+      <td><code>[Compressor]</code></td>
+      <td>Приводной воздушный компрессор пневмосистемы</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="общие-параметры-всех-компонентов-трансмиссии-и-двигателей-в-vehicleini">Общие параметры всех компонентов трансмиссии и двигателей в <code>Vehicle.ini</code></h3>
+
+<p>Любой из 20 перечисленных выше компонентов поддерживает в своей секции <code>Vehicle.ini</code> следующие 5 базовых параметров вращающегося вала:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Ключ в <code>Vehicle.ini</code></th>
+      <th>Тип</th>
+      <th class="center">По умолч.</th>
+      <th class="center">Ед. изм.</th>
+      <th>Описание</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Inertia</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>1e-4</code></td>
+      <td class="center">$\text{кг}\cdot\text{м}^2$</td>
+      <td>Собственный момент инерции вращающихся частей узла. <em>(У <code>WheelRaycast</code> вычисляется автоматически из массы и радиуса).</em></td>
+    </tr>
+    <tr>
+      <td><code>RotationalFrictionConstant</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.0</code></td>
+      <td class="center">$\text{Н}\cdot\text{м}$</td>
+      <td>Постоянный момент сопротивления вращению вала ($C_{\text{const}}$).</td>
+    </tr>
+    <tr>
+      <td><code>RotationalFrictionQuadCoeff</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.0</code></td>
+      <td class="center">$\text{Н}\cdot\text{м}\cdot\text{с}^2/\text{рад}^2$</td>
+      <td>Квадратичный коэффициент трения вала ($C_{\text{quad}}$), умножаемый на квадрат угловой скорости $\omega^2$: $M_{\text{rot}} = C_{\text{const}} + C_{\text{quad}}\cdot\omega^2$. <em>(У <code>EngineElectric</code> вычисляется автоматически).</em></td>
+    </tr>
+    <tr>
+      <td><code>JammingSpeed</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>1.0</code></td>
+      <td class="center">$1/\text{с}$</td>
+      <td>Скорость нарастания тормозного момента при заклинивании вала (<code>Jammed = true</code>).</td>
+    </tr>
+    <tr>
+      <td><code>JammedFrictionMax</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>1.0</code></td>
+      <td class="center">$\text{Н}\cdot\text{м}$</td>
+      <td>Максимальный дополнительный момент сопротивления при полном заклинивании вала.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="alert alert-note">
+  <div class="alert-title">NOTE</div>
+  <p>Постоянная нагрузка на вал задаётся через <code>RotationalFrictionConstant</code>, а скоростные потери — через <code>RotationalFrictionQuadCoeff</code>. Все массивы чисел в <code>Vehicle.ini</code> записываются <strong>строго через точку с запятой <code>;</code> без пробела перед <code>;</code></strong> (<code>OilPressureRPM = 0; 750; 6000</code>).</p>
+</div>
+
+<ul>
+  <li><strong>Общий выход (<code>&lt;OutputElements&gt;</code>):</strong> <code>InternalName="RPM"</code> (<code>Real</code>, об/мин) — текущая частота вращения входного вала узла (кроме <code>BrakeFrictionPneumatic</code>).</li>
+  <li><strong>Общие состояния (<code>&lt;StateElements&gt;</code>):</strong> <code>InternalName="Jammed"</code> (<code>Boolean</code>) — принудительное заклинивание вала (кроме <code>[Engine]</code>); <code>InternalName="AngularVelocity"</code> (<code>Real</code>, рад/с) — мгновенная установка угловой скорости вала.</li>
+</ul>
+
+<hr>
+
+<h2 id="2-двигатели-enginegazoline-enginediesel-engineelectric-externalvelocitymotor">2. Двигатели (<code>EngineGazoline</code>, <code>EngineDiesel</code>, <code>EngineElectric</code>, <code>ExternalVelocityMotor</code>)</h2>
+
+<h3 id="21-бензиновый-и-дизельный-двс-engine">2.1. Бензиновый и дизельный ДВС (<code>[Engine]</code>)</h3>
+<p>В City Car Driving 2.0 секция двигателя в <code>Vehicle.ini</code> называется <strong><code>[Engine]</code></strong>. В XML-схемах доступны два класса ДВС: <strong><code>EngineGazoline</code></strong> и <strong><code>EngineDiesel</code></strong>.</p>
+
+<div class="alert alert-tip">
+  <div class="alert-title">TIP</div>
+  <p><strong>Использование <code>EngineGazoline</code> как универсального («базового») класса ДВС при сочетании опций «Бензин / Дизель» и «АКПП / МКПП»:</strong><br>
+  В файле <code>options.xml</code> атрибут <code>SetSchema="true"</code> разрешено указывать <strong>только у одной опции</strong> (попытка привязать к смене схемы одновременно и <code>TransmissionType</code>, и <code>EngineType</code> вызовет ошибку загрузки).</p>
+  <ul>
+    <li>Поэтому, если у автомобиля есть <strong>две комплектации по коробке передач</strong> (<code>Auto</code> / <code>Manual</code>) и <strong>две комплектации по типу двигателя</strong> (например, бензиновый <code>1.8I</code> и дизельный <code>1.6TD</code>), переключение XML-схемы (<code>SetSchema="true"</code>) привязывается к коробке передач (<code>*Auto.xml</code> и <code>*Manual.xml</code>), а сам компонент двигателя в обеих стандартных схемах остаётся <strong><code>Class="EngineGazoline"</code></strong>.</li>
+    <li>Поскольку вся физика расчёта крутящего момента по таблице <code>PowerCurves</code>, торможения двигателем, отсечки <code>RpmLimit</code>, холостого хода, прогрева, охлаждения и смазки у <code>EngineGazoline</code> и <code>EngineDiesel</code> <strong>полностью идентична</strong>, дизельная комплектация моделируется прямо на базе <code>Class="EngineGazoline"</code> за счёт своей дизельной кривой крутящего момента (<code>PowerCurves</code>) и переопределения секций <code>[Engine.EngineType.&lt;Дизель&gt;]</code>, <code>[Idler.EngineType.&lt;Дизель&gt;]</code>, <code>[Starter.EngineType.&lt;Дизель&gt;]</code> в <code>Vehicle.ini</code> (с сохранением <code>IgnitionResistance = 4</code> и <code>IgnitionMinVoltage = 7</code>):
+<pre><code class="language-ini">[Engine.EngineType.1.8I]
+Volume = 1.8
+RpmLimit = 7000
+PowerCurves = ../Plugins/Mods/Content/&lt;ИмяМода&gt;/Engine_1_8I.csv
+AirPressureRatio = 0.355
+IgnitionResistance = 4
+IgnitionMinVoltage = 7
+
+[Engine.EngineType.1.6TD]
+Volume = 1.6
+RpmLimit = 5000
+MinCombustionRpm = 150
+PowerCurves = ../Plugins/Mods/Content/&lt;ИмяМода&gt;/Engine_1_6TD.csv
+AirPressureRatio = 0.655
+IgnitionResistance = 4
+IgnitionMinVoltage = 7</code></pre>
+    </li>
+    <li>Выделенный класс <strong><code>Class="EngineDiesel"</code></strong> целесообразно использовать только в собственных кастомных XML-схемах чисто дизельных автомобилей или грузовиков, когда требуется специфическая физика затруднённого холодного пуска от сжатия на морозе (<code>FuelIgnitionMinTemperature</code>, по умолчанию <code>-5 °C</code>, базовый шанс вспышки <code>0.2</code> и плотность дизтоплива <code>850 кг/м³</code> вместо <code>750 кг/м³</code> у <code>EngineGazoline</code>).</li>
+  </ul>
+</div>
+
+<p><strong>Связи <code>&lt;Links&gt;</code> компонента <code>Engine</code> в XML:</strong></p>
+<ul>
+  <li>Исходящие от <code>Engine</code>: обязательная связь с топливным баком <code>&lt;Link Holder="Engine" Reference="FuelTank" /&gt;</code> и не более 1 связи с ведомым валом трансмиссии (<code>Clutch</code> в <code>*Manual.xml</code> или <code>TorqueConverter</code> в <code>*Auto.xml</code>), плюс отводы на <code>Generator</code> и <code>GearBoxAutomaticPump</code>.</li>
+  <li>Входящие на <code>Engine</code>: от <code>StarterBendix</code>, <code>Idler</code> (<code>Class="FuelControllerComputer"</code>), <code>CarElectrics</code>, <code>GearBoxAutomatic</code> (в <code>*Auto.xml</code>), <code>Turbocharger</code> (при наличии турбины).</li>
+  <li><strong>Отличие <code>EngineGazoline</code> и <code>EngineDiesel</code> в <code>&lt;Links&gt;</code>:</strong>
+    <ul>
+      <li>Для <strong><code>EngineGazoline</code></strong> обязательна связь питания свечей зажигания <code>&lt;Link Holder="IgnitionElectricCircuit" Reference="Engine" /&gt;</code> (без напряжения в цепи зажигания выше <code>IgnitionMinVoltage</code> мотор не развивает момент).</li>
+      <li>Для <strong><code>EngineDiesel</code></strong> связь <code>IgnitionElectricCircuit -&gt; Engine</code> <strong>не поддерживается и должна быть удалена из XML-схемы</strong>! Дизель воспламеняет топливо от сжатия (при температуре камеры сгорания выше <code>FuelIgnitionMinTemperature</code>), а его гарантированное глушение при повороте ключа в <code>0</code> обеспечивается связью <code>&lt;Link Holder="IgnitionKey" Reference="Idler" /&gt;</code>, перекрывающей подачу топлива в ЭБУ холостого хода.</li>
+    </ul>
+  </li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th>Ключ в <code>Vehicle.ini</code> (<code>[Engine]</code>)</th>
+      <th>Тип</th>
+      <th class="center">По умолч.</th>
+      <th class="center">Ед. изм.</th>
+      <th>Описание</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>TwoStroked</code></td>
+      <td><code>Boolean</code></td>
+      <td class="center"><code>false</code></td>
+      <td class="center">—</td>
+      <td>Тактность ДВС: <code>false</code> — 4-тактный, <code>true</code> — 2-тактный.</td>
+    </tr>
+    <tr>
+      <td><code>Volume</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>1.5</code></td>
+      <td class="center">л</td>
+      <td>Рабочий объём двигателя (влияет на наполнение цилиндров и часовой расход топлива).</td>
+    </tr>
+    <tr>
+      <td><code>CylinderCount</code></td>
+      <td><code>Integer</code></td>
+      <td class="center"><code>4</code></td>
+      <td class="center">шт.</td>
+      <td>Число цилиндров (определяет частоту вибрации <code>VibrationFrequency</code>).</td>
+    </tr>
+    <tr>
+      <td><code>RpmLimit</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>6000.0</code></td>
+      <td class="center">об/мин</td>
+      <td>Обороты срабатывания отсечки подачи топлива.</td>
+    </tr>
+    <tr>
+      <td><code>RpmLimitTime</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.1</code></td>
+      <td class="center">с</td>
+      <td>Длительность перекрытия топлива при достижении <code>RpmLimit</code>.</td>
+    </tr>
+    <tr>
+      <td><code>MinStableRpm</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>500.0</code></td>
+      <td class="center">об/мин</td>
+      <td>Минимальные обороты устойчивой работы (ниже них момент начинает случайно проседать).</td>
+    </tr>
+    <tr>
+      <td><code>MinCombustionRpm</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>50.0</code></td>
+      <td class="center">об/мин</td>
+      <td>Минимальные пусковые обороты коленвала, начиная с которых возможны вспышки в цилиндрах.</td>
+    </tr>
+    <tr>
+      <td><code>AirPressureRatio</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.2</code></td>
+      <td class="center">доля</td>
+      <td>Коэффициент наполнения цилиндров воздухом при эталонной кривой <code>PowerCurves</code>.</td>
+    </tr>
+    <tr>
+      <td><code>PowerCurves</code></td>
+      <td><code>String</code></td>
+      <td class="center"><code>"engine.csv"</code></td>
+      <td class="center">путь</td>
+      <td>Путь к 2D-таблице крутящего момента и механических потерь относительно папки <code>Content/</code> (для папки мода: <code>../Plugins/Mods/Content/&lt;ИмяМода&gt;/Engine.csv</code>).</td>
+    </tr>
+    <tr>
+      <td><code>OptimalRpmMin</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>3000.0</code></td>
+      <td class="center">об/мин</td>
+      <td>Нижняя граница оптимальной («зелёной») зоны оборотов.</td>
+    </tr>
+    <tr>
+      <td><code>OptimalRpmMax</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>4000.0</code></td>
+      <td class="center">об/мин</td>
+      <td>Верхняя граница оптимальной зоны оборотов.</td>
+    </tr>
+    <tr>
+      <td><code>VibrationCurve</code></td>
+      <td><code>String</code></td>
+      <td class="center"><code>"vibration.csv"</code></td>
+      <td class="center">путь</td>
+      <td>Путь к 1D-таблице амплитуды вибраций от <code>RPM / RpmLimit</code> (<code>Common/Vehicles/MotorCars/Tables/EngineVibration.csv</code>).</td>
+    </tr>
+    <tr>
+      <td><code>VibrationAmplitude</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.01</code></td>
+      <td class="center">м</td>
+      <td>Базовый множитель амплитуды вибрации работающего двигателя.</td>
+    </tr>
+    <tr>
+      <td><strong><code>HeatingSpeed</code></strong></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.3</code></td>
+      <td class="center">°C/с</td>
+      <td>Базовая скорость прогрева ОЖ на 1000 об/мин без нагрузки.</td>
+    </tr>
+    <tr>
+      <td><code>HeatingLoadCoeff</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>2.5</code></td>
+      <td class="center">безразм.</td>
+      <td>Во сколько раз ускоряется нагрев двигателя под полной нагрузкой (100% газа).</td>
+    </tr>
+    <tr>
+      <td><code>ThermostatBeginTemperature</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>80.0</code></td>
+      <td class="center">°C</td>
+      <td>Температура ОЖ начала открытия термостата (перехода на большой круг).</td>
+    </tr>
+    <tr>
+      <td><code>ThermostatEndTemperature</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>94.0</code></td>
+      <td class="center">°C</td>
+      <td>Температура ОЖ полного открытия термостата.</td>
+    </tr>
+    <tr>
+      <td><code>SmallCircuitCoolingSpeed</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.1</code></td>
+      <td class="center">°C/с</td>
+      <td>Скорость охлаждения по малому кругу (при разнице температур с воздухом 100 °C).</td>
+    </tr>
+    <tr>
+      <td><code>LargeCircuitCoolingSpeed</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.2</code></td>
+      <td class="center">°C/с</td>
+      <td>Дополнительная скорость охлаждения радиатором большого круга.</td>
+    </tr>
+    <tr>
+      <td><code>InmotionCoolingSpeed</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>1.0</code></td>
+      <td class="center">°C/с</td>
+      <td>Дополнительная скорость охлаждения набегающим потоком воздуха на 100 км/ч.</td>
+    </tr>
+    <tr>
+      <td><code>ElectricFan</code></td>
+      <td><code>Boolean</code></td>
+      <td class="center"><code>true</code></td>
+      <td class="center">—</td>
+      <td><code>true</code> — электровентилятор по датчику температуры; <code>false</code> — крыльчатка на вискомуфте (дует пропорционально <code>RPM</code>).</td>
+    </tr>
+    <tr>
+      <td><code>FanSwitchOnTemperature</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>99.0</code></td>
+      <td class="center">°C</td>
+      <td>Температура ОЖ включения основного вентилятора охлаждения.</td>
+    </tr>
+    <tr>
+      <td><code>FanSwitchOffTemperature</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>94.0</code></td>
+      <td class="center">°C</td>
+      <td>Температура ОЖ выключения основного вентилятора охлаждения.</td>
+    </tr>
+    <tr>
+      <td><code>FanCoolingSpeed</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.5</code></td>
+      <td class="center">°C/с</td>
+      <td>Скорость охлаждения от работающего основного вентилятора.</td>
+    </tr>
+    <tr>
+      <td><code>SecondFanSwitchOnTemperature</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>115.0</code></td>
+      <td class="center">°C</td>
+      <td>Температура ОЖ включения второго вентилятора (выключается при <code>FanSwitchOnTemperature</code>).</td>
+    </tr>
+    <tr>
+      <td><code>SecondFanCoolingSpeed</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.0</code></td>
+      <td class="center">°C/с</td>
+      <td>Скорость охлаждения от второго вентилятора.</td>
+    </tr>
+    <tr>
+      <td><code>OverheatTemperature</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>115.0</code></td>
+      <td class="center">°C</td>
+      <td>Порог температуры ОЖ, при котором срабатывает индикатор перегрева <code>OverheatIcon</code>.</td>
+    </tr>
+    <tr>
+      <td><code>MaxTemperature</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>130.0</code></td>
+      <td class="center">°C</td>
+      <td>Критическая температура ОЖ, при достижении которой двигатель необратимо заклинивает.</td>
+    </tr>
+    <tr>
+      <td><code>OilPressureRPM</code></td>
+      <td><code>Array&lt;Real&gt;</code></td>
+      <td class="center">—</td>
+      <td class="center">об/мин</td>
+      <td>Точки оборотов для расчёта давления масла (размер обязан совпадать с <code>OilPressureValues</code>, например <code>0; 750; 6000</code>).</td>
+    </tr>
+    <tr>
+      <td><code>OilPressureValues</code></td>
+      <td><code>Array&lt;Real&gt;</code></td>
+      <td class="center">—</td>
+      <td class="center">бар</td>
+      <td>Значения давления масла при 85 °C для точек <code>OilPressureRPM</code> (например, <code>0; 2; 4.2</code>).</td>
+    </tr>
+    <tr>
+      <td><code>OilLowPressureThreshold</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>1.5</code></td>
+      <td class="center">бар</td>
+      <td>Минимальное рабочее давление масла (ниже него растёт трение вала и ускоряется нагрев).</td>
+    </tr>
+    <tr>
+      <td><code>OilLowPressureHeatCoeff</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>2.0</code></td>
+      <td class="center">безразм.</td>
+      <td>Множитель скорости нагрева ДВС при нулевом давлении масла.</td>
+    </tr>
+    <tr>
+      <td><code>OilLowLevelThreshold</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.5</code></td>
+      <td class="center"><code>[0..1]</code></td>
+      <td>Уровень масла, ниже которого начинает падать давление в системе смазки.</td>
+    </tr>
+    <tr>
+      <td><code>OilPressureTemperatureCoeff</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.7</code></td>
+      <td class="center">безразм.</td>
+      <td>Коэффициент изменения давления масла от температуры относительно 85 °C.</td>
+    </tr>
+    <tr>
+      <td><code>OilPressureMinTemperature</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>30.0</code></td>
+      <td class="center">°C</td>
+      <td>Нижняя граница температуры для расчёта температурной поправки давления масла.</td>
+    </tr>
+    <tr>
+      <td><code>OilPressureMaxTemperature</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>130.0</code></td>
+      <td class="center">°C</td>
+      <td>Верхняя граница температуры для расчёта температурной поправки давления масла.</td>
+    </tr>
+    <tr>
+      <td><code>OilLevelDropRate</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.01</code></td>
+      <td class="center">$1/\text{с}$</td>
+      <td>Скорость падения уровня масла при включённом входе утечки <code>OilLevel</code>.</td>
+    </tr>
+    <tr>
+      <td><code>MinOilLevelAtLeak</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.0</code></td>
+      <td class="center"><code>[0..1]</code></td>
+      <td>Минимальный остаточный уровень масла при утечке.</td>
+    </tr>
+    <tr>
+      <td><code>IgnitionResistance</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>4.0</code></td>
+      <td class="center">Ом</td>
+      <td><strong>Только <code>EngineGazoline</code>:</strong> электрическое сопротивление системы зажигания на оборотах <code>RpmLimit</code>.</td>
+    </tr>
+    <tr>
+      <td><code>IgnitionMinVoltage</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>11.0</code></td>
+      <td class="center">В</td>
+      <td><strong>Только <code>EngineGazoline</code>:</strong> минимальное напряжение в <code>IgnitionElectricCircuit</code>, необходимое для искры.</td>
+    </tr>
+    <tr>
+      <td><code>FuelIgnitionMinTemperature</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>-5.0</code></td>
+      <td class="center">°C</td>
+      <td><strong>Только <code>EngineDiesel</code>:</strong> минимальная температура камеры сгорания для воспламенения дизтоплива от сжатия (рекомендуется <code>-20..-25</code>).</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li><strong>Входы (<code>InternalName</code>):</strong> <code>FuelConsumptionMultiplier</code> (<code>Real</code>), <code>CoolantLeak</code> (<code>Boolean</code>), <code>BrokenCoolingSystem</code> (<code>Boolean</code>), <code>OilLevel</code> (<code>Boolean</code> — утечка масла).</li>
+  <li><strong>Состояния (<code>InternalName</code>):</strong> <code>CoolantLevel</code> (<code>Real</code>, <code>[0..1]</code>), <code>CoolantTemperature</code> (<code>Real</code>, °C), <code>OilTemperature</code> (<code>Real</code>, °C), <code>OilLevel</code> (<code>Real</code>, <code>[0..1]</code>), <code>FuelChamberTemperature</code> (<code>Real</code>, °C), <code>BrokenCoolingSystem</code> (<code>Boolean</code>), <code>AngularVelocity</code> (<code>Real</code>, рад/с).</li>
+  <li><strong>Выходы (<code>InternalName</code>):</strong> <code>RPM</code>, <code>RPMLimit</code>, <code>StableRPM</code>, <code>Combustion</code> (<code>Boolean</code>), <code>CoolantTemperature</code>, <code>CoolantLevel</code>, <code>OilTemperature</code>, <code>OilPressure</code>, <code>OilLowPressure</code>, <code>AFRRatio</code>, <code>Load</code> (<code>EngineLoad</code>), <code>MaxTorque</code> (<code>EngineMaxTorque</code>), <code>FuelConsumedTotal</code>, <code>FuelConsumedPerSecond</code>, <code>ThermostatBeginTemperature</code>, <code>OverheatTemperature</code>, <code>VibrationFrequency</code> (<code>EngineVibrationFrequency</code>), <code>VibrationAmplitude</code> (<code>EngineVibrationAmplitude</code>), <code>OptimalRpmMin</code>, <code>OptimalRpmMax</code>, <code>BrokenCoolingSystem</code> (<code>Boolean</code>).</li>
+</ul>
+
+<h3 id="22-критическое-правило-расчёта-enginecsv-powercurves-и-холостого-хода-в-d">2.2. Критическое правило расчёта <code>Engine.csv</code> (<code>PowerCurves</code>) и холостого хода в <code>D</code></h3>
+<p>Файл <code>Engine.csv</code> задаёт двумерную таблицу крутящего момента от процента открытия дроссельной заслонки (по строкам: <code>0; 5; 10; 20; 40; 60; 80; 100</code>) и оборотов <code>RPM</code> (по столбцам). Разделитель ячеек — <code>;</code>, дробная часть отделяется <strong>точкой <code>.</code></strong>:</p>
+<pre><code class="language-csv">thr/rpm;0;50;250;500;750;1000;1500;2000;2500;3000;3500;4000;4500;5500
+0;0;0;0;0;0;0;0;0;0;0;0;0;0;0
+5;0;15;40;150;32;24;20;18;15;12;10;6;0;0
+10;0;18;55;180;75;65;58;52;45;38;30;18;5;0
+...
+100;0;20;80;208;288;349;490;498;486;464;440;397;325;2.5
+0;12;15;20;24;28;35;50;58;68;78;88;98;110;10000</code></pre>
+
+<div class="alert alert-caution">
+  <div class="alert-title">CAUTION</div>
+  <p><strong>Главное правило расчёта строки <code>100%</code> газа в <code>Engine.csv</code>:</strong><br>
+  Последняя строка таблицы (после строки <code>100</code>, начинающаяся с <code>0;...</code>) задаёт положительный момент механических потерь и торможения двигателем $F(\text{RPM}) &gt; 0$. Физический движок <strong>вычитает $F(\text{RPM})$ из всех строк сгорания, включая строку <code>100%</code> полного газа</strong>:</p>
+  $$T_{\text{маховик}}(\text{RPM}) = T_{\text{строка 100}}(\text{RPM}) - F(\text{RPM}).$$
+  <p>Если записать в строку <code>100</code> паспортный крутящий момент $440\text{ Н}\cdot\text{м}$, а в последнюю строку трения — $60\text{ Н}\cdot\text{м}$, то на маховике останется лишь $380\text{ Н}\cdot\text{м}$ (потеря до 20–25% мощности!). Чтобы получить на маховике паспортную характеристику $T_{\text{паспорт}}(\text{RPM})$, в строку <code>100</code> необходимо записывать <strong>сумму</strong>:</p>
+  $$T_{\text{строка 100}}(\text{RPM}) = T_{\text{паспорт}}(\text{RPM}) + F(\text{RPM}).$$
+  <p><em>(Если в XML-схему добавлен компонент <code>Turbocharger</code>, то каждая ячейка сгорания <code>(thr, RPM)</code> после прибавления $F(\text{RPM})$ дополнительно делится на стационарный коэффициент наддува $\text{ratio}(\text{RPM}, \text{thr})$ при данном положении педали <code>thr</code>, а последняя строка трения $F(\text{RPM})$ остаётся без деления).</em></p>
+</div>
+
+<div class="alert alert-tip">
+  <div class="alert-title">TIP</div>
+  <p><strong>Ограничение регулятора холостого хода <code>[Idler]</code> и «анти-столл горб» в строках <code>5%</code> и <code>10%</code>:</strong><br>
+  ЭБУ холостого хода <code>[Idler]</code> (<code>FuelControllerComputer</code>) рассчитывает базовое открытие дросселя в разомкнутом цикле — он ищет такое положение заслонки, при котором момент сгорания на <code>IdleRpm</code> равен внутреннему трению $F(\text{IdleRpm})$, не учитывая внешнюю нагрузку от гидротрансформатора в <code>D</code> и не открывая заслонку шире при падении оборотов ниже <code>IdleRpm</code>.</p>
+  <ul>
+    <li>Если просто поднять момент в строке <code>5%</code> на колонке самих оборотов ХХ (например, <code>750 RPM</code>), <code>[Idler]</code> пропорционально прикроет заслонку, и обороты в <code>D</code> всё равно провалятся!</li>
+    <li><strong>Решение:</strong> на колонке <code>IdleRpm</code> (<code>750 RPM</code>) задайте в строке <code>5%</code> момент лишь чуть выше трения $F(750)$ (например, <code>32 Н·м</code> при $F(750) = 28\text{ Н}\cdot\text{м}$), а на соседней нижней колонке <strong><code>500 RPM</code></strong> сформируйте крутой подъём — <strong>«анти-столл горб»</strong> (например, <code>150 Н·м</code> в строке <code>5%</code> и <code>180 Н·м</code> в строке <code>10%</code>). Тогда при переводе селектора в <code>D</code> или плавном отпускании сцепления небольшое снижение оборотов с <code>750</code> до <code>660–680 об/мин</code> вызовет резкий рост крутящего момента и надёжно удержит холостой ход.</li>
+  </ul>
+</div>
+
+<h3 id="23-электродвигатель-стартера-starter-classengineelectric">2.3. Электродвигатель стартера (<code>[Starter]</code>, <code>Class="EngineElectric"</code>)</h3>
+<p>Подключается к электросети (<code>&lt;Link Holder="BatteryElectricCircuit" Reference="Starter" /&gt;</code>), замку зажигания (<code>&lt;Link Holder="IgnitionKey" Reference="Starter" /&gt;</code>), ЭБУ ХХ (<code>&lt;Link Holder="Idler" Reference="Starter" /&gt;</code>) и передаёт вращение через реле и редуктор стартера (<code>&lt;Link Holder="Starter" Reference="StarterRelay" /&gt;</code>).</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Ключ в <code>Vehicle.ini</code> (<code>[Starter]</code>)</th>
+      <th>Тип</th>
+      <th class="center">По умолч.</th>
+      <th class="center">Ед. изм.</th>
+      <th>Описание</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>IdleVoltage</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>12.0</code></td>
+      <td class="center">В</td>
+      <td>Напряжение холостого хода стартера.</td>
+    </tr>
+    <tr>
+      <td><code>IdleAmperage</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>80.0</code></td>
+      <td class="center">А</td>
+      <td>Потребляемый ток на оборотах холостого хода <code>IdleRPM</code>.</td>
+    </tr>
+    <tr>
+      <td><code>IdleRPM</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>3000.0</code></td>
+      <td class="center">об/мин</td>
+      <td>Максимальные обороты холостого хода стартера без нагрузки.</td>
+    </tr>
+    <tr>
+      <td><code>StallVoltage</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>5.0</code></td>
+      <td class="center">В</td>
+      <td>Напряжение на клеммах при полностью заторможенном якоре.</td>
+    </tr>
+    <tr>
+      <td><code>StallAmperage</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>700.0</code></td>
+      <td class="center">А</td>
+      <td>Пусковой ток при заторможенном якоре.</td>
+    </tr>
+    <tr>
+      <td><code>StallTorque</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>13.0</code></td>
+      <td class="center">$\text{Н}\cdot\text{м}$</td>
+      <td>Максимальный пусковой крутящий момент при токе <code>StallAmperage</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><em>(Примечание: стартер сам вычисляет квадратичный коэффициент трения из режима холостого хода <code>IdleRPM</code> / <code>IdleAmperage</code>, поэтому задавать <code>RotationalFrictionQuadCoeff</code> в секции <code>[Starter]</code> не нужно).</em></p>
+
+<h3 id="24-мотор-внешней-уставки-скорости-classexternalvelocitymotor">2.4. Мотор внешней уставки скорости (<code>Class="ExternalVelocityMotor"</code>)</h3>
+<p>Вспомогательный привод механизмов спецтехники, раскручивающий ведомый вал до целевых оборотов <code>ShaftRpm</code>.</p>
+<ul>
+  <li><strong>Параметры <code>.ini</code>:</strong> <code>TorqueCurve</code> (<code>String</code>, путь к 1D-таблице момента от оборотов, по умолчанию <code>"torque.csv"</code>), <code>EnableTorqueFadeByRpmDiff</code> (<code>Boolean</code>, по умолчанию <code>true</code> — плавно снижает момент при приближении оборотов к уставке), <code>MinWorkingRpm</code> (<code>Real</code>), <code>MaxWorkingRpm</code> (<code>Real</code>).</li>
+  <li><strong>Вход (<code>InternalName</code>):</strong> <code>ShaftRpm</code> (<code>Real</code>, об/мин). <strong>Выходы (<code>InternalName</code>):</strong> <code>RPM</code> (<code>Real</code>), <code>ShaftRpm</code> (<code>Real</code>), <code>Position</code> (<code>Real</code>, доля оборота <code>(-1..1)</code>).</li>
+</ul>
+
+<hr>
+
+<h2 id="3-сцепление-гидротрансформатор-и-бендикс-clutchfriction-hydraulictorqueconverter-variabletorqueconverter-bendix">3. Сцепление, гидротрансформатор и бендикс (<code>ClutchFriction</code>, <code>HydraulicTorqueConverter</code>, <code>VariableTorqueConverter</code>, <code>Bendix</code>)</h2>
+
+<h3 id="31-фрикционное-сцепление-clutch-classclutchfriction">3.1. Фрикционное сцепление (<code>[Clutch]</code>, <code>Class="ClutchFriction"</code>)</h3>
+<p>Используется в схемах с МКПП (<code>*Manual.xml</code>). Связывается между двигателем и КПП (<code>Engine -&gt; Clutch -&gt; GearBox</code>), а степень смыкания дисков принимает от компонента педали <code>&lt;Link Holder="ClutchPedal" Reference="Clutch" /&gt;</code>.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Ключ в <code>Vehicle.ini</code> (<code>[Clutch]</code>)</th>
+      <th>Тип</th>
+      <th class="center">По умолч.</th>
+      <th class="center">Ед. изм.</th>
+      <th>Описание</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>MaxTorque</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>1000.0</code></td>
+      <td class="center">$\text{Н}\cdot\text{м}$</td>
+      <td>Максимальный момент трения полностью замкнутого сцепления (рекомендуется в <code>1.4–1.6</code> раза выше пикового момента ДВС).</td>
+    </tr>
+    <tr>
+      <td><code>VelocityScale</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>1.0</code></td>
+      <td class="center">$\text{с}/\text{рад}$</td>
+      <td>Крутизна нарастания момента трения от разности угловых скоростей дисков.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="32-гидротрансформатор-torqueconverter-classhydraulictorqueconverter">3.2. Гидротрансформатор (<code>[TorqueConverter]</code>, <code>Class="HydraulicTorqueConverter"</code>)</h3>
+<p>Используется в схемах с АКПП (<code>*Auto.xml</code>). Связывается в цепочку <code>Engine -&gt; TorqueConverter -&gt; GearBoxAutomatic</code>, а команда на смыкание фрикциона блокировки приходит по обратной связи <code>&lt;Link Holder="GearBoxAutomatic" Reference="TorqueConverter" /&gt;</code>.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Ключ в <code>Vehicle.ini</code> (<code>[TorqueConverter]</code>)</th>
+      <th>Тип</th>
+      <th class="center">По умолч.</th>
+      <th class="center">Ед. изм.</th>
+      <th>Описание</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>MaxRatio</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>3.0</code></td>
+      <td class="center">безразм.</td>
+      <td>Максимальный коэффициент трансформации (умножения) момента при старте с места (обычно <code>1.8–2.5</code>).</td>
+    </tr>
+    <tr>
+      <td><code>MaxRatioVelocity</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>100.0</code></td>
+      <td class="center">об/мин</td>
+      <td>Разность оборотов насосного и турбинного колёс, при которой достигается <code>MaxRatio</code> (обычно <code>1400–1800</code>).</td>
+    </tr>
+    <tr>
+      <td><code>Torque</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>3000.0</code></td>
+      <td class="center">$\text{Н}\cdot\text{м}$</td>
+      <td>Опорный гидравлический момент нагружения насосного колеса при разности оборотов <code>TorqueRpm</code> (для легковых авто <code>25–65</code>).</td>
+    </tr>
+    <tr>
+      <td><code>TorqueRpm</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>100.0</code></td>
+      <td class="center">об/мин</td>
+      <td>Опорная разность оборотов насоса и турбины для расчёта квадратичного момента: $M_{\text{pump}} = \text{Torque} \cdot (\Delta\text{RPM} / \text{TorqueRpm})^2$ (обычно <code>700–800</code>).</td>
+    </tr>
+    <tr>
+      <td><code>LockMaxTorque</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>1000.0</code></td>
+      <td class="center">$\text{Н}\cdot\text{м}$</td>
+      <td>Максимальный момент трения муфты блокировки ГДТ (должен с запасом перекрывать пиковый момент ДВС, <code>750–1100</code>).</td>
+    </tr>
+    <tr>
+      <td><code>LockVelocityScale</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>1000.0</code></td>
+      <td class="center">$\text{с}/\text{рад}$</td>
+      <td>Жёсткость муфты блокировки ГДТ по разности скоростей валов (<code>10–100</code> для плотной фиксации без пробуксовки).</td>
+    </tr>
+    <tr>
+      <td><code>ValveStartOpenVelocity</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>-1.0</code></td>
+      <td class="center">об/мин</td>
+      <td>Обороты турбины начала открытия разгрузочного клапана (<code>-1</code> — отключено).</td>
+    </tr>
+    <tr>
+      <td><code>ValveFullOpenVelocity</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>-1.0</code></td>
+      <td class="center">об/мин</td>
+      <td>Обороты турбины полного открытия разгрузочного клапана (<code>-1</code> — отключено).</td>
+    </tr>
+    <tr>
+      <td><code>TransferInertia</code></td>
+      <td><code>Boolean</code></td>
+      <td class="center"><code>true</code></td>
+      <td class="center">—</td>
+      <td>Передавать ли приведённую инерцию маховика ДВС на первичный вал АКПП.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="33-вариатор-classvariabletorqueconverter-и-бендикс-starterbendix-classbendix">3.3. Вариатор (<code>Class="VariableTorqueConverter"</code>) и бендикс (<code>[StarterBendix]</code>, <code>Class="Bendix"</code>)</h3>
+<ul>
+  <li><strong><code>VariableTorqueConverter</code>:</strong> узел с плавно меняющимся передаточным числом. Параметры <code>.ini</code>: <code>GearRatio</code> (<code>1.0</code>), <code>GearRatioMin</code> (<code>1.0</code>), <code>GearRatioMax</code> (<code>100.0</code>). Вход: <code>GearRatio</code> (<code>Real</code>). Выходы: <code>RPM</code>, <code>OutRPM</code>.</li>
+  <li><strong><code>Bendix</code> (<code>[StarterBendix]</code>):</strong> односторонняя обгонная муфта между редуктором стартера и коленвалом (<code>StarterGear -&gt; StarterBendix -&gt; Engine</code>). Передаёт крутящий момент только тогда, когда обороты стартера выше оборотов ДВС; после запуска мотора свободно проскальзывает. Настраивается 5 общими параметрами вала.</li>
+</ul>
+
+<hr>
+
+<h2 id="4-коробки-передач-и-узлы-трансмиссии-gearbox-gearboxautomatic-differentialopen-reducer-relay-retarder">4. Коробки передач и узлы трансмиссии (<code>GearBox</code>, <code>GearBoxAutomatic</code>, <code>DifferentialOpen</code>, <code>Reducer</code>, <code>Relay</code>, <code>Retarder</code>)</h2>
+
+<h3 id="41-механическая-кпп-gearbox-classgearbox">4.1. Механическая КПП (<code>[GearBox]</code>, <code>Class="GearBox"</code>)</h3>
+<p>Используется в схемах <code>*Manual.xml</code> (<code>Clutch -&gt; GearBox -&gt; Differential / DifferentialAxle</code>).</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Ключ в <code>Vehicle.ini</code> (<code>[GearBox]</code>)</th>
+      <th>Тип</th>
+      <th class="center">По умолч.</th>
+      <th class="center">Ед. изм.</th>
+      <th>Описание</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Gears</code></td>
+      <td><code>Array&lt;Real&gt;</code></td>
+      <td class="center">—</td>
+      <td class="center">безразм.</td>
+      <td>Список передаточных чисел (отрицательные — задний ход, положительные — передние передачи). Пример: <code>-4.722; 5.076; 2.610; 1.518; 1.000; 0.791; 0.675</code>.</td>
+    </tr>
+    <tr>
+      <td><code>GearsSynchronized</code></td>
+      <td><code>Array&lt;Bool&gt;</code></td>
+      <td class="center">—</td>
+      <td class="center"><code>0</code>/<code>1</code></td>
+      <td>Флаги наличия синхронизатора для каждой передачи из <code>Gears</code> (длина списка обязана совпадать с <code>Gears</code>, например <code>1; 1; 1; 1; 1; 1; 1</code>).</td>
+    </tr>
+    <tr>
+      <td><code>StartingGear</code></td>
+      <td><code>Integer</code></td>
+      <td class="center"><code>-1</code></td>
+      <td class="center">индекс</td>
+      <td>Начальная передача при спавне (<code>-1</code> — нейтраль, <code>0..N-1</code> — индекс в массиве <code>Gears</code>).</td>
+    </tr>
+    <tr>
+      <td><code>EnableNeutralInput</code></td>
+      <td><code>Boolean</code></td>
+      <td class="center"><code>true</code></td>
+      <td class="center">—</td>
+      <td>Разрешено ли переключение в нейтраль (<code>-1</code>).</td>
+    </tr>
+    <tr>
+      <td><code>MaxTorqueToNeutral</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>10.0</code></td>
+      <td class="center">$\text{Н}\cdot\text{м}$</td>
+      <td>Максимальный момент на вторичном валу, позволяющий выдернуть передачу в нейтраль без выжима сцепления (рекомендуется <code>50</code>).</td>
+    </tr>
+    <tr>
+      <td><code>MaxRPMDiffToShift</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>50.0</code></td>
+      <td class="center">об/мин</td>
+      <td>Максимальная разница оборотов синхронизируемых валов для включения передачи из нейтрали.</td>
+    </tr>
+    <tr>
+      <td><code>SynchronizerFrictionCoeff</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.5</code></td>
+      <td class="center">$\text{Н}\cdot\text{м}\cdot\text{с}/\text{рад}$</td>
+      <td>Коэффициент вязкого трения синхронизатора.</td>
+    </tr>
+    <tr>
+      <td><code>SynchronizerMaxFrictionTorque</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>3.0</code></td>
+      <td class="center">$\text{Н}\cdot\text{м}$</td>
+      <td>Максимальный синхронизирующий момент трения на первичном валу.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="alert alert-tip">
+  <div class="alert-title">TIP</div>
+  <p><strong>Рекомендации по настройке синхронизаторов МКПП:</strong><br>
+  Для быстрого и чёткого включения первой передачи из нейтрали при одновременной подаче газа рекомендуется задавать допуск синхронизации <strong><code>MaxRPMDiffToShift = 200..250</code></strong> и момент трения синхронизатора <strong><code>SynchronizerMaxFrictionTorque = 10..15</code></strong>.</p>
+</div>
+
+<ul>
+  <li><strong>Вход (<code>InternalName</code>):</strong> <code>Gear</code> (<code>Integer</code>, <code>-1</code> — нейтраль, <code>0</code> — задняя, <code>1..N-1</code> — передние передачи). <strong>Состояние:</strong> <code>Gear</code> (<code>Integer</code>). <strong>Выходы:</strong> <code>RPM</code>, <code>Gear</code>, <code>GearRatio</code>, <code>GearCount</code>, <code>EnableNeutralInput</code>.</li>
+</ul>
+
+<h3 id="42-гидромеханическая-акпп-gearboxautomatic-classgearboxautomatic">4.2. Гидромеханическая АКПП (<code>[GearBoxAutomatic]</code>, <code>Class="GearBoxAutomatic"</code>)</h3>
+<p>Используется в схемах <code>*Auto.xml</code>. Имеет 3 обязательные исходящие связи в <code>&lt;Links&gt;</code>: <code>&lt;Link Holder="GearBoxAutomatic" Reference="Engine" /&gt;</code> (чтение оборотов ДВС), <code>&lt;Link Holder="GearBoxAutomatic" Reference="TorqueConverter" /&gt;</code> (управление блокировкой ГДТ) и <code>&lt;Link Holder="GearBoxAutomatic" Reference="DifferentialAxle" /&gt;</code> (или <code>Differential</code> в <code>FwdAuto</code>/<code>RwdAuto</code>). Давление рабочей жидкости подаётся от <code>GearBoxAutomaticPump</code>, а режимы селектора <code>P/R/N/D</code> — от <code>GearBoxLogic</code>.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Ключ в <code>Vehicle.ini</code> (<code>[GearBoxAutomatic]</code>)</th>
+      <th>Тип</th>
+      <th class="center">По умолч.</th>
+      <th class="center">Ед. изм.</th>
+      <th>Описание</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Gears</code></td>
+      <td><code>Array&lt;Real&gt;</code></td>
+      <td class="center">—</td>
+      <td class="center">безразм.</td>
+      <td>Список передаточных чисел (отрицательное — задняя, положительные — передние; <code>0</code> запрещён, значения уникальны).</td>
+    </tr>
+    <tr>
+      <td><code>LockTorqueConverter</code></td>
+      <td><code>Array&lt;Bool&gt;</code></td>
+      <td class="center">—</td>
+      <td class="center"><code>0</code>/<code>1</code></td>
+      <td>Разрешена ли блокировка ГДТ на каждой передаче из <code>Gears</code> (обычно <code>0; 1; 1; ...</code>). Размер обязан совпадать с <code>Gears</code>.</td>
+    </tr>
+    <tr>
+      <td><code>OilWorkPressure</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.0</code></td>
+      <td class="center">бар</td>
+      <td>Минимальное давление масла от <code>GearBoxAutomaticPump</code>, необходимое для включения передач (обычно <code>3.5</code>).</td>
+    </tr>
+    <tr>
+      <td><code>GearChangeTime</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.5</code></td>
+      <td class="center">с</td>
+      <td>Длительность плавного переключения ступени (<code>0.25–0.50</code>).</td>
+    </tr>
+    <tr>
+      <td><code>ChangeGearWaitTime</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>1.0</code></td>
+      <td class="center">с</td>
+      <td>Минимальная пауза между двумя соседними переключениями (<code>0.30–0.60</code>).</td>
+    </tr>
+    <tr>
+      <td><code>MaxGearStep</code></td>
+      <td><code>Integer</code></td>
+      <td class="center">все ступени</td>
+      <td class="center">шт.</td>
+      <td>На сколько максимум ступеней коробка может перескочить за одно переключение при кикдауне (рекомендуется <code>2–3</code>).</td>
+    </tr>
+    <tr>
+      <td><code>PreferredGearRatioDiffPercent</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.1</code></td>
+      <td class="center">доля</td>
+      <td>Порог гистерезиса относительной выгоды передаточного числа для старта переключения (<code>0.12–0.35</code>).</td>
+    </tr>
+    <tr>
+      <td><code>LockTorqueConverterRpm</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>3000.0</code></td>
+      <td class="center">об/мин</td>
+      <td>Минимальные обороты входного вала АКПП (турбины ГДТ), выше которых разрешено замыкание блокировки ГДТ.</td>
+    </tr>
+    <tr>
+      <td><code>UnlockTorqueConverterRpm</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>1500.0</code></td>
+      <td class="center">об/мин</td>
+      <td>Обороты входного вала АКПП, ниже которых блокировка ГДТ принудительно размыкается.</td>
+    </tr>
+    <tr>
+      <td><code>TorqueConverterLockTime</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>1.0</code></td>
+      <td class="center">с</td>
+      <td>Время полного смыкания/размыкания муфты блокировки ГДТ.</td>
+    </tr>
+    <tr>
+      <td><code>ShiftAccelerator</code></td>
+      <td><code>Array&lt;Real&gt;</code></td>
+      <td class="center">—</td>
+      <td class="center"><code>[0..1]</code></td>
+      <td>Опорные точки положения педали газа (например, <code>0; 0.1; 0.2; 0.4; 0.6; 0.8; 1</code>).</td>
+    </tr>
+    <tr>
+      <td><code>OptimalRpm</code></td>
+      <td><code>Array&lt;Real&gt;</code></td>
+      <td class="center">—</td>
+      <td class="center">об/мин</td>
+      <td>Целевые обороты ДВС для выбора оптимальной передачи в каждой точке <code>ShiftAccelerator</code>.</td>
+    </tr>
+    <tr>
+      <td><code>MaxRpm</code></td>
+      <td><code>Array&lt;Real&gt;</code></td>
+      <td class="center">—</td>
+      <td class="center">об/мин</td>
+      <td>Предельные обороты ДВС принудительного переключения вверх в каждой точке <code>ShiftAccelerator</code>.</td>
+    </tr>
+    <tr>
+      <td><code>TorqueConverterLockDiff</code></td>
+      <td><code>Array&lt;Real&gt;</code></td>
+      <td class="center">—</td>
+      <td class="center">об/мин</td>
+      <td>Максимальная разность оборотов насоса и турбины ГДТ, при которой разрешается включить блокировку ГДТ.</td>
+    </tr>
+    <tr>
+      <td><code>ParkingFriction</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>10000.0</code></td>
+      <td class="center">$\text{Н}\cdot\text{м}$</td>
+      <td>Тормозной момент парковочного стопора на выходном валу в режиме селектора <code>P</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li><strong>Вход (<code>InternalName</code>):</strong> <code>Accelerator</code> (<code>Real</code>, <code>[0..1]</code>). <strong>Выход (<code>InternalName</code>):</strong> <code>RPM</code> (<code>Real</code>). <em>(Каналы <code>AutoShifterState</code>, <code>AutoShifterCurrentGear</code>, <code>AutoShifterTargetGear</code>, <code>AutoShifterMaxGear</code> принадлежат компоненту <code>GearBoxLogic</code>, см. <a href="./05_Components_Chassis_and_Subsystems.html">05. Шасси и подсистемы</a>).</em></li>
+</ul>
+
+<div class="alert alert-tip">
+  <div class="alert-title">TIP</div>
+  <p><strong>Рекомендации по настройке <code>[GearBoxAutomatic]</code>:</strong></p>
+  <ol>
+    <li><strong>Гидромеханические потери первичного вала (<code>RotationalFrictionQuadCoeff</code>):</strong> поскольку квадратичное трение прикладывается к первичному валу АКПП до умножения передаточным числом, для современных легковых АКПП рекомендуется задавать <code>RotationalFrictionQuadCoeff = 2.0e-4 .. 3.0e-4</code> и <code>RotationalFrictionConstant = 1.5</code>.</li>
+    <li><strong>Согласование точек переключения (<code>OptimalRpm</code>, <code>MaxRpm</code>) и блокировки ГДТ (<code>TorqueConverterLockDiff</code>):</strong> при переключении ступени муфта ГДТ кратковременно размыкается, и обороты двигателя под тягой возрастают на величину скольжения ГДТ. Рекомендуется задавать <code>MaxRpm</code> выше оборотов разомкнутого ГДТ (<code>3150..4200</code> для дизельных и <code>4500..6400</code> для бензиновых ДВС), а рабочие моменты переключений настраивать через массив <code>OptimalRpm</code> при достаточно широком допуске смыкания <code>TorqueConverterLockDiff</code> (<code>650..2100</code>).</li>
+    <li><strong>Размыкание ГДТ при резком торможении (<code>UnlockTorqueConverterRpm</code> и <code>TorqueConverterLockTime</code>):</strong> чтобы при экстренном торможении до полной остановки муфта блокировки ГДТ успевала разомкнуться раньше остановки колёс, рекомендуется задавать <code>UnlockTorqueConverterRpm</code> с запасом над оборотами холостого хода (<code>1200..1250</code> при <code>LockTorqueConverterRpm = 1350..1400</code>) и время срабатывания муфты <code>TorqueConverterLockTime = 0.25..0.30</code>.</li>
+  </ol>
+</div>
+
+<h3 id="43-дифференциалы-classdifferentialopen">4.3. Дифференциалы (<code>Class="DifferentialOpen"</code>)</h3>
+<p>Симметричный дифференциал с главной передачей <code>GearRatio</code>, раздающий момент ровно на <strong>2 обязательных ведомых вала</strong>.</p>
+<ul>
+  <li><strong>Имена секций в <code>Vehicle.ini</code>:</strong> в схемах <code>Fwd*.xml</code> и <code>Rwd*.xml</code> единственный дифференциал называется <strong><code>[Differential]</code></strong>; в схемах <code>Awd*.xml</code> используются три секции — межосевой <strong><code>[DifferentialAxle]</code></strong> (с передаточным числом главной пары <code>GearRatio</code>), передний межколёсный <strong><code>[DifferentialWheelFront]</code></strong> (<code>GearRatio = 1.0</code>) и задний межколёсный <strong><code>[DifferentialWheelBack]</code></strong> (<code>GearRatio = 1.0</code>).</li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th>Ключ в <code>Vehicle.ini</code></th>
+      <th>Тип</th>
+      <th class="center">По умолч.</th>
+      <th class="center">Ед. изм.</th>
+      <th>Описание</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>GearRatio</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>4.0</code></td>
+      <td class="center">безразм.</td>
+      <td>Передаточное число главной пары (не должно быть равно <code>0</code>).</td>
+    </tr>
+    <tr>
+      <td><code>Locked</code></td>
+      <td><code>Boolean</code></td>
+      <td class="center"><code>false</code></td>
+      <td class="center">—</td>
+      <td>Заблокирован ли дифференциал по умолчанию при спавне автомобиля.</td>
+    </tr>
+    <tr>
+      <td><code>DisableInput</code></td>
+      <td><code>Boolean</code></td>
+      <td class="center"><code>false</code></td>
+      <td class="center">—</td>
+      <td>Если <code>true</code>, игнорирует внешний вход включения блокировки <code>Lock</code>.</td>
+    </tr>
+    <tr>
+      <td><code>LockVelocityCoeff</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.05</code></td>
+      <td class="center">$\text{с}/\text{рад}$</td>
+      <td>Скорость переброски крутящего момента на отстающую полуось при включённой блокировке.</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li><strong>Вход (<code>InternalName</code>):</strong> <code>Lock</code> (<code>Boolean</code>). <strong>Выходы (<code>InternalName</code>):</strong> <code>RPM</code> (<code>Real</code>), <code>Locked</code> (<code>Boolean</code>).</li>
+</ul>
+
+<div class="alert alert-tip">
+  <div class="alert-title">TIP</div>
+  <p><strong>Настройка межосевого <code>[DifferentialAxle]</code> для постоянного полного привода (AWD):</strong><br>
+  Для автомобилей с постоянным полным приводом межосевой дифференциал <code>[DifferentialAxle]</code> рекомендуется держать разблокированным (<strong><code>Locked = false</code></strong>), чтобы передняя и задняя оси могли свободно вращаться с разной угловой скоростью в поворотах.</p>
+</div>
+
+<h3 id="44-редуктор-classreducer-муфта-classrelay-и-ретардер-classretarder">4.4. Редуктор (<code>Class="Reducer"</code>), муфта (<code>Class="Relay"</code>) и ретардер (<code>Class="Retarder"</code>)</h3>
+<ul>
+  <li><strong><code>Reducer</code> (секция <code>[StarterGear]</code>):</strong> редуктор с постоянным передаточным отношением. Параметр <code>.ini</code>: <code>GearRatio</code> (<code>Real</code>, по умолчанию <code>1.0</code>, в <code>[StarterGear]</code> обычно <code>10..12</code>). Выходы: <code>RPM</code>, <code>OutRPM</code>.</li>
+  <li><strong><code>Relay</code> (секции <code>[StarterRelay]</code> и <code>[FrontAxisRelay]</code>):</strong> управляемая муфта с передаточным числом <code>1:1</code>, замыкающая или разрывающая поток мощности. Параметр <code>.ini</code>: <code>Enabled</code> (<code>Boolean</code>, по умолчанию <code>true</code>; в <code>[StarterRelay]</code> ставится <code>false</code>, а в <code>Awd*.xml</code> вход <code>AWD</code> с <code>DefaultValue="true"</code> автоматически включает <code>FrontAxisRelay</code>). Вход: <code>Enable</code> (<code>Boolean</code>). Выходы: <code>RPM</code>, <code>Enabled</code>.</li>
+  <li><strong><code>Retarder</code>:</strong> трансмиссионный тормоз-замедлитель грузовиков и автобусов. Параметры <code>.ini</code>: <code>Rpm</code> (<code>Array&lt;Real&gt;</code>, обязательный список оборотов), <code>Torque</code> (<code>Array&lt;Real&gt;</code>, обязательный список тормозных моментов в Н·м того же размера), <code>TorqueMultiplier</code> (<code>Array&lt;Real&gt;</code>, доли момента <code>[0..1]</code> по ступеням), <code>DiscreteInput</code> (<code>Boolean</code>), <code>TimeLag</code> (<code>Real</code>, с, по умолчанию <code>0.1</code>). Входы: <code>Enabled</code> (<code>Boolean</code>), <code>Brake</code> (<code>Real</code>), <code>BrakeStage</code> (<code>Integer</code>). Выходы: <code>RPM</code>, <code>Enabled</code>, <code>DiscreteInput</code>, <code>RelativeTorque</code>.</li>
+</ul>
+
+<hr>
+
+<h2 id="5-тормозные-механизмы-и-колёса-brakefriction-brakefrictionpneumatic-wheelraycast">5. Тормозные механизмы и колёса (<code>BrakeFriction</code>, <code>BrakeFrictionPneumatic</code>, <code>WheelRaycast</code>)</h2>
+
+<h3 id="51-колёсный-фрикционный-тормоз-classbrakefriction">5.1. Колёсный фрикционный тормоз (<code>Class="BrakeFriction"</code>)</h3>
+<p>Ставится непосредственно перед каждым колесом (<code>Brake* -&gt; Wheel*</code>). Во всех стандартных схемах CCD 2.0 секции задних тормозов и задних колёс называются через <strong><code>Back</code></strong>, а не <code>Rear</code>: <strong><code>[BrakeFrontLeft]</code></strong>, <strong><code>[BrakeFrontRight]</code></strong>, <strong><code>[BrakeBackLeft]</code></strong>, <strong><code>[BrakeBackRight]</code></strong> и <strong><code>[WheelFrontLeft]</code></strong>, <strong><code>[WheelFrontRight]</code></strong>, <strong><code>[WheelBackLeft]</code></strong>, <strong><code>[WheelBackRight]</code></strong>.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Ключ в <code>Vehicle.ini</code> (<code>[Brake*]</code>)</th>
+      <th>Тип</th>
+      <th class="center">По умолч.</th>
+      <th class="center">Ед. изм.</th>
+      <th>Описание</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>MaxTorque</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>500.0</code></td>
+      <td class="center">$\text{Н}\cdot\text{м}$</td>
+      <td>Максимальный тормозной момент суппорта при 100% нажатии педали (обычно <code>2500–3800</code> спереди и <code>1400–2200</code> сзади).</td>
+    </tr>
+    <tr>
+      <td><code>ParkingBrakePower</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.0</code></td>
+      <td class="center"><code>[0..1]</code></td>
+      <td>Эффективность стояночного тормоза (ручника) в долях от <code>MaxTorque</code> (задаётся <code>0.7–1.0</code> для задних тормозов <code>BrakeBackLeft/Right</code>).</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li><strong>Входы (<code>InternalName</code>):</strong> <code>Brake</code> (<code>Real</code>, <code>[0..1]</code>), <code>ParkingBrake</code> (<code>Real</code>, <code>[0..1]</code>), <code>BrokenBrake</code> (<code>Boolean</code>). <strong>Выход (<code>InternalName</code>):</strong> <code>RPM</code> (<code>Real</code>).</li>
+</ul>
+
+<h3 id="52-пневматический-тормоз-с-энергоаккумулятором-classbrakefrictionpneumatic">5.2. Пневматический тормоз с энергоаккумулятором (<code>Class="BrakeFrictionPneumatic"</code>)</h3>
+<p>Используется на грузовиках и автобусах с пневматической тормозной системой. Содержит рабочую тормозную камеру прямого действия (<code>Main*</code>) и пружинный энергоаккумулятор стояночного тормоза обратного действия (<code>SpringLock*</code>, зажимает колодки при сбросе воздуха ручником или падении давления в контуре).</p>
+<ul>
+  <li><strong>Правило порядка связей с ресиверами в <code>&lt;Links&gt;</code>:</strong> помимо связи с колесом (<code>WheelRaycast</code>), компонент принимает две связи с пневморесиверами в <strong>строго фиксированном порядке</strong>: <strong>первая связь</strong> питает рабочую тормозную камеру (<code>Main</code>), <strong>вторая связь</strong> питает пружинный энергоаккумулятор ручника (<code>SpringLock</code>, обязательна при <code>SpringLock = true</code>).</li>
+  <li><strong>Параметры <code>.ini</code>:</strong> <code>MaxTorque</code> (<code>500.0</code> Н·м), <code>MainMaxBrakePower</code> (<code>1.0</code>), <code>SpringLock</code> (<code>Boolean</code>, <code>false</code>), <code>SpringLockMaxBrakePower</code> (<code>1.0</code>), <code>PressureDelta</code> (<code>1.0</code> бар), <code>FeedDiameter</code> (<code>10.0</code> мм), <code>LeakageDiameter</code> (<code>5.0</code> мм); параметры рабочей камеры <code>MainMinVolume</code> (<code>1.0</code> л), <code>MainMaxVolume</code> (<code>2.0</code> л), <code>MainMinVolumePressure</code> (<code>4.0</code> бар), <code>MainMaxVolumePressure</code> (<code>7.0</code> бар), <code>MainWorkPressure</code> (<code>6.0</code> бар), <code>MainMaxPressure</code> (<code>8.0</code> бар), <code>MainBlowOffDiameter</code> (<code>5.0</code> мм), <code>MainInitialPressure</code>; аналогичные параметры энергоаккумулятора с префиксом <code>SpringLock*</code> (<code>SpringLockMinVolume</code>, <code>SpringLockMaxVolume</code>, <code>SpringLockMinVolumePressure</code>, <code>SpringLockMaxVolumePressure</code>, <code>SpringLockWorkPressure</code>, <code>SpringLockMaxPressure</code>, <code>SpringLockBlowOffDiameter</code>, <code>SpringLockInitialPressure</code>).</li>
+  <li><strong>Входы (<code>InternalName</code>):</strong> <code>Brake</code> (<code>Real</code>), <code>ParkingBrake</code> (<code>Real</code>), <code>BrokenBrake</code> (<code>Boolean</code>). <strong>Выходы (<code>InternalName</code>):</strong> <code>MinPressure</code>, <code>MinWorkPressure</code>, <code>WorkPressure</code>, <code>SpringLockMinPressure</code>, <code>SpringLockWorkPressure</code>, <code>PressureLevel</code>, <code>AirFlowIntensityLevel</code>, <code>PressureLevelSpringLock</code>, <code>AirFlowIntensityLevelSpringLock</code>.</li>
+</ul>
+
+<h3 id="53-рейкастовое-пневматическое-колесо-wheel-classwheelraycast">5.3. Рейкастовое пневматическое колесо (<code>[Wheel*]</code>, <code>Class="WheelRaycast"</code>)</h3>
+<p>Конечный узел ветви трансмиссии (не может иметь исходящих связей <code>&lt;Link Holder="Wheel*" ... /&gt;</code>). Собственный момент инерции колеса вычисляется автоматически при загрузке по формуле $J = 0.5 \cdot \text{Mass} \cdot \text{Radius}^2$ (ключ <code>Inertia</code> в секциях <code>[Wheel*]</code> указывать не нужно).</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Ключ в <code>Vehicle.ini</code> (<code>[Wheel*]</code>)</th>
+      <th>Тип</th>
+      <th class="center">По умолч.</th>
+      <th class="center">Ед. изм.</th>
+      <th>Описание</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>Radius</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.4</code></td>
+      <td class="center">м</td>
+      <td>Статический рабочий радиус колеса под нагрузкой при нормальном давлении <code>WorkingPressure</code> (на <code>8–12 мм</code> меньше свободного радиуса 3D-меша).</td>
+    </tr>
+    <tr>
+      <td><code>MinRadius</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.8 * Radius</code></td>
+      <td class="center">м</td>
+      <td>Радиус колёсного диска (минимальный радиус полностью спущенного колеса).</td>
+    </tr>
+    <tr>
+      <td><code>MaxRadius</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>1.05 * Radius</code></td>
+      <td class="center">м</td>
+      <td>Радиус перекачанного колеса при давлении <code>TyreMaxPressure</code>.</td>
+    </tr>
+    <tr>
+      <td><code>Width</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.3</code></td>
+      <td class="center">м</td>
+      <td>Ширина профиля шины (например, <code>0.245</code> для <code>245/45 R19</code>).</td>
+    </tr>
+    <tr>
+      <td><code>Mass</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>20.0</code></td>
+      <td class="center">кг</td>
+      <td>Неподрессоренная масса колеса в сборе (определяет инерцию вращения $0.5 \cdot \text{Mass} \cdot \text{Radius}^2$).</td>
+    </tr>
+    <tr>
+      <td><code>FrictionCoeff</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>1.0</code></td>
+      <td class="center">безразм.</td>
+      <td>Общий коэффициент сцепления шины с дорогой (обычно <code>0.90–1.00</code>).</td>
+    </tr>
+    <tr>
+      <td><strong><code>ForceCurveLoad</code></strong></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>1000.0</code></td>
+      <td class="center">Н</td>
+      <td>Номинальная вертикальная нагрузка $F_{N0}$, на которой нормированы кривые сцепления.</td>
+    </tr>
+    <tr>
+      <td><code>RollingResistanceCoeff</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.011</code></td>
+      <td class="center">безразм.</td>
+      <td>Базовый коэффициент сопротивления качению.</td>
+    </tr>
+    <tr>
+      <td><code>RollingResistanceCurves</code></td>
+      <td><code>String</code></td>
+      <td class="center">— <em>(обяз.)</em></td>
+      <td class="center">путь</td>
+      <td>2D-таблица сопротивления качению (<code>Common/Vehicles/MotorCars/Tables/WheelRollingResistance.csv</code>).</td>
+    </tr>
+    <tr>
+      <td><code>ForceCurveLongitudinal</code></td>
+      <td><code>String</code></td>
+      <td class="center">— <em>(обяз.)</em></td>
+      <td class="center">путь</td>
+      <td>1D-кривая продольной силы от скольжения в % (<code>Common/Vehicles/MotorCars/Tables/WheelForceLon.csv</code>).</td>
+    </tr>
+    <tr>
+      <td><code>ForceCurveLateral</code></td>
+      <td><code>String</code></td>
+      <td class="center">— <em>(обяз.)</em></td>
+      <td class="center">путь</td>
+      <td>1D-кривая боковой силы от угла увода в градусах (<code>Common/Vehicles/MotorCars/Tables/WheelForceLat.csv</code>).</td>
+    </tr>
+    <tr>
+      <td><code>AligningTorqueCurve</code></td>
+      <td><code>String</code></td>
+      <td class="center">— <em>(обяз.)</em></td>
+      <td class="center">путь</td>
+      <td>1D-кривая стабилизирующего момента (<code>Common/Vehicles/MotorCars/Tables/WheelAlignTorque.csv</code>; обязана иметь <code>0</code> в точке пика <code>ForceCurveLateral</code>).</td>
+    </tr>
+    <tr>
+      <td><code>CamberToSlipAngleCurve</code></td>
+      <td><code>String</code></td>
+      <td class="center">— <em>(обяз.)</em></td>
+      <td class="center">путь</td>
+      <td>1D-кривая смещения угла увода от развала (<code>Common/Vehicles/Tables/Dummy2d.csv</code> или <code>WheelCamberToSlipAngle.csv</code>).</td>
+    </tr>
+    <tr>
+      <td><code>StaticAligningTorqueCoeff</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.0</code></td>
+      <td class="center">м</td>
+      <td>Коэффициент возвращающего момента на руле при повороте колёс на месте (на передних колёсах обычно <code>-0.002</code> слева и <code>0.002</code> справа).</td>
+    </tr>
+    <tr>
+      <td><code>StaticAligningTorqueCurve</code></td>
+      <td><code>String</code></td>
+      <td class="center"><code>""</code></td>
+      <td class="center">путь</td>
+      <td>1D-кривая статического момента (<code>Common/Vehicles/MotorCars/Tables/WheelStaticAligningTorque.csv</code>, обязательна при <code>StaticAligningTorqueCoeff != 0</code>).</td>
+    </tr>
+    <tr>
+      <td><code>StaticFrictionTorqueMaxAngVelocity</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>1.0</code></td>
+      <td class="center">рад/с</td>
+      <td>Скорость вращения колеса, до которой действует статическое сопротивление повороту руля (обычно <code>2.5</code>).</td>
+    </tr>
+    <tr>
+      <td><code>LatStaticFrictionMaxLinVelocity</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>2.0</code></td>
+      <td class="center">м/с</td>
+      <td>Линейная скорость удержания боковым статическим трением покоя.</td>
+    </tr>
+    <tr>
+      <td><code>LonStaticFrictionMaxLinVelocity</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.2</code></td>
+      <td class="center">м/с</td>
+      <td>Линейная скорость удержания продольным статическим трением покоя.</td>
+    </tr>
+    <tr>
+      <td><code>LonStaticFrictionMaxAngVelocity</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.01</code></td>
+      <td class="center">рад/с</td>
+      <td>Угловая скорость колеса для удержания продольным трением покоя.</td>
+    </tr>
+    <tr>
+      <td><code>RelaxationLength</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.1</code></td>
+      <td class="center">м</td>
+      <td>Длина релаксации боковой силы шины.</td>
+    </tr>
+    <tr>
+      <td><code>SlipAngleMinVelocity</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>3.0</code></td>
+      <td class="center">м/с</td>
+      <td>Сглаживающая скорость вычисления угла увода на малом ходу.</td>
+    </tr>
+    <tr>
+      <td><code>SingularSlipRatioVelocity</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.2</code></td>
+      <td class="center">м/с</td>
+      <td>Пороговая скорость скольжения при старте с места.</td>
+    </tr>
+    <tr>
+      <td><code>WorkingPressure</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>2.0</code></td>
+      <td class="center">бар</td>
+      <td>Рабочее избыточное давление в шине (устанавливается при спавне авто, например <code>2.2–2.8</code>).</td>
+    </tr>
+    <tr>
+      <td><code>CriticalPressure</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>WorkingPressure - 1</code></td>
+      <td class="center">бар</td>
+      <td>Порог давления срабатывания индикатора спущенной шины <code>LowTirePressureIcon</code>.</td>
+    </tr>
+    <tr>
+      <td><code>TyreMaxPressure</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>8.0</code></td>
+      <td class="center">бар</td>
+      <td>Предельное давление воздушного баллона шины (<code>TyreWorkPressure</code>, <code>TyreBlowOffDiameter</code> — параметры клапана).</td>
+    </tr>
+    <tr>
+      <td><code>BlowoutHoleSquare</code></td>
+      <td><code>Real</code></td>
+      <td class="center">авто</td>
+      <td class="center">$\text{м}^2$</td>
+      <td>Площадь отверстия стравливания воздуха при проколе (<code>Blowout = true</code>).</td>
+    </tr>
+    <tr>
+      <td><code>PressureToSteeringCoeff</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.0</code></td>
+      <td class="center">безразм.</td>
+      <td>Коэффициент увода автомобиля в сторону спущенного колеса (<code>PressureToSteeringCurve</code> — путь к кривой).</td>
+    </tr>
+    <tr>
+      <td><code>SlipRatioToPacejkaCoeffK</code> / <code>B</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>-0.4</code> / <code>1.4</code></td>
+      <td class="center">безразм.</td>
+      <td>Линейные коэффициенты $K$ и $B$ масштабирования оси X продольного скольжения от относительной нагрузки $F_N / \text{ForceCurveLoad}$.</td>
+    </tr>
+    <tr>
+      <td><code>PacejkaToLonForceCoeffK</code> / <code>B</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>-0.2</code> / <code>1.2</code></td>
+      <td class="center">безразм.</td>
+      <td>Коэффициенты $K$ и $B$ масштабирования продольной силы от относительной нагрузки.</td>
+    </tr>
+    <tr>
+      <td><code>SlipAngleToPacejkaCoeffK</code> / <code>B</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>-0.1</code> / <code>1.1</code></td>
+      <td class="center">безразм.</td>
+      <td>Коэффициенты $K$ и $B$ масштабирования оси X угла бокового увода от относительной нагрузки.</td>
+    </tr>
+    <tr>
+      <td><code>PacejkaToLatForceCoeffK</code> / <code>B</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>-0.25</code> / <code>1.25</code></td>
+      <td class="center">безразм.</td>
+      <td>Коэффициенты $K$ и $B$ масштабирования боковой силы от относительной нагрузки ($K = -0.25 &lt; 0$ задаёт нелинейное насыщение шины под нагрузкой).</td>
+    </tr>
+    <tr>
+      <td><strong><code>PacejkaAlignTorqueCoeffK</code> / <code>B</code></strong></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>-0.25</code> / <code>1.25</code></td>
+      <td class="center">безразм.</td>
+      <td>Коэффициенты $K$ и $B$ масштабирования стабилизирующего момента от нагрузки <em>(пишутся <strong>без</strong> <code>To</code> в середине имени!)</em>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="alert alert-tip">
+  <div class="alert-title">TIP</div>
+  <p><strong>Тонкая настройка поворачиваемости через <code>ForceCurveLoad</code>:</strong><br>
+  Из-за отрицательного коэффициента <code>PacejkaToLatForceCoeffK = -0.25</code> шина, нагруженная сильнее своего <code>ForceCurveLoad</code>, теряет относительный коэффициент бокового зацепа. Для передних колёс задавайте <code>ForceCurveLoad</code> равным статической вертикальной нагрузке одного переднего колеса ($F_{\text{stat,f}} \approx 0.5 \cdot m_{\text{перед}} \cdot 9.81$), а для задних колёс — на <strong>8–15% выше</strong> статической нагрузки заднего колеса ($F_{\text{stat,r}}$). Это обеспечит естественную недостаточную поворачиваемость без «плужения» передней оси.</p>
+</div>
+
+<ul>
+  <li><strong>Входы (<code>InternalName</code>):</strong> <code>Blowout</code> (<code>Boolean</code> — прокол шины), <code>NoSlip</code> (<code>Boolean</code> — режим идеального зацепа <code>PerfectWheels</code>). <strong>Состояние:</strong> <code>Pressure</code> (<code>Real</code>, бар). <strong>Выходы:</strong> <code>RPM</code>, <code>WorkingPressure</code>, <code>LowPressure</code>, <code>Pressure</code>.</li>
+</ul>
+
+<hr>
+
+<h2 id="6-навесные-агрегаты-generator-pump-compressor-и-готовый-пример-vehicleini">6. Навесные агрегаты (<code>Generator</code>, <code>Pump</code>, <code>Compressor</code>) и готовый пример <code>Vehicle.ini</code></h2>
+
+<h3 id="61-электрический-генератор-generator-classgenerator">6.1. Электрический генератор (<code>[Generator]</code>, <code>Class="Generator"</code>)</h3>
+<p>Приводится во вращение от двигателя (<code>&lt;Link Holder="Engine" Reference="Generator" /&gt;</code>), питает цепь генератора (<code>&lt;Link Holder="GeneratorElectricCircuit" Reference="Generator" /&gt;</code>) и отслеживается приборной панелью (<code>&lt;Link Holder="CarElectrics" Reference="Generator" /&gt;</code>).</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Ключ в <code>Vehicle.ini</code> (<code>[Generator]</code>)</th>
+      <th>Тип</th>
+      <th class="center">По умолч.</th>
+      <th class="center">Ед. изм.</th>
+      <th>Описание</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>GearRatio</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>1.0</code></td>
+      <td class="center">безразм.</td>
+      <td>Передаточное отношение ременного привода шкива генератора (<code>2.0–2.5</code>, ротор вращается в <code>GearRatio</code> раз быстрее коленвала).</td>
+    </tr>
+    <tr>
+      <td><code>MaxAmperage</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>80.0</code></td>
+      <td class="center">А</td>
+      <td>Максимальный ток отдачи генератора (<code>80–150</code>).</td>
+    </tr>
+    <tr>
+      <td><code>MinVoltage</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>13.0</code></td>
+      <td class="center">В</td>
+      <td>Минимальное напряжение включения генератора в сеть (<code>13.2</code>).</td>
+    </tr>
+    <tr>
+      <td><code>MaxVoltage</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>14.0</code></td>
+      <td class="center">В</td>
+      <td>Поддерживаемое реле-регулятором напряжение зарядки (<code>14.4–14.7</code>).</td>
+    </tr>
+    <tr>
+      <td><code>Resistance</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>1.0</code></td>
+      <td class="center">Ом</td>
+      <td>Внутреннее сопротивление обмоток генератора.</td>
+    </tr>
+    <tr>
+      <td><code>MinAmperageRpm</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>0.0</code></td>
+      <td class="center">об/мин</td>
+      <td>Обороты ротора генератора (уже умноженные на <code>GearRatio</code>), с которых начинается выработка тока (<code>600–1000</code>).</td>
+    </tr>
+    <tr>
+      <td><code>MaxAmperageRpm</code></td>
+      <td><code>Real</code></td>
+      <td class="center"><code>6000.0</code></td>
+      <td class="center">об/мин</td>
+      <td>Обороты ротора генератора, на которых достигается полная токоотдача <code>MaxAmperage</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li><strong>Вход (<code>InternalName</code>):</strong> <code>Broken</code> (<code>Boolean</code> — поломка генератора). <strong>Выход (<code>InternalName</code>):</strong> <code>RPM</code> (<code>Real</code>).</li>
+</ul>
+
+<h3 id="62-гидравлический-масляный-насос-gearboxautomaticpump-classpump-и-компрессор-classcompressor">6.2. Гидравлический / масляный насос (<code>[GearBoxAutomaticPump]</code>, <code>Class="Pump"</code>) и компрессор (<code>Class="Compressor"</code>)</h3>
+<ul>
+  <li><strong><code>Pump</code> (<code>[GearBoxAutomaticPump]</code> в <code>*Auto.xml</code>):</strong> приводится от двигателя (<code>Engine -&gt; GearBoxAutomaticPump</code>), требует обязательной связи с баком <code>&lt;Link Holder="GearBoxAutomaticPump" Reference="OilTank" /&gt;</code> и подаёт давление в АКПП (<code>GearBoxAutomaticPump -&gt; GearBoxAutomatic</code>).
+    <ul>
+      <li><strong>Параметры <code>.ini</code>:</strong> <code>MaxPressure</code> (<code>1.0</code> бар, в <code>*Auto.xml</code> обычно <code>7.0</code> — должно быть выше <code>OilWorkPressure</code> АКПП), <code>MaxPressureRpm</code> (<code>1.0</code> об/мин, обычно <code>650–800</code> — не выше оборотов ХХ!), <code>MaxPressureVolume</code> (<code>1.0</code> л), <code>MaxPressureFriction</code> (<code>0.0</code> Н·м, обычно <code>1.5–2.0</code>). <strong>Выходы:</strong> <code>RPM</code>, <code>Pressure</code>.</li>
+    </ul>
+  </li>
+  <li><strong><code>Compressor</code>:</strong> приводной компрессор пневмосистемы грузовиков/автобусов. Требует обязательной связи <code>&lt;Link Holder="Compressor" Reference="ИмяРесивераИлиЗащитногоКлапана" /&gt;</code>.
+    <ul>
+      <li><strong>Параметры <code>.ini</code>:</strong> <code>Volume</code> (<code>1.0</code> л/об), <code>ActivatePressure</code> (<code>6.0</code> бар), <code>DeactivatePressure</code> (<code>8.0</code> бар), <code>OutputRef</code> (<code>1000.0</code> л/мин), <code>RpmRef</code> (<code>1000.0</code> об/мин), <code>PressureRef</code> (<code>8.0</code> бар), <code>ResistanceTorqueRef</code> (<code>100.0</code> Н·м). <strong>Выход:</strong> <code>RPM</code>.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="63-образец-настроенных-секций-трансмиссии-и-двс-в-vehicleini-ccd-20">6.3. Образец настроенных секций трансмиссии и ДВС в <code>Vehicle.ini</code> (CCD 2.0)</h3>
+<pre><code class="language-ini">[Starter]
+Inertia = 1e-3
+RotationalFrictionConstant = 0.5
+StallVoltage = 9.0
+StallAmperage = 850
+StallTorque = 24
+IdleVoltage = 12.0
+IdleAmperage = 95
+IdleRPM = 7000
+
+[Engine]
+Inertia = 0.24
+Volume = 2.143
+CylinderCount = 4
+RpmLimit = 4600
+RpmLimitTime = 0.25
+MinCombustionRpm = 150
+MinStableRpm = 380
+PowerCurves = ../Plugins/Mods/Content/CieBensVGruppe/Engine.csv
+HeatingSpeed = 0.25
+ThermostatBeginTemperature = 82
+ThermostatEndTemperature = 95
+FanSwitchOffTemperature = 92
+FanSwitchOnTemperature = 98
+FanCoolingSpeed = 2.0
+OverheatTemperature = 112
+LargeCircuitCoolingSpeed = 0.3
+OilPressureRPM = 0; 750; 2500; 4600
+OilPressureValues = 0; 1.8; 3.8; 4.5
+AirPressureRatio = 0.355
+IgnitionResistance = 4.0
+IgnitionMinVoltage = 7.0
+VibrationCurve = Common/Vehicles/MotorCars/Tables/EngineVibration.csv
+VibrationAmplitude = 0.0075
+
+[TorqueConverter]
+MaxRatio = 1.85
+MaxRatioVelocity = 1500
+Torque = 62
+TorqueRpm = 750
+LockMaxTorque = 850
+LockVelocityScale = 100
+
+[GearBoxAutomatic]
+Inertia = 1e-4
+RotationalFrictionConstant = 1.5
+RotationalFrictionQuadCoeff = 2.6e-4
+Gears = -3.416; 4.377; 2.859; 1.921; 1.368; 1.000; 0.820; 0.728
+LockTorqueConverter = 0; 1; 1; 1; 1; 1; 1; 1
+GearChangeTime = 0.26
+ChangeGearWaitTime = 0.45
+MaxGearStep = 3
+PreferredGearRatioDiffPercent = 0.14
+LockTorqueConverterRpm = 1360
+UnlockTorqueConverterRpm = 1220
+TorqueConverterLockTime = 0.26
+ShiftAccelerator = 0; 0.1; 0.2; 0.4; 0.6; 0.8; 1
+OptimalRpm = 1420; 1520; 1660; 2040; 2550; 3100; 3400
+MaxRpm = 3150; 3250; 3350; 3550; 3780; 4000; 4200
+TorqueConverterLockDiff = 650; 800; 950; 1250; 1550; 1850; 2100
+OilWorkPressure = 3.5
+
+[DifferentialAxle.TransmissionType.Auto]
+Inertia = 1e-4
+GearRatio = 3.267
+Locked = false</code></pre>
+
+</body>
+</html>

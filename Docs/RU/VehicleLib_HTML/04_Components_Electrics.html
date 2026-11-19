@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>04. Бортовая электросеть и приборная панель (CarElectrics) в City Car Driving 2.0</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"
+    onload="renderMathInElement(document.body, {
+      delimiters: [
+        {left: '$$', right: '$$', display: true},
+        {left: '$', right: '$', display: false}
+      ],
+      throwOnError: false
+    });"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      mermaid.initialize({ startOnLoad: true });
+    });
+  </script>
+  <style>
+    body {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 32px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #1f2328;
+      background-color: #ffffff;
+    }
+    h1, h2, h3, h4 {
+      margin-top: 24px;
+      margin-bottom: 16px;
+      font-weight: 600;
+      line-height: 1.25;
+    }
+    h1 {
+      font-size: 2em;
+      padding-bottom: 0.3em;
+      border-bottom: 1px solid #d0d7de;
+    }
+    h2 {
+      font-size: 1.5em;
+      padding-bottom: 0.3em;
+      border-bottom: 1px solid #d0d7de;
+    }
+    h3 {
+      font-size: 1.25em;
+    }
+    h4 {
+      font-size: 1em;
+    }
+    a {
+      color: #0969da;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    hr {
+      height: 0.25em;
+      padding: 0;
+      margin: 24px 0;
+      background-color: #d0d7de;
+      border: 0;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 16px 0;
+      font-size: 0.95em;
+    }
+    th, td {
+      border: 1px solid #d0d7de;
+      padding: 8px 12px;
+      vertical-align: top;
+    }
+    th {
+      background: #f6f8fa;
+      font-weight: 600;
+    }
+    tr:nth-child(even) {
+      background: #f6f8fa;
+    }
+    code {
+      background: #eff1f3;
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+      font-size: 0.9em;
+    }
+    pre {
+      background: #f6f8fa;
+      padding: 14px;
+      border-radius: 6px;
+      overflow-x: auto;
+      border: 1px solid #d0d7de;
+    }
+    pre code {
+      background: transparent;
+      padding: 0;
+      border-radius: 0;
+      font-size: 0.9em;
+    }
+    ul, ol {
+      padding-left: 2em;
+    }
+    li + li {
+      margin-top: 0.25em;
+    }
+    .alert {
+      padding: 12px 16px;
+      margin: 16px 0;
+      border-left: 4px solid;
+      border-radius: 4px;
+      background: #f6f8fa;
+    }
+    .alert-title {
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .alert-note {
+      border-left-color: #0969da;
+      background-color: #ddf4ff;
+    }
+    .alert-note .alert-title { color: #0969da; }
+    .alert-tip {
+      border-left-color: #1a7f37;
+      background-color: #dafbe1;
+    }
+    .alert-tip .alert-title { color: #1a7f37; }
+    .alert-important {
+      border-left-color: #8250df;
+      background-color: #fbefff;
+    }
+    .alert-important .alert-title { color: #8250df; }
+    .alert-warning {
+      border-left-color: #9a6700;
+      background-color: #fff8c5;
+    }
+    .alert-warning .alert-title { color: #9a6700; }
+    .alert-caution {
+      border-left-color: #cf222e;
+      background-color: #ffebe9;
+    }
+    .alert-caution .alert-title { color: #cf222e; }
+    .text-left { text-align: left; }
+    .text-center { text-align: center; }
+  </style>
+</head>
+<body>
+
+<h1 id="04-бортовая-электросеть-и-приборная-панель-carelectrics-в-city-car-driving-20">04. Бортовая электросеть и приборная панель (<code>CarElectrics</code>) в City Car Driving 2.0</h1>
+
+<p><strong>Навигация:</strong> <a href="./README.html">README</a> | <a href="./00_Quick_Start.html">00. Быстрый старт</a> | <a href="./01_Architecture_and_Config.html">01. Архитектура и конфиги</a> | <a href="./02_Named_IO_and_States.html">02. Именованный ввод/вывод</a> | <a href="./03_Components_TorqueTrain.html">03. Трансмиссия</a> | <strong>04. Электрика</strong> | <a href="./05_Components_Chassis_and_Subsystems.html">05. Шасси и подсистемы</a></p>
+
+<h2 id="содержание">Содержание</h2>
+<ol>
+  <li><a href="#1-схема-электросети-автомобиля-в-city-car-driving-20">Схема электросети автомобиля в City Car Driving 2.0</a></li>
+  <li><a href="#2-компоненты-electriccircuit-battery-и-electricelement">Компоненты <code>ElectricCircuit</code>, <code>Battery</code> и <code>ElectricElement</code></a></li>
+  <li><a href="#3-бортовая-электрика-светотехника-и-приборная-панель-carelectrics">Бортовая электрика, светотехника и приборная панель <code>CarElectrics</code></a></li>
+  <li><a href="#4-готовый-пример-секции-carelectrics-и-battery-из-ccd-20">Готовый пример секции <code>[CarElectrics]</code> и <code>[Battery]</code> из CCD 2.0</a></li>
+</ol>
+
+<hr>
+
+<h2 id="1-схема-электросети-автомобиля-в-city-car-driving-20">1. Схема электросети автомобиля в City Car Driving 2.0</h2>
+
+<p>Во всех стандартных XML-схемах (<code>Common/Vehicles/MotorCars/Schemes/*.xml</code>) бортовая сеть постоянного тока строится из трёх узловых цепей (<code>Class="ElectricCircuit"</code>):</p>
+<ol>
+  <li><strong><code>BatteryElectricCircuit</code></strong> — неотключаемая силовая цепь аккумулятора (<code>Battery</code>) и стартера (<code>Starter</code>). Питает приборы, работающие при вынутом ключе зажигания (аварийка <code>HazardLight</code>, габариты <code>ParkingLights</code>, стоп-сигналы <code>StopLight</code>, звуковой сигнал <code>Horn</code>).</li>
+  <li><strong><code>GeneratorElectricCircuit</code></strong> — цепь генератора (<code>Generator</code>), постоянно соединённая с <code>BatteryElectricCircuit</code>.</li>
+  <li><strong><code>IgnitionElectricCircuit</code></strong> — коммутируемая цепь зажигания (клемма 15). В XML она подключается к <code>BatteryElectricCircuit</code> с атрибутом <strong><code>Connected="false"</code></strong>:</li>
+</ol>
+
+<pre><code class="language-xml">&lt;Link Holder="BatteryElectricCircuit" Reference="Battery" /&gt;
+&lt;Link Holder="BatteryElectricCircuit" Reference="Starter" /&gt;
+&lt;Link Holder="BatteryElectricCircuit" Reference="CarElectrics" /&gt;
+&lt;Link Holder="BatteryElectricCircuit" Reference="GeneratorElectricCircuit" /&gt;
+&lt;Link Holder="GeneratorElectricCircuit" Reference="Generator" /&gt;
+&lt;Link Holder="BatteryElectricCircuit" Reference="IgnitionElectricCircuit" Connected="false" /&gt;
+&lt;Link Holder="IgnitionElectricCircuit" Reference="Engine" /&gt; &lt;!-- Только для EngineGazoline! --&gt;
+&lt;Link Holder="IgnitionElectricCircuit" Reference="CarElectrics" /&gt;
+&lt;Link Holder="IgnitionKey" Reference="IgnitionElectricCircuit" /&gt;</code></pre>
+
+<p>Когда водитель поворачивает ключ зажигания (<code>IgnitionKey</code>, <code>Class="IgnitionKeyProcessor"</code>) в положение <code>1</code> (<code>Ignition</code>) или <code>2</code> (<code>Starter</code>), <code>IgnitionKey</code> замыкает связь <code>BatteryElectricCircuit -&gt; IgnitionElectricCircuit</code>, подавая напряжение бортовой сети на приборы зажигания, фары, поворотники, дворники, приборную панель и свечи зажигания бензинового ДВС.</p>
+
+<div class="alert alert-important">
+  <div class="alert-title">Important</div>
+  <p>Чтобы приборы из <code>[CarElectrics]</code> получали питание от конкретной цепи (например, <code>IgnitionElectricCircuit</code> или <code>BatteryElectricCircuit</code>), в <code>&lt;Links&gt;</code> обязательно должна быть прописана связь <code>&lt;Link Holder="ИмяЦепи" Reference="CarElectrics" /&gt;</code>, а в <code>Vehicle.ini</code> — указано имя этой цепи в <code>DefaultCircuitName</code> или <code>&lt;Префикс&gt;_CircuitName</code>.</p>
+</div>
+
+<hr>
+
+<h2 id="2-компоненты-electriccircuit-battery-и-electricelement">2. Компоненты <code>ElectricCircuit</code>, <code>Battery</code> и <code>ElectricElement</code></h2>
+
+<h3 id="21-электрическая-цепь-classelectriccircuit">2.1. Электрическая цепь (<code>Class="ElectricCircuit"</code>)</h3>
+<p>Рассчитывает общее напряжение параллельно включённых источников ЭДС (<code>Battery</code>, <code>Generator</code>) и потребителей по закону Ома с учётом их внутреннего сопротивления. Параметров в <code>Vehicle.ini</code> не имеет.</p>
+<ul>
+  <li><strong>Связи <code>&lt;Links&gt;</code> (<code>Holder="ИмяЦепи"</code>):</strong> принимает <code>Battery</code>, <code>Generator</code>, <code>Starter</code>, <code>Engine</code> (<code>EngineGazoline</code>), <code>CarElectrics</code>, одиночные <code>ElectricElement</code> и дочерние <code>ElectricCircuit</code> (с опциональным атрибутом <code>Connected="true|false"</code>).</li>
+  <li><strong>Вход (<code>InternalName</code>):</strong> <code>Master</code> (<code>Boolean</code>) — замыкает (<code>true</code>) или размыкает (<code>false</code>) связь данной цепи с родительской цепью. <strong>Выход (<code>InternalName</code>):</strong> <code>Voltage</code> (<code>Real</code>, В) — текущее напряжение в цепи.</li>
+</ul>
+
+<h3 id="22-аккумуляторная-батарея-battery-classbattery">2.2. Аккумуляторная батарея (<code>[Battery]</code>, <code>Class="Battery"</code>)</h3>
+<p>Источник постоянного тока, который разряжается при нагрузке (особенно при пуске стартера) и заряжается, когда напряжение генератора в сети превышает текущую ЭДС аккумулятора.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th class="text-left">Ключ в <code>Vehicle.ini</code> (<code>[Battery]</code>)</th>
+      <th class="text-left">Тип</th>
+      <th class="text-center">По умолч.</th>
+      <th class="text-center">Ед. изм.</th>
+      <th class="text-left">Описание</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="text-left"><code>VoltageMin</code></td>
+      <td class="text-left"><code>Real</code></td>
+      <td class="text-center"><code>10.0</code></td>
+      <td class="text-center">В</td>
+      <td class="text-left">Минимальная ЭДС при полностью разряженном аккумуляторе (<code>10.0–10.5</code>).</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>VoltageMax</code></td>
+      <td class="text-left"><code>Real</code></td>
+      <td class="text-center"><code>12.0</code></td>
+      <td class="text-center">В</td>
+      <td class="text-left">Максимальная ЭДС полностью заряженной АКБ (<code>12.6–14.7</code>).</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>Capacity</code></td>
+      <td class="text-left"><code>Real</code></td>
+      <td class="text-center"><code>60.0</code></td>
+      <td class="text-center">А·ч</td>
+      <td class="text-left">Ёмкость аккумулятора в ампер-часах (<code>55–100</code>).</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>Resistance</code></td>
+      <td class="text-left"><code>Real</code></td>
+      <td class="text-center"><code>0.02</code></td>
+      <td class="text-center">Ом</td>
+      <td class="text-left">Базовое внутреннее сопротивление АКБ (<code>0.002–0.02</code>).</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>DischargeResistance</code></td>
+      <td class="text-left"><code>Real</code></td>
+      <td class="text-center"><code>Resistance</code></td>
+      <td class="text-center">Ом</td>
+      <td class="text-left">Внутреннее сопротивление в режиме отдачи тока (разряда).</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>ChargeResistance</code></td>
+      <td class="text-left"><code>Real</code></td>
+      <td class="text-center"><code>Resistance</code></td>
+      <td class="text-center">Ом</td>
+      <td class="text-left">Внутреннее сопротивление в режиме приёма тока (заряда от генератора).</td>
+    </tr>
+  </tbody>
+</table>
+
+<ul>
+  <li><strong>Входы (<code>InternalName</code>):</strong> <code>Battery</code> (<code>Boolean</code>, по умолчанию <code>true</code> — выключатель массы АКБ), <code>EnableUnlimited</code> (<code>Boolean</code> — режим бесконечного заряда <code>UnlimitedBattery</code>).</li>
+  <li><strong>Выходы (<code>InternalName</code>):</strong> <code>Amperage</code> (<code>Real</code>, А: <code>&gt; 0</code> — разряд, <code>&lt; 0</code> — заряд), <code>VoltageMin</code> (<code>Real</code>, В), <code>CapacityRelative</code> (<code>Real</code>, <code>[0..1]</code>), <code>BatteryActive</code> (<code>Boolean</code> — <code>true</code>, если АКБ разряжается).</li>
+</ul>
+
+<h3 id="23-одиночный-электропотребитель-classelectricelement">2.3. Одиночный электропотребитель (<code>Class="ElectricElement"</code>)</h3>
+<p>Универсальный резистивный прибор (обогреватель, дополнительный фонарь, спецсигнал), подключаемый к <code>ElectricCircuit</code>.</p>
+<ul>
+  <li><strong>Параметры <code>.ini</code>:</strong> <code>Resistance</code> (<code>5.0</code> Ом — сопротивление во включённом состоянии), <code>MinVoltage</code> (<code>9.0</code> В — напряжение начала работы), <code>NormalVoltage</code> (<code>12.0</code> В — напряжение 100% яркости/мощности).</li>
+  <li><strong>Вход (<code>InternalName</code>):</strong> <code>Enabled</code> (<code>Boolean</code>). <strong>Выходы (<code>InternalName</code>):</strong> <code>Intensity</code> (<code>Real</code>, <code>[0..∞)</code>), <code>Enabled</code> (<code>Boolean</code>).</li>
+</ul>
+
+<hr>
+
+<h2 id="3-бортовая-электрика-светотехника-и-приборная-панель-carelectrics">3. Бортовая электрика, светотехника и приборная панель <code>CarElectrics</code></h2>
+
+<p>Компонент <code>&lt;Component Name="CarElectrics" Class="CarElectrics" /&gt;</code> (секция <strong><code>[CarElectrics]</code></strong> в <code>Vehicle.ini</code>) объединяет всю автомобильную светотехнику, поворотники, стеклоочистители, звуковой сигнал, зуммеры, контрольные лампы и стрелочные указатели приборной панели.</p>
+
+<h3 id="31-связи-links-с-carelectrics-в-xml">3.1. Связи <code>&lt;Links&gt;</code> с <code>CarElectrics</code> в XML</h3>
+<p>Чтобы <code>CarElectrics</code> автоматически считывал показания агрегатов для стрелок и сигнальных ламп, в секции <code>&lt;Links&gt;</code> задаются связи <code>&lt;Link Holder="CarElectrics" Reference="ИмяКомпонента" /&gt;</code>:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th class="text-left">Целевой компонент (<code>Reference</code>)</th>
+      <th class="text-center">XML-атрибут в <code>&lt;Link&gt;</code></th>
+      <th class="text-left">Какие приборы и лампы в <code>CarElectrics</code> оживляет эта связь</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="text-left"><code>Engine</code> (<code>EngineGazoline</code> / <code>EngineDiesel</code>)</td>
+      <td class="text-center">—</td>
+      <td class="text-left">Тахометр <code>RpmNeedle</code>, термометр ОЖ <code>CoolantTemperatureNeedle</code>, манометр <code>OilNeedle</code>, лампы <code>OilIcon</code>, <code>HighOilPressureIcon</code>, <code>OverheatIcon</code>, <code>PowerSteeringIcon</code>, <code>ParkingBrakeIcon</code>, <code>EmergencyStopIcon</code>, <code>BrakeOilLowLevelIcon</code>, зуммер <code>Beeper</code>.</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>Speedometer</code></td>
+      <td class="text-center">—</td>
+      <td class="text-left">Спидометр <code>SpeedNeedle</code>, лампа и зуммер непристёгнутого ремня <code>SafetyBeltIcon</code>, <code>SafetyBeltBeeper</code>.</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>FuelTank</code> (<code>Class="Tank"</code>)</td>
+      <td class="text-center">—</td>
+      <td class="text-left">Указатель уровня топлива <code>FuelNeedle</code> (в литрах) и лампа резерва топлива <code>FuelIcon</code>.</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>Generator</code></td>
+      <td class="text-center">—</td>
+      <td class="text-left">Контрольная лампа отсутствия заряда АКБ <code>BatteryIcon</code> (гаснет при выходе генератора на рабочий режим).</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>Battery</code></td>
+      <td class="text-center">—</td>
+      <td class="text-left">Стрелка амперметра <code>AmperageNeedle</code>.</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>IgnitionKey</code> (<code>IgnitionKeyProcessor</code>)</td>
+      <td class="text-center">—</td>
+      <td class="text-left">Лампа свечей накаливания / предпускового подогрева <code>HeaterControlIcon</code>.</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>StarterRelay</code> (<code>Class="Relay"</code>)</td>
+      <td class="text-center">—</td>
+      <td class="text-left">Лампа контроля пуска стартера <code>StartControlIcon</code>.</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>GearBox</code> (в <code>*Manual.xml</code>)</td>
+      <td class="text-center">—</td>
+      <td class="text-left">Фонарь заднего хода <code>ReverseLight</code> (включается при передаточном числе <code>&lt; 0</code>).</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>GearBox</code></td>
+      <td class="text-center"><code>StartIconGearBox="true"</code></td>
+      <td class="text-left">Контроль нейтрали КПП для режима мигания лампы <code>StartControlIcon</code>.</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>GearBox</code></td>
+      <td class="text-center"><code>Reducer="true"</code></td>
+      <td class="text-left">Раздаточная коробка / демультипликатор для иконок <code>DownshiftAWDIcon</code> и <code>OverdriveAWDIcon</code>.</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>Relay</code> (муфты мостов)</td>
+      <td class="text-center"><code>AxisRelay="true"</code></td>
+      <td class="text-left">Иконки включения ведущих мостов <code>DriveAxis0..2Icon</code>, <code>DownshiftAWDIcon</code>, <code>OverdriveAWDIcon</code> <em>(требуют также связи с <code>Reducer="true"</code>)</em>.</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>GearBoxLogic</code> (в <code>*Auto.xml</code>)</td>
+      <td class="text-center">—</td>
+      <td class="text-left">Фонарь заднего хода <code>ReverseLight</code> и индикаторы режимов АКПП <code>GearBoxIconN</code>, <code>GearBoxIconR</code>, <code>GearBoxIconD</code>, <code>GearBoxIcon1</code>, <code>GearBoxIcon2</code>.</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>GearBoxAutomaticPump</code> (<code>Class="Pump"</code>)</td>
+      <td class="text-center">—</td>
+      <td class="text-left">Манометр и лампы давления масла КПП: <code>GearBoxOilNeedle</code>, <code>GearBoxOilIcon</code>, <code>GearBoxOilHighPressureIcon</code>.</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>AbsTcs</code></td>
+      <td class="text-center">—</td>
+      <td class="text-left">Контрольные лампы <code>AbsDisableIcon</code>, <code>AbsActiveIcon</code>, <code>TcsDisableIcon</code>, <code>TcsActiveIcon</code>.</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>BrakeFrontLeft/Right</code>, <code>BrakeBackLeft/Right</code></td>
+      <td class="text-center">—</td>
+      <td class="text-left">Сигнал стояночного тормоза <code>ParkingBrakeLight</code> (при затяжке ручника <code>&gt; 0.01</code>).</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>WheelFrontLeft/Right</code>, <code>WheelBackLeft/Right</code></td>
+      <td class="text-center">—</td>
+      <td class="text-left">Лампа падения давления в шинах (TPMS) <code>LowTirePressureIcon</code>.</td>
+    </tr>
+    <tr>
+      <td class="text-left">Приводы дверей (<code>ActuatorPneumatic2Chamber</code>)</td>
+      <td class="text-center">—</td>
+      <td class="text-left">Контрольные лампы открытых дверей автобуса/кузова <code>DoorIcon0</code> .. <code>DoorIcon3</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="32-общие-параметры-секции-carelectrics-в-vehicleini-17-параметров">3.2. Общие параметры секции <code>[CarElectrics]</code> в <code>Vehicle.ini</code> (17 параметров)</h3>
+
+<table>
+  <thead>
+    <tr>
+      <th class="text-left">Ключ в <code>Vehicle.ini</code> (<code>[CarElectrics]</code>)</th>
+      <th class="text-left">Тип</th>
+      <th class="text-center">По умолч.</th>
+      <th class="text-center">Ед. изм.</th>
+      <th class="text-left">Описание</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="text-left"><code>DefaultCircuitName</code></td>
+      <td class="text-left"><code>String</code></td>
+      <td class="text-center"><code>""</code></td>
+      <td class="text-center">имя цепи</td>
+      <td class="text-left">Имя электроцепи по умолчанию для всех элементов (обычно <code>IgnitionElectricCircuit</code>).</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>MinVoltage</code></td>
+      <td class="text-left"><code>Real</code></td>
+      <td class="text-center"><code>9.0</code></td>
+      <td class="text-center">В</td>
+      <td class="text-left">Минимальное напряжение бортовой сети, ниже которого яркость ламп равна <code>0</code> (<code>0 &lt; MinVoltage &lt;= Voltage</code>).</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>Voltage</code></td>
+      <td class="text-left"><code>Real</code></td>
+      <td class="text-center"><code>13.0</code></td>
+      <td class="text-center">В</td>
+      <td class="text-left">Номинальное напряжение сети, при котором яркость ламп равна <code>1.0</code> (<code>13.0–14.7</code>).</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>HasAlwaysLitDashboard</code></td>
+      <td class="text-left"><code>Boolean</code></td>
+      <td class="text-center"><code>false</code></td>
+      <td class="text-center">—</td>
+      <td class="text-left">Если <code>true</code>, подсветка приборной панели <code>AlwaysLitDashboard</code> горит всегда при включённом зажигании (независимо от габаритов).</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>LowFuelLevel</code></td>
+      <td class="text-left"><code>Real</code></td>
+      <td class="text-center"><code>0.1</code></td>
+      <td class="text-center"><code>[0..1]</code></td>
+      <td class="text-left">Доля остатка топлива в баке, ниже которой загорается лампа резерва <code>FuelIcon</code> (например, <code>0.15–0.21</code>).</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>OilLowPressureThreshold</code></td>
+      <td class="text-left"><code>Real</code></td>
+      <td class="text-center"><code>0.6</code></td>
+      <td class="text-center">бар</td>
+      <td class="text-left">Порог аварийно низкого давления масла ДВС для зажигания маслёнки <code>OilIcon</code>.</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>OilHighPressureThreshold</code></td>
+      <td class="text-left"><code>Real</code></td>
+      <td class="text-center"><code>6.1</code></td>
+      <td class="text-center">бар</td>
+      <td class="text-left">Порог чрезмерно высокого давления масла ДВС для <code>HighOilPressureIcon</code>.</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>OilPressureConsiderEngine</code></td>
+      <td class="text-left"><code>Boolean</code></td>
+      <td class="text-center"><code>false</code></td>
+      <td class="text-center">—</td>
+      <td class="text-left">Если <code>true</code>, лампы давления масла ДВС горят только при заведённом моторе; если <code>false</code> — горят и при включённом зажигании до пуска ДВС.</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>GearBoxOilLowPressureThreshold</code></td>
+      <td class="text-left"><code>Real</code></td>
+      <td class="text-center"><code>1.0</code></td>
+      <td class="text-center">бар</td>
+      <td class="text-left">Нижний аварийный порог давления масла КПП для <code>GearBoxOilIcon</code>.</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>GearBoxOilHighPressureThreshold</code></td>
+      <td class="text-left"><code>Real</code></td>
+      <td class="text-center"><code>10.0</code></td>
+      <td class="text-center">бар</td>
+      <td class="text-left">Верхний аварийный порог давления масла КПП для <code>GearBoxOilHighPressureIcon</code>.</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>GearBoxOilPressureConsiderEngine</code></td>
+      <td class="text-left"><code>Boolean</code></td>
+      <td class="text-center"><code>false</code></td>
+      <td class="text-center">—</td>
+      <td class="text-left">Учитывать ли факт работы ДВС для ламп давления масла КПП.</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>HasBrokenBrakeBeeper</code></td>
+      <td class="text-left"><code>Boolean</code></td>
+      <td class="text-center"><code>true</code></td>
+      <td class="text-center">—</td>
+      <td class="text-left">Включать ли аварийный зуммер <code>Beeper</code> при отказе тормозов (<code>BrokenBrake = true</code>) и работающем ДВС.</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>HasEngineOverheatBeeper</code></td>
+      <td class="text-left"><code>Boolean</code></td>
+      <td class="text-center"><code>true</code></td>
+      <td class="text-center">—</td>
+      <td class="text-left">Включать ли аварийный зуммер <code>Beeper</code> при перегреве двигателя (<code>CoolantTemperature &gt; OverheatTemperature</code>).</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>HeaterControlIcon_BlinkingTime</code></td>
+      <td class="text-left"><code>Real</code></td>
+      <td class="text-center"><code>2.0</code></td>
+      <td class="text-center">с</td>
+      <td class="text-left">Время непрерывного свечения иконки накала свечей <code>HeaterControlIcon</code> до перехода в мигающий режим.</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>SafetyBeltMinSpeed</code></td>
+      <td class="text-left"><code>Real</code></td>
+      <td class="text-center"><code>2.0</code></td>
+      <td class="text-center">км/ч</td>
+      <td class="text-left">Минимальная скорость движения, с которой начинает идти таймер езды без ремня безопасности.</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>SafetyBeltWarningSpeed</code></td>
+      <td class="text-left"><code>Real</code></td>
+      <td class="text-center"><code>20.0</code></td>
+      <td class="text-center">км/ч</td>
+      <td class="text-left">Скорость, при превышении которой без ремня немедленно включается зуммер <code>SafetyBeltBeeper</code> и мигание <code>SafetyBeltIcon</code>.</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>SafetyBeltWarningTime</code></td>
+      <td class="text-left"><code>Real</code></td>
+      <td class="text-center"><code>60.0</code></td>
+      <td class="text-center">с</td>
+      <td class="text-left">Время езды со скоростью выше <code>SafetyBeltMinSpeed</code> без ремня до включения зуммера <code>SafetyBeltBeeper</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="33-настройка-ламп-фар-поворотников-дворников-и-стрелок-через-префиксы-префикс_">3.3. Настройка ламп, фар, поворотников, дворников и стрелок через префиксы <code>&lt;Префикс&gt;_*</code></h3>
+
+<p>Внутри секции <code>[CarElectrics]</code> каждый из 81 прибора настраивается параметрами вида <code>&lt;ПрефиксЭлемента&gt;_&lt;Суффикс&gt;</code>:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th class="text-left">Категория элементов</th>
+      <th class="text-left">Суффикс параметра в <code>[CarElectrics]</code></th>
+      <th class="text-left">Тип</th>
+      <th class="text-center">По умолч.</th>
+      <th class="text-center">Ед. изм.</th>
+      <th class="text-left">Описание</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="text-left"><strong>Все 81 элемент</strong> (фары, лампы, иконки, зуммеры, дворники, стрелки)</td>
+      <td class="text-left"><code>&lt;Префикс&gt;_Resistance</code></td>
+      <td class="text-left"><code>Real</code></td>
+      <td class="text-center"><strong><code>0.0</code></strong></td>
+      <td class="text-center">Ом</td>
+      <td class="text-left">Электрическое сопротивление включённого прибора (<code>1.2–7.0</code> для фар, <code>40</code> для ламп приборки, <code>100</code> для стрелок).</td>
+    </tr>
+    <tr>
+      <td class="text-left"></td>
+      <td class="text-left"><code>&lt;Префикс&gt;_CircuitName</code></td>
+      <td class="text-left"><code>String</code></td>
+      <td class="text-center"><code>DefaultCircuitName</code></td>
+      <td class="text-center">имя цепи</td>
+      <td class="text-left">Индивидуальная привязка прибора к электроцепи (например, <code>BatteryElectricCircuit</code> для <code>HazardLight</code>, <code>ParkingLights</code>, <code>StopLight</code>, <code>Horn</code>).</td>
+    </tr>
+    <tr>
+      <td class="text-left"></td>
+      <td class="text-left"><code>&lt;Префикс&gt;_ConnectionCheckTime</code></td>
+      <td class="text-left"><code>Real</code></td>
+      <td class="text-center"><code>0.0</code> <em>(или $\infty$)</em></td>
+      <td class="text-center">с</td>
+      <td class="text-left">Длительность тестового свечения лампы после подачи питания в цепь (самодиагностика приборной панели при повороте ключа).</td>
+    </tr>
+    <tr>
+      <td class="text-left"></td>
+      <td class="text-left"><code>&lt;Префикс&gt;_EngineCheckTime</code></td>
+      <td class="text-left"><code>Real</code></td>
+      <td class="text-center"><code>0.0</code></td>
+      <td class="text-center">с</td>
+      <td class="text-left">Длительность тестового свечения лампы <strong>после запуска ДВС</strong> (до погасания).</td>
+    </tr>
+    <tr>
+      <td class="text-left"><strong>Мигающие элементы</strong> (<code>*TurnLight*</code>, <code>HazardLight*</code>, <code>SafetyBeltIcon</code>, <code>ParkingBrakeIcon</code>, <code>AbsActiveIcon</code>, <code>TcsActiveIcon</code>, <code>StartControlIcon</code>, <code>HeaterControlIcon</code>, <code>EngineShutdownIcon</code>)</td>
+      <td class="text-left"><code>&lt;Префикс&gt;_Period</code></td>
+      <td class="text-left"><code>Real</code></td>
+      <td class="text-center"><code>0.6</code> (<code>0.0</code> для ABS/TCS)</td>
+      <td class="text-center">с</td>
+      <td class="text-left">Полный период цикла мигания (<code>1.0</code> — 60 вспышек/мин; при <code>0.0</code> горит непрерывно без мигания).</td>
+    </tr>
+    <tr>
+      <td class="text-left"></td>
+      <td class="text-left"><code>&lt;Префикс&gt;_DutyCycle</code></td>
+      <td class="text-left"><code>Real</code></td>
+      <td class="text-center"><code>0.5</code></td>
+      <td class="text-center"><code>[0..1]</code></td>
+      <td class="text-left">Доля периода, в течение которой лампа включена (<code>0.5</code> — полпериода горит, полпериода погашена).</td>
+    </tr>
+    <tr>
+      <td class="text-left"></td>
+      <td class="text-left"><code>&lt;Префикс&gt;_Blinking</code></td>
+      <td class="text-left"><code>Boolean</code></td>
+      <td class="text-center"><code>true</code></td>
+      <td class="text-center">—</td>
+      <td class="text-left">Разрешено ли мигание элемента по умолчанию.</td>
+    </tr>
+    <tr>
+      <td class="text-left"><strong>Стеклоочистители (дворники)</strong> (<code>FrontWindshieldWiper</code>, <code>BackWindshieldWiper</code>)</td>
+      <td class="text-left"><code>&lt;Префикс&gt;_PeriodicDelay</code></td>
+      <td class="text-left"><code>Real</code></td>
+      <td class="text-center"><code>2.0</code></td>
+      <td class="text-center">с</td>
+      <td class="text-left">Пауза между взмахами щёток в прерывистом режиме (<code>1</code>).</td>
+    </tr>
+    <tr>
+      <td class="text-left"></td>
+      <td class="text-left"><code>&lt;Префикс&gt;_PeriodicPhase</code></td>
+      <td class="text-left"><code>Real</code></td>
+      <td class="text-center"><code>2.0</code></td>
+      <td class="text-center">с</td>
+      <td class="text-left">Время полного взмаха туда-обратно (<code>0 -&gt; 1 -&gt; 0</code>) в прерывистом режиме (<code>1</code>).</td>
+    </tr>
+    <tr>
+      <td class="text-left"></td>
+      <td class="text-left"><code>&lt;Префикс&gt;_NormalPhase</code></td>
+      <td class="text-left"><code>Real</code></td>
+      <td class="text-center"><code>2.0</code></td>
+      <td class="text-center">с</td>
+      <td class="text-left">Время полного взмаха туда-обратно в постоянном режиме (<code>2</code>) и при возврате на парковку (<code>0</code>).</td>
+    </tr>
+    <tr>
+      <td class="text-left"></td>
+      <td class="text-left"><code>&lt;Префикс&gt;_FastPhase</code></td>
+      <td class="text-left"><code>Real</code></td>
+      <td class="text-center"><code>1.0</code></td>
+      <td class="text-center">с</td>
+      <td class="text-left">Время полного взмаха туда-обратно в быстром режиме (<code>3</code>).</td>
+    </tr>
+    <tr>
+      <td class="text-left"><strong>Стрелочные приборы</strong> (<code>*Needle</code>)</td>
+      <td class="text-left"><code>&lt;Префикс&gt;_IsMechanical</code></td>
+      <td class="text-left"><code>Boolean</code></td>
+      <td class="text-center"><code>false</code></td>
+      <td class="text-center">—</td>
+      <td class="text-left">Если <code>true</code>, прибор механический — работает всегда без электропитания и не требует задания <code>_Resistance</code>.</td>
+    </tr>
+    <tr>
+      <td class="text-left"></td>
+      <td class="text-left"><code>&lt;Префикс&gt;_DefaultValue</code></td>
+      <td class="text-left"><code>Real</code></td>
+      <td class="text-center"><code>0.0</code></td>
+      <td class="text-center">ед. шкалы</td>
+      <td class="text-left">Показание стрелки при выключенном зажигании (например, <code>50</code> для <code>CoolantTemperatureNeedle</code>).</td>
+    </tr>
+    <tr>
+      <td class="text-left"></td>
+      <td class="text-left"><code>&lt;Префикс&gt;_ValueSpeed</code></td>
+      <td class="text-left"><code>Real</code></td>
+      <td class="text-center"><code>5.0</code></td>
+      <td class="text-center">$1/\text{с}$</td>
+      <td class="text-left">Скорость плавного сглаживания движения стрелки к целевому значению.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="alert alert-important">
+  <div class="alert-title">Important</div>
+  <p><strong>Два главных правила настройки элементов в <code>[CarElectrics]</code>:</strong></p>
+  <ol>
+    <li><strong>Нулевое сопротивление = прибор отключён!</strong> По умолчанию у всех 81 элементов <code>&lt;Префикс&gt;_Resistance = 0.0</code>, из-за чего они считаются неподключёнными к бортовой сети, и их выход в игру всегда равен <strong><code>0.0</code></strong>. Чтобы любая фара, контрольная лампа, зуммер, дворник или электрическая стрелка работали, <strong>обязательно задайте для них в <code>[CarElectrics]</code> положительное сопротивление <code>&lt;Префикс&gt;_Resistance &gt; 0</code></strong> (исключение — механические стрелки с <code>&lt;Префикс&gt;_IsMechanical = true</code>).</li>
+    <li><strong>Особенность <code>&lt;Префикс&gt;_EngineCheckTime</code>:</strong> если задать для лампы <code>_EngineCheckTime &gt; 0</code> (например, <code>ExhaustSystemIcon_EngineCheckTime = 0.5</code>), но не указать <code>_ConnectionCheckTime</code>, то <code>_ConnectionCheckTime</code> автоматически становится <strong>бесконечным</strong> — лампа будет гореть всё время при включённом зажигании и погаснет через <code>0.5 с</code> после запуска двигателя!</li>
+  </ol>
+</div>
+
+<h3 id="34-сводная-таблица-всех-81-элемента-carelectrics-и-их-выходов-в-xml">3.4. Сводная таблица всех 81 элемента <code>[CarElectrics]</code> и их выходов в XML</h3>
+
+<p>В колонке «Тип» указан набор поддерживаемых суффиксов: <strong>Базовый</strong> (<code>_Resistance</code>, <code>_CircuitName</code>, <code>_ConnectionCheckTime</code>, <code>_EngineCheckTime</code>), <strong>Мигающий</strong> (+ <code>_Period</code>, <code>_DutyCycle</code>, <code>_Blinking</code>), <strong>Дворник</strong> (+ <code>_PeriodicDelay</code>, <code>_PeriodicPhase</code>, <code>_NormalPhase</code>, <code>_FastPhase</code>), <strong>Стрелка</strong> (+ <code>_IsMechanical</code>, <code>_DefaultValue</code>, <code>_ValueSpeed</code>).</p>
+
+<table>
+  <thead>
+    <tr>
+      <th class="text-center">№</th>
+      <th class="text-left">Префикс в <code>[CarElectrics]</code></th>
+      <th class="text-center">Тип</th>
+      <th class="text-left">Условие включения / что показывает</th>
+      <th class="text-left">Имя выхода <code>InternalName</code> (<code>Real</code>) в XML</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="text-center">1</td>
+      <td class="text-left"><code>LowBeam</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Вход <code>LowBeam</code> (гаснет при включении <code>HighBeam</code>)</td>
+      <td class="text-left"><code>LowBeamIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">2</td>
+      <td class="text-left"><code>LowBeamIcon</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Повторяет состояние <code>LowBeam</code></td>
+      <td class="text-left"><code>LowBeamIconIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">3</td>
+      <td class="text-left"><code>HighBeam</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Вход <code>HighBeam</code> (при включённом <code>LowBeam</code>) или <code>HighBeamUnfixed</code></td>
+      <td class="text-left"><code>HighBeamIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">4</td>
+      <td class="text-left"><code>HighBeamIcon</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Повторяет состояние <code>HighBeam</code></td>
+      <td class="text-left"><code>HighBeamIconIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">5</td>
+      <td class="text-left"><code>ParkingLights</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Вход <code>ParkingLights</code> (габаритные огни)</td>
+      <td class="text-left"><code>ParkingLightsIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">6</td>
+      <td class="text-left"><code>ParkingLightsIcon</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Повторяет состояние <code>ParkingLights</code></td>
+      <td class="text-left"><code>ParkingLightsIconIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">7</td>
+      <td class="text-left"><code>FrontFogLights</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Вход <code>FrontFogLights</code> (передние ПТФ)</td>
+      <td class="text-left"><code>FrontFogLightsIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">8</td>
+      <td class="text-left"><code>RearFogLights</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Вход <code>RearFogLights</code> (задние ПТФ)</td>
+      <td class="text-left"><code>RearFogLightsIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">9</td>
+      <td class="text-left"><code>StopLight</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Вход педали тормоза <code>Brake &gt; 0.01</code></td>
+      <td class="text-left"><code>StopLightIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">10</td>
+      <td class="text-left"><code>ReverseLight</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Задняя передача в <code>GearBox</code> (<code>&lt; 0</code>) или режим <code>R</code> в <code>GearBoxLogic</code></td>
+      <td class="text-left"><code>ReverseLightIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">11</td>
+      <td class="text-left"><code>ParkingBrakeLight</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Затянут стояночный тормоз на <code>Brake*</code> (<code>&gt; 0.01</code>)</td>
+      <td class="text-left"><code>ParkingBrakeLightIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">12</td>
+      <td class="text-left"><code>RetarderLight</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Вход <code>Retarder</code> (<code>true</code>)</td>
+      <td class="text-left"><code>RetarderLightIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">13</td>
+      <td class="text-left"><code>LeftTurnLight</code></td>
+      <td class="text-center">Мигающий</td>
+      <td class="text-left">Вход <code>LeftTurnLight</code> (перекрывается <code>HazardLight</code>)</td>
+      <td class="text-left"><code>LeftTurnLightIntensity</code> <em>(макс. с <code>HazardLight</code> и <code>EngineShutdownIcon</code>)</em></td>
+    </tr>
+    <tr>
+      <td class="text-center">14</td>
+      <td class="text-left"><code>LeftTurnLightIcon</code></td>
+      <td class="text-center">Мигающий</td>
+      <td class="text-left">Повторяет <code>LeftTurnLight</code></td>
+      <td class="text-left"><code>LeftTurnLightIconIntensity</code> <em>(макс. с <code>HazardLightIcon</code> и <code>EngineShutdownIcon</code>)</em></td>
+    </tr>
+    <tr>
+      <td class="text-center">15</td>
+      <td class="text-left"><code>RightTurnLight</code></td>
+      <td class="text-center">Мигающий</td>
+      <td class="text-left">Вход <code>RightTurnLight</code> (перекрывается <code>HazardLight</code>)</td>
+      <td class="text-left"><code>RightTurnLightIntensity</code> <em>(макс. с <code>HazardLight</code> и <code>EngineShutdownIcon</code>)</em></td>
+    </tr>
+    <tr>
+      <td class="text-center">16</td>
+      <td class="text-left"><code>RightTurnLightIcon</code></td>
+      <td class="text-center">Мигающий</td>
+      <td class="text-left">Повторяет <code>RightTurnLight</code></td>
+      <td class="text-left"><code>RightTurnLightIconIntensity</code> <em>(макс. с <code>HazardLightIcon</code> и <code>EngineShutdownIcon</code>)</em></td>
+    </tr>
+    <tr>
+      <td class="text-center">17</td>
+      <td class="text-left"><code>StartControlIcon</code></td>
+      <td class="text-center">Мигающий</td>
+      <td class="text-left">Включено <code>StarterRelay</code> (мигает, если КПП не в нейтрали)</td>
+      <td class="text-left"><code>StartControlIconIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">18</td>
+      <td class="text-left"><code>HeaterControlIcon</code></td>
+      <td class="text-center">Мигающий</td>
+      <td class="text-left">Ключ в <code>Ignition</code> при незаведённом ДВС (горит, затем мигает)</td>
+      <td class="text-left"><code>HeaterControlIconIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">19</td>
+      <td class="text-left"><code>HazardLight</code></td>
+      <td class="text-center">Мигающий</td>
+      <td class="text-left">Вход аварийной сигнализации <code>HazardLight</code></td>
+      <td class="text-left"><em>(входит в <code>LeftTurnLightIntensity</code> и <code>RightTurnLightIntensity</code>)</em></td>
+    </tr>
+    <tr>
+      <td class="text-center">20</td>
+      <td class="text-left"><code>HazardLightIcon</code></td>
+      <td class="text-center">Мигающий</td>
+      <td class="text-left">Повторяет состояние <code>HazardLight</code></td>
+      <td class="text-left"><code>HazardLightIconIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">21</td>
+      <td class="text-left"><code>Dashboard</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Включены <code>ParkingLights</code>, <code>LowBeam</code> или фиксированный <code>HighBeam</code></td>
+      <td class="text-left"><code>DashboardIntensity</code> <em>(макс. с <code>AlwaysLitDashboard</code>)</em></td>
+    </tr>
+    <tr>
+      <td class="text-center">22</td>
+      <td class="text-left"><code>AlwaysLitDashboard</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Постоянно при <code>HasAlwaysLitDashboard = true</code></td>
+      <td class="text-left"><em>(входит в <code>DashboardIntensity</code>)</em></td>
+    </tr>
+    <tr>
+      <td class="text-center">23</td>
+      <td class="text-left"><code>SafetyBeltIcon</code></td>
+      <td class="text-center">Мигающий</td>
+      <td class="text-left">Не пристёгнут ремень (<code>SafetyBelt = false</code>; мигает при зуммере)</td>
+      <td class="text-left"><code>SafetyBeltIconIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">24</td>
+      <td class="text-left"><code>SafetyBeltBeeper</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Езда без ремня быстрее <code>SafetyBeltWarningSpeed</code> или дольше <code>SafetyBeltWarningTime</code></td>
+      <td class="text-left"><code>SafetyBeltBeeperVolume</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">25</td>
+      <td class="text-left"><code>ParkingBrakeIcon</code></td>
+      <td class="text-center">Мигающий</td>
+      <td class="text-left">Включён <code>ParkingBrake &gt; 0.01</code> (горит) или <code>BrokenBrake = true</code> (мигает)</td>
+      <td class="text-left"><code>ParkingBrakeIconIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">26</td>
+      <td class="text-left"><code>BatteryIcon</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Генератор не отдаёт ток в сеть (<code>Generator</code> отключён)</td>
+      <td class="text-left"><code>BatteryIconIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">27</td>
+      <td class="text-left"><code>Horn</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Вход звукового сигнала <code>Horn</code></td>
+      <td class="text-left"><code>HornVolume</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">28</td>
+      <td class="text-left"><code>FrontWindshieldWiper</code></td>
+      <td class="text-center">Дворник</td>
+      <td class="text-left">Вход <code>FrontWindshieldWiper</code> (<code>0..3</code>)</td>
+      <td class="text-left"><code>FrontWindshieldWiperPhase</code> (<code>[0..1]</code>), <code>FrontWindshieldWiperSpeed</code> ($1/\text{с}$)</td>
+    </tr>
+    <tr>
+      <td class="text-center">29</td>
+      <td class="text-left"><code>BackWindshieldWiper</code></td>
+      <td class="text-center">Дворник</td>
+      <td class="text-left">Вход <code>BackWindshieldWiper</code> (<code>0..3</code>)</td>
+      <td class="text-left"><code>BackWindshieldWiperPhase</code> (<code>[0..1]</code>), <code>BackWindshieldWiperSpeed</code> ($1/\text{с}$)</td>
+    </tr>
+    <tr>
+      <td class="text-center">30</td>
+      <td class="text-left"><code>FuelIcon</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Остаток топлива в <code>FuelTank</code> ниже <code>LowFuelLevel</code></td>
+      <td class="text-left"><code>FuelIconIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">31</td>
+      <td class="text-left"><code>FuelNeedle</code></td>
+      <td class="text-center">Стрелка</td>
+      <td class="text-left">Объём топлива в <code>FuelTank</code> (л)</td>
+      <td class="text-left"><code>Fuel</code> <em>(в схемах выводится как <code>DashboardFuel</code>)</em></td>
+    </tr>
+    <tr>
+      <td class="text-center">32</td>
+      <td class="text-left"><code>SpeedNeedle</code></td>
+      <td class="text-center">Стрелка</td>
+      <td class="text-left">Скорость от <code>Speedometer</code> (м/с)</td>
+      <td class="text-left"><code>Speed</code> <em>(в схемах — <code>DashboardSpeed</code>)</em></td>
+    </tr>
+    <tr>
+      <td class="text-center">33</td>
+      <td class="text-left"><code>RpmNeedle</code></td>
+      <td class="text-center">Стрелка</td>
+      <td class="text-left">Обороты коленвала <code>Engine</code> (об/мин)</td>
+      <td class="text-left"><code>RPM</code> <em>(в схемах — <code>DashboardRPM</code>)</em></td>
+    </tr>
+    <tr>
+      <td class="text-center">34</td>
+      <td class="text-left"><code>CoolantTemperatureNeedle</code></td>
+      <td class="text-center">Стрелка</td>
+      <td class="text-left">Температура ОЖ <code>Engine</code> (°C)</td>
+      <td class="text-left"><code>CoolantTemperature</code> <em>(в схемах — <code>DashboardCoolantTemperature</code>)</em></td>
+    </tr>
+    <tr>
+      <td class="text-center">35</td>
+      <td class="text-left"><code>OilNeedle</code></td>
+      <td class="text-center">Стрелка</td>
+      <td class="text-left">Давление масла <code>Engine</code> (бар)</td>
+      <td class="text-left"><code>OilPressure</code> <em>(в схемах — <code>DashboardOilPressure</code>)</em></td>
+    </tr>
+    <tr>
+      <td class="text-center">36</td>
+      <td class="text-left"><code>GearBoxOilNeedle</code></td>
+      <td class="text-center">Стрелка</td>
+      <td class="text-left">Давление масла КПП от <code>Pump</code> (бар)</td>
+      <td class="text-left"><code>GearBoxOilPressure</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">37</td>
+      <td class="text-left"><code>VoltageNeedle</code></td>
+      <td class="text-center">Стрелка</td>
+      <td class="text-left">Напряжение цепи со знаком минус (<code>-Voltage</code>, В)</td>
+      <td class="text-left"><code>Voltage</code> <em>(в схемах — <code>DashboardVoltage</code>)</em></td>
+    </tr>
+    <tr>
+      <td class="text-center">38</td>
+      <td class="text-left"><code>AmperageNeedle</code></td>
+      <td class="text-center">Стрелка</td>
+      <td class="text-left">Ток аккумулятора <code>Battery</code> (А)</td>
+      <td class="text-left"><code>Amperage</code> <em>(в схемах — <code>DashboardAmperage</code>)</em></td>
+    </tr>
+    <tr>
+      <td class="text-center">39</td>
+      <td class="text-left"><code>PneumoPressure0Needle</code></td>
+      <td class="text-center">Стрелка</td>
+      <td class="text-left">Выход автомобиля <code>PneumoPressure0</code> (бар)</td>
+      <td class="text-left"><code>PneumoPressure0</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">40</td>
+      <td class="text-left"><code>PneumoPressure1Needle</code></td>
+      <td class="text-center">Стрелка</td>
+      <td class="text-left">Выход автомобиля <code>PneumoPressure1</code> (бар)</td>
+      <td class="text-left"><code>PneumoPressure1</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">41</td>
+      <td class="text-left"><code>OilIcon</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Давление масла ДВС <code>&lt; OilLowPressureThreshold</code></td>
+      <td class="text-left"><code>OilIconIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">42</td>
+      <td class="text-left"><code>GearBoxOilIcon</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Давление масла КПП <code>&lt; GearBoxOilLowPressureThreshold</code></td>
+      <td class="text-left"><code>GearBoxOilIconIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">43</td>
+      <td class="text-left"><code>GearBoxOilHighPressureIcon</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Давление масла КПП <code>&gt; GearBoxOilHighPressureThreshold</code></td>
+      <td class="text-left"><code>GearBoxOilHighPressureIconIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">44</td>
+      <td class="text-left"><code>OverheatIcon</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Температура ОЖ ДВС <code>&gt; OverheatTemperature</code></td>
+      <td class="text-left"><code>OverheatIconIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">45</td>
+      <td class="text-left"><code>Beeper</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Отказ тормозов при работающем ДВС или перегрев ДВС</td>
+      <td class="text-left"><code>BeeperVolume</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">46</td>
+      <td class="text-left"><code>CheckIcons</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Самодиагностика при пуске (<code>CheckIcons_ConnectionCheckTime</code>)</td>
+      <td class="text-left"><code>CheckIconsIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">47</td>
+      <td class="text-left"><code>AbsDisableIcon</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Отключена ABS в блоке <code>AbsTcs</code></td>
+      <td class="text-left"><code>AbsDisableIconIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">48</td>
+      <td class="text-left"><code>AbsActiveIcon</code></td>
+      <td class="text-center">Мигающий</td>
+      <td class="text-left">Активно срабатывает ABS в <code>AbsTcs</code></td>
+      <td class="text-left"><code>AbsActiveIconIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">49</td>
+      <td class="text-left"><code>TcsDisableIcon</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Отключена TCS в блоке <code>AbsTcs</code></td>
+      <td class="text-left"><code>TcsDisableIconIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">50</td>
+      <td class="text-left"><code>TcsActiveIcon</code></td>
+      <td class="text-center">Мигающий</td>
+      <td class="text-left">Активно срабатывает TCS в <code>AbsTcs</code></td>
+      <td class="text-left"><code>TcsActiveIconIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">51</td>
+      <td class="text-left"><code>AirbagIcon</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Самодиагностика подушек безопасности (<code>_ConnectionCheckTime</code>)</td>
+      <td class="text-left"><code>AirbagIconIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">52</td>
+      <td class="text-left"><code>ExhaustSystemIcon</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Самодиагностика системы выпуска (<code>_EngineCheckTime</code>)</td>
+      <td class="text-left"><code>ExhaustSystemIconIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">53</td>
+      <td class="text-left"><code>PowerSteeringIcon</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Обороты ДВС <code>&lt; StableRPM / 2</code> или вход <code>BrokenPowerSteering</code></td>
+      <td class="text-left"><code>PowerSteeringIconIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">54</td>
+      <td class="text-left"><code>EmergencyStopIcon</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Отказ тормозов, отказ ЭУР/ГУР или перегрев ДВС</td>
+      <td class="text-left"><code>EmergencyStopIconIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">55–58</td>
+      <td class="text-left"><code>LowAirPressureIcon0</code>..<code>3</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Давление в пневмоконтуре <code>0..3</code> ниже <code>MinWorkPneumoPressure0..3</code></td>
+      <td class="text-left"><strong><code>LowPressureIcon0Intensity</code></strong> .. <strong><code>LowPressureIcon3Intensity</code></strong></td>
+    </tr>
+    <tr>
+      <td class="text-center">59–62</td>
+      <td class="text-left"><code>DoorIcon0</code>..<code>3</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Открыта соответствующая пневмодверь <code>0..3</code> (<code>&gt; 0.05</code>)</td>
+      <td class="text-left"><code>DoorIcon0Intensity</code> .. <code>DoorIcon3Intensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">63</td>
+      <td class="text-left"><code>RetarderIcon</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Вход <code>Retarder</code> (<code>true</code>)</td>
+      <td class="text-left"><code>RetarderIconIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">64</td>
+      <td class="text-left"><code>LowAirPressureIcon</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Низкое давление хотя бы в одном из 4 пневмоконтуров</td>
+      <td class="text-left"><strong><code>LowPressureIconIntensity</code></strong></td>
+    </tr>
+    <tr>
+      <td class="text-center">65</td>
+      <td class="text-left"><code>EngineShutdownIcon</code></td>
+      <td class="text-center">Мигающий</td>
+      <td class="text-left">Вход <code>ShutdownEngine</code> (<code>true</code>)</td>
+      <td class="text-left"><strong><code>ShutdownEngineIconIntensity</code></strong></td>
+    </tr>
+    <tr>
+      <td class="text-center">66</td>
+      <td class="text-left"><code>HighOilPressureIcon</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Давление масла ДВС <code>&gt; OilHighPressureThreshold</code></td>
+      <td class="text-left"><code>HighOilPressureIconIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">67–71</td>
+      <td class="text-left"><code>GearBoxIconN</code>/<code>D</code>/<code>R</code>/<code>1</code>/<code>2</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Положение селектора <code>GearBoxLogic</code> (<code>N</code>, <code>D</code>, <code>R</code>, <code>D+1</code>, <code>D+2</code>)</td>
+      <td class="text-left"><code>GearBoxIconNIntensity</code>, <code>GearBoxIconDIntensity</code>, <code>GearBoxIconRIntensity</code>, <code>GearBoxIcon1Intensity</code>, <code>GearBoxIcon2Intensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">72</td>
+      <td class="text-left"><code>LowTirePressureIcon</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Давление хотя бы в одном колесе <code>&lt; CriticalPressure</code></td>
+      <td class="text-left"><code>LowTirePressureIconIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">73</td>
+      <td class="text-left"><code>BrakeOilLowLevelIcon</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Вход отказа тормозов <code>BrokenBrake = true</code></td>
+      <td class="text-left"><code>BrakeOilLowLevelIconIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">74–76</td>
+      <td class="text-left"><code>DiffLock0Icon</code>..<code>DiffLock2Icon</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Заблокирован дифференциал <code>0..2</code></td>
+      <td class="text-left"><strong><code>DiffLockIcon0Intensity</code></strong> .. <strong><code>DiffLockIcon2Intensity</code></strong></td>
+    </tr>
+    <tr>
+      <td class="text-center">77–79</td>
+      <td class="text-left"><code>DriveAxis0Icon</code>..<code>DriveAxis2Icon</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Включена муфта ведущего моста <code>0..2</code> (<code>AxisRelay="true"</code>)</td>
+      <td class="text-left"><strong><code>DriveAxisIcon0Intensity</code></strong> .. <strong><code>DriveAxisIcon2Intensity</code></strong></td>
+    </tr>
+    <tr>
+      <td class="text-center">80</td>
+      <td class="text-left"><code>DownshiftAWDIcon</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Включены все мосты и пониженная передача раздатки (<code>Reducer="true"</code>)</td>
+      <td class="text-left"><code>DownshiftAWDIconIntensity</code></td>
+    </tr>
+    <tr>
+      <td class="text-center">81</td>
+      <td class="text-left"><code>OverdriveAWDIcon</code></td>
+      <td class="text-center">Базовый</td>
+      <td class="text-left">Включены все мосты и повышенная передача раздатки</td>
+      <td class="text-left"><code>OverdriveAWDIconIntensity</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<p><em>(Дополнительно <code>CarElectrics</code> предоставляет выход <code>InternalName="EnvironmentTemperature"</code> типа <code>Real</code> — температура окружающего воздуха в °C).</em></p>
+
+<h3 id="35-важно-иконки-с-несовпадающими-именами-префикса-ini-и-выхода-xml">3.5. Важно: иконки с несовпадающими именами префикса <code>.ini</code> и выхода XML</h3>
+
+<p>У следующих индикаторов имя префикса в <code>Vehicle.ini</code> (<code>[CarElectrics]</code>) и имя выхода <code>InternalName</code> в <code>&lt;OutputElements&gt;</code> XML-схемы пишутся по-разному — будьте внимательны:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th class="text-left">Префикс параметра в <code>Vehicle.ini</code> (<code>[CarElectrics]</code>)</th>
+      <th class="text-left">Точное имя выхода <code>InternalName</code> в <code>&lt;OutputElements&gt;</code> (XML)</th>
+      <th class="text-left">В чём отличие</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="text-left"><code>LowAirPressureIcon0_Resistance</code> .. <code>LowAirPressureIcon3_Resistance</code></td>
+      <td class="text-left"><code>LowPressureIcon0Intensity</code> .. <code>LowPressureIcon3Intensity</code></td>
+      <td class="text-left">В имени выхода XML пропущено слово <code>Air</code></td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>LowAirPressureIcon_Resistance</code></td>
+      <td class="text-left"><code>LowPressureIconIntensity</code></td>
+      <td class="text-left">В имени выхода XML пропущено слово <code>Air</code></td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>EngineShutdownIcon_Resistance</code></td>
+      <td class="text-left"><code>ShutdownEngineIconIntensity</code></td>
+      <td class="text-left">Слова <code>Engine</code> и <code>Shutdown</code> переставлены местами</td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>DiffLock0Icon_Resistance</code> .. <code>DiffLock2Icon_Resistance</code></td>
+      <td class="text-left"><code>DiffLockIcon0Intensity</code> .. <code>DiffLockIcon2Intensity</code></td>
+      <td class="text-left">Индекс <code>0..2</code> в <code>.ini</code> стоит перед <code>Icon</code>, а в XML — после <code>Icon</code></td>
+    </tr>
+    <tr>
+      <td class="text-left"><code>DriveAxis0Icon_Resistance</code> .. <code>DriveAxis2Icon_Resistance</code></td>
+      <td class="text-left"><code>DriveAxisIcon0Intensity</code> .. <code>DriveAxisIcon2Intensity</code></td>
+      <td class="text-left">Индекс <code>0..2</code> в <code>.ini</code> стоит перед <code>Icon</code>, а в XML — после <code>Icon</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="36-входы-inputprocessors-и-булевы-выходы-carelectrics">3.6. Входы (<code>&lt;InputProcessors&gt;</code>) и булевы выходы <code>CarElectrics</code></h3>
+
+<ul>
+  <li><strong>Входы типа <code>Real</code> (4 шт.):</strong> <code>Brake</code> (<code>[0..1]</code> — стоп-сигналы <code>StopLight</code> при <code>&gt; 0.01</code>), <code>ParkingBrake</code> (<code>[0..1]</code> — лампа ручника <code>ParkingBrakeIcon</code> при <code>&gt; 0.01</code>), <code>FrontWindshieldWipersTimeDelay</code> и <code>BackWindshieldWipersTimeDelay</code> (<code>[0..∞)</code> с — пауза прерывистого режима дворников).</li>
+  <li><strong>Входы типа <code>Integer</code> (2 шт.):</strong> <code>FrontWindshieldWiper</code>, <code>BackWindshieldWiper</code> (<code>0</code> — выкл. с доводкой в парковку, <code>1</code> — прерывистый, <code>2</code> — постоянный, <code>3</code> — быстрый).</li>
+  <li><strong>Входы типа <code>Boolean</code> (16 шт.):</strong>
+    <ul>
+      <li>Свет и поворотники: <code>LowBeam</code>, <code>HighBeam</code> (включается только вместе с <code>LowBeam</code> или <code>HighBeamUnfixed</code>), <code>HighBeamUnfixed</code> (моргание дальним), <code>ParkingLights</code>, <code>FrontFogLights</code>, <code>RearFogLights</code>, <code>LeftTurnLight</code>, <code>RightTurnLight</code>, <code>HazardLight</code>.</li>
+      <li>Системы и отказы: <code>Horn</code> (клаксон), <code>SafetyBelt</code> (<code>true</code> — ремень пристёгнут), <code>Retarder</code> (включает <code>RetarderLight</code> и <code>RetarderIcon</code>), <code>ShutdownEngine</code> (включает <code>EngineShutdownIcon</code>), <code>BrokenLighting</code> (отказ всех 12 фар, фонарей и подсветки приборки), <code>BrokenBrake</code> (авария тормозов), <code>BrokenPowerSteering</code> (отказ усилителя руля).</li>
+    </ul>
+  </li>
+  <li><strong>Булевы выходы (<code>Type="Boolean"</code>, 4 шт.):</strong> <code>TurnSignal</code> (<code>true</code> в фазе свечения поворотников/аварийки — для звука реле), <code>FrontWindshieldWiperForward</code> (<code>true</code> при прямом ходе щёток <code>0 -&gt; 1</code>), <code>HighBeam</code> (<code>true</code> при горящем дальнем свете), <code>ParkingBrakeLight</code> (<code>true</code> при горящей лампе <code>ParkingBrakeIcon</code>).</li>
+</ul>
+
+<hr>
+
+<h2 id="4-готовый-пример-секции-carelectrics-и-battery-из-ccd-20">4. Готовый пример секции <code>[CarElectrics]</code> и <code>[Battery]</code> из CCD 2.0</h2>
+
+<pre><code class="language-ini">[Battery]
+VoltageMin = 10.5
+VoltageMax = 14.7
+Capacity = 90
+Resistance = 0.0019
+
+[CarElectrics]
+DefaultCircuitName = IgnitionElectricCircuit
+MinVoltage = 10.5
+Voltage = 14.7
+HasAlwaysLitDashboard = true
+LowFuelLevel = 0.21
+OilLowPressureThreshold = 0.98
+SafetyBeltWarningSpeed = 20
+HasBrokenBrakeBeeper = false
+HasEngineOverheatBeeper = false
+
+LowBeam_Resistance = 1.3
+HighBeam_Resistance = 1.2
+ParkingLights_Resistance = 7
+ParkingLights_CircuitName = BatteryElectricCircuit
+StopLight_Resistance = 7
+StopLight_CircuitName = BatteryElectricCircuit
+ReverseLight_Resistance = 5
+FrontFogLights_Resistance = 7
+RearFogLights_Resistance = 7
+LeftTurnLight_Resistance = 7
+LeftTurnLight_Period = 1.0
+RightTurnLight_Resistance = 7
+RightTurnLight_Period = 1.0
+HazardLight_Resistance = 3.5
+HazardLight_CircuitName = BatteryElectricCircuit
+HazardLight_Period = 1.0
+
+Dashboard_Resistance = 14
+AlwaysLitDashboard_Resistance = 14
+LowBeamIcon_Resistance = 40
+HighBeamIcon_Resistance = 40
+ParkingLightsIcon_Resistance = 40
+LeftTurnLightIcon_Resistance = 40
+RightTurnLightIcon_Resistance = 40
+HazardLightIcon_Resistance = 40
+HazardLightIcon_CircuitName = BatteryElectricCircuit
+SafetyBeltIcon_Resistance = 40
+SafetyBeltIcon_ConnectionCheckTime = 0.8
+SafetyBeltBeeper_Resistance = 40
+ParkingBrakeIcon_Resistance = 40
+ParkingBrakeIcon_ConnectionCheckTime = 1.1
+BatteryIcon_Resistance = 40
+FuelIcon_Resistance = 40
+OilIcon_Resistance = 40
+OverheatIcon_Resistance = 40
+CheckIcons_Resistance = 40
+CheckIcons_ConnectionCheckTime = 1.8
+ExhaustSystemIcon_Resistance = 40
+ExhaustSystemIcon_EngineCheckTime = 0.5
+PowerSteeringIcon_Resistance = 40
+AirbagIcon_Resistance = 40
+AirbagIcon_ConnectionCheckTime = 5.0
+AirbagIcon_EngineCheckTime = 0.5
+AbsActiveIcon_Resistance = 40
+AbsActiveIcon_Period = 0.3
+Horn_Resistance = 5
+Horn_CircuitName = BatteryElectricCircuit
+FrontWindshieldWiper_Resistance = 2.5
+FrontWindshieldWiper_PeriodicDelay = 1.0
+FrontWindshieldWiper_PeriodicPhase = 2.0
+FrontWindshieldWiper_NormalPhase = 2.0
+FrontWindshieldWiper_FastPhase = 1.0
+BackWindshieldWiper_Resistance = 4
+FuelNeedle_Resistance = 100
+FuelNeedle_IsMechanical = true
+SpeedNeedle_Resistance = 100
+RpmNeedle_Resistance = 100
+CoolantTemperatureNeedle_Resistance = 100
+CoolantTemperatureNeedle_DefaultValue = 50</code></pre>
+
+</body>
+</html>

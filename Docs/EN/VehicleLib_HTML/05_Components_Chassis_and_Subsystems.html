@@ -1,0 +1,913 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>05. Chassis and Subsystem Components (Suspension, Input, Output, Pneumatics, Hydraulics, Aerodynamics, ExternalForce)</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '', right: '', display: true}, {left: '$', right: '$', display: false}]});"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({ startOnLoad: true });</script>
+    <style>
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 32px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1f2328;
+            background-color: #ffffff;
+        }
+        h1, h2, h3, h4 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        h1 { font-size: 2em; padding-bottom: 0.3em; border-bottom: 1px solid #d0d7de; }
+        h2 { font-size: 1.5em; padding-bottom: 0.3em; border-bottom: 1px solid #d0d7de; }
+        h3 { font-size: 1.25em; }
+        hr { height: 0.25em; padding: 0; margin: 24px 0; background-color: #d0d7de; border: 0; }
+        a { color: #0969da; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+        th, td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; vertical-align: top; }
+        th { background: #f6f8fa; font-weight: 600; }
+        tr:nth-child(even) { background: #f6f8fa; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        code { background: #eff1f3; padding: 2px 5px; border-radius: 4px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 85%; }
+        pre { background: #f6f8fa; padding: 14px; border-radius: 6px; overflow-x: auto; border: 1px solid #d0d7de; }
+        pre code { background: transparent; padding: 0; font-size: 100%; }
+        pre.mermaid { background: #ffffff; text-align: center; }
+        .alert { padding: 12px 16px; margin: 16px 0; border-left: 4px solid; border-radius: 6px; background: #f6f8fa; }
+        .alert-title { font-weight: 600; margin-bottom: 6px; }
+        .alert p:last-child, .alert ul:last-child, .alert ol:last-child { margin-bottom: 0; }
+        .alert-note { border-left-color: #0969da; background-color: #ddf4ff; }
+        .alert-note .alert-title { color: #0969da; }
+        .alert-tip { border-left-color: #1a7f37; background-color: #dafbe1; }
+        .alert-tip .alert-title { color: #1a7f37; }
+        .alert-important { border-left-color: #8250df; background-color: #fbefff; }
+        .alert-important .alert-title { color: #8250df; }
+        .alert-warning { border-left-color: #9a6700; background-color: #fff8c5; }
+        .alert-warning .alert-title { color: #9a6700; }
+        .alert-caution { border-left-color: #cf222e; background-color: #ffebe9; }
+        .alert-caution .alert-title { color: #cf222e; }
+        ul.checklist { list-style-type: none; padding-left: 0; }
+        ul.checklist li { margin-bottom: 8px; }
+        ul.checklist input[type="checkbox"] { margin-right: 8px; }
+        figure.doc-figure { margin: 16px 0; padding: 10px; background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 6px; text-align: center; }
+        figure.doc-figure img { max-width: 100%; height: auto; border-radius: 4px; display: block; margin: 0 auto; }
+        figure.doc-figure figcaption { margin-top: 8px; font-size: 0.9em; color: #57606a; }
+    </style>
+</head>
+<body>
+<h1 id="05-chassis-and-subsystem-components-suspension-input-output-pneumatics-hydraulics-aerodynamics-externalforce">05. Chassis and Subsystem Components (<code>Suspension</code>, <code>Input</code>, <code>Output</code>, <code>Pneumatics</code>, <code>Hydraulics</code>, <code>Aerodynamics</code>, <code>ExternalForce</code>)</h1>
+<p><strong>Navigation:</strong> <a href="./README.html">README</a> | <a href="./00_Quick_Start.html">00. Quick Start</a> | <a href="./01_Architecture_and_Config.html">01. Architecture &amp; Configs</a> | <a href="./02_Named_IO_and_States.html">02. Named I/O &amp; States</a> | <a href="./03_Components_TorqueTrain.html">03. TorqueTrain</a> | <a href="./04_Components_Electrics.html">04. Electrics</a> | <strong>05. Chassis &amp; Subsystems</strong></p>
+<hr>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+    <li><a href="#1-suspension-and-steering">1. Suspension and Steering</a>
+<ul>
+    <li><a href="#11-suspension1spring--coil-spring-and-damper-suspension">1.1. <code>Suspension1Spring</code> — Coil Spring and Damper Suspension</a></li>
+    <li><a href="#12-suspension1constant--rigid-constant-load-suspension">1.2. <code>Suspension1Constant</code> — Rigid Constant-Load Suspension</a></li>
+    <li><a href="#13-steering2ackermann--ackermann-steering-linkage">1.3. <code>Steering2Ackermann</code> — Ackermann Steering Linkage</a></li>
+    <li><a href="#14-steeringsimple--symmetrical-steering">1.4. <code>SteeringSimple</code> — Symmetrical Steering</a></li>
+</ul>
+</li>
+    <li><a href="#2-control-input-processors-input">2. Control Input Processors (<code>Input</code>)</a>
+<ul>
+    <li><a href="#21-fuelcontrollercomputer-idler-section-and-fuelcontrollermechanical">2.1. <code>FuelControllerComputer</code> (<code>[Idler]</code>) and <code>FuelControllerMechanical</code></a></li>
+    <li><a href="#22-abstcs--abs-tcs-and-electronic-brakeforce-distribution-ebd-unit">2.2. <code>AbsTcs</code> — ABS, TCS, and Electronic Brakeforce Distribution (EBD) Unit</a></li>
+    <li><a href="#23-clutchinputprocessor--nonlinear-clutch-pedal-controller">2.3. <code>ClutchInputProcessor</code> — Nonlinear Clutch Pedal Controller</a></li>
+    <li><a href="#24-gearboxautomaticlogic-gearboxlogic-section-and-gearboxautomaticlogicbus">2.4. <code>GearBoxAutomaticLogic</code> (<code>[GearBoxLogic]</code>) and <code>GearBoxAutomaticLogicBus</code></a></li>
+    <li><a href="#25-ignitionkeyprocessor--ignition-switch-controller">2.5. <code>IgnitionKeyProcessor</code> — Ignition Switch Controller</a></li>
+</ul>
+</li>
+    <li><a href="#3-telemetry-and-steering-force-feedback-output">3. Telemetry and Steering Force Feedback (<code>Output</code>)</a>
+<ul>
+    <li><a href="#31-powersteering--power-steering-hpseps-and-force-feedback">3.1. <code>PowerSteering</code> — Power Steering (HPS/EPS) and Force Feedback</a></li>
+    <li><a href="#32-speedometer--speedometer-and-odometer">3.2. <code>Speedometer</code> — Speedometer and Odometer</a></li>
+    <li><a href="#33-fuelconsumptionmeter--average-fuel-consumption-meter">3.3. <code>FuelConsumptionMeter</code> — Average Fuel Consumption Meter</a></li>
+</ul>
+</li>
+    <li><a href="#4-forced-induction-pneumatics-tanks-aerodynamics-and-external-forces">4. Forced Induction, Pneumatics, Tanks, Aerodynamics, and External Forces</a>
+<ul>
+    <li><a href="#41-turbocharger--engine-forced-induction-turbocharger">4.1. <code>Turbocharger</code> — Engine Forced-Induction Turbocharger</a></li>
+    <li><a href="#42-pneumatic-system-receiver-valvemulticircuit-actuatorpneumatic1chamber-actuatorpneumatic2chamber">4.2. Pneumatic System: <code>Receiver</code>, <code>ValveMultiCircuit</code>, <code>ActuatorPneumatic1/2Chamber</code></a></li>
+    <li><a href="#43-tank--fuel-and-oil-tank">4.3. <code>Tank</code> — Fuel and Oil Tank</a></li>
+    <li><a href="#44-aerodynamicscarsimple--body-aerodynamics">4.4. <code>AerodynamicsCarSimple</code> — Body Aerodynamics</a></li>
+    <li><a href="#45-externalthruster--external-linear-thruster">4.5. <code>ExternalThruster</code> — External Linear Thruster</a></li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="general-configuration-rules-in-vehicleini-and-xml-schematics">General Configuration Rules in <code>Vehicle.ini</code> and XML Schematics</h2>
+<ol>
+    <li><strong>Strict array and vector syntax in <code>Vehicle.ini</code>:</strong> all number lists and 3D vectors must be separated <strong>only by a semicolon <code>;</code> with no space before <code>;</code></strong> (<code>Mount = 1.63; 0.85; 0.4455</code>). Commas <code>,</code> are not supported, and a <code>space + ;</code> sequence (<code>" ;"</code>) is treated by the <code>.ini</code> parser as the start of a comment, truncating the rest of the line!</li>
+    <li><strong>Connections (<code>&lt;Links&gt;</code>) and signals in XML:</strong> links between components are defined via <code>&lt;Link Holder="HolderName" Reference="TargetName" /&gt;</code>. External inputs, outputs, and states are mapped to internal channel names (<code>InternalName</code>) in the <code>&lt;InputProcessors&gt;</code>, <code>&lt;OutputElements&gt;</code>, and <code>&lt;StateElements&gt;</code> sections.</li>
+</ol>
+<hr>
+<h2 id="1-suspension-and-steering">1. Suspension and Steering</h2>
+<h3 id="11-suspension1spring--coil-spring-and-damper-suspension">1.1. <code>Suspension1Spring</code> — Coil Spring and Damper Suspension</h3>
+<p>In standard CCD 2.0 schematics (<code>Common/Vehicles/MotorCars/Schemes/*.xml</code>), this component is used for all four suspension struts of a vehicle: <strong><code>[SuspensionFrontLeft]</code></strong>, <strong><code>[SuspensionFrontRight]</code></strong>, <strong><code>[SuspensionBackLeft]</code></strong>, <strong><code>[SuspensionBackRight]</code></strong> (the rear axle is always named <strong><code>Back</code></strong>, never <code>Rear</code>!).</p>
+<ul>
+    <li><strong>XML links (<code>&lt;Links&gt;</code>):</strong> each strut links to its corresponding wheel (<code>&lt;Link Holder="SuspensionFrontLeft" Reference="WheelFrontLeft" /&gt;</code>). An incoming link from the steering mechanism (<code>Steering</code>) is connected only to the steerable front struts.</li>
+    <li><strong>Body attachment:</strong> the parameter <code>BodyName = Body</code> specifies the name of the main physical chassis mesh in the vehicle Blueprint.</li>
+    <li><strong>Coordinate system in <code>Vehicle.ini</code>:</strong> right-handed body-local coordinate system in <strong>meters</strong>:
+<ul>
+    <li><strong><code>X</code> — Forward</strong> (<code>+X</code> = front axle, <code>-X</code> = rear axle);</li>
+    <li><strong><code>Y</code> — Left</strong> (<code>+Y</code> = left side, <code>-Y</code> = right side, opposite to the Unreal Engine 5 <code>Y</code> axis);</li>
+    <li><strong><code>Z</code> — Up</strong>. The strut travel direction is fixed vertically downward along the vector <code>Direction = 0; 0; -1</code>.</li>
+</ul>
+</li>
+</ul>
+<h4 id="exact-formula-for-converting-mount-coordinates-from-an-ue5-blueprint">Exact Formula for Converting <code>Mount</code> Coordinates from an UE5 Blueprint</h4>
+<p>In a vehicle Blueprint, the <code>SuspensionFrontLeft</code>, <code>SuspensionFrontRight</code>, <code>SuspensionBackLeft</code>, and <code>SuspensionBackRight</code> components are placed at the design wheel centers at normal static ride height, with local coordinates $(X_{\text{UE}},\; Y_{\text{UE}},\; Z_{\text{UE}})$ in <strong>centimeters</strong>.</p>
+<div class="alert alert-important">
+    <div class="alert-title">Important</div>
+<p><strong>Physical meaning of the <code>Mount</code> point and the <code>Mount.Z</code> formula:</strong><br>
+In <code>Suspension1Spring</code>, the <code>Mount</code> vector defines the wheel center position at <strong>full spring compression</strong> (<code>SpringSag = 1.0</code>), and the current wheel center position is measured downward from <code>Mount</code> along <code>Direction = 0; 0; -1</code>:</p>
+<p>$$\vec{P}_{\text{wheel}} = \text{Mount} + (1 - \text{SpringSag}) \cdot \text{Length} \cdot (0;\; 0;\; -1)$$</p>
+<p>At normal static sag <code>NormalSag</code> (typically <code>0.33</code>, i.e., the spring is compressed by $33\%$ of its travel), the wheel sits below <code>Mount</code> by the <strong>remaining rebound travel</strong> $(1 - \text{NormalSag}) \cdot \text{Length} = 0.67 \cdot \text{Length}$!</p>
+<p>$$\text{Mount} = \left(\frac{X_{\text{UE}}}{100};\quad -\frac{Y_{\text{UE}}}{100};\quad \frac{Z_{\text{UE}}}{100} + (1 - \text{NormalSag}) \cdot \text{Length}\right)$$</p>
+<p><em>Example:</em> for <code>SuspensionFrontLeft</code> at <code>(163.0, -85.0, 31.15)</code> cm with <code>Length = 0.20</code> m and <code>NormalSag = 0.33</code>, we get $\text{Mount}_Z = 0.3115 + 0.67 \cdot 0.20 = 0.4455\text{ m}$ and write <code>Mount = 1.63; 0.85; 0.4455</code>. <em>(Mistakenly using <code>+ NormalSag * Length</code> lifts the body too high by an extra $(1 - 2\cdot\text{NormalSag})\cdot\text{Length} \approx 6.5\text{ cm}$!)</em></p>
+
+</div>
+<h4 id="accounting-for-the-springprogressioncsv-curve-and-roll-stiffness">Accounting for the <code>SpringProgression.csv</code> Curve and Roll Stiffness</h4>
+<ol>
+    <li><strong>Spring and damper force formulas:</strong> at compression $x = \text{SpringSag} \cdot \text{Length}$ (m) and extension velocity $v$ (m/s, where $v &gt; 0$ is rebound and $v \le 0$ is compression/bump):
+<p>$$F_{\text{spring}} = x \cdot \text{SpringCoeff} \cdot k_{\text{prog}}(\text{SpringSag}) + \text{PreloadForce} \cdot \text{Clamp}\left(\frac{x}{\text{PreloadRampBuffer}},\, 0,\, 1\right), \qquad F_{\text{damp}} = -\frac{v \cdot \text{DampCoeff}}{v &gt; 0 \,?\; 1 : 3}$$<br>
+During compression (bump), <code>DampCoeff</code> is automatically divided by <code>3</code> (rebound damping is 3 times stiffer than bump damping).</p>
+</li>
+    <li><strong><code>Common/Vehicles/MotorCars/Tables/SpringProgression.csv</code> multiplier and choosing <code>SpringCoeff</code> / <code>PreloadForce</code> / <code>DampCoeff</code>:</strong> the standard progression curve (<code>0 -&gt; 0.55 -&gt; 0.7 -&gt; 0.85 -&gt; 0.95 -&gt; 1.0</code>), spline-interpolated at <code>NormalSag = 0.33</code>, yields a multiplier of <strong><code>0.654</code></strong> relative to a linear calculation. Given a static corner load $F_{\text{stat}} = m_{\text{corner}} \cdot 9.81$, the spring and damper parameters are related by:
+<p>$$F_{\text{stat}} = \text{PreloadForce} + \text{SpringCoeff} \cdot \text{Length} \cdot \text{NormalSag} \cdot 0.654, \qquad \text{DampCoeff} \approx (0.65 \dots 0.75) \cdot 2 \sqrt{\text{SpringCoeff} \cdot m_{\text{corner}}}$$</p>
+</li>
+    <li><strong>No separate anti-roll bar (ARB):</strong> all angular roll stiffness comes solely from the <code>Suspension1Spring</code> springs themselves. For tall vehicles (minivans, crossovers/SUVs), it is recommended to choose a natural suspension frequency <code>10–12%</code> higher than the purely vertical target and a travel of <code>Length = 0.20..0.22</code> m so that the inside wheel retains <code>~14–15 cm</code> of droop/rebound travel and does not lift off the road in corners.</li>
+</ol>
+<table>
+    <thead>
+        <tr>
+            <th>INI Key</th>
+            <th>Type</th>
+            <th class="text-center">Default</th>
+            <th class="text-center">Units</th>
+            <th>Description and Purpose</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>BodyName</code></td>
+            <td>string</td>
+            <td class="text-center"><code>"body"</code></td>
+            <td class="text-center">mesh name</td>
+            <td>Name of the physical chassis mesh in the Blueprint (<code>Body</code>).</td>
+        </tr>
+        <tr>
+            <td><code>Mount</code></td>
+            <td>vector (3)</td>
+            <td class="text-center"><em>required</em></td>
+            <td class="text-center">m <code>(X; Y; Z)</code></td>
+            <td>Wheel center coordinates at <strong>full suspension compression</strong> (<code>SpringSag = 1.0</code>) in the body coordinate frame.</td>
+        </tr>
+        <tr>
+            <td><code>Length</code></td>
+            <td>number</td>
+            <td class="text-center"><code>0.25</code></td>
+            <td class="text-center">m</td>
+            <td>Total suspension travel from full bump stop to full rebound.</td>
+        </tr>
+        <tr>
+            <td><code>SpringCoeff</code></td>
+            <td>number</td>
+            <td class="text-center"><code>50000.0</code></td>
+            <td class="text-center">N/m</td>
+            <td>Base spring rate (stiffness).</td>
+        </tr>
+        <tr>
+            <td><code>PreloadForce</code></td>
+            <td>number</td>
+            <td class="text-center"><code>5000.0</code></td>
+            <td class="text-center">N</td>
+            <td>Spring preload force.</td>
+        </tr>
+        <tr>
+            <td><code>PreloadRampBuffer</code></td>
+            <td>number</td>
+            <td class="text-center"><code>0.02</code></td>
+            <td class="text-center">m</td>
+            <td>Initial compression range <code>[0..PreloadRampBuffer]</code> over which <code>PreloadForce</code> ramps up smoothly.</td>
+        </tr>
+        <tr>
+            <td><code>DampCoeff</code></td>
+            <td>number</td>
+            <td class="text-center"><code>4000.0</code></td>
+            <td class="text-center">$\text{N}\cdot\text{s/m}$</td>
+            <td>Damper coefficient on <strong>rebound</strong> (automatically divided by <code>3</code> on compression/bump).</td>
+        </tr>
+        <tr>
+            <td><code>ProgressionCurve</code></td>
+            <td>CSV path</td>
+            <td class="text-center"><code>"progression.csv"</code></td>
+            <td class="text-center">1D table</td>
+            <td>Spring progression curve (<code>Common/Vehicles/MotorCars/Tables/SpringProgression.csv</code>).</td>
+        </tr>
+        <tr>
+            <td><code>NormalSag</code></td>
+            <td>number</td>
+            <td class="text-center"><code>0.33</code></td>
+            <td class="text-center">fraction <code>[0..1]</code></td>
+            <td>Nominal static suspension sag of the stationary vehicle (zero point for bump steer).</td>
+        </tr>
+        <tr>
+            <td><code>SagToCamberCurve</code></td>
+            <td>CSV path</td>
+            <td class="text-center"><code>""</code></td>
+            <td class="text-center">1D table</td>
+            <td>Camber-vs-compression curve (<code>Common/Vehicles/MotorCars/Tables/WheelSagToCamberCurve.csv</code>).</td>
+        </tr>
+        <tr>
+            <td><code>SagToCamberCoeff</code></td>
+            <td>number</td>
+            <td class="text-center"><code>0.0</code></td>
+            <td class="text-center">deg</td>
+            <td>Scale multiplier for the sag-to-camber curve (opposite signs for left and right sides).</td>
+        </tr>
+        <tr>
+            <td><code>SteerToCamberCurve</code></td>
+            <td>CSV path</td>
+            <td class="text-center"><code>""</code></td>
+            <td class="text-center">1D table</td>
+            <td>Camber-vs-steering curve (<code>Common/Vehicles/MotorCars/Tables/WheelSteerToCamberCurve.csv</code>).</td>
+        </tr>
+        <tr>
+            <td><code>SteerToCamberCoeff</code></td>
+            <td>number</td>
+            <td class="text-center"><code>0.0</code></td>
+            <td class="text-center">deg</td>
+            <td>Scale multiplier for the steer-to-camber curve.</td>
+        </tr>
+        <tr>
+            <td><code>SagToSteeringAngle</code></td>
+            <td>number</td>
+            <td class="text-center"><code>0.0</code></td>
+            <td class="text-center">deg</td>
+            <td>Base kinematic bump-steer angle during compression/rebound travel.</td>
+        </tr>
+        <tr>
+            <td><code>SagToSteeringLinCoeff</code></td>
+            <td>number</td>
+            <td class="text-center"><code>0.5</code></td>
+            <td class="text-center">dimensionless</td>
+            <td>Linear coefficient of the sag-to-steer polynomial.</td>
+        </tr>
+        <tr>
+            <td><code>SagToSteeringCubeCoeff</code></td>
+            <td>number</td>
+            <td class="text-center"><code>0.5</code></td>
+            <td class="text-center">dimensionless</td>
+            <td>Cubic coefficient of the sag-to-steer polynomial.</td>
+        </tr>
+        <tr>
+            <td><code>LonForceToSteeringCoeff</code></td>
+            <td>number</td>
+            <td class="text-center"><code>1.75</code></td>
+            <td class="text-center">dimensionless</td>
+            <td>Elastokinematic compliance-steer sensitivity to longitudinal force.</td>
+        </tr>
+        <tr>
+            <td><code>LonForceToSteeringMaxAngle</code></td>
+            <td>number</td>
+            <td class="text-center"><code>0.0</code></td>
+            <td class="text-center">deg</td>
+            <td>Maximum compliance-steer angle from longitudinal wheel force (drive/braking).</td>
+        </tr>
+        <tr>
+            <td><code>LatForceToSteeringCoeff</code></td>
+            <td>number</td>
+            <td class="text-center"><code>1.75</code></td>
+            <td class="text-center">dimensionless</td>
+            <td>Elastokinematic compliance-steer sensitivity to lateral force.</td>
+        </tr>
+        <tr>
+            <td><code>LatForceToSteeringMaxAngle</code></td>
+            <td>number</td>
+            <td class="text-center"><code>0.0</code></td>
+            <td class="text-center">deg</td>
+            <td>Maximum compliance-steer angle from lateral wheel force during cornering.</td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li><strong>Outputs (<code>OutputElements</code>):</strong> <code>SpringSag</code> (<code>Real</code>, <code>[0.0..1.0]</code> — current relative spring compression), <code>WheelSteeringAngle</code> (<code>Real</code>, deg — base wheel steering angle).</li>
+</ul>
+<pre><code class="language-ini">[SuspensionFrontLeft]
+BodyName = Body
+Mount = 1.63; 0.85; 0.4455
+Length = 0.20
+SpringCoeff = 45000
+PreloadForce = 2615
+DampCoeff = 4450
+NormalSag = 0.33
+ProgressionCurve = Common/Vehicles/MotorCars/Tables/SpringProgression.csv
+SagToCamberCurve = Common/Vehicles/MotorCars/Tables/WheelSagToCamberCurve.csv
+SagToCamberCoeff = -0.3
+LonForceToSteeringMaxAngle = 0.5</code></pre>
+<h3 id="12-suspension1constant--rigid-constant-load-suspension">1.2. <code>Suspension1Constant</code> — Rigid Constant-Load Suspension</h3>
+<p>A simplified non-raycast suspension with zero compression travel and a fixed vertical load (intended for rail vehicles). Links to a single wheel (<code>&lt;Link Holder="Suspension..." Reference="Wheel..." /&gt;</code>) and transmits only longitudinal force to the body.</p>
+<ul>
+    <li><strong><code>.ini</code> parameters:</strong> <code>BodyName</code> (<code>"body"</code>), <code>Mount</code> (required vector <code>X; Y; Z</code> in m), <code>Load</code> (constant vertical load in N, default <code>100.0</code>).</li>
+</ul>
+<h3 id="13-steering2ackermann--ackermann-steering-linkage">1.3. <code>Steering2Ackermann</code> — Ackermann Steering Linkage</h3>
+<p>In standard CCD 2.0 schematics, this component is declared as <strong><code>[Steering]</code></strong> and linked to the two steerable struts (<code>SuspensionFrontLeft</code>, <code>SuspensionFrontRight</code>).</p>
+<ul>
+    <li>The steerable axle track width (<code>TracksWidth</code>, $W_{\text{track}}$) is computed automatically from the difference between the lateral <code>Mount.Y</code> coordinates of the left and right suspension struts.</li>
+    <li>The inside wheel turns by the full angle $\alpha_{\text{inner}} = \text{MaxAngle} \cdot |\text{Steering}|$, while the outside wheel turns by a smaller angle following Ackermann geometry:
+<p>$$\alpha_{\text{outer}} = \arctan\left(\frac{\text{InteraxleDistance}}{W_{\text{track}} + \dfrac{\text{InteraxleDistance}}{\tan(\alpha_{\text{inner}})}}\right)$$</p>
+</li>
+</ul>
+<table>
+    <thead>
+        <tr>
+            <th>INI Key</th>
+            <th>Type</th>
+            <th class="text-center">Default</th>
+            <th class="text-center">Units</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>MaxAngle</code></td>
+            <td>number</td>
+            <td class="text-center"><code>40.0</code></td>
+            <td class="text-center">degrees</td>
+            <td>Maximum steering angle of the <strong>inside</strong> wheel at full steering lock (<code>|Steering| = 1.0</code>).</td>
+        </tr>
+        <tr>
+            <td><code>InteraxleDistance</code></td>
+            <td>number</td>
+            <td class="text-center"><code>1.0</code></td>
+            <td class="text-center">m</td>
+            <td>Longitudinal wheelbase of the vehicle — the exact difference $X_{\text{front}} - X_{\text{back}}$ between the front and rear axle <code>Mount.X</code> values!</td>
+        </tr>
+        <tr>
+            <td><code>BackSteering</code></td>
+            <td>boolean</td>
+            <td class="text-center"><code>false</code></td>
+            <td class="text-center"><code>true</code>/<code>false</code></td>
+            <td>If <code>true</code>, the axle acts as rear-wheel steering (turns wheels in opposite phase).</td>
+        </tr>
+        <tr>
+            <td><code>MinPositionInput</code> / <code>MaxPositionInput</code></td>
+            <td>number</td>
+            <td class="text-center"><code>-1.0</code> / <code>1.0</code></td>
+            <td class="text-center">input units</td>
+            <td>Input bounds of the <code>Steering</code> signal corresponding to full left and full right lock.</td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li><strong>Inputs (<code>InputProcessors</code>):</strong> <code>Steering</code> (<code>Real</code>, <code>[-1.0..+1.0]</code>, <code>&gt; 0</code> = right), <code>BrokenSteering</code> (<code>Boolean</code> — steering failure).</li>
+    <li><strong>Outputs (<code>OutputElements</code>):</strong> <code>MaxSteeringAngle</code> (<code>Real</code>, rad — average maximum steering angle of the steerable wheels accounting for Ackermann reduction).</li>
+</ul>
+<h3 id="14-steeringsimple--symmetrical-steering">1.4. <code>SteeringSimple</code> — Symmetrical Steering</h3>
+<p>Turns the wheels of linked suspension struts (<code>&lt;Link Holder="Steering..." Reference="Suspension..." /&gt;</code>) by an identical angle $\alpha = \text{MaxAngle} \cdot \text{Steering}$ without Ackermann geometry and without <code>PowerSteering</code> support.</p>
+<ul>
+    <li><strong><code>.ini</code> parameters:</strong> <code>MaxAngle</code> (degrees, default <code>40.0</code>). <strong>Inputs:</strong> <code>Steering</code> (<code>Real</code>, <code>[-1.0..+1.0]</code>), <code>BrokenSteering</code> (<code>Boolean</code>).</li>
+</ul>
+<hr>
+<h2 id="2-control-input-processors-input">2. Control Input Processors (<code>Input</code>)</h2>
+<h3 id="21-fuelcontrollercomputer-idler-section-and-fuelcontrollermechanical">2.1. <code>FuelControllerComputer</code> (<code>[Idler]</code> section) and <code>FuelControllerMechanical</code></h3>
+<p>Control throttle opening and per-cycle fuel delivery to the engine (<code>Engine</code>).</p>
+<ul>
+    <li><strong><code>FuelControllerComputer</code></strong> (named <strong><code>Idler</code></strong> in all standard CCD 2.0 schematics) — ECU for fuel-injected gasoline or diesel ICEs. Requires mandatory <code>&lt;Link&gt;</code> connections to <code>Engine</code> and <code>Starter</code>, plus an optional link to <code>Speedometer</code> (for the electronic speed limiter <code>SpeedLimit</code>).</li>
+    <li><strong><code>FuelControllerMechanical</code></strong> — mechanical carburetor with manual choke control (<code>Choke</code>). Requires a <code>&lt;Link&gt;</code> to <code>Engine</code>.</li>
+</ul>
+<div class="alert alert-warning">
+    <div class="alert-title">Warning</div>
+<p><strong>Two important simulation quirks of <code>FuelControllerComputer</code> (<code>[Idler]</code>):</strong></p>
+<ol>
+    <li><strong>Cold-start mixture enrichment (<code>+10%</code> torque below <code>30 °C</code>):</strong> Over the coolant temperature range <code>[LowTemperature..WorkingTemperature]</code> (default <code>30..35 °C</code>), the ECU interpolates idle speed from <code>WarmupRpm</code> down to <code>IdleRpm</code> and holds an enriched air-fuel mixture <code>Lambda = 0.8</code>. As a result, a cold engine right after spawn produces roughly <strong><code>10%</code> more torque</strong> than after warming up above <code>35 °C</code>.</li>
+    <li><strong>Open-loop idle controller ("anti-stall hump"):</strong> Maintaining <code>IdleRpm</code> is computed solely to overcome the engine's own internal friction $F(\text{IdleRpm})$, with no closed-loop feedback for external shaft loads (and no added throttle when RPM drops below <code>IdleRpm</code>). When the torque converter impeller loads the crankshaft by <code>45..60 N·m</code> in <code>D</code> while holding the brake, RPM sags. To keep the engine from stalling and maintain a smooth idle in <code>D</code>, a steep "anti-stall torque hump" must be shaped in the <code>5%</code> and <code>10%</code> rows at the <code>500 RPM</code> column of <code>Engine.csv</code> (see <a href="./03_Components_TorqueTrain.html#22-critical-rule-for-calculating-enginecsv-powercurves-and-idling-in-d">Section 2.2 of Document 03</a> and <a href="./01_Architecture_and_Config.html#53-exact-format-of-the-engine-table-enginecsv-powercurves">Section 5.3 of Document 01</a> for details).</li>
+</ol>
+
+</div>
+<table>
+    <thead>
+        <tr>
+            <th>INI Key</th>
+            <th>Controller Class</th>
+            <th>Type</th>
+            <th class="text-center">Default</th>
+            <th class="text-center">Units</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>IdleRpm</code></td>
+            <td><code>FuelControllerComputer</code></td>
+            <td>number</td>
+            <td class="text-center"><code>750.0</code></td>
+            <td class="text-center">RPM</td>
+            <td>Target idle speed of a fully warmed-up engine.</td>
+        </tr>
+        <tr>
+            <td><code>WarmupRpm</code></td>
+            <td><code>FuelControllerComputer</code></td>
+            <td>number</td>
+            <td class="text-center"><code>1000.0</code></td>
+            <td class="text-center">RPM</td>
+            <td>Elevated fast-idle warm-up RPM on a cold engine.</td>
+        </tr>
+        <tr>
+            <td><code>LowTemperature</code></td>
+            <td><code>FuelControllerComputer</code></td>
+            <td>number</td>
+            <td class="text-center"><code>30.0</code></td>
+            <td class="text-center">°C</td>
+            <td>Lower bound of the warm-up temperature range, below which full <code>WarmupRpm</code> and <code>Lambda = 0.8</code> apply.</td>
+        </tr>
+        <tr>
+            <td><code>WorkingTemperature</code></td>
+            <td><code>FuelControllerComputer</code></td>
+            <td>number</td>
+            <td class="text-center"><code>35.0</code></td>
+            <td class="text-center">°C</td>
+            <td>Upper bound of coolant warm-up (full transition to operating <code>IdleRpm</code> and table <code>Lambda</code>).</td>
+        </tr>
+        <tr>
+            <td><code>SpeedLimit</code></td>
+            <td><code>FuelControllerComputer</code></td>
+            <td>number</td>
+            <td class="text-center"><code>0.0</code></td>
+            <td class="text-center">km/h</td>
+            <td>Top speed limiter (<code>&gt; 0</code> when linked to <code>Speedometer</code>; smoothly cuts throttle across a $\pm 0.9\text{ km/h}$ band).</td>
+        </tr>
+        <tr>
+            <td><code>Throttle</code></td>
+            <td><code>FuelControllerComputer</code></td>
+            <td>array</td>
+            <td class="text-center"><code>0; 0.1; 0.6; 0.7</code></td>
+            <td class="text-center">fraction <code>[0..1]</code></td>
+            <td>Accelerator pedal breakpoints for interpolating excess air ratio <code>Lambda</code>.</td>
+        </tr>
+        <tr>
+            <td><code>Lambda</code></td>
+            <td><code>FuelControllerComputer</code></td>
+            <td>array</td>
+            <td class="text-center"><code>1; 1.07; 1.02; 0.81</code></td>
+            <td class="text-center">dimensionless</td>
+            <td>Excess air ratio $\lambda$ at the <code>Throttle</code> breakpoints (array lengths must match!).</td>
+        </tr>
+        <tr>
+            <td><code>ThrottleIdle</code></td>
+            <td><code>FuelControllerMechanical</code></td>
+            <td>number</td>
+            <td class="text-center"><code>0.15</code></td>
+            <td class="text-center">fraction <code>[0..1]</code></td>
+            <td>Minimum carburetor throttle opening at idle.</td>
+        </tr>
+        <tr>
+            <td><code>ThrottleChoke</code></td>
+            <td><code>FuelControllerMechanical</code></td>
+            <td>number</td>
+            <td class="text-center"><code>0.30</code></td>
+            <td class="text-center">fraction <code>[0..1]</code></td>
+            <td>Throttle opening when the choke is fully pulled (<code>Choke = 1.0</code>).</td>
+        </tr>
+        <tr>
+            <td><code>ThrottleIdleMaxRpm</code></td>
+            <td><code>FuelControllerMechanical</code></td>
+            <td>number</td>
+            <td class="text-center"><code>1500.0</code></td>
+            <td class="text-center">RPM</td>
+            <td>Engine speed above which the <code>ThrottleIdle</code> idle stop disengages.</td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li><strong>Inputs (<code>InputProcessors</code>):</strong> <code>Accelerator</code> (<code>Real</code>, <code>[0.0..1.0]</code>), <code>FuelFeed</code> (<code>Boolean</code> — supplied by <code>IgnitionKey</code>), <code>Choke</code> (<code>Real</code>, <code>[0.0..1.0]</code>, <code>FuelControllerMechanical</code> only).</li>
+</ul>
+<h3 id="22-abstcs--abs-tcs-and-electronic-brakeforce-distribution-ebd-unit">2.2. <code>AbsTcs</code> — ABS, TCS, and Electronic Brakeforce Distribution (EBD) Unit</h3>
+<p>In standard CCD 2.0 schematics, this component is declared as <strong><code>[AbsTcs]</code></strong> strictly <strong>before</strong> <code>Idler</code>, powered from the ignition circuit (<code>IgnitionElectricCircuit</code>), and linked to <code>Idler</code> and all four brakes (<code>BrakeFrontLeft</code>, <code>BrakeFrontRight</code>, <code>BrakeBackLeft</code>, <code>BrakeBackRight</code>).</p>
+<ul>
+    <li><strong>Electronic Brakeforce Distribution (EBD):</strong> automatically proportions requested braking torque across axles according to each wheel's current vertical load (with a <code>5%</code> floor of nominal load for unloaded/lifted wheels).</li>
+    <li><strong>ABS and TCS:</strong> when bus voltage exceeds <code>MinVoltage</code>, keep each wheel's longitudinal slip within the optimal window (<code>OptimalSlip</code> / <code>MaxSlip</code> / <code>SlipRange</code> from the tire's longitudinal friction curve) and forward the <code>Accelerator</code> signal to <code>Idler</code>.</li>
+</ul>
+<table>
+    <thead>
+        <tr>
+            <th>INI Key</th>
+            <th>Type</th>
+            <th class="text-center">Default</th>
+            <th class="text-center">Units</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>AbsEquipped</code> / <code>TcsEquipped</code></td>
+            <td>boolean</td>
+            <td class="text-center"><code>true</code> / <code>true</code></td>
+            <td class="text-center"><code>true</code>/<code>false</code></td>
+            <td>Whether the vehicle is equipped with ABS and TCS (ASR).</td>
+        </tr>
+        <tr>
+            <td><code>AbsIsOnByDefault</code></td>
+            <td>boolean</td>
+            <td class="text-center"><code>true</code></td>
+            <td class="text-center"><code>true</code>/<code>false</code></td>
+            <td><strong>Note:</strong> this single key enables <strong>both ABS and TCS simultaneously</strong> by default when power is applied!</td>
+        </tr>
+        <tr>
+            <td><code>Resistance</code></td>
+            <td>number</td>
+            <td class="text-center"><code>5.0</code></td>
+            <td class="text-center">Ω</td>
+            <td>Electrical resistance of the unit in the ignition circuit.</td>
+        </tr>
+        <tr>
+            <td><code>MinVoltage</code> / <code>NormalVoltage</code></td>
+            <td>number</td>
+            <td class="text-center"><code>9.0</code> / <code>12.0</code></td>
+            <td class="text-center">V</td>
+            <td>Minimum and nominal bus voltages required for ABS and TCS operation.</td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li><strong>Inputs (<code>InputProcessors</code>):</strong> <code>Brake</code> (<code>Real</code>, <code>[0..1]</code>), <code>Accelerator</code> (<code>Real</code>, <code>[0..1]</code>), <code>EnableABS</code> (<code>Boolean</code>), <code>EnableTCS</code> (<code>Boolean</code>), <code>Enabled</code> (<code>Boolean</code>).</li>
+    <li><strong>Outputs (<code>OutputElements</code>):</strong> <code>AbsActive</code> (<code>Boolean</code>), <code>TcsActive</code> (<code>Boolean</code>), <code>AbsEnabled</code> (<code>Boolean</code>), <code>TcsEnabled</code> (<code>Boolean</code>), <code>Enabled</code> (<code>Boolean</code>), <code>Intensity</code> (<code>Real</code>).</li>
+</ul>
+<h3 id="23-clutchinputprocessor--nonlinear-clutch-pedal-controller">2.3. <code>ClutchInputProcessor</code> — Nonlinear Clutch Pedal Controller</h3>
+<p>In manual-transmission schematics (<code>*Manual.xml</code>), declared under the name <strong><code>[ClutchPedal]</code></strong> (<code>&lt;Link Holder="ClutchPedal" Reference="Clutch" /&gt;</code>).</p>
+<ul>
+    <li><strong><code>Clutch</code> input inversion:</strong> <code>0.0</code> = pedal <strong>fully pressed</strong> (clutch disengaged), <code>1.0</code> = pedal <strong>fully released</strong> (clutch engaged). Disc engagement law: $\text{Position} = (\text{Clutch})^{\text{Power}}$ (with <code>Power = 4.0</code>, the smooth bite zone lies around <code>0.70..0.85</code>).</li>
+    <li><strong><code>.ini</code> parameters:</strong> <code>Power</code> (number, default <code>4.0</code>).</li>
+</ul>
+<h3 id="24-gearboxautomaticlogic-gearboxlogic-section-and-gearboxautomaticlogicbus">2.4. <code>GearBoxAutomaticLogic</code> (<code>[GearBoxLogic]</code> section) and <code>GearBoxAutomaticLogicBus</code></h3>
+<p>Automatic transmission selector controllers (<code>&lt;Link Holder="GearBoxLogic" Reference="GearBoxAutomatic" /&gt;</code>) managing selector modes <code>0 = P</code>, <code>1 = R</code>, <code>2 = N</code>, <code>3 = D</code> and the upper gear limit <code>AutoShifterMaxGear</code> (<code>MaxGear</code>).</p>
+<ul>
+    <li><strong><code>GearBoxAutomaticLogic</code></strong> (passenger-car selector in <code>*Auto.xml</code>): interlocks shifting out of Park <code>P (0)</code> unless the brake pedal is depressed (<code>Brake &gt;= ShiftMinBrake</code>), and when <code>ConsiderRpmWhenChangeState = true</code>, protects the transmission from engaging <code>P</code>, <code>R</code>, or <code>D</code> above the output shaft speed thresholds (<code>MaxParkingOutputRpm</code>, <code>MaxReverseOutputRpm</code>, <code>MaxDriveOutputRpm</code>), temporarily holding neutral <code>N (2)</code>.</li>
+    <li><strong><code>GearBoxAutomaticLogicBus</code></strong> (push-button bus selector <code>D / N / R</code>): forbids direct <code>D &lt;-&gt; R</code> transitions bypassing <code>N</code>, supports a reverse interlock <code>ReverseLock</code>, and automatically engages a hidden neutral when stopped with the brake pressed (<code>Brake &gt; 0.1</code>).</li>
+</ul>
+<table>
+    <thead>
+        <tr>
+            <th>INI Key</th>
+            <th>Class</th>
+            <th>Type</th>
+            <th class="text-center">Default</th>
+            <th class="text-center">Units</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>HasParkingState</code></td>
+            <td>Both</td>
+            <td>boolean</td>
+            <td class="text-center"><code>true</code></td>
+            <td class="text-center"><code>true</code>/<code>false</code></td>
+            <td>Whether the Park mode <code>P</code> (<code>0</code>) is present. Set to <code>false</code> for buses without Park.</td>
+        </tr>
+        <tr>
+            <td><code>ShiftMinBrake</code></td>
+            <td><code>GearBoxAutomaticLogic</code></td>
+            <td>number</td>
+            <td class="text-center"><code>0.1</code></td>
+            <td class="text-center">fraction <code>[0..1]</code></td>
+            <td>Minimum brake pedal depression required to shift out of <code>P</code>.</td>
+        </tr>
+        <tr>
+            <td><code>ConsiderRpmWhenChangeState</code></td>
+            <td><code>GearBoxAutomaticLogic</code></td>
+            <td>boolean</td>
+            <td class="text-center"><code>true</code></td>
+            <td class="text-center"><code>true</code>/<code>false</code></td>
+            <td>Enables protection against shifting into <code>P</code>, <code>R</code>, or <code>D</code> while the gearbox output shaft is spinning rapidly.</td>
+        </tr>
+        <tr>
+            <td><code>MaxParkingOutputRpm</code></td>
+            <td><code>GearBoxAutomaticLogic</code></td>
+            <td>number</td>
+            <td class="text-center"><code>50.0</code></td>
+            <td class="text-center">RPM</td>
+            <td>Maximum transmission output shaft RPM at which engaging <code>P</code> is allowed.</td>
+        </tr>
+        <tr>
+            <td><code>MaxReverseOutputRpm</code></td>
+            <td><code>GearBoxAutomaticLogic</code></td>
+            <td>number</td>
+            <td class="text-center"><code>50.0</code></td>
+            <td class="text-center">RPM</td>
+            <td>Maximum forward-rolling output shaft RPM at which engaging <code>R</code> is allowed.</td>
+        </tr>
+        <tr>
+            <td><code>MaxDriveOutputRpm</code></td>
+            <td><code>GearBoxAutomaticLogic</code></td>
+            <td>number</td>
+            <td class="text-center"><code>50.0</code></td>
+            <td class="text-center">RPM</td>
+            <td>Maximum backward-rolling output shaft RPM at which engaging <code>D</code> is allowed.</td>
+        </tr>
+        <tr>
+            <td><code>HasReverseLock</code></td>
+            <td><code>GearBoxAutomaticLogicBus</code></td>
+            <td>boolean</td>
+            <td class="text-center"><code>false</code></td>
+            <td class="text-center"><code>true</code>/<code>false</code></td>
+            <td>Whether an unlock signal (<code>ReverseLock = false</code>) is required to engage reverse <code>R</code>.</td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li><strong>Inputs:</strong> <code>AutoShifterState</code> (<code>Integer</code>: <code>0=P</code>, <code>1=R</code>, <code>2=N</code>, <code>3=D</code>), <code>AutoShifterMaxGear</code> (<code>Integer</code>), <code>Brake</code> (<code>Real</code>), <code>Accelerator</code> (<code>Real</code>), <code>ReverseLock</code> (<code>Boolean</code>). <strong>State:</strong> <code>AutoShifterState</code> (<code>InternalName="State"</code>, <code>Integer</code>).</li>
+    <li><strong>Outputs:</strong> <code>AutoShifterState</code>, <code>CurrentState</code>, <code>AutoShifterMaxGear</code>, <code>AutoShifterCurrentGear</code>, <code>AutoShifterTargetGear</code> (all <code>Integer</code>).</li>
+</ul>
+<h3 id="25-ignitionkeyprocessor--ignition-switch-controller">2.5. <code>IgnitionKeyProcessor</code> — Ignition Switch Controller</h3>
+<p>Declared in standard schematics as <strong><code>[IgnitionKey]</code></strong> (has no parameters in <code>Vehicle.ini</code>) and accepts the <strong><code>Ignition</code></strong> input (<code>Integer</code>: <code>0 = Off</code>, <code>1 = Ignition</code>, <code>2 = Starter</code>).</p>
+<ul>
+    <li><strong><code>&lt;Link Holder="IgnitionKey" Reference="..." /&gt;</code> connections:</strong>
+<ol>
+    <li><code>IgnitionElectricCircuit</code> — closes the ignition circuit whenever <code>Ignition != 0</code>.</li>
+    <li><code>Starter</code> and <code>StarterRelay</code> — energizes the starter motor and its relay when <code>Ignition == 2</code>.</li>
+    <li><code>Idler</code> (<code>FuelControllerComputer</code>) — sends <code>FuelFeed = (Ignition != 0)</code>. <strong>Critical for diesel engines (<code>EngineDiesel</code>):</strong> this exact link cuts fuel supply and shuts off a diesel engine when the key is turned to <code>0</code>!</li>
+    <li><code>GearBoxLogic</code> (<code>GearBoxAutomaticLogic</code>) — <strong>in-gear starter interlock</strong>: if the AT selector is in <code>D (3)</code> or <code>R (1)</code>, key position <code>2 (Starter)</code> is forced down to <code>1 (Ignition)</code>.</li>
+</ol>
+</li>
+</ul>
+<hr>
+<h2 id="3-telemetry-and-steering-force-feedback-output">3. Telemetry and Steering Force Feedback (<code>Output</code>)</h2>
+<h3 id="31-powersteering--power-steering-hpseps-and-force-feedback">3.1. <code>PowerSteering</code> — Power Steering (HPS/EPS) and Force Feedback</h3>
+<p>Declared in standard schematics as <strong><code>[PowerSteering]</code></strong> (<code>&lt;Link&gt;</code> to <code>Steering</code> and <code>Engine</code>). Computes steering-shaft Force Feedback (FFB) from tire self-aligning torque and lateral forces, reducing steering effort as engine RPM rises from <code>ActivationRpm</code> to <code>FullPowerRpm</code>.</p>
+<table>
+    <thead>
+        <tr>
+            <th>INI Key</th>
+            <th>Type</th>
+            <th class="text-center">Default</th>
+            <th class="text-center">Units</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>SteeringRatio</code></td>
+            <td>number</td>
+            <td class="text-center"><code>17.0</code></td>
+            <td class="text-center">dimensionless</td>
+            <td>Steering gear ratio (ratio of steering wheel angle to road wheel angle).</td>
+        </tr>
+        <tr>
+            <td><code>ActivationRpm</code> / <code>FullPowerRpm</code></td>
+            <td>number</td>
+            <td class="text-center"><code>0.0</code> / <code>0.1</code></td>
+            <td class="text-center">RPM</td>
+            <td>Engine RPM at which power assist starts and reaches full output (typically <code>FullPowerRpm = 500</code>).</td>
+        </tr>
+        <tr>
+            <td><code>MaxTorque</code></td>
+            <td>number</td>
+            <td class="text-center"><code>1.0</code></td>
+            <td class="text-center">$\text{N}\cdot\text{m}$</td>
+            <td>Maximum assist torque on the steering shaft (typically <code>35..45</code>).</td>
+        </tr>
+        <tr>
+            <td><code>TorqueThreshold</code></td>
+            <td>number</td>
+            <td class="text-center"><code>1.0</code></td>
+            <td class="text-center">$\text{N}\cdot\text{m}$</td>
+            <td>Steering torque threshold below which assist does not cancel feedback (preserves on-center feel, <code>1.5..2.5</code>).</td>
+        </tr>
+        <tr>
+            <td><code>ConstFriction</code></td>
+            <td>number</td>
+            <td class="text-center"><code>0.0</code></td>
+            <td class="text-center">$\text{N}\cdot\text{m}$</td>
+            <td>Constant dry friction torque in the steering column.</td>
+        </tr>
+        <tr>
+            <td><code>DampingCoeff</code></td>
+            <td>number</td>
+            <td class="text-center"><code>0.0</code></td>
+            <td class="text-center">$\text{N}\cdot\text{m}\cdot\text{s/rad}$</td>
+            <td>Viscous damping coefficient of steering wheel rotation for FFB.</td>
+        </tr>
+        <tr>
+            <td><code>MechanicalTrailCoeff</code></td>
+            <td>number</td>
+            <td class="text-center"><code>0.0</code></td>
+            <td class="text-center">m</td>
+            <td>Mechanical caster trail arm: adds restoring torque $-F_{\text{lat}} \cdot \text{MechanicalTrailCoeff}$ (response to slip angle and lateral bumps, <code>0.002..0.025</code>).</td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li><strong>Inputs:</strong> <code>BrokenPowerSteering</code> (<code>InternalName="Broken"</code>, <code>Boolean</code>).</li>
+    <li><strong>Outputs:</strong> <code>ForceFeedbackTorque</code> (<code>InternalName="Torque"</code>), <code>ForceFeedbackFriction</code> (<code>InternalName="Friction"</code>), <code>ForceFeedbackDamping</code> (<code>InternalName="Damping"</code>), <code>ForceFeedbackSlipAngle</code> (<code>InternalName="SlipAngle"</code>), <code>ForceFeedbackInertia</code> (<code>InternalName="Inertia"</code>).</li>
+</ul>
+<h3 id="32-speedometer--speedometer-and-odometer">3.2. <code>Speedometer</code> — Speedometer and Odometer</h3>
+<p>Declared in standard schematics as <strong><code>[Speedometer]</code></strong> and linked to the primary differential (<code>DifferentialAxle</code> in <code>Awd*</code> schematics or <code>Differential</code> in <code>Fwd*</code>/<code>Rwd*</code> schematics).</p>
+<ul>
+    <li><strong>Exact <code>MetersPerRotation</code> formula:</strong> distance traveled per driveshaft revolution equals the wheel circumference <strong>divided</strong> by the final drive ratio <code>GearRatio</code> of the differential to which the speedometer is linked:
+<p>$$\text{MetersPerRotation} = \frac{2\pi R_{\text{wheel}}}{i_{\text{diff}}}$$<br>
+<em>(When MT and AT have different final drive ratios, specify this separately in <code>[Speedometer.TransmissionType.Manual]</code> and <code>[Speedometer.TransmissionType.Auto]</code>.)</em></p>
+</li>
+    <li><strong>Inputs:</strong> <code>MileageMultiplier</code> (<code>Real</code>, <code>1.0</code>). <strong>States:</strong> <code>Mileage</code> (m), <code>SessionMileage</code> (m). <strong>Outputs:</strong> <code>Speed</code> (m/s), <code>Mileage</code> (m), <code>SessionMileage</code> (m).</li>
+</ul>
+<h3 id="33-fuelconsumptionmeter--average-fuel-consumption-meter">3.3. <code>FuelConsumptionMeter</code> — Average Fuel Consumption Meter</h3>
+<p>Trip computer tracking rolling and session average fuel consumption (<code>&lt;Link&gt;</code> to <code>Speedometer</code> and <code>Engine</code>).</p>
+<ul>
+    <li><strong><code>.ini</code> parameters:</strong> <code>IsEquipped</code> (<code>Boolean</code>, <code>false</code>), <code>AveragingDistance</code> (km, <code>1.0</code>), <code>AveragingStep</code> (m, <code>100.0</code>).</li>
+    <li><strong>States:</strong> <code>AverageFuelConsumption</code> (L/m), <code>SessionMileage</code> (m), <code>SessionFuelConsumed</code> (L), <code>IsEnabled</code> (<code>Boolean</code>). <strong>Outputs:</strong> <code>AverageFuelConsumption</code> (L/m), <code>SessionAverageFuelConsumption</code> (L/m; multiply by <code>100000</code> to convert to L/100 km).</li>
+</ul>
+<hr>
+<h2 id="4-forced-induction-pneumatics-tanks-aerodynamics-and-external-forces">4. Forced Induction, Pneumatics, Tanks, Aerodynamics, and External Forces</h2>
+<h3 id="41-turbocharger--engine-forced-induction-turbocharger">4.1. <code>Turbocharger</code> — Engine Forced-Induction Turbocharger</h3>
+<p>Increases intake manifold air pressure (<code>&lt;Link Holder="Turbocharger" Reference="Engine" /&gt;</code>, input <code>&lt;Processor Input="Accelerator" Component="Turbocharger" InternalName="Throttle" /&gt;</code>), proportionally multiplying indicated combustion torque.</p>
+<table>
+    <thead>
+        <tr>
+            <th>INI Key</th>
+            <th>Type</th>
+            <th class="text-center">Default</th>
+            <th class="text-center">Units</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>MinRpm</code></td>
+            <td>number</td>
+            <td class="text-center"><code>1500.0</code></td>
+            <td class="text-center">RPM</td>
+            <td>Minimum effective speed ($\text{RPM} \cdot \text{Throttle}$) at which boost begins ($\text{ratio} &gt; 1.0$).</td>
+        </tr>
+        <tr>
+            <td><code>RefRpm</code></td>
+            <td>number</td>
+            <td class="text-center"><code>6000.0</code></td>
+            <td class="text-center">RPM</td>
+            <td>Reference speed (<code>&gt; MinRpm</code>) at which <code>RefCompressionRatio</code> is reached under full throttle.</td>
+        </tr>
+        <tr>
+            <td><code>RefCompressionRatio</code></td>
+            <td>number</td>
+            <td class="text-center"><code>1.6</code></td>
+            <td class="text-center">dimensionless</td>
+            <td>Intake pressure compression ratio at <code>RefRpm</code> with <code>Throttle = 1.0</code>.</td>
+        </tr>
+        <tr>
+            <td><code>LagTime</code></td>
+            <td>number</td>
+            <td class="text-center"><code>1.0</code></td>
+            <td class="text-center">s</td>
+            <td>Turbocharger spool inertia parameter (<strong><code>0.08..0.10</code></strong> recommended — see Rule #1 below!).</td>
+        </tr>
+    </tbody>
+</table>
+<div class="alert alert-caution">
+    <div class="alert-title">Caution</div>
+<p><strong>Two critical rules for calculating <code>Turbocharger</code> and <code>Engine.csv</code>:</strong></p>
+<ol>
+    <li><strong>Fourfold spool-time multiplier ($\tau_{\text{eff}} = 4 \cdot \text{LagTime}$):</strong> effective turbine speed is smoothed at a rate of $\frac{0.25}{\text{LagTime}} \cdot dt$, so the true time constant is <strong>$\tau_{\text{eff}} = 4 \cdot \text{LagTime}$</strong>, and at idle (<code>Throttle = 0</code>) turbine speed drops to <code>0</code>. To avoid a 1.5-second boost dead zone off the line and achieve a realistic <code>0.32..0.40 s</code> response, set <strong><code>LagTime = 0.08..0.10</code></strong>.</li>
+    <li><strong>Unbounded growth above <code>RefRpm</code> and 2D division of <code>Engine.csv</code> by <code>(RPM, Throttle)</code>:</strong> the boost ratio formula:
+<p>$$\text{ratio}(\text{RPM}, \text{Throttle}) = 1 + (\text{RefCompressionRatio} - 1)\sqrt{\frac{\max(0,\; \text{RPM} \cdot \text{Throttle} - \text{MinRpm})}{\text{RefRpm} - \text{MinRpm}}}$$<br>
+has <strong>no upper cap</strong> above <code>RefRpm</code> and depends on <code>Throttle</code>! Every combustion cell <code>(thr, RPM)</code> in <code>Engine.csv</code> must be divided by <strong>its own</strong> $\text{ratio}(\text{RPM}, \text{thr})$ at that row's <code>thr = row_pct / 100.0</code>, while leaving the final mechanical-friction row $F(\text{RPM})$ untouched.</p>
+</li>
+</ol>
+
+</div>
+<h3 id="42-pneumatic-system-receiver-valvemulticircuit-actuatorpneumatic1chamber-actuatorpneumatic2chamber">4.2. Pneumatic System: <code>Receiver</code>, <code>ValveMultiCircuit</code>, <code>ActuatorPneumatic1Chamber</code>, <code>ActuatorPneumatic2Chamber</code></h3>
+<p>Components for air brakes and pneumatic bus/truck door actuators (pressures are specified in <strong>absolute bar</strong>, where atmospheric pressure is $\approx 1.0\text{ bar}$):</p>
+<ul>
+    <li><strong><code>Receiver</code> (air tank)</strong> and <strong><code>ValveMultiCircuit</code> (multi-circuit protection valve):</strong>
+<p>The declaration order of <code>&lt;Link Holder="ValveMultiCircuit" Reference="Receiver..." /&gt;</code> links in the XML schematic is <strong>critical</strong> — it defines the circuit index <code>i</code>, which maps directly to <code>OpenPressure[i]</code> and <code>ClosePressure[i]</code> in <code>Vehicle.ini</code>!</p>
+</li>
+    <li><strong><code>ActuatorPneumatic1Chamber</code> (single-chamber actuator)</strong> and <strong><code>ActuatorPneumatic2Chamber</code> (dual-chamber door cylinder):</strong>
+<p>Linked to their supply air receiver (<code>&lt;Link Holder="Actuator..." Reference="Receiver..." /&gt;</code>) and accept the <code>Position</code> input (<code>Real</code>, <code>[0.0..1.0]</code>).</p>
+</li>
+</ul>
+<table>
+    <thead>
+        <tr>
+            <th>INI Key</th>
+            <th>Components</th>
+            <th class="text-center">Default</th>
+            <th class="text-center">Units</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>Volume</code></td>
+            <td><code>Receiver</code>, <code>ValveMultiCircuit</code></td>
+            <td class="text-center"><code>1.0</code></td>
+            <td class="text-center">L</td>
+            <td>Geometric volume of the air tank / valve chamber.</td>
+        </tr>
+        <tr>
+            <td><code>MaxPressure</code> / <code>WorkPressure</code></td>
+            <td>All 4 components</td>
+            <td class="text-center"><code>8.0</code> / <code>8.0</code> (<code>6.0</code>)</td>
+            <td class="text-center">bar (abs.)</td>
+            <td>Opening (<code>MaxPressure - 0.05</code>) and closing (<code>WorkPressure + 0.05</code>) pressures of the blow-off relief valve.</td>
+        </tr>
+        <tr>
+            <td><code>BlowOffDiameter</code> / <code>InitialPressure</code></td>
+            <td>All 4 components</td>
+            <td class="text-center"><code>5.0</code> / atm.</td>
+            <td class="text-center">mm / bar</td>
+            <td>Safety blow-off valve orifice diameter and initial absolute air pressure.</td>
+        </tr>
+        <tr>
+            <td><code>PressureDelta</code></td>
+            <td><code>ValveMultiCircuit</code>, <code>Actuator*</code></td>
+            <td class="text-center"><code>1.0</code></td>
+            <td class="text-center">bar</td>
+            <td>Pressure differential for smooth opening of the transfer valve.</td>
+        </tr>
+        <tr>
+            <td><code>ValveDiameter</code> / <code>AirLossDiameter</code></td>
+            <td><code>ValveMultiCircuit</code></td>
+            <td class="text-center"><code>10.0</code> / <code>1.0</code></td>
+            <td class="text-center">mm</td>
+            <td>Per-circuit valve orifice diameter and natural inlet air-leakage orifice diameter.</td>
+        </tr>
+        <tr>
+            <td><code>OpenPressure</code> / <code>ClosePressure</code></td>
+            <td><code>ValveMultiCircuit</code></td>
+            <td class="text-center"><em>empty</em></td>
+            <td class="text-center">bar</td>
+            <td>Arrays of forward-charging opening and backflow closing pressure thresholds per circuit (<code>P1; P2; ...</code>).</td>
+        </tr>
+        <tr>
+            <td><code>MinVolume</code> / <code>MaxVolume</code></td>
+            <td><code>ActuatorPneumatic1/2Chamber</code></td>
+            <td class="text-center"><code>1.0</code> / <code>2.0</code></td>
+            <td class="text-center">L</td>
+            <td>Minimum (compressed) and maximum (expanded) working chamber volumes.</td>
+        </tr>
+        <tr>
+            <td><code>MinVolumePressure</code> / <code>MaxVolumePressure</code></td>
+            <td><code>ActuatorPneumatic1/2Chamber</code></td>
+            <td class="text-center"><code>4.0</code> / <code>7.0</code></td>
+            <td class="text-center">bar (abs.)</td>
+            <td>Target chamber pressures at <code>Position = 0.0</code> and <code>Position = 1.0</code>.</td>
+        </tr>
+        <tr>
+            <td><code>FeedDiameter</code> / <code>LeakageDiameter</code></td>
+            <td><code>ActuatorPneumatic1/2Chamber</code></td>
+            <td class="text-center"><code>10.0</code> / <code>5.0</code></td>
+            <td class="text-center">mm</td>
+            <td>Charging transfer valve diameter and emergency leakage orifice diameter.</td>
+        </tr>
+        <tr>
+            <td><code>PistonMass</code></td>
+            <td><code>ActuatorPneumatic2Chamber</code></td>
+            <td class="text-center"><code>0.0</code> (<strong><code>&gt; 0</code>!</strong>)</td>
+            <td class="text-center">kg</td>
+            <td>Mass of the piston and door leaf. <strong>Must be set <code>&gt; 0</code>, otherwise division by zero occurs!</strong></td>
+        </tr>
+        <tr>
+            <td><code>PistonFriction</code> / <code>PistonDiameter</code></td>
+            <td><code>ActuatorPneumatic2Chamber</code></td>
+            <td class="text-center"><code>0.0</code> / <code>1.0</code></td>
+            <td class="text-center">N / m</td>
+            <td>Static breakaway friction force and piston diameter (<code>&gt; 0</code>).</td>
+        </tr>
+        <tr>
+            <td><code>PistonInitialPosition</code></td>
+            <td><code>ActuatorPneumatic2Chamber</code></td>
+            <td class="text-center"><code>0.5</code></td>
+            <td class="text-center">fraction <code>[0..1]</code></td>
+            <td>Initial piston position (<code>0.0</code> = far left, <code>1.0</code> = far right).</td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li><strong>Outputs:</strong> <code>Receiver</code> — <code>Pressure</code> (bar); <code>ActuatorPneumatic1Chamber</code> — <code>WorkPressure</code>, <code>MaxVolumePressure</code>; <code>ActuatorPneumatic2Chamber</code> — <code>WorkPressure</code>, <code>MaxVolumePressure</code>, <code>Position</code> (<code>[0..1]</code>), <code>PressureLeft</code>, <code>PressureRight</code>.</li>
+</ul>
+<h3 id="43-tank--fuel-and-oil-tank">4.3. <code>Tank</code> — Fuel and Oil Tank</h3>
+<p>Used for the fuel tank <strong><code>[FuelTank]</code></strong> and automatic transmission oil tank <strong><code>[OilTank]</code></strong> (in <code>*Auto.xml</code> schematics).</p>
+<ul>
+    <li><strong><code>.ini</code> parameters:</strong> <code>Volume</code> (capacity in L, default <code>1.0</code>, must be <code>&gt; 0</code>), <code>StartLevel</code> (initial fill fraction <code>[0.0..1.0]</code>, default <code>1.0</code>).</li>
+    <li><strong>Inputs:</strong> <code>FuelLeak</code> (<code>InternalName="DrainSpeed"</code>, L/s), <code>UnlimitedFuelTank</code> (<code>InternalName="EnableUnlimited"</code>, <code>Boolean</code>). <strong>State:</strong> <code>FuelVolume</code> (<code>InternalName="LiquidVolume"</code>, L). <strong>Outputs:</strong> <code>FuelVolume</code> (<code>LiquidVolume</code>, L), <code>FuelVolumeMax</code> (<code>Volume</code>, L), <code>FuelRelative</code> (<code>LiquidRelativeVolume</code>, <code>[0..1]</code>).</li>
+</ul>
+<h3 id="44-aerodynamicscarsimple--body-aerodynamics">4.4. <code>AerodynamicsCarSimple</code> — Body Aerodynamics</h3>
+<p>Declared in standard schematics as <strong><code>[Aerodynamics]</code></strong>. Applies aerodynamic drag $F_{\text{drag}} = \frac{1}{2}\rho_{\text{air}} C_d A v^2$ ($\rho_{\text{air}} = 1.225\text{ kg/m}^3$) and vertical lift/downforce $F_{\text{lift}} = \frac{1}{2}\rho_{\text{air}} C_l A v_{\text{fwd}}^2$ at the body's center of mass (<code>BodyName = Body</code>).</p>
+<ul>
+    <li><strong><code>.ini</code> parameters:</strong> <code>BodyName</code> (<code>Body</code>), <code>DragCoeff</code> ($C_d$, default <code>0.4</code>), <code>LiftCoeff</code> ($C_l$, default <code>-0.3</code>; <code>&lt; 0</code> = downforce), <code>FrontalArea</code> (frontal cross-sectional area in $\text{m}^2$, default <code>2.0</code>).</li>
+</ul>
+<h3 id="45-externalthruster--external-linear-thruster">4.5. <code>ExternalThruster</code> — External Linear Thruster</h3>
+<p>Applies a controllable force at body-local point <code>Pivot</code> along vector <code>Direction</code>, with thrust tapering linearly to zero between speeds <code>MaxForceVelocity</code> and <code>ZeroForceVelocity</code>.</p>
+<ul>
+    <li><strong><code>.ini</code> parameters:</strong> <code>BodyName</code> (<code>"body"</code>), <code>Pivot</code> (required vector <code>X; Y; Z</code> in m), <code>Direction</code> (required vector <code>X; Y; Z</code>), <code>MaxForce</code> (N, <code>100.0</code>), <code>MaxForceVelocity</code> (m/s), <code>ZeroForceVelocity</code> (m/s), <code>MinPower</code> (<code>-1.0</code>), <code>MaxPower</code> (<code>1.0</code>). <strong>Input:</strong> <code>Power</code> (<code>Real</code> or <code>Boolean</code>).</li>
+</ul>
+
+</body>
+</html>

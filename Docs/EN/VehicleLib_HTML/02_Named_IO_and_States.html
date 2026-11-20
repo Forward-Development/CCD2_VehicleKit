@@ -1,0 +1,2014 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02. Named Inputs, Outputs, and States in City Car Driving 2.0 XML Schemas</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '', right: '', display: true}, {left: '$', right: '$', display: false}]});"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({ startOnLoad: true });</script>
+    <style>
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 32px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1f2328;
+            background-color: #ffffff;
+        }
+        h1, h2, h3, h4 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        h1 { font-size: 2em; padding-bottom: 0.3em; border-bottom: 1px solid #d0d7de; }
+        h2 { font-size: 1.5em; padding-bottom: 0.3em; border-bottom: 1px solid #d0d7de; }
+        h3 { font-size: 1.25em; }
+        hr { height: 0.25em; padding: 0; margin: 24px 0; background-color: #d0d7de; border: 0; }
+        a { color: #0969da; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+        th, td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; vertical-align: top; }
+        th { background: #f6f8fa; font-weight: 600; }
+        tr:nth-child(even) { background: #f6f8fa; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        code { background: #eff1f3; padding: 2px 5px; border-radius: 4px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 85%; }
+        pre { background: #f6f8fa; padding: 14px; border-radius: 6px; overflow-x: auto; border: 1px solid #d0d7de; }
+        pre code { background: transparent; padding: 0; font-size: 100%; }
+        pre.mermaid { background: #ffffff; text-align: center; }
+        .alert { padding: 12px 16px; margin: 16px 0; border-left: 4px solid; border-radius: 6px; background: #f6f8fa; }
+        .alert-title { font-weight: 600; margin-bottom: 6px; }
+        .alert p:last-child, .alert ul:last-child, .alert ol:last-child { margin-bottom: 0; }
+        .alert-note { border-left-color: #0969da; background-color: #ddf4ff; }
+        .alert-note .alert-title { color: #0969da; }
+        .alert-tip { border-left-color: #1a7f37; background-color: #dafbe1; }
+        .alert-tip .alert-title { color: #1a7f37; }
+        .alert-important { border-left-color: #8250df; background-color: #fbefff; }
+        .alert-important .alert-title { color: #8250df; }
+        .alert-warning { border-left-color: #9a6700; background-color: #fff8c5; }
+        .alert-warning .alert-title { color: #9a6700; }
+        .alert-caution { border-left-color: #cf222e; background-color: #ffebe9; }
+        .alert-caution .alert-title { color: #cf222e; }
+        ul.checklist { list-style-type: none; padding-left: 0; }
+        ul.checklist li { margin-bottom: 8px; }
+        ul.checklist input[type="checkbox"] { margin-right: 8px; }
+        figure.doc-figure { margin: 16px 0; padding: 10px; background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 6px; text-align: center; }
+        figure.doc-figure img { max-width: 100%; height: auto; border-radius: 4px; display: block; margin: 0 auto; }
+        figure.doc-figure figcaption { margin-top: 8px; font-size: 0.9em; color: #57606a; }
+    </style>
+</head>
+<body>
+<h1 id="02-named-inputs-outputs-and-states-in-city-car-driving-20-xml-schemas">02. Named Inputs, Outputs, and States in City Car Driving 2.0 XML Schemas</h1>
+<p><strong>Navigation:</strong> <a href="./README.html">README</a> | <a href="./00_Quick_Start.html">00. Quick Start</a> | <a href="./01_Architecture_and_Config.html">01. Architecture &amp; Configs</a> | <strong>02. Named I/O &amp; States</strong> | <a href="./03_Components_TorqueTrain.html">03. TorqueTrain</a> | <a href="./04_Components_Electrics.html">04. Electrics</a> | <a href="./05_Components_Chassis_and_Subsystems.html">05. Chassis &amp; Subsystems</a></p>
+<hr>
+<h2 id="1-structure-of-inputelements-inputprocessors-outputelements-and-stateelements-sections">1. Structure of <code>&lt;InputElements&gt;</code>, <code>&lt;InputProcessors&gt;</code>, <code>&lt;OutputElements&gt;</code>, and <code>&lt;StateElements&gt;</code> Sections</h2>
+<p>The connection between City Car Driving 2.0 game logic (player controls, AI traffic, instrument cluster, exterior lighting, FMOD audio, traffic rules enforcement, and Force Feedback) and the vehicle's physical components is defined in the XML schema (<code>&lt;Vehicle&gt;</code>) via 4 sections:</p>
+<pre class="mermaid">
+flowchart LR
+    GAME["City Car Driving 2.0 (UE5 / Blueprints)"] --&gt;|"Control commands"| IE["&lt;InputElements&gt;&lt;br/&gt;Name, Type, DefaultValue"]
+    IE --&gt; IP["&lt;InputProcessors&gt;&lt;br/&gt;Input -&gt; Component + InternalName"]
+    IP --&gt; COMP["Physical components&lt;br/&gt;(&lt;Components&gt;)"]
+    GAME --&gt;|"Instant state assignment"| SE["&lt;StateElements&gt;&lt;br/&gt;Name -&gt; Component + InternalName"]
+    SE --&gt; COMP
+    COMP --&gt; OE["&lt;OutputElements&gt;&lt;br/&gt;Name -&gt; Component + InternalName"]
+    OE --&gt;|"Telemetry, needles, indicator lamps, sound"| GAME
+    OE -.-&gt;|"ConnectedToOutput / DefaultValueFromOutput"| IE
+</pre>
+<h3 id="11-tag-attributes-name-component-and-internalname">1.1. Tag Attributes: <code>Name</code>, <code>Component</code>, and <code>InternalName</code></h3>
+<p>Every I/O element uses three attributes:</p>
+<ul>
+    <li><strong><code>Component</code></strong> — the <strong>component instance name</strong> from the <code>&lt;Components&gt;&lt;Component Name="..." Class="..." /&gt;&lt;/Components&gt;</code> section of your XML schema. The <code>Component</code> name in the I/O system is <strong>unrestricted</strong> (except for the required suspension strut names <code>SuspensionFrontLeft/Right</code>, <code>SuspensionBackLeft/Right</code> and wheel names <code>WheelFrontLeft/Right</code>, <code>WheelBackLeft/Right</code>, which bind to 3D meshes in Blueprint). All other assemblies in a custom XML schema may be named arbitrarily, as long as the <code>Component="..."</code> attribute and the <code>[ComponentName]</code> section header in <code>Vehicle.ini</code> reference that exact name.</li>
+    <li><strong><code>InternalName</code></strong> — the <strong>internal channel name of the component class (<code>Class</code>)</strong>. It is hardcoded by the implementation of the corresponding <code>Class</code> and <strong>must match exactly</strong> the list of inputs/outputs/states supported by that class (see <a href="#3-reference-of-internal-names-internalname-by-component-class">Section 3</a>). If the <code>InternalName</code> attribute is omitted in XML, it automatically defaults to the external <code>Name</code> (or <code>Input</code>).</li>
+    <li><strong><code>Name</code></strong> (or <strong><code>Input</code></strong> in <code>&lt;InputProcessors&gt;</code>) — the <strong>external vehicle channel name</strong> used by City Car Driving 2.0 and Blueprints to communicate with the physics simulation. Required external channel names are listed in the tables of Section 2.</li>
+</ul>
+<table>
+    <thead>
+        <tr>
+            <th>XML Section &amp; Tag</th>
+            <th>Attributes</th>
+            <th>Purpose</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong><code>&lt;OutputElements&gt;</code></strong><br><code>&lt;Element ... /&gt;</code></td>
+            <td><code>Name</code>, <code>Type</code> (<code>Real</code>/<code>Integer</code>/<code>Boolean</code>), <code>Component</code>, <code>InternalName</code> <em>(opt.)</em></td>
+            <td>Exposes a physical quantity, gauge needle position, or indicator brightness from <code>Component</code> externally under the name <code>Name</code>.</td>
+        </tr>
+        <tr>
+            <td><strong><code>&lt;StateElements&gt;</code></strong><br><code>&lt;Element ... /&gt;</code></td>
+            <td><code>Name</code>, <code>Type</code> (<code>Real</code>/<code>Integer</code>/<code>Boolean</code>), <code>Component</code>, <code>InternalName</code> <em>(opt.)</em></td>
+            <td>Allows the game to instantaneously set a component's internal state (fuel volume, engine temperature, mileage, gear) on spawn, refueling, or reset.</td>
+        </tr>
+        <tr>
+            <td><strong><code>&lt;InputElements&gt;</code></strong><br><code>&lt;Element ... /&gt;</code></td>
+            <td><code>Name</code>, <code>Type</code> (<code>Real</code>/<code>Integer</code>/<code>Boolean</code>), <code>DefaultValue</code> <em>(opt.)</em>, <code>DefaultValueFromOutput</code> <em>(opt.)</em>, <code>ConnectedToOutput</code> <em>(opt.)</em></td>
+            <td>Declares an external control channel and how it is initially populated.</td>
+        </tr>
+        <tr>
+            <td><strong><code>&lt;InputProcessors&gt;</code></strong><br><code>&lt;Processor ... /&gt;</code></td>
+            <td><code>Input</code>, <code>Component</code>, <code>InternalName</code> <em>(opt.)</em></td>
+            <td>Subscribes <code>Component</code> to updates on the <code>Input</code> channel.</td>
+        </tr>
+    </tbody>
+</table>
+<h3 id="12-initial-input-values-and-connectedtooutput-auto-linking">1.2. Initial Input Values and <code>ConnectedToOutput</code> Auto-Linking</h3>
+<p>The <code>&lt;Element&gt;</code> tag inside <code>&lt;InputElements&gt;</code> supports three initialization attributes (in ascending order of priority):</p>
+<ol>
+    <li><strong><code>DefaultValue="..."</code></strong> — feeds the specified constant value once upon vehicle creation (for example, <code>DefaultValue="true"</code> for <code>Battery</code>, <code>EnableABS</code>, <code>EnableTCS</code>).</li>
+    <li><strong><code>DefaultValueFromOutput="OutputName"</code></strong> — copies the initial value once upon vehicle creation from the specified <code>&lt;OutputElements&gt;</code> entry of the same type (for example, in <code>*Manual.xml</code>, the <code>Gear</code> input takes its starting gear via <code>DefaultValueFromOutput="Gear"</code>). The input remains controllable by the game.</li>
+    <li><strong><code>ConnectedToOutput="OutputName"</code></strong> — automatically copies the value of the specified output into this input <strong>on every simulation frame</strong> and hides the input from the list of external inputs. Used for direct signal routing from one component to another without game involvement:</li>
+</ol>
+<pre><code class="language-xml">&lt;OutputElements&gt;
+    &lt;Element Name="RetarderActive" Type="Boolean" Component="Retarder" InternalName="Enabled" /&gt;
+&lt;/OutputElements&gt;
+&lt;InputElements&gt;
+    &lt;Element Name="RetarderIndicatorInput" Type="Boolean" ConnectedToOutput="RetarderActive" /&gt;
+&lt;/InputElements&gt;
+&lt;InputProcessors&gt;
+    &lt;Processor Input="RetarderIndicatorInput" Component="CarElectrics" InternalName="Retarder" /&gt;
+&lt;/InputProcessors&gt;</code></pre>
+<hr>
+<h2 id="2-standard-and-required-inputs-states-and-outputs-in-city-car-driving-20">2. Standard and Required Inputs, States, and Outputs in City Car Driving 2.0</h2>
+<div class="alert alert-important">
+    <div class="alert-title">Important</div>
+<p><strong>Six key rules for working with I/O channels in City Car Driving 2.0:</strong></p>
+<ol>
+    <li><strong>Transmission type detection via the <code>AutoShifterState</code> input:</strong> interior, shifter, and sound controllers (<code>BP_VehicleInteriorController_Transmission</code>, <code>BP_CarSound</code>) check for <code>HasInput("AutoShifterState")</code>. If the <code>AutoShifterState</code> input is declared in the schema, the vehicle is treated as having an <strong>automatic transmission (AT)</strong>; if absent, a <strong>manual transmission (MT)</strong>.</li>
+    <li><strong>The gas pedal is named <code>Accelerator</code> (not <code>Throttle</code>):</strong> across all CCD 2.0 schemas, the external throttle input is named <strong><code>Accelerator</code></strong> (<code>0.0 .. 1.0</code>). The name <code>Throttle</code> is used only as an <code>InternalName</code> inside the <code>Turbocharger</code> component.</li>
+    <li><strong>Inversion of the <code>Clutch</code> pedal (<code>*Manual.xml</code>):</strong> a value of <strong><code>0.0</code></strong> means the <strong>pedal is fully pressed</strong> (clutch disengaged), while <strong><code>1.0</code></strong> means the <strong>pedal is fully released</strong> (clutch engaged).</li>
+    <li><strong>Ignition key <code>Ignition</code> and starter interlock:</strong> accepts <strong><code>0</code></strong> (<code>Off</code>), <strong><code>1</code></strong> (<code>Ignition</code> — ignition on), and <strong><code>2</code></strong> (<code>Starter</code> — cranking the starter). In AT schemas (<code>*Auto.xml</code>), the ignition switch is linked to <code>GearBoxLogic</code> and <strong>allows starter operation (<code>2</code>) only in <code>P (0)</code> or <code>N (2)</code></strong>.</li>
+    <li><strong>Transmission control (<code>AutoShifterState</code> in <code>*Auto.xml</code> vs. <code>Gear</code> in <code>*Manual.xml</code>):</strong>
+<ul>
+    <li>In <code>*Auto.xml</code>, the selector is controlled by the <strong><code>AutoShifterState</code></strong> input: <strong><code>0 = P</code></strong>, <strong><code>1 = R</code></strong>, <strong><code>2 = N</code></strong>, <strong><code>3 = D</code></strong>. To shift out of <code>P (0)</code>, the brake pedal must be pressed (<code>Brake &gt;= ShiftMinBrake</code>, default <code>0.1</code>).</li>
+    <li>In <code>*Manual.xml</code>, the <strong><code>Gear</code></strong> input is used: inside <code>GearBox</code>, index <strong><code>-1</code></strong> is neutral (<code>N</code>), <strong><code>0</code></strong> is reverse (<code>R</code>), and <strong><code>1..N-1</code></strong> are forward gears <em>(the CCD 2.0 game controller automatically maps <code>-1 = R</code>, <code>0 = N</code>, <code>1..N = forward</code> into <code>GearBox</code> indices when the output <code>EnableNeutralInput = true</code> is present)</em>.</li>
+</ul>
+</li>
+    <li><strong>Speed units for <code>Speed</code> and <code>DashboardSpeed</code>:</strong> both outputs return speed strictly in <strong>meters per second ($\text{m/s}$)</strong> (<code>1 m/s = 3.6 km/h</code>).</li>
+</ol>
+
+</div>
+<h3 id="21-input-channels-inputelements-and-inputprocessors--one-input-per-row">2.1. Input Channels (<code>&lt;InputElements&gt;</code> and <code>&lt;InputProcessors&gt;</code>) — One Input per Row</h3>
+<p>The <strong>"Status in CCD 2.0"</strong> column highlights <strong>required</strong> channels whose names are hardcoded in the game's vehicle control code, AI traffic, and Blueprint components.</p>
+<table>
+    <thead>
+        <tr>
+            <th>External <code>Name</code></th>
+            <th class="text-center"><code>Type</code></th>
+            <th class="text-center">Default</th>
+            <th>Target (<code>Component</code> $\rightarrow$ <code>InternalName</code>)</th>
+            <th class="text-center">Schemas</th>
+            <th>Status in CCD 2.0 (where used)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong><code>Accelerator</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-center">—</td>
+            <td><code>AbsTcs</code>; in <code>*Auto</code>: + <code>GearBoxAutomatic</code>, <code>GearBoxLogic</code>; with turbo: + <code>Turbocharger</code> (<code>Throttle</code>)</td>
+            <td class="text-center">All 6</td>
+            <td><strong>Required</strong> (player/AI control, engine load sound in <code>BP_CarSound</code>, <code>BP_TrafficSound</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>Brake</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-center">—</td>
+            <td><code>AbsTcs</code>, <code>CarElectrics</code>; in <code>*Auto</code>: + <code>GearBoxLogic</code></td>
+            <td class="text-center">All 6</td>
+            <td><strong>Required</strong> (player/AI control, brake lights, unlocking AT selector from <code>P</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>ParkingBrake</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-center">—</td>
+            <td><code>BrakeBackLeft</code>, <code>BrakeBackRight</code>, <code>CarElectrics</code></td>
+            <td class="text-center">All 6</td>
+            <td><strong>Required</strong> (player/AI parking brake, handbrake sound in <code>BP_CarSound</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>Clutch</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-center">—</td>
+            <td><code>ClutchPedal</code> (<code>Clutch</code>, <code>0.0</code> = pressed, <code>1.0</code> = released)</td>
+            <td class="text-center"><code>*Manual</code></td>
+            <td><strong>Required for MT</strong> (player and AI clutch pedal)</td>
+        </tr>
+        <tr>
+            <td><strong><code>Steering</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-center">—</td>
+            <td><code>Steering</code> (<code>Steering</code>, <code>-1.0..+1.0</code>)</td>
+            <td class="text-center">All 6</td>
+            <td><strong>Required</strong> (player/AI steering, 3D steering wheel and hands rotation in <code>BP_SteeringWheel</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>Ignition</code></strong></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td class="text-center">—</td>
+            <td><code>IgnitionKey</code> (<code>Ignition</code>, <code>0=Off, 1=On, 2=Start</code>)</td>
+            <td class="text-center">All 6</td>
+            <td><strong>Required</strong> (ignition switch, trip computer screen in <code>BP_VehicleDashboard</code>, engine sound in <code>BP_CarSound</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>AutoShifterState</code></strong></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td class="text-center">—</td>
+            <td><code>GearBoxLogic</code> (<code>AutoShifterState</code>, <code>0=P, 1=R, 2=N, 3=D</code>)</td>
+            <td class="text-center"><code>*Auto</code></td>
+            <td><strong>Required for AT</strong> (AT selector; the game distinguishes AT from MT via <code>HasInput("AutoShifterState")</code>!)</td>
+        </tr>
+        <tr>
+            <td><strong><code>AutoShifterMaxGear</code></strong></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td class="text-center">—</td>
+            <td><code>GearBoxLogic</code> (<code>AutoShifterMaxGear</code>, <code>0..N</code>)</td>
+            <td class="text-center"><code>*Auto</code></td>
+            <td><strong>Required for AT</strong> (manual upper gear range limit for AT)</td>
+        </tr>
+        <tr>
+            <td><strong><code>Gear</code></strong></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td class="text-center"><code>FromOutput="Gear"</code></td>
+            <td><code>GearBox</code> (<code>Gear</code>)</td>
+            <td class="text-center"><code>*Manual</code></td>
+            <td><strong>Required for MT</strong> (MT gear shifting, gear lever sound in <code>BP_CarSound</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>SafetyBelt</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td><code>CarElectrics</code> (<code>SafetyBelt</code>)</td>
+            <td class="text-center">All 6</td>
+            <td><strong>Required</strong> (seatbelt, animation in <code>BP_SteeringWheel</code>, sound in <code>BP_CarSound</code>, traffic rules enforcement)</td>
+        </tr>
+        <tr>
+            <td><strong><code>Horn</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td><code>CarElectrics</code> (<code>Horn</code>)</td>
+            <td class="text-center">All 6</td>
+            <td><strong>Required</strong> (player and AI horn)</td>
+        </tr>
+        <tr>
+            <td><strong><code>LowBeam</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td><code>CarElectrics</code> (<code>LowBeam</code>)</td>
+            <td class="text-center">All 6</td>
+            <td><strong>Required</strong> (player/AI low beam headlights, switch sound in <code>BP_CarSound</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>HighBeam</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td><code>CarElectrics</code> (<code>HighBeam</code>)</td>
+            <td class="text-center">All 6</td>
+            <td><strong>Required</strong> (latched high beam headlights, stalk sound in <code>BP_CarSound</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>HighBeamUnfixed</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td><code>CarElectrics</code> (<code>HighBeamUnfixed</code>)</td>
+            <td class="text-center">All 6</td>
+            <td>Standard (high beam flash-to-pass)</td>
+        </tr>
+        <tr>
+            <td><strong><code>ParkingLights</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td><code>CarElectrics</code> (<code>ParkingLights</code>)</td>
+            <td class="text-center">All 6</td>
+            <td><strong>Required</strong> (parking/position lights, light switch sound in <code>BP_CarSound</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>FrontFogLights</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td><code>CarElectrics</code> (<code>FrontFogLights</code>)</td>
+            <td class="text-center">All 6</td>
+            <td><strong>Required</strong> (front fog lights, button sound in <code>BP_CarSound</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>RearFogLights</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td><code>CarElectrics</code> (<code>RearFogLights</code>)</td>
+            <td class="text-center">All 6</td>
+            <td><strong>Required</strong> (rear fog lights, button sound in <code>BP_CarSound</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>LeftTurnLight</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td><code>CarElectrics</code> (<code>LeftTurnLight</code>)</td>
+            <td class="text-center">All 6</td>
+            <td><strong>Required</strong> (player/AI left turn signal, stalk sound in <code>BP_CarSound</code>, traffic rules check <code>EG_TurningLights</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>RightTurnLight</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td><code>CarElectrics</code> (<code>RightTurnLight</code>)</td>
+            <td class="text-center">All 6</td>
+            <td><strong>Required</strong> (player/AI right turn signal, stalk sound in <code>BP_CarSound</code>, traffic rules check <code>EG_TurningLights</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>HazardLight</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td><code>CarElectrics</code> (<code>HazardLight</code>)</td>
+            <td class="text-center">All 6</td>
+            <td><strong>Required</strong> (player and AI hazard warning lights)</td>
+        </tr>
+        <tr>
+            <td><strong><code>FrontWindshieldWiper</code></strong></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td class="text-center">—</td>
+            <td><code>CarElectrics</code> (<code>FrontWindshieldWiper</code>, <code>0..3</code>)</td>
+            <td class="text-center">All 6</td>
+            <td><strong>Required</strong> (front wiper mode <code>0..3</code>, switch sound in <code>BP_CarSound</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>BackWindshieldWiper</code></strong></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td class="text-center">—</td>
+            <td><code>CarElectrics</code> (<code>BackWindshieldWiper</code>, <code>0..3</code>)</td>
+            <td class="text-center">All 6</td>
+            <td><strong>Required</strong> (rear wiper mode <code>0..3</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>EnableABS</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center"><code>true</code></td>
+            <td><code>AbsTcs</code> (<code>EnableABS</code>)</td>
+            <td class="text-center">All 6</td>
+            <td><strong>Required</strong> (toggling ABS in settings and cheats)</td>
+        </tr>
+        <tr>
+            <td><strong><code>EnableTCS</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center"><code>true</code></td>
+            <td><code>AbsTcs</code> (<code>EnableTCS</code>)</td>
+            <td class="text-center">All 6</td>
+            <td><strong>Required</strong> (toggling TCS in settings)</td>
+        </tr>
+        <tr>
+            <td><strong><code>AWD</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center"><code>true</code></td>
+            <td><code>FrontAxisRelay</code> (<code>Enable</code>)</td>
+            <td class="text-center"><code>Awd*</code></td>
+            <td><strong>Required for selectable AWD</strong> (all-wheel drive toggle switch)</td>
+        </tr>
+        <tr>
+            <td><strong><code>DifferentialAxleLock</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center"><code>false</code></td>
+            <td><code>DifferentialAxle</code> (<code>Lock</code>)</td>
+            <td class="text-center"><code>Awd*</code></td>
+            <td>Standard in <code>Awd*.xml</code> <em>(the game controller hardcodes the name <code>AxleDiffLock</code>)</em></td>
+        </tr>
+        <tr>
+            <td><strong><code>DifferentialWheelLock</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center"><code>false</code></td>
+            <td><code>DifferentialWheelFront</code> (<code>Lock</code>), <code>DifferentialWheelBack</code> (<code>Lock</code>)</td>
+            <td class="text-center"><code>Awd*</code></td>
+            <td>Standard in <code>Awd*.xml</code> <em>(the game controller hardcodes <code>FrontDiffLock</code> / <code>BackDiffLock</code>)</em></td>
+        </tr>
+        <tr>
+            <td><strong><code>Battery</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center"><code>true</code></td>
+            <td><code>Battery</code> (<code>Battery</code>)</td>
+            <td class="text-center">All 6</td>
+            <td><strong>Required</strong> (<code>DefaultValue="true"</code> connects the battery ground switch on spawn)</td>
+        </tr>
+        <tr>
+            <td><strong><code>MileageMultiplier</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-center"><code>1.0</code></td>
+            <td><code>Speedometer</code> (<code>MileageMultiplier</code>), <code>Engine</code> (<code>FuelConsumptionMultiplier</code>)</td>
+            <td class="text-center">All 6</td>
+            <td><strong>Required</strong> (mileage/fuel consumption multiplier, read in <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>UnlimitedFuelTank</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td><code>FuelTank</code> (<code>EnableUnlimited</code>)</td>
+            <td class="text-center">All 6</td>
+            <td><strong>Required</strong> (unlimited fuel mode in the game)</td>
+        </tr>
+        <tr>
+            <td><strong><code>UnlimitedBattery</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td><code>Battery</code> (<code>EnableUnlimited</code>)</td>
+            <td class="text-center">All 6</td>
+            <td>Standard (unlimited battery charge)</td>
+        </tr>
+        <tr>
+            <td><strong><code>PerfectWheels</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center"><code>false</code></td>
+            <td><code>WheelFrontLeft..BackRight</code> (<code>NoSlip</code>)</td>
+            <td class="text-center">All 6</td>
+            <td><strong>Required</strong> (ideal tire grip mode without slip)</td>
+        </tr>
+        <tr>
+            <td><strong><code>FuelLeak</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td class="text-center">—</td>
+            <td><code>FuelTank</code> (<code>DrainSpeed</code>, L/s)</td>
+            <td class="text-center">All 6</td>
+            <td><strong>Required</strong> (malfunction: fuel leak)</td>
+        </tr>
+        <tr>
+            <td><strong><code>CoolantLeak</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td><code>Engine</code> (<code>CoolantLeak</code>)</td>
+            <td class="text-center">All 6</td>
+            <td><strong>Required</strong> (malfunction: coolant leak)</td>
+        </tr>
+        <tr>
+            <td><strong><code>BrokenSteering</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td><code>Steering</code> (<code>BrokenSteering</code>)</td>
+            <td class="text-center">All 6</td>
+            <td><strong>Required</strong> (malfunction: steering failure)</td>
+        </tr>
+        <tr>
+            <td><strong><code>BrokenPowerSteering</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td><code>CarElectrics</code> (<code>BrokenPowerSteering</code>), <code>PowerSteering</code> (<code>Broken</code>)</td>
+            <td class="text-center">All 6</td>
+            <td><strong>Required</strong> (malfunction: hydraulic/electric power steering failure)</td>
+        </tr>
+        <tr>
+            <td><strong><code>BrokenLighting</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td><code>CarElectrics</code> (<code>BrokenLighting</code>)</td>
+            <td class="text-center">All 6</td>
+            <td>Standard (malfunction: exterior lighting failure)</td>
+        </tr>
+        <tr>
+            <td><strong><code>BrokenBrake</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td><code>BrakeFrontLeft..BackRight</code> (<code>BrokenBrake</code>), <code>CarElectrics</code> (<code>BrokenBrake</code>)</td>
+            <td class="text-center">All 6</td>
+            <td>Standard in <code>*.xml</code> <em>(the damage system also looks for <code>BrokenFrontLeftBrake..BackRightBrake</code>)</em></td>
+        </tr>
+        <tr>
+            <td><strong><code>BlowoutTyreFrontLeft</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td><code>WheelFrontLeft</code> (<code>Blowout</code>)</td>
+            <td class="text-center">All 6</td>
+            <td>Standard in <code>*.xml</code> <em>(the damage system also looks for <code>BlowoutFrontLeftWheel</code>)</em></td>
+        </tr>
+        <tr>
+            <td><strong><code>BlowoutTyreFrontRight</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td class="text-center">—</td>
+            <td><code>WheelFrontRight</code> (<code>Blowout</code>)</td>
+            <td class="text-center">All 6</td>
+            <td>Standard in <code>*.xml</code> <em>(the damage system also looks for <code>BlowoutFrontRightWheel</code>)</em></td>
+        </tr>
+    </tbody>
+</table>
+<hr>
+<h3 id="22-state-channels-stateelements--one-state-per-row">2.2. State Channels (<code>&lt;StateElements&gt;</code>) — One State per Row</h3>
+<table>
+    <thead>
+        <tr>
+            <th>External <code>Name</code></th>
+            <th class="text-center"><code>Type</code></th>
+            <th><code>Component</code> in XML</th>
+            <th><code>InternalName</code></th>
+            <th class="text-center">Units</th>
+            <th>Status in CCD 2.0 (where used)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong><code>FuelVolume</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>FuelTank</code></td>
+            <td><code>LiquidVolume</code></td>
+            <td class="text-center">L (<code>0..Volume</code>)</td>
+            <td><strong>Required</strong> (refueling at gas stations in <code>BP_CarFuelTank</code> / <code>BP_Vehicle_FuelTank</code>, saving fuel level, cheats)</td>
+        </tr>
+        <tr>
+            <td><strong><code>Mileage</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Speedometer</code></td>
+            <td><code>Mileage</code></td>
+            <td class="text-center">m</td>
+            <td><strong>Required</strong> (setting saved total vehicle mileage on spawn)</td>
+        </tr>
+        <tr>
+            <td><strong><code>SessionMileage</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Speedometer</code></td>
+            <td><code>SessionMileage</code></td>
+            <td class="text-center">m</td>
+            <td><strong>Required</strong> (resetting and initializing trip mileage)</td>
+        </tr>
+        <tr>
+            <td><strong><code>AutoShifterState</code></strong></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td><code>GearBoxLogic</code></td>
+            <td><code>State</code></td>
+            <td class="text-center"><code>0=P..3=D</code></td>
+            <td><strong>Required for AT</strong> (instant AT mode assignment when spawning with engine running/off)</td>
+        </tr>
+        <tr>
+            <td><strong><code>Gear</code></strong></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td><code>GearBox</code></td>
+            <td><code>Gear</code></td>
+            <td class="text-center"><code>-1..N-1</code></td>
+            <td><strong>Required for MT</strong> (instant MT gear assignment on spawn)</td>
+        </tr>
+        <tr>
+            <td><strong><code>CoolantTemperature</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Engine</code></td>
+            <td><code>CoolantTemperature</code></td>
+            <td class="text-center">$^\circ\text{C}$</td>
+            <td><strong>Required</strong> (setting initial warm/cold engine temperature at startup)</td>
+        </tr>
+        <tr>
+            <td><strong><code>FuelChamberTemperature</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Engine</code></td>
+            <td><code>FuelChamberTemperature</code></td>
+            <td class="text-center">$^\circ\text{C}$</td>
+            <td><strong>Required</strong> (pre-heating the combustion chamber when spawning a running vehicle)</td>
+        </tr>
+        <tr>
+            <td><strong><code>CoolantLevel</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Engine</code></td>
+            <td><code>CoolantLevel</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td>Standard (initial coolant level)</td>
+        </tr>
+        <tr>
+            <td><strong><code>BrokenCoolingSystem</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td><code>Engine</code></td>
+            <td><code>BrokenCoolingSystem</code></td>
+            <td class="text-center">flag</td>
+            <td><strong>Required</strong> (cooling system / thermostat malfunction)</td>
+        </tr>
+        <tr>
+            <td><strong><code>WheelPressureFrontLeft</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>WheelFrontLeft</code></td>
+            <td><code>Pressure</code></td>
+            <td class="text-center">bar (gauge)</td>
+            <td>Standard (initial front-left tire pressure)</td>
+        </tr>
+        <tr>
+            <td><strong><code>WheelPressureFrontRight</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>WheelFrontRight</code></td>
+            <td><code>Pressure</code></td>
+            <td class="text-center">bar (gauge)</td>
+            <td>Standard (initial front-right tire pressure)</td>
+        </tr>
+        <tr>
+            <td><strong><code>DriveShaftVelocity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>DifferentialAxle</code> (<code>Awd*</code>) / <code>Differential</code> (<code>Fwd*</code>, <code>Rwd*</code>)</td>
+            <td><code>AngularVelocity</code></td>
+            <td class="text-center">rad/s</td>
+            <td>Standard (initial driveshaft angular velocity)</td>
+        </tr>
+    </tbody>
+</table>
+<hr>
+<h3 id="23-output-channels-outputelements--one-output-per-row">2.3. Output Channels (<code>&lt;OutputElements&gt;</code>) — One Output per Row</h3>
+<h4 id="a-motion-engine-transmission-fuel-and-electrical-network">A. Motion, Engine, Transmission, Fuel, and Electrical Network</h4>
+<table>
+    <thead>
+        <tr>
+            <th>External <code>Name</code></th>
+            <th class="text-center"><code>Type</code></th>
+            <th><code>Component</code></th>
+            <th><code>InternalName</code></th>
+            <th class="text-center">Units</th>
+            <th>Status in CCD 2.0 (where used)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong><code>Speed</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Speedometer</code></td>
+            <td><code>Speed</code></td>
+            <td class="text-center"><strong>m/s</strong></td>
+            <td><strong>Required</strong> (vehicle speed for AI, HUD, wind/tire sounds, <code>BP_VehicleDashboard</code>, <code>BP_VehicleListener</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>Mileage</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Speedometer</code></td>
+            <td><code>Mileage</code></td>
+            <td class="text-center">m</td>
+            <td><strong>Required</strong> (total odometer mileage in <code>BP_VehicleDashboard</code> and traffic rules check <code>EG_TurningLights</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>SessionMileage</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Speedometer</code></td>
+            <td><code>SessionMileage</code></td>
+            <td class="text-center">m</td>
+            <td><strong>Required</strong> (trip mileage and average fuel consumption calculation in <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>RPM</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Engine</code></td>
+            <td><code>RPM</code></td>
+            <td class="text-center">RPM</td>
+            <td><strong>Required</strong> (engine RPM for AI, HUD, FMOD engine audio in <code>BP_CarSound</code> / <code>BP_TrafficSound</code>, <code>BP_VehicleListener</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>RPMLimit</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Engine</code></td>
+            <td><code>RPMLimit</code></td>
+            <td class="text-center">RPM</td>
+            <td><strong>Required</strong> (RPM rev limit for gear-shift logic and HUD tachometer)</td>
+        </tr>
+        <tr>
+            <td><strong><code>StableRPM</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Engine</code></td>
+            <td><code>StableRPM</code></td>
+            <td class="text-center">RPM</td>
+            <td><strong>Required</strong> (minimum stable idle RPM for launch and anti-stall logic)</td>
+        </tr>
+        <tr>
+            <td><strong><code>Combustion</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td><code>Engine</code></td>
+            <td><code>Combustion</code></td>
+            <td class="text-center">flag</td>
+            <td><strong>Required</strong> (engine running flag <code>IsEngineRunning</code> for <code>BP_CarSound</code>, power steering, and game logic)</td>
+        </tr>
+        <tr>
+            <td><strong><code>EngineLoad</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Engine</code></td>
+            <td><code>Load</code></td>
+            <td class="text-center">$\text{N}\cdot\text{m}$</td>
+            <td><strong>Required</strong> (current engine load torque for telemetry and audio)</td>
+        </tr>
+        <tr>
+            <td><strong><code>EngineMaxTorque</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Engine</code></td>
+            <td><code>MaxTorque</code></td>
+            <td class="text-center">$\text{N}\cdot\text{m}$</td>
+            <td><strong>Required</strong> (maximum engine torque for computing relative load)</td>
+        </tr>
+        <tr>
+            <td><strong><code>EngineVibrationFrequency</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Engine</code></td>
+            <td><code>VibrationFrequency</code></td>
+            <td class="text-center">Hz</td>
+            <td><strong>Required</strong> (engine vibration frequency for gamepad and Force Feedback wheel)</td>
+        </tr>
+        <tr>
+            <td><strong><code>EngineVibrationAmplitude</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Engine</code></td>
+            <td><code>VibrationAmplitude</code></td>
+            <td class="text-center">m</td>
+            <td><strong>Required</strong> (engine vibration amplitude for gamepad and Force Feedback wheel)</td>
+        </tr>
+        <tr>
+            <td><strong><code>CoolantTemperature</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Engine</code></td>
+            <td><code>CoolantTemperature</code></td>
+            <td class="text-center">$^\circ\text{C}$</td>
+            <td><strong>Required</strong> (coolant temperature for game logic and HUD)</td>
+        </tr>
+        <tr>
+            <td><strong><code>CoolantLevel</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Engine</code></td>
+            <td><code>CoolantLevel</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td>Standard (coolant level)</td>
+        </tr>
+        <tr>
+            <td><strong><code>ThermostatBeginTemperature</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Engine</code></td>
+            <td><code>ThermostatBeginTemperature</code></td>
+            <td class="text-center">$^\circ\text{C}$</td>
+            <td><strong>Required</strong> (operating coolant temperature threshold)</td>
+        </tr>
+        <tr>
+            <td><strong><code>OverheatTemperature</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Engine</code></td>
+            <td><code>OverheatTemperature</code></td>
+            <td class="text-center">$^\circ\text{C}$</td>
+            <td><strong>Required</strong> (engine overheat threshold)</td>
+        </tr>
+        <tr>
+            <td><strong><code>OilTemperature</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Engine</code></td>
+            <td><code>OilTemperature</code></td>
+            <td class="text-center">$^\circ\text{C}$</td>
+            <td><strong>Required</strong> (engine oil temperature)</td>
+        </tr>
+        <tr>
+            <td><strong><code>OilPressure</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Engine</code></td>
+            <td><code>OilPressure</code></td>
+            <td class="text-center">bar</td>
+            <td><strong>Required</strong> (current engine oil pressure)</td>
+        </tr>
+        <tr>
+            <td><strong><code>OilLowPressure</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Engine</code></td>
+            <td><code>OilLowPressure</code></td>
+            <td class="text-center">bar</td>
+            <td><strong>Required</strong> (low oil pressure warning threshold)</td>
+        </tr>
+        <tr>
+            <td><strong><code>AFRRatio</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Engine</code></td>
+            <td><code>AFRRatio</code></td>
+            <td class="text-center">$\lambda$</td>
+            <td>Standard (air-fuel equivalence ratio)</td>
+        </tr>
+        <tr>
+            <td><strong><code>FuelConsumedTotal</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Engine</code></td>
+            <td><code>FuelConsumedTotal</code></td>
+            <td class="text-center">L</td>
+            <td><strong>Required</strong> (total consumed fuel for computing <code>AvgEconomy</code> in <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>FuelConsumedPerSecond</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Engine</code></td>
+            <td><code>FuelConsumedPerSecond</code></td>
+            <td class="text-center">L/s</td>
+            <td><strong>Required</strong> (instantaneous fuel consumption for trip computer <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>BrokenCoolingSystem</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td><code>Engine</code></td>
+            <td><code>BrokenCoolingSystem</code></td>
+            <td class="text-center">flag</td>
+            <td>Standard (cooling system failure flag)</td>
+        </tr>
+        <tr>
+            <td><strong><code>StarterRPM</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Starter</code></td>
+            <td><code>RPM</code></td>
+            <td class="text-center">RPM</td>
+            <td>Standard (electric starter shaft RPM)</td>
+        </tr>
+        <tr>
+            <td><strong><code>StarterBendixRPM</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>StarterBendix</code></td>
+            <td><code>RPM</code></td>
+            <td class="text-center">RPM</td>
+            <td>Standard (starter Bendix output pinion RPM)</td>
+        </tr>
+        <tr>
+            <td><strong><code>StarterRelayEnabled</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td><code>StarterRelay</code></td>
+            <td><code>Enabled</code></td>
+            <td class="text-center">flag</td>
+            <td>Standard (starter solenoid relay state)</td>
+        </tr>
+        <tr>
+            <td><strong><code>AutoShifterState</code></strong></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td><code>GearBoxLogic</code></td>
+            <td><code>AutoShifterState</code></td>
+            <td class="text-center"><code>0=P..3=D</code></td>
+            <td><strong>Required for AT</strong> (AT selector position for HUD, <code>BP_VehicleDashboard</code>, reverse sound in <code>BP_CarSound</code>, and shifter animation)</td>
+        </tr>
+        <tr>
+            <td><strong><code>AutoShifterCurrentGear</code></strong></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td><code>GearBoxLogic</code></td>
+            <td><code>AutoShifterCurrentGear</code></td>
+            <td class="text-center"><code>-1..N-1</code></td>
+            <td><strong>Required for AT</strong> (current AT gear for HUD and <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>AutoShifterTargetGear</code></strong></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td><code>GearBoxLogic</code></td>
+            <td><code>AutoShifterTargetGear</code></td>
+            <td class="text-center"><code>-1..N-1</code></td>
+            <td><strong>Required for AT</strong> (target AT gear during a shift)</td>
+        </tr>
+        <tr>
+            <td><strong><code>AutoShifterMaxGear</code></strong></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td><code>GearBoxLogic</code></td>
+            <td><code>AutoShifterMaxGear</code></td>
+            <td class="text-center"><code>0..N</code></td>
+            <td><strong>Required for AT</strong> (upper AT gear limit for HUD)</td>
+        </tr>
+        <tr>
+            <td><strong><code>Gear</code></strong></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td><code>GearBox</code></td>
+            <td><code>Gear</code></td>
+            <td class="text-center"><code>-1..N-1</code></td>
+            <td><strong>Required for MT</strong> (engaged MT gear for HUD, <code>BP_VehicleDashboard</code>, and shift linkage animation)</td>
+        </tr>
+        <tr>
+            <td><strong><code>GearRatio</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>GearBox</code></td>
+            <td><code>GearRatio</code></td>
+            <td class="text-center">number</td>
+            <td><strong>Required for MT</strong> (current gearbox ratio)</td>
+        </tr>
+        <tr>
+            <td><strong><code>GearCount</code></strong></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td><code>GearBox</code></td>
+            <td><code>GearCount</code></td>
+            <td class="text-center">count</td>
+            <td><strong>Required for MT</strong> (total number of gears in the <code>Gears</code> array)</td>
+        </tr>
+        <tr>
+            <td><strong><code>BatteryActive</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td><code>Battery</code></td>
+            <td><code>BatteryActive</code></td>
+            <td class="text-center">flag</td>
+            <td>Standard (battery connection state)</td>
+        </tr>
+        <tr>
+            <td><strong><code>Amperage</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Battery</code></td>
+            <td><code>Amperage</code></td>
+            <td class="text-center">A</td>
+            <td>Standard (battery discharge <code>&gt;0</code> / charge <code>&lt;0</code> current)</td>
+        </tr>
+        <tr>
+            <td><strong><code>Voltage</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>IgnitionElectricCircuit</code></td>
+            <td><code>Voltage</code></td>
+            <td class="text-center">V</td>
+            <td><strong>Required</strong> (voltage in the ignition circuit)</td>
+        </tr>
+        <tr>
+            <td><strong><code>FuelVolume</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>FuelTank</code></td>
+            <td><code>LiquidVolume</code></td>
+            <td class="text-center">L</td>
+            <td><strong>Required</strong> (remaining fuel in tank for <code>BP_CarFuelTank</code>, <code>BP_Vehicle_FuelTank</code>, <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>FuelVolumeMax</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>FuelTank</code></td>
+            <td><code>Volume</code></td>
+            <td class="text-center">L</td>
+            <td><strong>Required</strong> (full tank capacity for gas stations <code>BP_CarFuelTank</code>, <code>BP_VehicleDashboard</code>, and cheats)</td>
+        </tr>
+        <tr>
+            <td><strong><code>FuelRelative</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>FuelTank</code></td>
+            <td><code>LiquidRelativeVolume</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td>Standard (relative fuel level in the tank)</td>
+        </tr>
+    </tbody>
+</table>
+<h4 id="b-chassis-tires-brakes-abstcs-and-steering-force-feedback">B. Chassis, Tires, Brakes (ABS/TCS), and Steering Force Feedback</h4>
+<table>
+    <thead>
+        <tr>
+            <th>External <code>Name</code></th>
+            <th class="text-center"><code>Type</code></th>
+            <th><code>Component</code></th>
+            <th><code>InternalName</code></th>
+            <th class="text-center">Units</th>
+            <th>Status in CCD 2.0 (where used)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong><code>ForceFeedbackTorque</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>PowerSteering</code></td>
+            <td><code>Torque</code></td>
+            <td class="text-center">$\text{N}\cdot\text{m}$</td>
+            <td><strong>Required</strong> (self-aligning torque on the steering wheel for the Force Feedback module)</td>
+        </tr>
+        <tr>
+            <td><strong><code>ForceFeedbackFriction</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>PowerSteering</code></td>
+            <td><code>Friction</code></td>
+            <td class="text-center">$\text{N}\cdot\text{m}$</td>
+            <td><strong>Required</strong> (dry friction on the steering column for Force Feedback)</td>
+        </tr>
+        <tr>
+            <td><strong><code>ForceFeedbackDamping</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>PowerSteering</code></td>
+            <td><code>Damping</code></td>
+            <td class="text-center">$\text{N}\cdot\text{m}\cdot\text{s/rad}$</td>
+            <td><strong>Required</strong> (viscous steering damping for Force Feedback)</td>
+        </tr>
+        <tr>
+            <td><strong><code>ForceFeedbackSlipAngle</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>PowerSteering</code></td>
+            <td><code>SlipAngle</code></td>
+            <td class="text-center"><code>-1.0..1.0</code></td>
+            <td><strong>Required</strong> (normalized front tire slip angle for Force Feedback)</td>
+        </tr>
+        <tr>
+            <td><strong><code>ForceFeedbackInertia</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>PowerSteering</code></td>
+            <td><code>Inertia</code></td>
+            <td class="text-center">$\text{kg}\cdot\text{m}^2$</td>
+            <td><strong>Required</strong> (effective steering system inertia for Force Feedback)</td>
+        </tr>
+        <tr>
+            <td><strong><code>AbsActive</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td><code>AbsTcs</code></td>
+            <td><code>AbsActive</code></td>
+            <td class="text-center">flag</td>
+            <td>Standard (flag indicating ABS is actively intervening right now)</td>
+        </tr>
+        <tr>
+            <td><strong><code>TcsActive</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td><code>AbsTcs</code></td>
+            <td><code>TcsActive</code></td>
+            <td class="text-center">flag</td>
+            <td>Standard (flag indicating TCS is actively intervening right now)</td>
+        </tr>
+        <tr>
+            <td><strong><code>AbsEnabled</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td><code>AbsTcs</code></td>
+            <td><code>AbsEnabled</code></td>
+            <td class="text-center">flag</td>
+            <td>Standard (ABS is operational and enabled)</td>
+        </tr>
+        <tr>
+            <td><strong><code>TcsEnabled</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td><code>AbsTcs</code></td>
+            <td><code>TcsEnabled</code></td>
+            <td class="text-center">flag</td>
+            <td>Standard (TCS is operational and enabled)</td>
+        </tr>
+        <tr>
+            <td><strong><code>FrontWheelsWorkingPressure</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>WheelFrontLeft</code></td>
+            <td><code>WorkingPressure</code></td>
+            <td class="text-center">bar</td>
+            <td>Standard (nominal operating pressure of the front tires)</td>
+        </tr>
+        <tr>
+            <td><strong><code>WheelPressureFrontLeft</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>WheelFrontLeft</code></td>
+            <td><code>Pressure</code></td>
+            <td class="text-center">bar</td>
+            <td>Standard (current pressure in the front-left tire)</td>
+        </tr>
+        <tr>
+            <td><strong><code>WheelPressureFrontRight</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>WheelFrontRight</code></td>
+            <td><code>Pressure</code></td>
+            <td class="text-center">bar</td>
+            <td>Standard (current pressure in the front-right tire)</td>
+        </tr>
+        <tr>
+            <td><strong><code>WheelRpmFrontLeft</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>WheelFrontLeft</code></td>
+            <td><code>RPM</code></td>
+            <td class="text-center">RPM</td>
+            <td>Standard (front-left wheel RPM)</td>
+        </tr>
+        <tr>
+            <td><strong><code>WheelRpmFrontRight</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>WheelFrontRight</code></td>
+            <td><code>RPM</code></td>
+            <td class="text-center">RPM</td>
+            <td>Standard (front-right wheel RPM)</td>
+        </tr>
+        <tr>
+            <td><strong><code>WheelRpmBackLeft</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>WheelBackLeft</code></td>
+            <td><code>RPM</code></td>
+            <td class="text-center">RPM</td>
+            <td>Standard (rear-left wheel RPM)</td>
+        </tr>
+        <tr>
+            <td><strong><code>WheelRpmBackRight</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>WheelBackRight</code></td>
+            <td><code>RPM</code></td>
+            <td class="text-center">RPM</td>
+            <td>Standard (rear-right wheel RPM)</td>
+        </tr>
+    </tbody>
+</table>
+<h4 id="c-dashboard-needles-exterior-lighting-indicators-wipers-and-sound-componentcarelectrics">C. Dashboard Needles, Exterior Lighting, Indicators, Wipers, and Sound (<code>Component="CarElectrics"</code>)</h4>
+<table>
+    <thead>
+        <tr>
+            <th>External <code>Name</code></th>
+            <th class="text-center"><code>Type</code></th>
+            <th><code>InternalName</code> in <code>CarElectrics</code></th>
+            <th class="text-center">Units</th>
+            <th>Status in CCD 2.0 (where used)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong><code>DashboardSpeed</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Speed</code></td>
+            <td class="text-center"><strong>m/s</strong></td>
+            <td><strong>Required</strong> (speedometer needle <code>SpeedArrow</code> / <code>ArrowSpeedometr</code> and digital speedometer in <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>DashboardRPM</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>RPM</code></td>
+            <td class="text-center">RPM</td>
+            <td><strong>Required</strong> (tachometer needle <code>RPMArrow</code> / <code>ArrowRPM</code> in <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>DashboardFuel</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Fuel</code></td>
+            <td class="text-center">L</td>
+            <td><strong>Required</strong> (fuel gauge needle <code>FuelArrow</code> / <code>ArrowFuelLevel</code> in <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>DashboardCoolantTemperature</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>CoolantTemperature</code></td>
+            <td class="text-center">$^\circ\text{C}$</td>
+            <td><strong>Required</strong> (coolant temperature needle <code>CoolantTemperatureArrow</code> / <code>ArrowCoolantTemperature</code> in <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>DashboardOilPressure</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>OilPressure</code></td>
+            <td class="text-center">bar</td>
+            <td>Standard (engine oil pressure gauge needle)</td>
+        </tr>
+        <tr>
+            <td><strong><code>DashboardVoltage</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Voltage</code></td>
+            <td class="text-center">V</td>
+            <td>Standard (electrical system voltmeter needle)</td>
+        </tr>
+        <tr>
+            <td><strong><code>DashboardAmperage</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>Amperage</code></td>
+            <td class="text-center">A</td>
+            <td><strong>Required</strong> (ammeter needle in <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>DashboardIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>DashboardIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (backlight of instrument dials, needles, and interior buttons in <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>LowBeamIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>LowBeamIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (headlights and <code>LowBeam</code> material slot in <code>BP_VehicleExternalLight</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>HighBeamIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>HighBeamIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (headlights and <code>HighBeam</code> material slot in <code>BP_VehicleExternalLight</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>ParkingLightsIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>ParkingLightsIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (<code>ParkingLights</code> and <code>LicensePlates</code> material slots in <code>BP_VehicleExternalLight</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>FrontFogLightsIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>FrontFogLightsIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (fog lamps and <code>FrontFogLights</code> slot in <code>BP_VehicleExternalLight</code>, <code>FrontFogLightsIcon</code> icon)</td>
+        </tr>
+        <tr>
+            <td><strong><code>RearFogLightsIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>RearFogLightsIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (rear fog lamp and <code>RearFogLights</code> slot in <code>BP_VehicleExternalLight</code>, <code>RearFogLightsIcon</code> icon)</td>
+        </tr>
+        <tr>
+            <td><strong><code>StopLightIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>StopLightIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (brake lamps and <code>StopLight</code> material slot in <code>BP_VehicleExternalLight</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>ReverseLightIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>ReverseLightIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (reverse lamps and <code>ReverseLight</code> material slot in <code>BP_VehicleExternalLight</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>LeftTurnLightIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>LeftTurnLightIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (blinking left turn signals and <code>LeftTurnLight</code> slot in <code>BP_VehicleExternalLight</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>RightTurnLightIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>RightTurnLightIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (blinking right turn signals and <code>RightTurnLight</code> slot in <code>BP_VehicleExternalLight</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>LowBeamIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>LowBeamIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (<code>LowBeamIcon</code> indicator slot in <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>HighBeamIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>HighBeamIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (<code>HighBeamIcon</code> indicator slot in <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>ParkingLightsIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>ParkingLightsIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (<code>ParkingLightsIcon</code> indicator slot in <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>LeftTurnLightIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>LeftTurnLightIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (<code>LeftTurnLightIcon</code> slot in <code>BP_VehicleDashboard</code> + relay click sound in <code>BP_CarSound</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>RightTurnLightIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>RightTurnLightIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (<code>RightTurnLightIcon</code> slot in <code>BP_VehicleDashboard</code> + relay click sound in <code>BP_CarSound</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>HazardLightIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>HazardLightIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (<code>HazardLightIcon</code> hazard button backlight in <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>SafetyBeltIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>SafetyBeltIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (<code>SafetyBeltIcon</code> seatbelt warning slot in <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>ParkingBrakeIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>ParkingBrakeIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (<code>ParkingBrakeIcon</code> parking brake indicator slot in <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>BatteryIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>BatteryIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (<code>BatteryIcon</code> battery indicator slot in <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>FuelIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>FuelIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (<code>FuelIcon</code> low fuel warning slot in <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>OilIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>OilIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (<code>OilIcon</code> low oil pressure warning slot in <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>OverheatIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>OverheatIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (<code>OverheatIcon</code> coolant overheat warning slot in <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>CheckIconsIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>CheckIconsIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (<code>CheckIcons</code> ignition self-test slot in <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>AbsDisableIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>AbsDisableIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (<code>AbsIcon</code> indicator slot in <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>AbsActiveIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>AbsActiveIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (<code>AbsIcon</code> indicator slot in <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>TcsDisableIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>TcsDisableIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (<code>TCSDisableIcon</code> indicator slot in <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>TcsActiveIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>TcsActiveIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (<code>TCSActiveIcon</code> indicator slot in <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>AirbagIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>AirbagIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (<code>AirbagIcon</code> indicator slot in <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>ExhaustSystemIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>ExhaustSystemIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (<code>ExhaustSystemIcon</code> / Check Engine indicator slot in <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>PowerSteeringIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>PowerSteeringIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (<code>PowerSteeringIcon</code> indicator slot in <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>EmergencyStopIconIntensity</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>EmergencyStopIconIntensity</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (<code>EmergencyStopIcon</code> indicator slot in <code>BP_VehicleDashboard</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>FrontWindshieldWiperPhase</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>FrontWindshieldWiperPhase</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (front wiper animation in <code>BP_VehicleWipersController</code>, raindrop clearing in <code>BP_VehicleWindshieldController</code>, sound in <code>BP_CarSound</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>BackWindshieldWiperPhase</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>BackWindshieldWiperPhase</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (rear wiper animation in <code>BP_VehicleWipersController</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>FrontWindshieldWiperSpeed</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>FrontWindshieldWiperSpeed</code></td>
+            <td class="text-center">cycles/s</td>
+            <td>Standard (front wiper sweep speed)</td>
+        </tr>
+        <tr>
+            <td><strong><code>BackWindshieldWiperSpeed</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>BackWindshieldWiperSpeed</code></td>
+            <td class="text-center">cycles/s</td>
+            <td>Standard (rear wiper sweep speed)</td>
+        </tr>
+        <tr>
+            <td><strong><code>FrontWindshieldWiperForward</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td><code>FrontWindshieldWiperForward</code></td>
+            <td class="text-center">flag</td>
+            <td>Standard (front wiper blade sweep direction)</td>
+        </tr>
+        <tr>
+            <td><strong><code>TurnSignal</code></strong></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td><code>TurnSignal</code></td>
+            <td class="text-center">flag</td>
+            <td>Standard (turn signal flasher relay state)</td>
+        </tr>
+        <tr>
+            <td><strong><code>HornVolume</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>HornVolume</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (horn volume: when <code>&gt; 0.1</code>, triggers the FMOD horn event in <code>BP_CarSound</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>SafetyBeltBeeperVolume</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>SafetyBeltBeeperVolume</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td><strong>Required</strong> (unfastened seatbelt chime volume: when <code>&gt; 0.1</code>, plays audio in <code>BP_CarSound</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>BeeperVolume</code></strong></td>
+            <td class="text-center"><code>Real</code></td>
+            <td><code>BeeperVolume</code></td>
+            <td class="text-center"><code>0.0..1.0</code></td>
+            <td>Standard (dashboard warning buzzer volume)</td>
+        </tr>
+    </tbody>
+</table>
+<hr>
+<h2 id="3-reference-of-internal-names-internalname-by-component-class">3. Reference of Internal Names (<code>InternalName</code>) by Component Class</h2>
+<h3 id="31-available-inputs-inputprocessors-by-class">3.1. Available Inputs (<code>&lt;InputProcessors&gt;</code>) by <code>Class</code></h3>
+<table>
+    <thead>
+        <tr>
+            <th>Component Class (<code>Class</code>)</th>
+            <th>Input <code>InternalName</code></th>
+            <th class="text-center">Type</th>
+            <th>Purpose and Range</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong><code>EngineGazoline</code></strong>, <strong><code>EngineDiesel</code></strong></td>
+            <td><code>FuelConsumptionMultiplier</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Fuel consumption multiplier (<code>1.0</code> by default)</td>
+        </tr>
+        <tr>
+            <td><strong><code>EngineGazoline</code></strong>, <strong><code>EngineDiesel</code></strong></td>
+            <td><code>CoolantLeak</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td>Radiator puncture / coolant leak</td>
+        </tr>
+        <tr>
+            <td><strong><code>EngineGazoline</code></strong>, <strong><code>EngineDiesel</code></strong></td>
+            <td><code>BrokenCoolingSystem</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td>Stuck thermostat (cooling failure)</td>
+        </tr>
+        <tr>
+            <td><strong><code>EngineGazoline</code></strong>, <strong><code>EngineDiesel</code></strong></td>
+            <td><code>OilLevel</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td>Engine oil leak</td>
+        </tr>
+        <tr>
+            <td><strong><code>ExternalVelocityMotor</code></strong></td>
+            <td><code>ShaftRpm</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Target shaft speed (RPM)</td>
+        </tr>
+        <tr>
+            <td><strong><code>VariableTorqueConverter</code></strong></td>
+            <td><code>GearRatio</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Current CVT gear ratio</td>
+        </tr>
+        <tr>
+            <td><strong><code>GearBox</code></strong></td>
+            <td><code>Gear</code></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td>Index of the gear to engage (<code>-1</code> = neutral, <code>0..N-1</code> = <code>Gears</code> steps)</td>
+        </tr>
+        <tr>
+            <td><strong><code>GearBoxAutomatic</code></strong></td>
+            <td><code>Accelerator</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Gas pedal <code>0.0..1.0</code> (used to calculate shifts via <code>OptimalRpm</code> and torque converter lockup)</td>
+        </tr>
+        <tr>
+            <td><strong><code>DifferentialOpen</code></strong></td>
+            <td><code>Lock</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td>Forced differential lock (when <code>DisableInput = false</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>Relay</code></strong></td>
+            <td><code>Enable</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td>Engage (<code>true</code>) / disengage (<code>false</code>) coupling</td>
+        </tr>
+        <tr>
+            <td><strong><code>Retarder</code></strong></td>
+            <td><code>Enabled</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td>Enable hydraulic retarder operation</td>
+        </tr>
+        <tr>
+            <td><strong><code>Retarder</code></strong></td>
+            <td><code>Brake</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Continuous braking effort <code>0.0..1.0</code> (when <code>DiscreteInput = false</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>Retarder</code></strong></td>
+            <td><code>BrakeStage</code></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td>Braking stage <code>0..N</code> (when <code>DiscreteInput = true</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>BrakeFriction</code></strong>, <strong><code>BrakeFrictionPneumatic</code></strong></td>
+            <td><code>Brake</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Service brake <code>0.0..1.0</code></td>
+        </tr>
+        <tr>
+            <td><strong><code>BrakeFriction</code></strong>, <strong><code>BrakeFrictionPneumatic</code></strong></td>
+            <td><code>ParkingBrake</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Parking brake <code>0.0..1.0</code></td>
+        </tr>
+        <tr>
+            <td><strong><code>BrakeFriction</code></strong>, <strong><code>BrakeFrictionPneumatic</code></strong></td>
+            <td><code>BrokenBrake</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td>Brake mechanism failure</td>
+        </tr>
+        <tr>
+            <td><strong><code>WheelRaycast</code></strong></td>
+            <td><code>Blowout</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td>Tire puncture / blowout</td>
+        </tr>
+        <tr>
+            <td><strong><code>WheelRaycast</code></strong></td>
+            <td><code>NoSlip</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td>Ideal no-slip grip mode</td>
+        </tr>
+        <tr>
+            <td><strong><code>Generator</code></strong>, <strong><code>PowerSteering</code></strong></td>
+            <td><code>Broken</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td>Alternator failure / power steering failure</td>
+        </tr>
+        <tr>
+            <td><strong><code>ElectricCircuit</code></strong></td>
+            <td><code>Master</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td>Connects the circuit to its parent master circuit</td>
+        </tr>
+        <tr>
+            <td><strong><code>Battery</code></strong></td>
+            <td><code>Battery</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td>Battery master ground switch (<code>true</code> = connected)</td>
+        </tr>
+        <tr>
+            <td><strong><code>Battery</code></strong></td>
+            <td><code>EnableUnlimited</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td>Unlimited battery charge</td>
+        </tr>
+        <tr>
+            <td><strong><code>ElectricElement</code></strong></td>
+            <td><code>Enabled</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td>Enables a standalone electrical consumer</td>
+        </tr>
+        <tr>
+            <td><strong><code>CarElectrics</code></strong></td>
+            <td><code>Brake</code>, <code>ParkingBrake</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Brake pedal and parking brake signals <code>0.0..1.0</code></td>
+        </tr>
+        <tr>
+            <td><strong><code>CarElectrics</code></strong></td>
+            <td><code>FrontWindshieldWipersTimeDelay</code>, <code>BackWindshieldWipersTimeDelay</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Intermittent wiper delay interval (s)</td>
+        </tr>
+        <tr>
+            <td><strong><code>CarElectrics</code></strong></td>
+            <td><code>FrontWindshieldWiper</code>, <code>BackWindshieldWiper</code></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td>Wiper mode (<code>0</code> = off, <code>1</code> = intermittent, <code>2</code> = normal, <code>3</code> = fast)</td>
+        </tr>
+        <tr>
+            <td><strong><code>CarElectrics</code></strong></td>
+            <td><code>LowBeam</code>, <code>HighBeam</code>, <code>HighBeamUnfixed</code>, <code>ParkingLights</code>, <code>FrontFogLights</code>, <code>RearFogLights</code>, <code>LeftTurnLight</code>, <code>RightTurnLight</code>, <code>HazardLight</code>, <code>Horn</code>, <code>SafetyBelt</code>, <code>BrokenLighting</code>, <code>BrokenBrake</code>, <code>BrokenPowerSteering</code>, <code>ShutdownEngine</code>, <code>Retarder</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td>Controls the corresponding lights, horn, seatbelt, indicators, and faults</td>
+        </tr>
+        <tr>
+            <td><strong><code>FuelControllerComputer</code></strong></td>
+            <td><code>Accelerator</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Gas pedal <code>0.0..1.0</code></td>
+        </tr>
+        <tr>
+            <td><strong><code>FuelControllerComputer</code></strong></td>
+            <td><code>FuelFeed</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td>Fuel supply authorization from the ignition switch</td>
+        </tr>
+        <tr>
+            <td><strong><code>FuelControllerMechanical</code></strong></td>
+            <td><code>Accelerator</code>, <code>Choke</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Gas pedal <code>0.0..1.0</code> and choke valve <code>0.0..1.0</code></td>
+        </tr>
+        <tr>
+            <td><strong><code>FuelControllerMechanical</code></strong></td>
+            <td><code>FuelFeed</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td>Fuel supply authorization</td>
+        </tr>
+        <tr>
+            <td><strong><code>AbsTcs</code></strong></td>
+            <td><code>Brake</code>, <code>Accelerator</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Brake and gas pedal inputs <code>0.0..1.0</code></td>
+        </tr>
+        <tr>
+            <td><strong><code>AbsTcs</code></strong></td>
+            <td><code>EnableABS</code>, <code>EnableTCS</code>, <code>Enabled</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td>Enables ABS, TCS, and unit power supply</td>
+        </tr>
+        <tr>
+            <td><strong><code>ClutchInputProcessor</code></strong></td>
+            <td><code>Clutch</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Clutch pedal (<code>0.0</code> = pressed, <code>1.0</code> = released)</td>
+        </tr>
+        <tr>
+            <td><strong><code>GearBoxAutomaticLogic</code></strong></td>
+            <td><code>Accelerator</code>, <code>Brake</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Gas and brake pedal signals <code>0.0..1.0</code></td>
+        </tr>
+        <tr>
+            <td><strong><code>GearBoxAutomaticLogic</code></strong></td>
+            <td><code>AutoShifterState</code>, <code>AutoShifterMaxGear</code></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td>Selector mode (<code>0=P, 1=R, 2=N, 3=D</code>) and upper gear limit (<code>0..N</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>GearBoxAutomaticLogicBus</code></strong></td>
+            <td><code>ReverseLock</code> <em>(+ all <code>GearBoxAutomaticLogic</code> inputs)</em></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td>Bus reverse gear engagement lockout</td>
+        </tr>
+        <tr>
+            <td><strong><code>IgnitionKeyProcessor</code></strong></td>
+            <td><code>Ignition</code></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td>Key position (<code>0 = Off</code>, <code>1 = Ignition</code>, <code>2 = Starter</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>Speedometer</code></strong></td>
+            <td><code>MileageMultiplier</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Odometer mileage accumulation multiplier</td>
+        </tr>
+        <tr>
+            <td><strong><code>Steering2Ackermann</code></strong>, <strong><code>SteeringSimple</code></strong></td>
+            <td><code>Steering</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Steering wheel position (<code>-1.0</code> = left, <code>+1.0</code> = right)</td>
+        </tr>
+        <tr>
+            <td><strong><code>Steering2Ackermann</code></strong>, <strong><code>SteeringSimple</code></strong></td>
+            <td><code>BrokenSteering</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td>Steering mechanism failure</td>
+        </tr>
+        <tr>
+            <td><strong><code>ActuatorPneumatic1Chamber/2Chamber</code></strong></td>
+            <td><code>Position</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Target rod/piston position <code>0.0..1.0</code></td>
+        </tr>
+        <tr>
+            <td><strong><code>Turbocharger</code></strong></td>
+            <td><code>Throttle</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Throttle opening <code>0.0..1.0</code> for boost pressure calculation</td>
+        </tr>
+        <tr>
+            <td><strong><code>Tank</code></strong></td>
+            <td><code>DrainSpeed</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Drain rate (<code>&gt; 0</code>) or fill rate (<code>&lt; 0</code>), L/s</td>
+        </tr>
+        <tr>
+            <td><strong><code>Tank</code></strong></td>
+            <td><code>EnableUnlimited</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td>Unlimited liquid supply in the tank</td>
+        </tr>
+        <tr>
+            <td><strong><code>ExternalThruster</code></strong></td>
+            <td><code>Power</code></td>
+            <td class="text-center"><code>Real</code> / <code>Boolean</code></td>
+            <td>Relative thrust of the external thruster <code>[-1.0..1.0]</code></td>
+        </tr>
+    </tbody>
+</table>
+<hr>
+<h3 id="32-available-outputs-outputelements-by-class">3.2. Available Outputs (<code>&lt;OutputElements&gt;</code>) by <code>Class</code></h3>
+<table>
+    <thead>
+        <tr>
+            <th>Component Class (<code>Class</code>)</th>
+            <th>Output <code>InternalName</code></th>
+            <th class="text-center">Type</th>
+            <th>Description and Units</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Drivetrain components</strong> <em>(except <code>BrakeFrictionPneumatic</code>)</em></td>
+            <td><code>RPM</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Component shaft rotational speed (RPM)</td>
+        </tr>
+        <tr>
+            <td><strong><code>EngineGazoline</code></strong>, <strong><code>EngineDiesel</code></strong></td>
+            <td><code>RPM</code>, <code>RPMLimit</code>, <code>StableRPM</code>, <code>OptimalRpmMin</code>, <code>OptimalRpmMax</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Current, maximum, minimum stable, and optimal engine speeds (RPM)</td>
+        </tr>
+        <tr>
+            <td><strong><code>EngineGazoline</code></strong>, <strong><code>EngineDiesel</code></strong></td>
+            <td><code>CoolantTemperature</code>, <code>ThermostatBeginTemperature</code>, <code>OverheatTemperature</code>, <code>OilTemperature</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Coolant, thermostat opening, overheat, and oil temperatures ($^\circ\text{C}$)</td>
+        </tr>
+        <tr>
+            <td><strong><code>EngineGazoline</code></strong>, <strong><code>EngineDiesel</code></strong></td>
+            <td><code>CoolantLevel</code>, <code>OilPressure</code>, <code>OilLowPressure</code>, <code>AFRRatio</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Coolant level (<code>0..1</code>), oil pressure and low-pressure threshold (bar), equivalence ratio $\lambda$</td>
+        </tr>
+        <tr>
+            <td><strong><code>EngineGazoline</code></strong>, <strong><code>EngineDiesel</code></strong></td>
+            <td><code>Load</code>, <code>MaxTorque</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Current and maximum engine torque ($\text{N}\cdot\text{m}$)</td>
+        </tr>
+        <tr>
+            <td><strong><code>EngineGazoline</code></strong>, <strong><code>EngineDiesel</code></strong></td>
+            <td><code>FuelConsumedTotal</code>, <code>FuelConsumedPerSecond</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Total (L) and instantaneous (L/s) fuel consumption</td>
+        </tr>
+        <tr>
+            <td><strong><code>EngineGazoline</code></strong>, <strong><code>EngineDiesel</code></strong></td>
+            <td><code>VibrationFrequency</code>, <code>VibrationAmplitude</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Engine vibration frequency (Hz) and amplitude (m)</td>
+        </tr>
+        <tr>
+            <td><strong><code>EngineGazoline</code></strong>, <strong><code>EngineDiesel</code></strong></td>
+            <td><code>Combustion</code>, <code>BrokenCoolingSystem</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td>Engine running (combustion active) flag and cooling system failure flag</td>
+        </tr>
+        <tr>
+            <td><strong><code>ExternalVelocityMotor</code></strong></td>
+            <td><code>RPM</code>, <code>ShaftRpm</code>, <code>Position</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Shaft RPM, target RPM (RPM), and angular position (<code>-1..1</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>VariableTorqueConverter</code></strong>, <strong><code>Reducer</code></strong></td>
+            <td><code>RPM</code>, <code>OutRPM</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Input and output shaft speeds (RPM)</td>
+        </tr>
+        <tr>
+            <td><strong><code>GearBox</code></strong></td>
+            <td><code>RPM</code>, <code>GearRatio</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Shaft speed (RPM) and current gear ratio</td>
+        </tr>
+        <tr>
+            <td><strong><code>GearBox</code></strong></td>
+            <td><code>Gear</code>, <code>GearCount</code></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td>Engaged gear index (<code>-1..N-1</code>) and total gear count</td>
+        </tr>
+        <tr>
+            <td><strong><code>GearBox</code></strong></td>
+            <td><code>EnableNeutralInput</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td>Whether index <code>-1</code> is enabled for neutral</td>
+        </tr>
+        <tr>
+            <td><strong><code>DifferentialOpen</code></strong></td>
+            <td><code>RPM</code> (<code>Real</code>), <code>Locked</code> (<code>Boolean</code>)</td>
+            <td class="text-center">mixed</td>
+            <td>Differential carrier speed and lock status</td>
+        </tr>
+        <tr>
+            <td><strong><code>Relay</code></strong></td>
+            <td><code>RPM</code> (<code>Real</code>), <code>Enabled</code> (<code>Boolean</code>)</td>
+            <td class="text-center">mixed</td>
+            <td>Coupling speed and engagement status</td>
+        </tr>
+        <tr>
+            <td><strong><code>Retarder</code></strong></td>
+            <td><code>RPM</code>, <code>RelativeTorque</code> (<code>Real</code>), <code>Enabled</code>, <code>DiscreteInput</code> (<code>Boolean</code>)</td>
+            <td class="text-center">mixed</td>
+            <td>Speed, relative braking torque, and retarder mode flags</td>
+        </tr>
+        <tr>
+            <td><strong><code>BrakeFrictionPneumatic</code></strong></td>
+            <td><code>MinPressure</code>, <code>MinWorkPressure</code>, <code>WorkPressure</code>, <code>SpringLockMinPressure</code>, <code>SpringLockWorkPressure</code>, <code>PressureLevel</code>, <code>AirFlowIntensityLevel</code>, <code>PressureLevelSpringLock</code>, <code>AirFlowIntensityLevelSpringLock</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Pressures (bar) and air bleed/flow levels of the service brake chamber and spring brake actuator</td>
+        </tr>
+        <tr>
+            <td><strong><code>WheelRaycast</code></strong></td>
+            <td><code>RPM</code>, <code>WorkingPressure</code>, <code>LowPressure</code>, <code>Pressure</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Wheel speed (RPM), nominal, low-warning, and current tire pressure (bar)</td>
+        </tr>
+        <tr>
+            <td><strong><code>Pump</code></strong>, <strong><code>Receiver</code></strong></td>
+            <td><code>RPM</code> <em>(<code>Pump</code> only)</em>, <code>Pressure</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Pump speed (RPM) and absolute circuit pressure (bar)</td>
+        </tr>
+        <tr>
+            <td><strong><code>ElectricCircuit</code></strong></td>
+            <td><code>Voltage</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Electrical circuit voltage (V)</td>
+        </tr>
+        <tr>
+            <td><strong><code>Battery</code></strong></td>
+            <td><code>Amperage</code>, <code>VoltageMin</code>, <code>CapacityRelative</code> (<code>Real</code>), <code>BatteryActive</code> (<code>Boolean</code>)</td>
+            <td class="text-center">mixed</td>
+            <td>Battery current (A), minimum voltage (V), state of charge (<code>0..1</code>), and active flag</td>
+        </tr>
+        <tr>
+            <td><strong><code>ElectricElement</code></strong></td>
+            <td><code>Intensity</code> (<code>Real</code>), <code>Enabled</code> (<code>Boolean</code>)</td>
+            <td class="text-center">mixed</td>
+            <td>Relative operating power (<code>0..1</code>) and active status</td>
+        </tr>
+        <tr>
+            <td><strong><code>AbsTcs</code></strong></td>
+            <td><code>Intensity</code> (<code>Real</code>), <code>Enabled</code>, <code>AbsActive</code>, <code>TcsActive</code>, <code>AbsEnabled</code>, <code>TcsEnabled</code> (<code>Boolean</code>)</td>
+            <td class="text-center">mixed</td>
+            <td>Readiness and active intervention states of the ABS and TCS systems</td>
+        </tr>
+        <tr>
+            <td><strong><code>GearBoxAutomaticLogic</code></strong>, <strong><code>GearBoxAutomaticLogicBus</code></strong></td>
+            <td><code>AutoShifterState</code>, <code>CurrentState</code>, <code>AutoShifterMaxGear</code>, <code>AutoShifterCurrentGear</code>, <code>AutoShifterTargetGear</code></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td>Selected and actual mode (<code>0=P..3=D</code>), upper gear limit, current gear, and target gear</td>
+        </tr>
+        <tr>
+            <td><strong><code>FuelConsumptionMeter</code></strong></td>
+            <td><code>AverageFuelConsumption</code>, <code>SessionAverageFuelConsumption</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Rolling and session average consumption in <strong>L/m</strong> <em>(multiply by <code>100000</code> for L/100 km)</em></td>
+        </tr>
+        <tr>
+            <td><strong><code>PowerSteering</code></strong></td>
+            <td><code>Torque</code>, <code>Friction</code>, <code>Damping</code>, <code>SlipAngle</code>, <code>Inertia</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Steering column Force Feedback parameters</td>
+        </tr>
+        <tr>
+            <td><strong><code>Speedometer</code></strong></td>
+            <td><code>Speed</code>, <code>Mileage</code>, <code>SessionMileage</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Vehicle speed (<strong>m/s</strong>), total mileage, and trip mileage (m)</td>
+        </tr>
+        <tr>
+            <td><strong><code>Steering2Ackermann</code></strong></td>
+            <td><code>MaxSteeringAngle</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Average maximum steering angle of the steered wheels (rad)</td>
+        </tr>
+        <tr>
+            <td><strong><code>Suspension1Spring</code></strong></td>
+            <td><code>SpringSag</code>, <code>WheelSteeringAngle</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Relative spring compression (<code>0..1</code>) and wheel steering angle (deg)</td>
+        </tr>
+        <tr>
+            <td><strong><code>ActuatorPneumatic1/2Chamber</code></strong></td>
+            <td><code>WorkPressure</code>, <code>MaxVolumePressure</code>, <code>Position</code>, <code>PressureLeft</code>, <code>PressureRight</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Chamber pressures (bar) and piston position (<code>0..1</code>, for <code>2Chamber</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>Tank</code></strong></td>
+            <td><code>LiquidVolume</code>, <code>Volume</code>, <code>LiquidRelativeVolume</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Current volume (L), full capacity (L), and fill fraction (<code>0..1</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>CarElectrics</code></strong> <em>(needles)</em></td>
+            <td><code>Fuel</code>, <code>Speed</code> (m/s), <code>RPM</code>, <code>CoolantTemperature</code>, <code>OilPressure</code>, <code>GearBoxOilPressure</code>, <code>Voltage</code>, <code>Amperage</code>, <code>PneumoPressure0</code>, <code>PneumoPressure1</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Instrument cluster gauge needle readings (configured in <code>.ini</code> with prefixes <code>&lt;Name&gt;Needle_</code>, <code>RpmNeedle_</code>, <code>OilNeedle_</code>, <code>GearBoxOilNeedle_</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>CarElectrics</code></strong> <em>(exterior lights &amp; backlight)</em></td>
+            <td><code>LowBeamIntensity</code>, <code>HighBeamIntensity</code>, <code>ParkingLightsIntensity</code>, <code>FrontFogLightsIntensity</code>, <code>RearFogLightsIntensity</code>, <code>StopLightIntensity</code>, <code>ReverseLightIntensity</code>, <code>ParkingBrakeLightIntensity</code>, <code>RetarderLightIntensity</code>, <code>LeftTurnLightIntensity</code>, <code>RightTurnLightIntensity</code>, <code>DashboardIntensity</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Brightness of exterior light fixtures and dashboard backlight (<code>0.0..1.0</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>CarElectrics</code></strong> <em>(primary dashboard icons)</em></td>
+            <td><code>LowBeamIconIntensity</code>, <code>HighBeamIconIntensity</code>, <code>ParkingLightsIconIntensity</code>, <code>LeftTurnLightIconIntensity</code>, <code>RightTurnLightIconIntensity</code>, <code>HazardLightIconIntensity</code>, <code>SafetyBeltIconIntensity</code>, <code>ParkingBrakeIconIntensity</code>, <code>BatteryIconIntensity</code>, <code>FuelIconIntensity</code>, <code>OilIconIntensity</code>, <code>OverheatIconIntensity</code>, <code>CheckIconsIntensity</code>, <code>AbsDisableIconIntensity</code>, <code>AbsActiveIconIntensity</code>, <code>TcsDisableIconIntensity</code>, <code>TcsActiveIconIntensity</code>, <code>AirbagIconIntensity</code>, <code>ExhaustSystemIconIntensity</code>, <code>PowerSteeringIconIntensity</code>, <code>EmergencyStopIconIntensity</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Brightness of the 21 standard passenger-car dashboard warning lamps (<code>0.0..1.0</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>CarElectrics</code></strong> <em>(extra truck/bus/AWD icons)</em></td>
+            <td><code>HighOilPressureIconIntensity</code>, <code>GearBoxOilIconIntensity</code>, <code>GearBoxOilHighPressureIconIntensity</code>, <code>StartControlIconIntensity</code>, <code>HeaterControlIconIntensity</code>, <code>DoorIcon0Intensity..DoorIcon3Intensity</code>, <code>RetarderIconIntensity</code>, <code>GearBoxIconNIntensity</code>, <code>GearBoxIconRIntensity</code>, <code>GearBoxIconDIntensity</code>, <code>GearBoxIcon1Intensity</code>, <code>GearBoxIcon2Intensity</code>, <code>BrakeOilLowLevelIconIntensity</code>, <code>LowTirePressureIconIntensity</code>, <code>OverdriveAWDIconIntensity</code>, <code>DownshiftAWDIconIntensity</code>, <code>LowPressureIcon0Intensity..3Intensity</code>, <code>LowPressureIconIntensity</code>, <code>ShutdownEngineIconIntensity</code>, <code>DiffLockIcon0Intensity..2Intensity</code>, <code>DriveAxisIcon0Intensity..2Intensity</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Brightness of specialized warning lamps (<code>0.0..1.0</code>; for any element to function, <code>&lt;Prefix&gt;_Resistance &gt; 0</code> must be set in <code>[CarElectrics]</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>CarElectrics</code></strong> <em>(wipers, sound &amp; flags)</em></td>
+            <td><code>FrontWindshieldWiperPhase</code>, <code>BackWindshieldWiperPhase</code>, <code>FrontWindshieldWiperSpeed</code>, <code>BackWindshieldWiperSpeed</code>, <code>HornVolume</code>, <code>BeeperVolume</code>, <code>SafetyBeltBeeperVolume</code>, <code>EnvironmentTemperature</code> (<code>Real</code>); <code>TurnSignal</code>, <code>ParkingBrakeLight</code>, <code>HighBeam</code>, <code>FrontWindshieldWiperForward</code> (<code>Boolean</code>)</td>
+            <td class="text-center">mixed</td>
+            <td>Wiper phases (<code>0..1</code>) and speeds, audio alert volumes (<code>0..1</code>), ambient temperature ($^\circ\text{C}$), and boolean flags</td>
+        </tr>
+    </tbody>
+</table>
+<hr>
+<h3 id="33-available-states-stateelements-by-class">3.3. Available States (<code>&lt;StateElements&gt;</code>) by <code>Class</code></h3>
+<table>
+    <thead>
+        <tr>
+            <th>Component Class (<code>Class</code>)</th>
+            <th>State <code>InternalName</code></th>
+            <th class="text-center">Type</th>
+            <th>Purpose and Range</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>All drivetrain components</strong></td>
+            <td><code>AngularVelocity</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Instantaneous shaft angular velocity assignment (rad/s)</td>
+        </tr>
+        <tr>
+            <td><strong>Drivetrain components</strong> <em>(except engine)</em></td>
+            <td><code>Jammed</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td>Mechanical shaft seizure</td>
+        </tr>
+        <tr>
+            <td><strong><code>EngineGazoline</code></strong>, <strong><code>EngineDiesel</code></strong></td>
+            <td><code>CoolantLevel</code>, <code>OilLevel</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Coolant and engine oil levels (<code>0.0..1.0</code>)</td>
+        </tr>
+        <tr>
+            <td><strong><code>EngineGazoline</code></strong>, <strong><code>EngineDiesel</code></strong></td>
+            <td><code>CoolantTemperature</code>, <code>OilTemperature</code>, <code>FuelChamberTemperature</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Coolant, oil, and combustion chamber temperatures ($^\circ\text{C}$)</td>
+        </tr>
+        <tr>
+            <td><strong><code>EngineGazoline</code></strong>, <strong><code>EngineDiesel</code></strong></td>
+            <td><code>BrokenCoolingSystem</code></td>
+            <td class="text-center"><code>Boolean</code></td>
+            <td>Cooling system / thermostat failure</td>
+        </tr>
+        <tr>
+            <td><strong><code>GearBox</code></strong></td>
+            <td><code>Gear</code></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td>Instant gear engagement (<code>-1..N-1</code>) bypassing synchronizers</td>
+        </tr>
+        <tr>
+            <td><strong><code>GearBoxAutomaticLogic</code></strong>, <strong><code>GearBoxAutomaticLogicBus</code></strong></td>
+            <td><code>State</code></td>
+            <td class="text-center"><code>Integer</code></td>
+            <td>Instantaneous shift of selector and AT into mode <code>0=P, 1=R, 2=N, 3=D</code></td>
+        </tr>
+        <tr>
+            <td><strong><code>WheelRaycast</code></strong></td>
+            <td><code>Pressure</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Gauge air pressure in the tire (bar)</td>
+        </tr>
+        <tr>
+            <td><strong><code>Speedometer</code></strong></td>
+            <td><code>Mileage</code>, <code>SessionMileage</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Total and trip odometer mileage (m)</td>
+        </tr>
+        <tr>
+            <td><strong><code>Tank</code></strong></td>
+            <td><code>LiquidVolume</code></td>
+            <td class="text-center"><code>Real</code></td>
+            <td>Current liquid volume in the tank (<code>0..Volume</code>, L)</td>
+        </tr>
+        <tr>
+            <td><strong><code>FuelConsumptionMeter</code></strong></td>
+            <td><code>AverageFuelConsumption</code>, <code>SessionMileage</code>, <code>SessionFuelConsumed</code> (<code>Real</code>), <code>IsEnabled</code> (<code>Boolean</code>)</td>
+            <td class="text-center">mixed</td>
+            <td>Average consumption (L/m; <code>&lt; 0</code> resets the buffer), session mileage (m), session fuel consumed (L), and active flag</td>
+        </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

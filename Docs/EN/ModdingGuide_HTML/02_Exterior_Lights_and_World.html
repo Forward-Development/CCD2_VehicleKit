@@ -1,0 +1,466 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 2. Exterior, Lights, Suspension &amp; World Interaction</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({ startOnLoad: true });</script>
+    <style>
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 32px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1f2328;
+            background-color: #ffffff;
+        }
+        h1, h2, h3, h4 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        h1 { font-size: 2em; padding-bottom: 0.3em; border-bottom: 1px solid #d0d7de; }
+        h2 { font-size: 1.5em; padding-bottom: 0.3em; border-bottom: 1px solid #d0d7de; }
+        h3 { font-size: 1.25em; }
+        hr { height: 0.25em; padding: 0; margin: 24px 0; background-color: #d0d7de; border: 0; }
+        a { color: #0969da; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+        th, td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; vertical-align: top; }
+        th { background: #f6f8fa; font-weight: 600; }
+        tr:nth-child(even) { background: #f6f8fa; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        code { background: #eff1f3; padding: 2px 5px; border-radius: 4px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 85%; }
+        pre { background: #f6f8fa; padding: 14px; border-radius: 6px; overflow-x: auto; border: 1px solid #d0d7de; }
+        pre code { background: transparent; padding: 0; font-size: 100%; }
+        pre.mermaid { background: #ffffff; text-align: center; }
+        .alert { padding: 12px 16px; margin: 16px 0; border-left: 4px solid; border-radius: 6px; background: #f6f8fa; }
+        .alert-title { font-weight: 600; margin-bottom: 6px; }
+        .alert p:last-child, .alert ul:last-child, .alert ol:last-child { margin-bottom: 0; }
+        .alert-note { border-left-color: #0969da; background-color: #ddf4ff; }
+        .alert-note .alert-title { color: #0969da; }
+        .alert-tip { border-left-color: #1a7f37; background-color: #dafbe1; }
+        .alert-tip .alert-title { color: #1a7f37; }
+        .alert-important { border-left-color: #8250df; background-color: #fbefff; }
+        .alert-important .alert-title { color: #8250df; }
+        .alert-warning { border-left-color: #9a6700; background-color: #fff8c5; }
+        .alert-warning .alert-title { color: #9a6700; }
+        .alert-caution { border-left-color: #cf222e; background-color: #ffebe9; }
+        .alert-caution .alert-title { color: #cf222e; }
+        ul.checklist { list-style-type: none; padding-left: 0; }
+        ul.checklist li { margin-bottom: 8px; }
+        ul.checklist input[type="checkbox"] { margin-right: 8px; }
+        figure.doc-figure { margin: 16px 0; padding: 10px; background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 6px; text-align: center; }
+        figure.doc-figure img { max-width: 100%; height: auto; border-radius: 4px; display: block; margin: 0 auto; }
+        figure.doc-figure figcaption { margin-top: 8px; font-size: 0.9em; color: #57606a; }
+    </style>
+</head>
+<body>
+<h1 id="module-2-exterior-lights-suspension--world-interaction">Module 2. Exterior, Lights, Suspension &amp; World Interaction</h1>
+<p><strong>Navigation:</strong> <a href="./README.html">README</a> | <a href="./01_Minimal_Car_QuickStart.html">01. Minimal Car</a> | <strong>02. Exterior, Lights &amp; World</strong> | <a href="./03_Interior_Dashboard_Cameras_Seats.html">03. Interior, Dashboard &amp; Cameras</a> | <a href="./04_Mirrors_and_Wipers.html">04. Mirrors &amp; Wipers</a> | <a href="./05_Sounds_and_FMOD.html">05. Sounds &amp; FMOD</a> | <a href="./06_Advanced_Specs_Logic_and_Reference.html">06. Specs, Logic &amp; Reference</a></p>
+<hr>
+<p>After completing <a href="./01_Minimal_Car_QuickStart.html">Module 1</a>, your vehicle already drives. In this module we polish the exterior and connect the car to the game world:</p>
+<ul>
+    <li>configure all exterior PBR materials and glass;</li>
+    <li>add non-rotating suspension parts (brake calipers <code>Suspension*</code>);</li>
+    <li>wire up glowing exterior lamps and real light sources illuminating the road;</li>
+    <li>set up license plates;</li>
+    <li>add world trigger interaction (<code>LogicBox</code>), refueling (<code>FuelTank</code>), and cabin rain blocking (<code>RainBlocker</code>).</li>
+</ul>
+<hr>
+<h2 id="1-exterior-textures--materials">1. Exterior Textures &amp; Materials</h2>
+<p>All mod materials are <strong>PBR Material Instances</strong> inheriting from the parent materials in <code>Content/Common/MasterMaterials/VehicleMaterials/ModMaterials/</code> and mapped to <strong>UV channel 0</strong>.</p>
+<h3 id="11-pbr-texture-map-types">1.1. PBR Texture Map Types</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Map</th>
+            <th>Purpose</th>
+            <th>Required UE Texture Settings</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Diffuse (Albedo)</strong></td>
+            <td>Base color RGB texture.</td>
+            <td><code>Virtual Texture Streaming = True</code></td>
+        </tr>
+        <tr>
+            <td><strong>Normal</strong></td>
+            <td>Surface normal map.</td>
+            <td><code>Virtual Texture Streaming = True</code></td>
+        </tr>
+        <tr>
+            <td><strong>MRA</strong></td>
+            <td>Channel-packed mask:<br>• <strong>R</strong> — Metallic<br>• <strong>G</strong> — Roughness<br>• <strong>B</strong> — Ambient Occlusion</td>
+            <td><code>Virtual Texture Streaming = True</code><br><strong><code>Compression Settings = Masks (no sRGB)</code></strong></td>
+        </tr>
+        <tr>
+            <td><strong>Emissive</strong></td>
+            <td>RGB glow map for illuminated elements.</td>
+            <td><code>Virtual Texture Streaming = True</code></td>
+        </tr>
+        <tr>
+            <td><strong>Livery</strong></td>
+            <td>RGB livery/decal texture for the body; the <strong>Alpha channel</strong> masks the livery over the base car paint.</td>
+            <td><code>Virtual Texture Streaming = True</code></td>
+        </tr>
+    </tbody>
+</table>
+<div class="alert alert-tip">
+    <div class="alert-title">Tip</div>
+<p>Double-click any <code>Material Instance</code> to inspect its parameters and check the tick box to the left of a parameter to override it. Check <code>Plugins/Mods Content/CieBensVGruppe/Materials/</code> for working reference setups.</p>
+
+</div>
+<h3 id="12-exterior-parent-materials">1.2. Exterior Parent Materials</h3>
+<h4 id="painted-body--mi_mod_carpaint">Painted Body — <code>MI_Mod_CarPaint</code></h4>
+<p>Controls the base paint color and finish, and supports a <code>Livery</code> texture with an alpha mask.</p>
+<figure class="doc-figure">
+    <img src="./images/m2_mat_carpaint.png" alt="Material Instance parameters for MI_Mod_CarPaint" loading="lazy">
+    <figcaption>Material Instance parameters for MI_Mod_CarPaint</figcaption>
+</figure>
+<h4 id="trim-chrome-rims--unpainted-parts--mi_mod_exterior">Trim, Chrome, Rims &amp; Unpainted Parts — <code>MI_Mod_Exterior</code></h4>
+<p>Used for any exterior elements that should <strong>not</strong> receive the base vehicle paint (plastic trim, grilles, chrome, underbody, wheel rims, calipers).</p>
+<figure class="doc-figure">
+    <img src="./images/m2_mat_exterior.png" alt="Material Instance parameters for MI_Mod_Exterior" loading="lazy">
+    <figcaption>Material Instance parameters for MI_Mod_Exterior</figcaption>
+</figure>
+<h4 id="tires--mi_mod_tyre">Tires — <code>MI_Mod_Tyre</code></h4>
+<p>Dedicated material for rubber wheel tires.</p>
+<h4 id="vehicle-windows--headlight-lenses--mi_mod_glass">Vehicle Windows &amp; Headlight Lenses — <code>MI_Mod_Glass</code></h4>
+<p>Used for transparent or tinted headlight lenses as well as windshields and side/rear windows.</p>
+<figure class="doc-figure">
+    <img src="./images/m2_mat_glass.png" alt="Material Instance parameters for MI_Mod_Glass" loading="lazy">
+    <figcaption>Material Instance parameters for MI_Mod_Glass</figcaption>
+</figure>
+<div class="alert alert-note">
+    <div class="alert-title">Note</div>
+<p><strong>About Glass (<code>Inner</code> / <code>Outer</code>) and Raindrops:</strong><br>
+Raindrops on windows are not yet implemented for modded vehicles, so there are currently no strict mesh-splitting rules for glass — simply assign <code>MI_Mod_Glass</code> to your glass meshes.<br>
+However, <strong>in future updates</strong> (when raindrop rendering and wiper clearing are enabled for mods), windows will need to be split into outer and inner meshes (<code>*_Outer</code> and <code>*_Inner</code>), as already demonstrated in <code>CieBensVGruppe/Meshes/</code>.</p>
+
+</div>
+<hr>
+<h2 id="2-non-rotating-wheel-components--brake-calipers-suspension">2. Non-Rotating Wheel Components / Brake Calipers (<code>Suspension*</code>)</h2>
+<p>If your vehicle has visible brake calipers or steering knuckles that should move up/down over bumps and steer with the front wheels <strong>without spinning around the wheel axle</strong>, use <code>Suspension*</code> nodes.</p>
+<h3 id="21-preparing--importing-the-caliper-mesh">2.1. Preparing &amp; Importing the Caliper Mesh</h3>
+<figure class="doc-figure">
+    <img src="./images/m2_suspension_3d_pivot.png" alt="Brake caliper 3D model pivot and axes" loading="lazy">
+    <figcaption>Brake caliper 3D model pivot and axes</figcaption>
+</figure>
+<ol>
+    <li>Place the <strong>Pivot</strong> at the exact wheel hub center (matching the wheel's pivot). Wheel rotation axis is <strong><code>Y</code></strong>.</li>
+    <li>Import into UE just like wheels: <strong><code>Generate Missing Collision = False</code></strong>, <strong><code>Do Not Create Material</code></strong>.</li>
+    <li>Assign a Material Instance inheriting from <strong><code>MI_Mod_Exterior</code></strong>.</li>
+</ol>
+<h3 id="22-attaching-in-actor-v_modname">2.2. Attaching in Actor <code>V_&lt;ModName&gt;</code></h3>
+<ol>
+    <li>Under <strong><code>Body</code></strong> <em>(recommended parent for clean hierarchy)</em>, add 4 <code>StaticMeshComponent</code> nodes with the exact names from the XML schema:
+<ul>
+    <li><code>SuspensionFrontLeft</code></li>
+    <li><code>SuspensionFrontRight</code></li>
+    <li><code>SuspensionBackLeft</code></li>
+    <li><code>SuspensionBackRight</code></li>
+</ul>
+</li>
+    <li>Set <strong><code>Collision Presets = NoCollision</code></strong> and uncheck <strong><code>Receives Decals</code></strong> on all four.</li>
+    <li>Move the <code>Location</code> coordinates (in centimeters, at full suspension compression, matching <code>Mount</code> in <code>Vehicle.ini</code> with inverted <code>Y</code>) from the wheel nodes onto the corresponding <code>Suspension*</code> nodes.</li>
+    <li>Drag each wheel (<code>WheelFrontLeft</code>, <code>WheelFrontRight</code>, <code>WheelBackLeft</code>, <code>WheelBackRight</code>) onto its corresponding <code>Suspension*</code> parent and reset each wheel's <code>Location</code> to <code>(0, 0, 0)</code>.</li>
+</ol>
+<pre class="mermaid">
+flowchart TD
+    Body["Body (StaticMeshComponent)"] --&gt; SFL["SuspensionFrontLeft&lt;br/&gt;Location = Mount (cm), NoCollision"]
+    Body --&gt; SFR["SuspensionFrontRight&lt;br/&gt;Location = Mount (cm), NoCollision"]
+    Body --&gt; SBL["SuspensionBackLeft&lt;br/&gt;Location = Mount (cm), NoCollision"]
+    Body --&gt; SBR["SuspensionBackRight&lt;br/&gt;Location = Mount (cm), NoCollision"]
+    SFL --&gt; WFL["WheelFrontLeft&lt;br/&gt;Location = (0, 0, 0), NoCollision"]
+    SFR --&gt; WFR["WheelFrontRight&lt;br/&gt;Location = (0, 0, 0), NoCollision"]
+    SBL --&gt; WBL["WheelBackLeft&lt;br/&gt;Location = (0, 0, 0), NoCollision"]
+    SBR --&gt; WBR["WheelBackRight&lt;br/&gt;Location = (0, 0, 0), NoCollision"]
+</pre>
+<hr>
+<h2 id="3-exterior-lighting-emissive-material-slots--real-light-sources">3. Exterior Lighting: Emissive Material Slots &amp; Real Light Sources</h2>
+<p>Exterior lighting in CCD 2.0 consists of <strong>two distinct layers</strong>:</p>
+<ol>
+    <li><strong>Glowing lamp geometry</strong> (visually lights up the bulb/LED housing on the car) — driven by <strong>Material Slot Names</strong> on the body mesh.</li>
+    <li><strong>Real light sources</strong> (project light beams onto the road and environment) — separate <strong><code>SpotLight</code></strong> components on the Actor with <strong><code>ControlBlock</code> <code>Light</code></strong>.</li>
+</ol>
+<h3 id="31-glowing-exterior-elements-mi_mod_emissive_beam">3.1. Glowing Exterior Elements (<code>MI_Mod_Emissive_Beam</code>)</h3>
+<p>Each lighting function on the body 3D model needs its own <strong>Material ID (slot)</strong>.</p>
+<ol>
+    <li>Create Material Instances inheriting from <strong><code>MI_Mod_Emissive_Beam</code></strong>. Off-state lamp appearance uses <code>Albedo_texture</code>, and glow color uses <code>Emissive</code>.</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m2_mat_emissive_beam.png" alt="MI_Mod_Emissive_Beam parameter settings" loading="lazy">
+    <figcaption>MI_Mod_Emissive_Beam parameter settings</figcaption>
+</figure>
+<ol>
+    <li>Open the body Static Mesh → under <strong>Details → Material Slots</strong>, assign your materials and <strong>rename the <code>Slot Name</code></strong> strictly according to the table below:</li>
+</ol>
+<div class="alert alert-important">
+    <div class="alert-title">Important</div>
+<p>The game matches the <strong><code>Slot Name</code></strong> inside the Static Mesh, NOT the <code>MI_*</code> filename in the Content Browser!</p>
+
+</div>
+<table>
+    <thead>
+        <tr>
+            <th>Required <code>Slot Name</code></th>
+            <th>Lamp Function</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>LowBeam</code></td>
+            <td>Low-beam headlights</td>
+        </tr>
+        <tr>
+            <td><code>HighBeam</code></td>
+            <td>High-beam headlights</td>
+        </tr>
+        <tr>
+            <td><code>ParkingLights</code></td>
+            <td>Parking / position lights</td>
+        </tr>
+        <tr>
+            <td><code>FrontFogLights</code></td>
+            <td>Front fog lights</td>
+        </tr>
+        <tr>
+            <td><code>RearFogLights</code></td>
+            <td>Rear fog lights</td>
+        </tr>
+        <tr>
+            <td><code>StopLight</code></td>
+            <td>Brake lights</td>
+        </tr>
+        <tr>
+            <td><code>ReverseLight</code></td>
+            <td>Reverse lights</td>
+        </tr>
+        <tr>
+            <td><code>LeftTurnLight</code></td>
+            <td>Left turn signals</td>
+        </tr>
+        <tr>
+            <td><code>RightTurnLight</code></td>
+            <td>Right turn signals</td>
+        </tr>
+        <tr>
+            <td><code>LicensePlates</code></td>
+            <td>License plate illumination lamps</td>
+        </tr>
+    </tbody>
+</table>
+<h3 id="32-real-light-sources-bp_exportspotlight--spotlightcomponent">3.2. Real Light Sources (<code>BP_ExportSpotLight</code> / <code>SpotLightComponent</code>)</h3>
+<h4 id="step-1-create-reusable-light-components">Step 1. Create Reusable Light Components</h4>
+<p>In <code>MyFirstCar/Blueprints/</code>, it is convenient to pre-create reusable Blueprint light components:</p>
+<ul>
+    <li>For <strong>front headlights (low &amp; high beams)</strong>, use <strong><code>BP_ExportSpotLight</code></strong> as the parent class (<code>Content/Common/Player/BP_ExportSpotLight</code>).</li>
+    <li>For <strong>other lights</strong> (reverse, brake, turn lights), any Light Component works, but a standard <strong><code>SpotLightComponent</code></strong> is recommended.</li>
+</ul>
+<figure class="doc-figure">
+    <img src="./images/m2_light_components_list.png" alt="Sample pre-built light components in CieBensVGruppe" loading="lazy">
+    <figcaption>Sample pre-built light components in CieBensVGruppe</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m2_light_export_spotlight.png" alt="Selecting BP_ExportSpotLight as parent class" loading="lazy">
+    <figcaption>Selecting BP_ExportSpotLight as parent class</figcaption>
+</figure>
+<h4 id="step-2-beam-pattern-lfm_vehiclelightspot--intensity">Step 2. Beam Pattern (<code>LFM_VehicleLightSpot</code>) &amp; Intensity</h4>
+<p>To project a realistic headlight beam pattern onto the road:</p>
+<ol>
+    <li>Create a Material Instance from <strong><code>LFM_VehicleLightSpot</code></strong> (<code>Content/Common/MasterMaterials/VehicleMaterials/ModMaterials/Lights/LFM_VehicleLightSpot</code>).</li>
+    <li>If you plug in a custom beam-pattern texture, set its <strong><code>Compression Settings = Alpha</code></strong>.</li>
+    <li>Assign your <code>LFMI_*</code> to the light component's <strong><code>Light Function Material</code></strong> field.</li>
+</ol>
+<p>Reference values from <code>CieBensVGruppe</code>:</p>
+<table>
+    <thead>
+        <tr>
+            <th>Light Type</th>
+            <th>Intensity Units</th>
+            <th>Intensity</th>
+            <th>Attenuation Radius</th>
+            <th>Inner / Outer Cone Angle</th>
+            <th>Shadow Bias</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Low Beam (<code>LowBeam</code>)</td>
+            <td><code>Candelas</code></td>
+            <td><code>8000.0 cd</code></td>
+            <td><code>2500.0</code></td>
+            <td><code>0.0 / 36.0</code></td>
+            <td><code>0.1</code></td>
+        </tr>
+        <tr>
+            <td>High Beam (<code>HighBeam</code>)</td>
+            <td><code>Candelas</code></td>
+            <td><code>2500.0 cd</code></td>
+            <td><code>10000.0</code></td>
+            <td><code>0.0 / 60.0</code></td>
+            <td><code>0.1</code></td>
+        </tr>
+        <tr>
+            <td>Reverse (<code>ReverseLight</code>)</td>
+            <td><code>Candelas</code></td>
+            <td><code>100.0 cd</code></td>
+            <td><code>400.0</code></td>
+            <td><code>0.0 / 60.0</code></td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td>Brake (<code>StopLight</code>)</td>
+            <td><code>Candelas</code></td>
+            <td><code>30.0 cd</code></td>
+            <td><code>300.0</code></td>
+            <td><code>0.0 / 60.0</code></td>
+            <td>—</td>
+        </tr>
+    </tbody>
+</table>
+<figure class="doc-figure">
+    <img src="./images/m2_light_spot_params.png" alt="Reference intensity, radius, cone angle, and Light Function Material settings" loading="lazy">
+    <figcaption>Reference intensity, radius, cone angle, and Light Function Material settings</figcaption>
+</figure>
+<h4 id="step-3-placement--orientation-on-the-actor">Step 3. Placement &amp; Orientation on the Actor</h4>
+<ol>
+    <li>Add your light components to <code>V_&lt;ModName&gt;</code> (under <code>Body</code> or <code>DefaultSceneRoot</code>) and position them at the headlights/taillights.</li>
+    <li><strong>Important when using beam patterns from the template project:</strong> orient the component's local axes as shown below — <strong><code>Y</code> (green) pointing down, <code>Z</code> (blue) pointing sideways</strong>, and <code>X</code> (red) pointing forward along the beam.</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m2_light_orientation.png" alt="Correct local axis orientation for vehicle light sources" loading="lazy">
+    <figcaption>Correct local axis orientation for vehicle light sources</figcaption>
+</figure>
+<h4 id="step-4-linking-lights-to-physics-via-controlblock-light">Step 4. Linking Lights to Physics via <code>ControlBlock</code> <code>Light</code></h4>
+<p>On <strong>every</strong> light component, add <code>Asset User Data → Control Asset Data</code>:</p>
+<ul>
+    <li><code>Control Block</code> name: <strong><code>Light</code></strong></li>
+    <li>Property in <code>Properties</code>:
+<ul>
+    <li>Name: <strong><code>PhysicsOutput</code></strong></li>
+    <li>Type: <strong><code>Control Property String Array</code></strong></li>
+    <li>In <code>Values</code>, add one or more <code>float</code> physics output names that drive this light's intensity:</li>
+</ul>
+</li>
+</ul>
+<figure class="doc-figure">
+    <img src="./images/m2_light_cb.png" alt="Configuring ControlBlock Light with PhysicsOutput array" loading="lazy">
+    <figcaption>Configuring ControlBlock Light with PhysicsOutput array</figcaption>
+</figure>
+<table>
+    <thead>
+        <tr>
+            <th><code>PhysicsOutput</code> Value</th>
+            <th>Controlled Lamp</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>LowBeamIntensity</code></td>
+            <td>Low beam</td>
+        </tr>
+        <tr>
+            <td><code>HighBeamIntensity</code></td>
+            <td>High beam</td>
+        </tr>
+        <tr>
+            <td><code>ParkingLightsIntensity</code></td>
+            <td>Parking lights</td>
+        </tr>
+        <tr>
+            <td><code>FrontFogLightsIntensity</code></td>
+            <td>Front fog lights</td>
+        </tr>
+        <tr>
+            <td><code>RearFogLightsIntensity</code></td>
+            <td>Rear fog lights</td>
+        </tr>
+        <tr>
+            <td><code>StopLightIntensity</code></td>
+            <td>Brake lights</td>
+        </tr>
+        <tr>
+            <td><code>ReverseLightIntensity</code></td>
+            <td>Reverse lights</td>
+        </tr>
+        <tr>
+            <td><code>LeftTurnLightIntensity</code></td>
+            <td>Left turn signals</td>
+        </tr>
+        <tr>
+            <td><code>RightTurnLightIntensity</code></td>
+            <td>Right turn signals</td>
+        </tr>
+        <tr>
+            <td><code>LicensePlatesIntensity</code></td>
+            <td>License plate lights</td>
+        </tr>
+    </tbody>
+</table>
+<div class="alert alert-tip">
+    <div class="alert-title">Tip</div>
+<p>Make sure every active light has a positive electrical resistance (<code>*_Resistance &gt; 0</code>) in <code>[CarElectrics]</code> inside <code>Vehicle.ini</code> — see <a href="../VehicleLib_HTML/04_Components_Electrics.html">VehicleLib_MD/04_Components_Electrics.md</a>.</p>
+
+</div>
+<hr>
+<h2 id="4-license-plates-licenseplates">4. License Plates (<code>LicensePlates</code>)</h2>
+<p>License plates are generated dynamically by the game:</p>
+<ol>
+    <li>On your license plate mesh, set <strong><code>Slot Name = LicensePlates</code></strong>.</li>
+    <li><strong>Leave the material slot empty</strong> — the game automatically assigns the dynamic license plate material at runtime. <em>(The <code>MI_Mod_LicensePlate</code> asset in <code>ModMaterials</code> is not used for mods.)</em></li>
+    <li>Match the UV layout shown below (filling the <code>0..1</code> UV square).</li>
+    <li><strong>Fastest option:</strong> reuse the ready-made plate mesh <code>SM_CieBensVGruppe_LicensePlate</code> from <code>Plugins/Mods Content/CieBensVGruppe/Meshes/</code> on your front and rear bumpers (with <code>NoCollision</code>).</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m2_license_plate_uv.png" alt="Required UV layout for vehicle license plates" loading="lazy">
+    <figcaption>Required UV layout for vehicle license plates</figcaption>
+</figure>
+<hr>
+<h2 id="5-game-world-interaction">5. Game World Interaction</h2>
+<p>These 3 components are optional for minimal driving, but essential for full integration with simulator features (gas stations, in-game triggers, rain).</p>
+<h3 id="51-world-interaction-volume-logicbox">5.1. World Interaction Volume (<code>LogicBox</code>)</h3>
+<p>Allows interactive objects, barriers, parking zones, and in-game triggers to detect your vehicle's bounds accurately.</p>
+<ol>
+    <li>In <code>V_&lt;ModName&gt;</code>, add a <strong><code>Box Collision</code></strong> component (<code>+ Add → Box Collision</code>).</li>
+    <li>Adjust its <strong><code>Location</code></strong>, <strong><code>Rotation</code></strong>, and <strong><code>Box Extent</code></strong> so the box closely wraps your vehicle's exterior dimensions.</li>
+    <li>Add a <code>ControlBlock</code> named <strong><code>LogicBox</code></strong> (no properties needed).</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m2_logicbox_mesh.png" alt="BoxCollision setup for LogicBox world interaction" loading="lazy">
+    <figcaption>BoxCollision setup for LogicBox world interaction</figcaption>
+</figure>
+<h3 id="52-fuel-tank-fueltank">5.2. Fuel Tank (<code>FuelTank</code>)</h3>
+<p>Enables refueling at gas stations.</p>
+<ol>
+    <li>Add a <strong><code>SceneComponent</code></strong> (<code>+ Add → Scene</code>) attached to a parent with <strong>zero transforms relative to root</strong> (e.g., directly under <code>DefaultSceneRoot</code> or <code>Body</code>).</li>
+    <li>Add a <code>ControlBlock</code> named <strong><code>FuelTank</code></strong> (no properties needed — its presence alone enables the feature).</li>
+</ol>
+<h3 id="53-blocking-raindrops-inside-the-cabin-rainblocker">5.3. Blocking Raindrops Inside the Cabin (<code>RainBlocker</code>)</h3>
+<p>Prevents falling rain particles from passing through the roof into the interior:</p>
+<ol>
+    <li>Create a very simple closed box-like mesh <strong>slightly larger than the entire car</strong> (or adapt <code>SM_CieBensVGruppe_RainBlocker</code>). Import with no collision.</li>
+    <li>Add it as a <code>StaticMeshComponent</code> on the Vehicle Actor (<code>NoCollision</code>, <code>Receives Decals = False</code>).</li>
+    <li>For editor visibility without obscuring your car, assign the wireframe material <strong><code>MM_Wireframe</code></strong> (<code>Content/Common/MasterMaterials/System/MM_Wireframe</code>) — it stays invisible in-game.</li>
+    <li>Add a <code>ControlBlock</code> named <strong><code>RainBlocker</code></strong> (no properties needed).</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m2_rainblocker_mesh.png" alt="Simplified RainBlocker mesh using MM_Wireframe around the vehicle" loading="lazy">
+    <figcaption>Simplified RainBlocker mesh using MM_Wireframe around the vehicle</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m2_rainblocker_cb.png" alt="Adding ControlBlock RainBlocker" loading="lazy">
+    <figcaption>Adding ControlBlock RainBlocker</figcaption>
+</figure>
+<hr>
+<p><strong>Next step:</strong> continue to <strong><a href="./03_Interior_Dashboard_Cameras_Seats.html">Module 3. Interior, Dashboard, Cameras &amp; Driver Seating</a></strong> to bring the cockpit and first-person view to life.</p>
+
+</body>
+</html>

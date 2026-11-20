@@ -1,0 +1,573 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Модуль 2. Экстерьер, оптика, подвеска и взаимодействие с миром</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({ startOnLoad: true });</script>
+    <style>
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 32px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1f2328;
+            background-color: #ffffff;
+        }
+        h1, h2, h3, h4 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        h1 {
+            font-size: 2em;
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid #d0d7de;
+        }
+        h2 {
+            font-size: 1.5em;
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid #d0d7de;
+        }
+        h3 {
+            font-size: 1.25em;
+        }
+        hr {
+            height: 0.25em;
+            padding: 0;
+            margin: 24px 0;
+            background-color: #d0d7de;
+            border: 0;
+        }
+        a {
+            color: #0969da;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 16px 0;
+        }
+        th, td {
+            border: 1px solid #d0d7de;
+            padding: 8px 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background: #f6f8fa;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background: #f6f8fa;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .text-right {
+            text-align: right;
+        }
+        code {
+            background: #eff1f3;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+            font-size: 85%;
+        }
+        pre {
+            background: #f6f8fa;
+            padding: 14px;
+            border-radius: 6px;
+            overflow-x: auto;
+            border: 1px solid #d0d7de;
+        }
+        pre code {
+            background: transparent;
+            padding: 0;
+            font-size: 100%;
+        }
+        pre.mermaid {
+            background: #ffffff;
+            text-align: center;
+        }
+        .alert {
+            padding: 12px 16px;
+            margin: 16px 0;
+            border-left: 4px solid;
+            border-radius: 6px;
+            background: #f6f8fa;
+        }
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .alert p:last-child, .alert ul:last-child, .alert ol:last-child {
+            margin-bottom: 0;
+        }
+        .alert-note {
+            border-left-color: #0969da;
+            background-color: #ddf4ff;
+        }
+        .alert-note .alert-title { color: #0969da; }
+        .alert-tip {
+            border-left-color: #1a7f37;
+            background-color: #dafbe1;
+        }
+        .alert-tip .alert-title { color: #1a7f37; }
+        .alert-important {
+            border-left-color: #8250df;
+            background-color: #fbefff;
+        }
+        .alert-important .alert-title { color: #8250df; }
+        .alert-warning {
+            border-left-color: #9a6700;
+            background-color: #fff8c5;
+        }
+        .alert-warning .alert-title { color: #9a6700; }
+        .alert-caution {
+            border-left-color: #cf222e;
+            background-color: #ffebe9;
+        }
+        .alert-caution .alert-title { color: #cf222e; }
+        ul.checklist {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        ul.checklist li {
+            margin-bottom: 8px;
+        }
+        ul.checklist input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        figure.doc-figure {
+            margin: 16px 0;
+            padding: 10px;
+            background: #f6f8fa;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            text-align: center;
+        }
+        figure.doc-figure img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            display: block;
+            margin: 0 auto;
+        }
+        figure.doc-figure figcaption {
+            margin-top: 8px;
+            font-size: 0.9em;
+            color: #57606a;
+        }
+    </style>
+</head>
+<body>
+<h1 id="модуль-2-экстерьер-оптика-подвеска-и-взаимодействие-с-миром">Модуль 2. Экстерьер, оптика, подвеска и взаимодействие с миром</h1>
+<p><strong>Навигация:</strong> <a href="./README.html">README</a> | <a href="./01_Minimal_Car_QuickStart.html">01. Минимальный автомобиль</a> | <strong>02. Экстерьер, свет и мир</strong> | <a href="./03_Interior_Dashboard_Cameras_Seats.html">03. Салон, приборка и камеры</a> | <a href="./04_Mirrors_and_Wipers.html">04. Зеркала и дворники</a> | <a href="./05_Sounds_and_FMOD.html">05. Звуки и FMOD</a> | <a href="./06_Advanced_Specs_Logic_and_Reference.html">06. Комплектации, логика и шпаргалка</a></p>
+<hr>
+<p>После прохождения <a href="./01_Minimal_Car_QuickStart.html">Модуля 1</a> ваш автомобиль уже ездит. В этом модуле мы доведём до ума внешний вид и взаимодействие с игровым миром:</p>
+<ul>
+    <li>настроим все PBR-материалы экстерьера и стёкол;</li>
+    <li>добавим неподвижные элементы подвески (тормозные суппорты <code>Suspension*</code>);</li>
+    <li>подключим светящиеся фары/фонари и реальные источники света, освещающие дорогу;</li>
+    <li>настроим автомобильные номера;</li>
+    <li>добавим зону взаимодействия с объектами мира (<code>LogicBox</code>), топливный бак (<code>FuelTank</code>) и защиту салона от капель дождя (<code>RainBlocker</code>).</li>
+</ul>
+<hr>
+<h2 id="1-текстуры-и-материалы-экстерьера">1. Текстуры и материалы экстерьера</h2>
+<p>Все материалы в модах — это <strong>PBR-материалы</strong> (<code>Material Instance</code>), унаследованные от подготовленных родительских материалов из папки <code>Content/Common/MasterMaterials/VehicleMaterials/ModMaterials/</code> и работающие по <strong>0-му UV-каналу</strong>.</p>
+<h3 id="11-типы-pbr-текстур">1.1. Типы PBR-текстур</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Карта</th>
+            <th>Назначение</th>
+            <th>Обязательные настройки в UE</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Diffuse (Albedo)</strong></td>
+            <td>Базовый цвет поверхности (RGB).</td>
+            <td><code>Virtual Texture Streaming = True</code></td>
+        </tr>
+        <tr>
+            <td><strong>Normal</strong></td>
+            <td>Карта нормалей (рельеф поверхности).</td>
+            <td><code>Virtual Texture Streaming = True</code></td>
+        </tr>
+        <tr>
+            <td><strong>MRA</strong></td>
+            <td>Комбинированная маска по каналам:<br>• <strong>R</strong> — Metallic (металличность)<br>• <strong>G</strong> — Roughness (шероховатость)<br>• <strong>B</strong> — Ambient Occlusion (затенение)</td>
+            <td><code>Virtual Texture Streaming = True</code><br><strong><code>Compression Settings = Masks (no sRGB)</code></strong></td>
+        </tr>
+        <tr>
+            <td><strong>Emissive</strong></td>
+            <td>RGB-карта цвета свечения для ламп и фар.</td>
+            <td><code>Virtual Texture Streaming = True</code></td>
+        </tr>
+        <tr>
+            <td><strong>Livery</strong></td>
+            <td>RGB-карта ливреи/наклеек кузова; в <strong>альфа-канале</strong> хранится маска отделения ливреи от базовой краски.</td>
+            <td><code>Virtual Texture Streaming = True</code></td>
+        </tr>
+    </tbody>
+</table>
+<div class="alert alert-tip">
+    <div class="alert-title">Совет (TIP)</div>
+<p>Чтобы увидеть все доступные параметры <code>Material Instance</code>, откройте его двойным кликом в Content Browser и поставьте галочку слева от нужного параметра в панели <strong>Details</strong> — тогда значение станет активным для редактирования. Рекомендуется также изучать готовые примеры материалов в <code>Plugins/Mods Content/CieBensVGruppe/Materials/</code>.</p>
+
+</div>
+<h3 id="12-родительские-материалы-экстерьера">1.2. Родительские материалы экстерьера</h3>
+<h4 id="окрашенная-часть-кузова-mi_mod_carpaint">Окрашенная часть кузова — <code>MI_Mod_CarPaint</code></h4>
+<p>Позволяет настраивать базовую краску автомобиля, её блеск/металлик, а также подключать текстуру ливреи (<code>Livery</code>) с маской в альфа-канале.</p>
+<figure class="doc-figure">
+    <img src="./images/m2_mat_carpaint.png" alt="Параметры Material Instance от MI_Mod_CarPaint" loading="lazy">
+    <figcaption>Параметры Material Instance от MI_Mod_CarPaint</figcaption>
+</figure>
+<h4 id="пластик-хром-диски-и-неокрашенные-детали-mi_mod_exterior">Пластик, хром, диски и неокрашенные детали — <code>MI_Mod_Exterior</code></h4>
+<p>Используется для любых деталей экстерьера, на которые <strong>не</strong> должна наноситься базовая краска автомобиля (молдинги, решётка радиатора, хромированные элементы, днище, диски колёс, суппорты).</p>
+<figure class="doc-figure">
+    <img src="./images/m2_mat_exterior.png" alt="Параметры Material Instance от MI_Mod_Exterior" loading="lazy">
+    <figcaption>Параметры Material Instance от MI_Mod_Exterior</figcaption>
+</figure>
+<h4 id="шины-mi_mod_tyre">Шины — <code>MI_Mod_Tyre</code></h4>
+<p>Специализированный материал для резиновых покрышек колёс.</p>
+<h4 id="стёкла-кузова-и-плафоны-фар-mi_mod_glass">Стёкла кузова и плафоны фар — <code>MI_Mod_Glass</code></h4>
+<p>Используется для прозрачных и цветных стёкол фар (плафонов), а также для лобового, боковых и заднего стёкол автомобиля.</p>
+<figure class="doc-figure">
+    <img src="./images/m2_mat_glass.png" alt="Параметры Material Instance от MI_Mod_Glass" loading="lazy">
+    <figcaption>Параметры Material Instance от MI_Mod_Glass</figcaption>
+</figure>
+<div class="alert alert-note">
+    <div class="alert-title">Примечание (NOTE)</div>
+<p><strong>Про стёкла (<code>Inner</code> / <code>Outer</code>) и капли дождя на стекле:</strong><br>
+На текущий момент функционал капель дождя на стёклах в пользовательских (модерских) автомобилях ещё не реализован, поэтому жёстких требований по разделению стёкол нет — достаточно назначить <code>MI_Mod_Glass</code> на ваши меши стёкол.<br>
+Однако <strong>на будущее</strong> (когда поддержка капель и стирания дворниками появится для модов) потребуется разделять стёкла на внешние и внутренние поверхности (<code>*_Outer</code> и <code>*_Inner</code>), как это уже сделано в эталонной модели <code>CieBensVGruppe/Meshes/</code>.</p>
+
+</div>
+<hr>
+<h2 id="2-неподвижные-части-колеса-суппорты-suspension">2. Неподвижные части колеса / суппорты (<code>Suspension*</code>)</h2>
+<p>Если на вашем автомобиле видны тормозные суппорты или поворотные кулаки, которые должны двигаться вверх-вниз на кочках и поворачиваться вместе с передними колёсами, но <strong>не вращаться вокруг оси колеса</strong>, используйте узлы <code>Suspension*</code>.</p>
+<h3 id="21-подготовка-и-импорт-модели-суппорта">2.1. Подготовка и импорт модели суппорта</h3>
+<figure class="doc-figure">
+    <img src="./images/m2_suspension_3d_pivot.png" alt="Пивот и ориентация 3D-модели суппорта" loading="lazy">
+    <figcaption>Пивот и ориентация 3D-модели суппорта</figcaption>
+</figure>
+<ol>
+    <li>В 3D-редакторе поставьте <strong>пивот</strong> модели строго в центре относительно точки крепления колеса (совпадает с центром колеса). Ось вращения колеса — <strong><code>Y</code></strong>.</li>
+    <li>Импортируйте в UE так же, как колесо: <strong><code>Generate Missing Collision = False</code></strong>, <strong><code>Do Not Create Material</code></strong>.</li>
+    <li>Назначьте материал от родительского <strong><code>MI_Mod_Exterior</code></strong>.</li>
+</ol>
+<h3 id="22-подключение-в-акторе-v_имямода">2.2. Подключение в Акторе <code>V_&lt;ИмяМода&gt;</code></h3>
+<ol>
+    <li>Добавьте к <strong><code>Body</code></strong> <em>(рекомендуемое крепление для порядка в иерархии)</em> 4 компонента <code>StaticMeshComponent</code> со строгими именами из XML-схемы:
+<ul>
+    <li><code>SuspensionFrontLeft</code></li>
+    <li><code>SuspensionFrontRight</code></li>
+    <li><code>SuspensionBackLeft</code></li>
+    <li><code>SuspensionBackRight</code></li>
+</ul>
+</li>
+    <li>Выставьте всем четырём <strong><code>Collision Presets = NoCollision</code></strong> и снимите <strong><code>Receives Decals</code></strong>.</li>
+    <li>Перенесите координаты <code>Location</code> (в сантиметрах, положение максимально прожатой подвески, совпадающее с <code>Mount</code> в <code>Vehicle.ini</code> с инверсией <code>Y</code>) с узлов колёс на соответствующие узлы <code>Suspension*</code>.</li>
+    <li>Перетащите каждый узел колеса (<code>WheelFrontLeft</code>, <code>WheelFrontRight</code>, <code>WheelBackLeft</code>, <code>WheelBackRight</code>) мышкой внутрь соответствующего <code>Suspension*</code> и обнулите у колёс <code>Location = (0, 0, 0)</code>.</li>
+</ol>
+<pre class="mermaid">
+flowchart TD
+    Body["Body (StaticMeshComponent)"] --&gt; SFL["SuspensionFrontLeft&lt;br/&gt;Location = Mount (см), NoCollision"]
+    Body --&gt; SFR["SuspensionFrontRight&lt;br/&gt;Location = Mount (см), NoCollision"]
+    Body --&gt; SBL["SuspensionBackLeft&lt;br/&gt;Location = Mount (см), NoCollision"]
+    Body --&gt; SBR["SuspensionBackRight&lt;br/&gt;Location = Mount (см), NoCollision"]
+    SFL --&gt; WFL["WheelFrontLeft&lt;br/&gt;Location = (0, 0, 0), NoCollision"]
+    SFR --&gt; WFR["WheelFrontRight&lt;br/&gt;Location = (0, 0, 0), NoCollision"]
+    SBL --&gt; WBL["WheelBackLeft&lt;br/&gt;Location = (0, 0, 0), NoCollision"]
+    SBR --&gt; WBR["WheelBackRight&lt;br/&gt;Location = (0, 0, 0), NoCollision"]
+</pre>
+<hr>
+<h2 id="3-оптика-автомобиля-светящиеся-слоты-и-реальные-источники-света">3. Оптика автомобиля: светящиеся слоты и реальные источники света</h2>
+<p>В Unreal Engine и CCD 2.0 внешнее освещение состоит из <strong>двух разных частей</strong>:</p>
+<ol>
+    <li><strong>Светящаяся геометрия фары/фонаря</strong> (визуально загорается сама лампочка на кузове) — управляется через <strong>имена слотов материалов (<code>Material Slot Name</code>)</strong> на меше кузова.</li>
+    <li><strong>Реальный источник света</strong> (светит на асфальт, стены и знаки) — отдельные компоненты <strong><code>SpotLight</code></strong> на Акторе с <strong><code>ControlBlock</code> <code>Light</code></strong>.</li>
+</ol>
+<h3 id="31-светящиеся-элементы-на-кузове-mi_mod_emissive_beam">3.1. Светящиеся элементы на кузове (<code>MI_Mod_Emissive_Beam</code>)</h3>
+<p>Для каждого типа ламп на 3D-модели кузова должен быть свой <strong>отдельный Material ID (слот материала)</strong>.</p>
+<ol>
+    <li>Создайте <code>Material Instance</code> от <strong><code>MI_Mod_Emissive_Beam</code></strong>. Цвет лампы в выключенном состоянии задаётся через <code>Albedo_texture</code>, цвет свечения — через <code>Emissive</code>-текстуру.</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m2_mat_emissive_beam.png" alt="Настройка параметров MI_Mod_Emissive_Beam" loading="lazy">
+    <figcaption>Настройка параметров MI_Mod_Emissive_Beam</figcaption>
+</figure>
+<ol>
+    <li>Откройте Static Mesh кузова (<code>Body</code>) двойным кликом → в панели <strong>Details → Material Slots</strong> назначьте созданные материалы и <strong>переименуйте поле <code>Slot Name</code></strong> строго по таблице ниже:</li>
+</ol>
+<div class="alert alert-important">
+    <div class="alert-title">Важно (IMPORTANT)</div>
+<p>Игре важно именно поле <strong><code>Slot Name</code></strong> внутри Static Mesh, а не имя файла <code>MI_*</code> в Content Browser!</p>
+
+</div>
+<table>
+    <thead>
+        <tr>
+            <th>Обязательное имя слота (<code>Slot Name</code>)</th>
+            <th>Назначение</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>LowBeam</code></td>
+            <td>Лампа ближнего света</td>
+        </tr>
+        <tr>
+            <td><code>HighBeam</code></td>
+            <td>Лампа дальнего света</td>
+        </tr>
+        <tr>
+            <td><code>ParkingLights</code></td>
+            <td>Лампа габаритных огней</td>
+        </tr>
+        <tr>
+            <td><code>FrontFogLights</code></td>
+            <td>Лампа переднего противотуманного огня</td>
+        </tr>
+        <tr>
+            <td><code>RearFogLights</code></td>
+            <td>Лампа заднего противотуманного огня</td>
+        </tr>
+        <tr>
+            <td><code>StopLight</code></td>
+            <td>Лампа стоп-сигнала</td>
+        </tr>
+        <tr>
+            <td><code>ReverseLight</code></td>
+            <td>Лампа заднего хода</td>
+        </tr>
+        <tr>
+            <td><code>LeftTurnLight</code></td>
+            <td>Лампа левого указателя поворота</td>
+        </tr>
+        <tr>
+            <td><code>RightTurnLight</code></td>
+            <td>Лампа правого указателя поворота</td>
+        </tr>
+        <tr>
+            <td><code>LicensePlates</code></td>
+            <td>Лампочки подсветки номерного знака</td>
+        </tr>
+    </tbody>
+</table>
+<h3 id="32-реальные-источники-света-bp_exportspotlight-spotlightcomponent">3.2. Реальные источники света (<code>BP_ExportSpotLight</code> / <code>SpotLightComponent</code>)</h3>
+<h4 id="шаг-1-создаём-переиспользуемые-компоненты-света-удобно-для-левой-и-правой-фары">Шаг 1. Создаём переиспользуемые компоненты света (удобно для левой и правой фары)</h4>
+<p>В папке <code>MyFirstCar/Blueprints/</code> рекомендуется заранее создать Blueprint-компоненты для каждого типа фар:</p>
+<ul>
+    <li>Для <strong>передних фар (ближний и дальний свет)</strong> создавайте Blueprint Class с родительским классом <strong><code>BP_ExportSpotLight</code></strong> (лежит в <code>Content/Common/Player/BP_ExportSpotLight</code>).</li>
+    <li>Для <strong>остальных огней</strong> (задний ход, стоп-сигналы, поворотники) можно использовать любой Light Component, но рекомендуется обычный <strong><code>SpotLightComponent</code></strong>.</li>
+</ul>
+<figure class="doc-figure">
+    <img src="./images/m2_light_components_list.png" alt="Пример заранее подготовленных компонентов света в CieBensVGruppe" loading="lazy">
+    <figcaption>Пример заранее подготовленных компонентов света в CieBensVGruppe</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m2_light_export_spotlight.png" alt="Выбор родительского класса BP_ExportSpotLight" loading="lazy">
+    <figcaption>Выбор родительского класса BP_ExportSpotLight</figcaption>
+</figure>
+<h4 id="шаг-2-настройка-светового-пятна-lfm_vehiclelightspot-и-яркости">Шаг 2. Настройка светового пятна (<code>LFM_VehicleLightSpot</code>) и яркости</h4>
+<p>Если вы хотите, чтобы фара давала реалистичный рисунок светотеневой границы на асфальте:</p>
+<ol>
+    <li>Создайте <code>Material Instance</code> от <strong><code>LFM_VehicleLightSpot</code></strong> (лежит в <code>Content/Common/MasterMaterials/VehicleMaterials/ModMaterials/Lights/LFM_VehicleLightSpot</code>).</li>
+    <li>Если подставляете свою текстуру маски светового пятна — откройте её и установите <strong><code>Compression Settings = Alpha</code></strong>.</li>
+    <li>Назначьте созданный <code>LFMI_*</code> в поле <strong><code>Light Function Material</code></strong> вашего источника света.</li>
+</ol>
+<p>Ориентировочные значения параметров из эталонного <code>CieBensVGruppe</code>:</p>
+<table>
+    <thead>
+        <tr>
+            <th>Тип фонаря</th>
+            <th>Intensity Units</th>
+            <th>Intensity</th>
+            <th>Attenuation Radius</th>
+            <th>Inner / Outer Cone Angle</th>
+            <th>Shadow Bias</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Ближний свет (<code>LowBeam</code>)</td>
+            <td><code>Candelas</code></td>
+            <td><code>8000.0 cd</code></td>
+            <td><code>2500.0</code></td>
+            <td><code>0.0 / 36.0</code></td>
+            <td><code>0.1</code></td>
+        </tr>
+        <tr>
+            <td>Дальний свет (<code>HighBeam</code>)</td>
+            <td><code>Candelas</code></td>
+            <td><code>2500.0 cd</code></td>
+            <td><code>10000.0</code></td>
+            <td><code>0.0 / 60.0</code></td>
+            <td><code>0.1</code></td>
+        </tr>
+        <tr>
+            <td>Задний ход (<code>ReverseLight</code>)</td>
+            <td><code>Candelas</code></td>
+            <td><code>100.0 cd</code></td>
+            <td><code>400.0</code></td>
+            <td><code>0.0 / 60.0</code></td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td>Стоп-сигнал (<code>StopLight</code>)</td>
+            <td><code>Candelas</code></td>
+            <td><code>30.0 cd</code></td>
+            <td><code>300.0</code></td>
+            <td><code>0.0 / 60.0</code></td>
+            <td>—</td>
+        </tr>
+    </tbody>
+</table>
+<figure class="doc-figure">
+    <img src="./images/m2_light_spot_params.png" alt="Параметры яркости, радиуса и Light Function Material для источников света" loading="lazy">
+    <figcaption>Параметры яркости, радиуса и Light Function Material для источников света</figcaption>
+</figure>
+<h4 id="шаг-3-расстановка-на-акторе-и-ориентация">Шаг 3. Расстановка на Акторе и ориентация</h4>
+<ol>
+    <li>Откройте ваш Актор <code>V_&lt;ИмяМода&gt;</code>, добавьте созданные компоненты света к <code>Body</code> (или к <code>DefaultSceneRoot</code>) и расположите их точно на месте фар/фонарей.</li>
+    <li><strong>Важно для световых пятен из шаблонного проекта:</strong> соблюдайте ориентацию локальных осей компонента света как на скриншоте ниже — <strong>ось <code>Y</code> (зелёная) направлена вниз, ось <code>Z</code> (синяя) — в сторону</strong>, ось <code>X</code> (красная) — по направлению луча света.</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m2_light_orientation.png" alt="Правильная ориентация локальных осей источников света" loading="lazy">
+    <figcaption>Правильная ориентация локальных осей источников света</figcaption>
+</figure>
+<h4 id="шаг-4-привязка-к-физике-через-controlblock-light">Шаг 4. Привязка к физике через <code>ControlBlock</code> <code>Light</code></h4>
+<p>На <strong>каждом</strong> источнике света добавьте <code>Asset User Data → Control Asset Data</code>:</p>
+<ul>
+    <li>Имя <code>Control Block</code>: <strong><code>Light</code></strong></li>
+    <li>Свойство в <code>Properties</code>:
+<ul>
+    <li>Имя: <strong><code>PhysicsOutput</code></strong></li>
+    <li>Тип: <strong><code>Control Property String Array</code></strong></li>
+    <li>В <code>Values</code> добавьте одно или несколько имён выходных каналов физики (типа <code>float</code>), управляющих яркостью этого источника:</li>
+</ul>
+</li>
+</ul>
+<figure class="doc-figure">
+    <img src="./images/m2_light_cb.png" alt="Настройка ControlBlock Light с массивом PhysicsOutput" loading="lazy">
+    <figcaption>Настройка ControlBlock Light с массивом PhysicsOutput</figcaption>
+</figure>
+<table>
+    <thead>
+        <tr>
+            <th>Значение в <code>PhysicsOutput</code></th>
+            <th>Чем управляет</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>LowBeamIntensity</code></td>
+            <td>Ближний свет</td>
+        </tr>
+        <tr>
+            <td><code>HighBeamIntensity</code></td>
+            <td>Дальний свет</td>
+        </tr>
+        <tr>
+            <td><code>ParkingLightsIntensity</code></td>
+            <td>Габаритные огни</td>
+        </tr>
+        <tr>
+            <td><code>FrontFogLightsIntensity</code></td>
+            <td>Передние противотуманные фары</td>
+        </tr>
+        <tr>
+            <td><code>RearFogLightsIntensity</code></td>
+            <td>Задние противотуманные фонари</td>
+        </tr>
+        <tr>
+            <td><code>StopLightIntensity</code></td>
+            <td>Стоп-сигналы</td>
+        </tr>
+        <tr>
+            <td><code>ReverseLightIntensity</code></td>
+            <td>Фонари заднего хода</td>
+        </tr>
+        <tr>
+            <td><code>LeftTurnLightIntensity</code></td>
+            <td>Левые указатели поворота</td>
+        </tr>
+        <tr>
+            <td><code>RightTurnLightIntensity</code></td>
+            <td>Правые указатели поворота</td>
+        </tr>
+        <tr>
+            <td><code>LicensePlatesIntensity</code></td>
+            <td>Подсветка номерного знака</td>
+        </tr>
+    </tbody>
+</table>
+<div class="alert alert-tip">
+    <div class="alert-title">Совет (TIP)</div>
+<p>Не забудьте убедиться, что в <code>Vehicle.ini</code> в секции <code>[CarElectrics]</code> у всех используемых фонарей прописано положительное сопротивление (<code>*_Resistance &gt; 0</code>) — подробнее см. <a href="../VehicleLib_HTML/04_Components_Electrics.html">VehicleLib_HTML/04_Components_Electrics.html</a>.</p>
+
+</div>
+<hr>
+<h2 id="4-автомобильные-номера-licenseplates">4. Автомобильные номера (<code>LicensePlates</code>)</h2>
+<p>Игровые номера генерируются и подставляются игрой автоматически:</p>
+<ol>
+    <li>На меше номерной таблички задайте <strong><code>Slot Name = LicensePlates</code></strong>.</li>
+    <li><strong>Сам материал в слот можно не назначать (оставить пустым)</strong> — игра автоматически заменит его динамическим материалом номерного знака. <em>(Материал <code>MI_Mod_LicensePlate</code> в папке <code>ModMaterials</code> для модов не используется.)</em></li>
+    <li>UV-развёртка таблички должна заполнять квадрат <code>0..1</code> точно так, как показано на примере ниже.</li>
+    <li><strong>Самый быстрый способ:</strong> просто скопируйте уже готовую плашку номера <code>SM_CieBensVGruppe_LicensePlate</code> из <code>Plugins/Mods Content/CieBensVGruppe/Meshes/</code> и разместите её на переднем и заднем бамперах вашего Актора (с <code>NoCollision</code>).</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m2_license_plate_uv.png" alt="Требуемая UV-развёртка для автомобильного номерного знака" loading="lazy">
+    <figcaption>Требуемая UV-развёртка для автомобильного номерного знака</figcaption>
+</figure>
+<hr>
+<h2 id="5-взаимодействие-с-игровым-миром">5. Взаимодействие с игровым миром</h2>
+<p>Эти 3 компонента не обязательны для базового старта, но необходимы, чтобы автомобиль полноценно работал со всеми механиками симулятора (АЗС, внутриигровые триггеры, дождь).</p>
+<h3 id="51-зона-взаимодействия-с-внешним-миром-logicbox">5.1. Зона взаимодействия с внешним миром (<code>LogicBox</code>)</h3>
+<p>Нужна, чтобы интерактивные объекты, шлагбаумы, парковочные зоны и внутриигровые триггеры корректно определяли габариты вашего автомобиля.</p>
+<ol>
+    <li>В Акторе <code>V_&lt;ИмяМода&gt;</code> добавьте компонент <strong><code>Box Collision</code></strong> (<code>+ Add → Box Collision</code>).</li>
+    <li>Подогните его <strong><code>Location</code></strong>, <strong><code>Rotation</code></strong> и <strong><code>Box Extent</code></strong> так, чтобы параллелепипед плотно охватывал габариты вашего автомобиля.</li>
+    <li>Добавьте на него <code>ControlBlock</code> с именем <strong><code>LogicBox</code></strong> (свойств добавлять не нужно).</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m2_logicbox_mesh.png" alt="Настройка BoxCollision для зоны взаимодействия LogicBox" loading="lazy">
+    <figcaption>Настройка BoxCollision для зоны взаимодействия LogicBox</figcaption>
+</figure>
+<h3 id="52-топливный-бак-fueltank">5.2. Топливный бак (<code>FuelTank</code>)</h3>
+<p>Отвечает за работу заправки на АЗС.</p>
+<ol>
+    <li>Добавьте <strong><code>SceneComponent</code></strong> (<code>+ Add → Scene</code>) и прикрепите его к компоненту с <strong>нулевыми трансформами относительно корня</strong> (например, напрямую к <code>DefaultSceneRoot</code> или <code>Body</code>).</li>
+    <li>Выставьте его позицию в районе лючка бензобака (если требуется) и добавьте <code>ControlBlock</code> с именем <strong><code>FuelTank</code></strong> (свойств добавлять не нужно — важен сам факт наличия блока).</li>
+</ol>
+<h3 id="53-исключение-капель-дождя-из-салона-rainblocker">5.3. Исключение капель дождя из салона (<code>RainBlocker</code>)</h3>
+<p>Чтобы капли падающего дождя не пролетали сквозь крышу внутрь салона:</p>
+<ol>
+    <li>Создайте в 3D-редакторе очень простой замкнутый меш-коробку, <strong>слегка больше самого автомобиля</strong> по объёму (или скопируйте и адаптируйте <code>SM_CieBensVGruppe_RainBlocker</code>). Импортируйте без коллизии.</li>
+    <li>Добавьте его как <code>StaticMeshComponent</code> на Актор автомобиля (<code>NoCollision</code>, <code>Receives Decals = False</code>).</li>
+    <li>Для удобства работы в редакторе назначьте ему каркасный материал <strong><code>MM_Wireframe</code></strong> (<code>Content/Common/MasterMaterials/System/MM_Wireframe</code>) — он не будет закрывать машину во вьюпорте, а в игре блокер невидим.</li>
+    <li>Добавьте на компонент <code>ControlBlock</code> с именем <strong><code>RainBlocker</code></strong> (без свойств).</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m2_rainblocker_mesh.png" alt="Упрощённый меш RainBlocker с материалом MM_Wireframe вокруг автомобиля" loading="lazy">
+    <figcaption>Упрощённый меш RainBlocker с материалом MM_Wireframe вокруг автомобиля</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m2_rainblocker_cb.png" alt="Добавление ControlBlock RainBlocker" loading="lazy">
+    <figcaption>Добавление ControlBlock RainBlocker</figcaption>
+</figure>
+<hr>
+<p><strong>Следующий шаг:</strong> переходите к <strong><a href="./03_Interior_Dashboard_Cameras_Seats.html">Модулю 3. Салон, приборная панель, камеры и посадка водителя</a></strong>, чтобы оживить интерьер автомобиля и вид от первого лица.</p>
+
+</body>
+</html>

@@ -1,0 +1,308 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Модуль 4. Зеркала заднего вида и дворники</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({ startOnLoad: true });</script>
+    <style>
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 32px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1f2328;
+            background-color: #ffffff;
+        }
+        h1, h2, h3, h4 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        h1 {
+            font-size: 2em;
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid #d0d7de;
+        }
+        h2 {
+            font-size: 1.5em;
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid #d0d7de;
+        }
+        h3 {
+            font-size: 1.25em;
+        }
+        hr {
+            height: 0.25em;
+            padding: 0;
+            margin: 24px 0;
+            background-color: #d0d7de;
+            border: 0;
+        }
+        a {
+            color: #0969da;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 16px 0;
+        }
+        th, td {
+            border: 1px solid #d0d7de;
+            padding: 8px 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background: #f6f8fa;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background: #f6f8fa;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .text-right {
+            text-align: right;
+        }
+        code {
+            background: #eff1f3;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+            font-size: 85%;
+        }
+        pre {
+            background: #f6f8fa;
+            padding: 14px;
+            border-radius: 6px;
+            overflow-x: auto;
+            border: 1px solid #d0d7de;
+        }
+        pre code {
+            background: transparent;
+            padding: 0;
+            font-size: 100%;
+        }
+        pre.mermaid {
+            background: #ffffff;
+            text-align: center;
+        }
+        .alert {
+            padding: 12px 16px;
+            margin: 16px 0;
+            border-left: 4px solid;
+            border-radius: 6px;
+            background: #f6f8fa;
+        }
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .alert p:last-child, .alert ul:last-child, .alert ol:last-child {
+            margin-bottom: 0;
+        }
+        .alert-note {
+            border-left-color: #0969da;
+            background-color: #ddf4ff;
+        }
+        .alert-note .alert-title { color: #0969da; }
+        .alert-tip {
+            border-left-color: #1a7f37;
+            background-color: #dafbe1;
+        }
+        .alert-tip .alert-title { color: #1a7f37; }
+        .alert-important {
+            border-left-color: #8250df;
+            background-color: #fbefff;
+        }
+        .alert-important .alert-title { color: #8250df; }
+        .alert-warning {
+            border-left-color: #9a6700;
+            background-color: #fff8c5;
+        }
+        .alert-warning .alert-title { color: #9a6700; }
+        .alert-caution {
+            border-left-color: #cf222e;
+            background-color: #ffebe9;
+        }
+        .alert-caution .alert-title { color: #cf222e; }
+        ul.checklist {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        ul.checklist li {
+            margin-bottom: 8px;
+        }
+        ul.checklist input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        figure.doc-figure {
+            margin: 16px 0;
+            padding: 10px;
+            background: #f6f8fa;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            text-align: center;
+        }
+        figure.doc-figure img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            display: block;
+            margin: 0 auto;
+        }
+        figure.doc-figure figcaption {
+            margin-top: 8px;
+            font-size: 0.9em;
+            color: #57606a;
+        }
+    </style>
+</head>
+<body>
+<h1 id="модуль-4-зеркала-заднего-вида-и-дворники">Модуль 4. Зеркала заднего вида и дворники</h1>
+<p><strong>Навигация:</strong> <a href="./README.html">README</a> | <a href="./01_Minimal_Car_QuickStart.html">01. Минимальный автомобиль</a> | <a href="./02_Exterior_Lights_and_World.html">02. Экстерьер, свет и мир</a> | <a href="./03_Interior_Dashboard_Cameras_Seats.html">03. Салон, приборка и камеры</a> | <strong>04. Зеркала и дворники</strong> | <a href="./05_Sounds_and_FMOD.html">05. Звуки и FMOD</a> | <a href="./06_Advanced_Specs_Logic_and_Reference.html">06. Комплектации, логика и шпаргалка</a></p>
+<hr>
+<p>В этом модуле вы настроите два важных симуляторных узла автомобиля:</p>
+<ol>
+    <li><strong>Зеркала заднего вида</strong> (левое, правое и центральное салонное) — с реальным рендером изображения через игровые камеры.</li>
+    <li><strong>Стеклоочистители (дворники)</strong> — передние и (при наличии) задний, работающие через скелетную анимацию.</li>
+</ol>
+<hr>
+<h2 id="1-зеркала-заднего-вида-mirror">1. Зеркала заднего вида (<code>Mirror</code>)</h2>
+<p>В City Car Driving 2.0 отражение в зеркалах реализовано через рендер-камеры, привязанные к отдельным мешам отражающих стёкол.</p>
+<h3 id="11-подготовка-и-импорт-3d-моделей-зеркал">1.1. Подготовка и импорт 3D-моделей зеркал</h3>
+<figure class="doc-figure">
+    <img src="./images/m4_mirror_3d_axes.png" alt="Ориентация 3D-модели отражающей поверхности зеркала (ось Z вверх, ось Y вниз по стеклу)" loading="lazy">
+    <figcaption>Ориентация 3D-модели отражающей поверхности зеркала (ось Z вверх, ось Y вниз по стеклу)</figcaption>
+</figure>
+<ol>
+    <li>Для <strong>каждого</strong> зеркала (левое, правое, центральное) экспортируйте <strong>отдельный меш</strong> — только саму плоскую/слегка изогнутую отражающую стекляшку (корпус зеркала остаётся на кузове или салоне).</li>
+    <li><strong>Строгое требование к осям:</strong>
+<ul>
+    <li><strong>Ось <code>+Z</code></strong> определяет направление отражающей поверхности (лицевая нормаль зеркала смотрит строго вверх по <code>+Z</code>, само стекло лежит в плоскости <code>XY</code>!).</li>
+    <li><strong>Ось <code>+Y</code></strong> определяет направление <strong>вниз</strong> вдоль зеркала.</li>
+</ul>
+<p><em>(Это требование необходимо для работы скрипта автоматической генерации UV-координат, который проецирует вершины по осям <code>X</code> и <code>Y</code>.)</em></p>
+</li>
+    <li><strong>Импорт в UE:</strong> аналогично колёсам — <strong><code>Generate Missing Collision = False</code></strong>, <strong><code>Material Import Method = Do Not Create Material</code></strong>, <strong><code>Build Nanite = False</code></strong>.</li>
+    <li><strong>Материал:</strong> материал на отражающую поверхность <strong>можно не назначать</strong> — игра подставит динамический материал отражения автоматически. <em>(Напоминание: <code>MI_Mod_Mirror</code> используется только для корпуса/плафона салонного зеркала, а не для отражающего стекла.)</em></li>
+</ol>
+<h3 id="12-настройка-сокета-camera-и-генерация-uv-в-ue">1.2. Настройка сокета <code>Camera</code> и генерация UV в UE</h3>
+<p>Выполните эти 2 шага для <strong>каждого</strong> импортированного Static Mesh зеркала:</p>
+<h4 id="шаг-1-добавление-сокета-camera">Шаг 1. Добавление сокета <code>Camera</code></h4>
+<ol>
+    <li>Откройте Static Mesh зеркала двойным кликом.</li>
+    <li>Откройте <strong>Window → Socket Manager</strong> и нажмите <strong><code>+</code></strong> (Create Socket).</li>
+    <li>Переименуйте сокет строго в <strong><code>Camera</code></strong>.</li>
+    <li>При необходимости поверните <strong><code>Relative Rotation</code></strong> этого сокета — именно поворот сокета <code>Camera</code> задаёт, куда будет смотреть камера захвата отражения.</li>
+    <li>Нажмите <strong>Save</strong> и закройте окно меша.</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m4_mirror_socket_uv.png" alt="Пример настройки сокета Camera и сгенерированной UV-развёртки для 3 зеркал" loading="lazy">
+    <figcaption>Пример настройки сокета Camera и сгенерированной UV-развёртки для 3 зеркал</figcaption>
+</figure>
+<h4 id="шаг-2-запуск-скрипта-генерации-uv-generate-uvs-by-vertex-positions">Шаг 2. Запуск скрипта генерации UV (<code>Generate UVs by Vertex Positions</code>)</h4>
+<ol>
+    <li>В <strong>Content Browser</strong> нажмите <strong>ПКМ</strong> на ассете Static Mesh зеркала.</li>
+    <li>Выберите в контекстном меню:
+<p><strong><code>Scripted Asset Actions → UV → Generate UVs by Vertex Positions</code></strong></p>
+</li>
+    <li>Скрипт автоматически сгенерирует UV-координаты по позициям вершин на <strong>1-м UV-канале</strong>, запишет габариты зеркала в метаданные ассета и включит <code>Allow CPU Access</code>.</li>
+    <li><strong>Обязательно сохраните ассет</strong> (<code>Ctrl + S</code> или <strong>ПКМ → Save</strong>) — звёздочка <code>*</code> на иконке должна исчезнуть!</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m4_mirror_script_menu.png" alt="Запуск Scripted Asset Actions → UV → Generate UVs by Vertex Positions" loading="lazy">
+    <figcaption>Запуск Scripted Asset Actions → UV → Generate UVs by Vertex Positions</figcaption>
+</figure>
+<h3 id="13-подключение-зеркал-в-акторе-v_имямода">1.3. Подключение зеркал в Акторе <code>V_&lt;ИмяМода&gt;</code></h3>
+<ol>
+    <li>Добавьте <code>StaticMeshComponent</code> для каждого зеркала (например, внутрь <code>Body</code> для боковых и <code>InteriorObjects</code> для салонного), выставите <strong><code>NoCollision</code></strong> и <strong><code>Receives Decals = False</code></strong>.</li>
+    <li>Расположите и поверните каждое зеркало точно на его место в корпусе зеркала на автомобиле.</li>
+    <li>На каждом компоненте зеркала добавьте <code>Asset User Data → Control Asset Data</code> → <strong><code>ControlBlock</code></strong> с именем <strong><code>Mirror</code></strong>:
+<ul>
+    <li><em>(Опционально)</em> Добавьте свойство <strong><code>FOV</code></strong> типа <strong><code>Control Property Float</code></strong> — угол обзора камеры зеркала в градусах.</li>
+    <li><strong>Рекомендуемое значение <code>FOV</code>: <code>20–40</code></strong> (более высокие значения сильно увеличивают нагрузку на производительность и искажают расстояния в зеркале).</li>
+</ul>
+</li>
+    <li>Нажмите <strong>Compile</strong> и <strong>Save</strong>.</li>
+</ol>
+<hr>
+<h2 id="2-стеклоочистители-дворники-wippers">2. Стеклоочистители / Дворники (<code>Wippers</code>)</h2>
+<p>Дворники в City Car Driving 2.0 работают с помощью <strong>скелетной анимации</strong>.</p>
+<h3 id="21-подготовка-3d-модели-и-анимации">2.1. Подготовка 3D-модели и анимации</h3>
+<figure class="doc-figure">
+    <img src="./images/m4_wipers_skeleton.png" alt="Пример Skeletal Mesh и скелета дворников" loading="lazy">
+    <figcaption>Пример Skeletal Mesh и скелета дворников</figcaption>
+</figure>
+<ol>
+    <li>В 3D-редакторе создайте скелет (Armature) для дворников, привяжите к костям геометрию поводков и щёток (скиннинг) и сделайте анимацию взмаха.</li>
+    <li><strong>Важно про цикл анимации:</strong> ваша <code>Animation Sequence</code> должна представлять собой только <strong>первую половину цикла</strong> — движение дворника из исходного (нижнего) положения до крайнего (верхнего) положения! Обратный ход игра проигрывает автоматически.</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m4_wipers_animation_cycle.png" alt="Пример анимации дворников: кадр 0% (исходное положение) и кадр 100% (крайнее положение)" loading="lazy">
+    <figcaption>Пример анимации дворников: кадр 0% (исходное положение) и кадр 100% (крайнее положение)</figcaption>
+</figure>
+<ol>
+    <li>Если у автомобиля есть и передние, и задний дворник — экспортируйте их <strong>двумя отдельными Skeletal Mesh</strong> (передние вместе одним мешем, задний — отдельным).</li>
+</ol>
+<h3 id="22-импорт-и-материал-дворников">2.2. Импорт и материал дворников</h3>
+<ol>
+    <li>Импортируйте <code>.fbx</code> с дворниками в <code>MyFirstCar/Meshes/</code>. В окне импорта:
+<ul>
+    <li>Включите <strong><code>Skeletal Mesh</code></strong> и <strong><code>Import Animations</code></strong>.</li>
+    <li>Выключите <strong><code>Generate Missing Collision</code></strong> / создание Physics Asset при необходимости и выберите <strong><code>Material Import Method = Do Not Create Material</code></strong>.</li>
+    <li>В результате в папке появятся <code>Skeletal Mesh</code>, <code>Skeleton</code> и <code>Animation Sequence</code>.</li>
+</ul>
+</li>
+    <li>Создайте <code>Material Instance</code> от родительского материала <strong><code>MI_Mod_Wipers</code></strong> (<code>Content/Common/MasterMaterials/VehicleMaterials/ModMaterials/MI_Mod_Wipers</code>) и назначьте его в слот материала на <code>Skeletal Mesh</code>.</li>
+</ol>
+<div class="alert alert-note">
+    <div class="alert-title">Примечание (NOTE)</div>
+<p><strong>Про сокеты зоны очистки стекла (которые можно увидеть в <code>CieBensVGruppe</code>):</strong><br>
+Если вы откроете <code>SM_CieBensVGruppe_Wipers</code>, то увидите на костях сокеты <code>LeftUpper</code>, <code>LeftBottom</code>, <code>RightUpper</code>, <code>RightBottom</code>. <strong>На текущий момент сокеты на дворниках в модах НЕ используются и создавать их не нужно</strong> (функционал стирания капель со стекла в пользовательских автомобилях ещё не активен).</p>
+
+</div>
+<h3 id="23-подключение-дворников-в-акторе-v_имямода">2.3. Подключение дворников в Акторе <code>V_&lt;ИмяМода&gt;</code></h3>
+<div class="alert alert-warning">
+    <div class="alert-title">Внимание (WARNING)</div>
+<p><strong>Обратите внимание на точное написание имени <code>ControlBlock</code>:</strong><br>
+В коде игры блок называется <strong><code>Wippers</code></strong> — <strong>с двумя буквами <code>p</code></strong>! Если написать <code>Wipers</code>, дворники не будут работать.</p>
+
+</div>
+<ol>
+    <li>Откройте Актор <code>V_&lt;ИмяМода&gt;</code> и добавьте компонент <strong><code>Skeletal Mesh</code></strong> (<code>+ Add → Skeletal Mesh</code>), выставите <strong><code>NoCollision</code></strong> и <strong><code>Receives Decals = False</code></strong>.</li>
+    <li>Расположите дворники в нужном месте на лобовом (или заднем) стекле.</li>
+    <li>В панели <strong>Details</strong> компонента заполните:
+<ul>
+    <li><strong>Mesh → Skeletal Mesh Asset:</strong> выберите ваш импортированный <code>Skeletal Mesh</code> дворников.</li>
+    <li><strong>Animation → Animation Mode:</strong> выберите <strong><code>Use Animation Asset</code></strong>.</li>
+    <li><strong>Animation → Anim to Play:</strong> выберите вашу <code>Animation Sequence</code> (первая половина цикла взмаха).</li>
+</ul>
+</li>
+    <li>Добавьте <code>Asset User Data → Control Asset Data</code> → <strong><code>ControlBlock</code></strong> с именем <strong><code>Wippers</code></strong>:
+<ul>
+    <li>Добавьте свойство <strong><code>Side</code></strong> типа <strong><code>Control Property String</code></strong>:
+<ul>
+    <li><strong><code>Front</code></strong> — для передних дворников;</li>
+    <li><strong><code>Rear</code></strong> — для заднего дворника.</li>
+</ul>
+</li>
+</ul>
+</li>
+    <li>Убедитесь, что в <code>Vehicle.ini</code> в секции <code>[CarElectrics]</code> задано сопротивление <code>FrontWindshieldWiper_Resistance &gt; 0</code> (и <code>BackWindshieldWiper_Resistance &gt; 0</code>, если есть задний дворник).</li>
+    <li>Нажмите <strong>Compile</strong> и <strong>Save</strong>.</li>
+</ol>
+<hr>
+<p><strong>Следующий шаг:</strong> переходите к <strong><a href="./05_Sounds_and_FMOD.html">Модулю 5. Звуки автомобиля и работа с FMOD Studio</a></strong>, чтобы настроить звуковое сопровождение вашего автомобиля.</p>
+
+</body>
+</html>

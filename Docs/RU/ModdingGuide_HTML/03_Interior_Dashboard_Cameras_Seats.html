@@ -1,0 +1,660 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Модуль 3. Салон, приборная панель, камеры и посадка водителя</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({ startOnLoad: true });</script>
+    <style>
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 32px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1f2328;
+            background-color: #ffffff;
+        }
+        h1, h2, h3, h4 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        h1 {
+            font-size: 2em;
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid #d0d7de;
+        }
+        h2 {
+            font-size: 1.5em;
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid #d0d7de;
+        }
+        h3 {
+            font-size: 1.25em;
+        }
+        hr {
+            height: 0.25em;
+            padding: 0;
+            margin: 24px 0;
+            background-color: #d0d7de;
+            border: 0;
+        }
+        a {
+            color: #0969da;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 16px 0;
+        }
+        th, td {
+            border: 1px solid #d0d7de;
+            padding: 8px 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background: #f6f8fa;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background: #f6f8fa;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .text-right {
+            text-align: right;
+        }
+        code {
+            background: #eff1f3;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+            font-size: 85%;
+        }
+        pre {
+            background: #f6f8fa;
+            padding: 14px;
+            border-radius: 6px;
+            overflow-x: auto;
+            border: 1px solid #d0d7de;
+        }
+        pre code {
+            background: transparent;
+            padding: 0;
+            font-size: 100%;
+        }
+        pre.mermaid {
+            background: #ffffff;
+            text-align: center;
+        }
+        .alert {
+            padding: 12px 16px;
+            margin: 16px 0;
+            border-left: 4px solid;
+            border-radius: 6px;
+            background: #f6f8fa;
+        }
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .alert p:last-child, .alert ul:last-child, .alert ol:last-child {
+            margin-bottom: 0;
+        }
+        .alert-note {
+            border-left-color: #0969da;
+            background-color: #ddf4ff;
+        }
+        .alert-note .alert-title { color: #0969da; }
+        .alert-tip {
+            border-left-color: #1a7f37;
+            background-color: #dafbe1;
+        }
+        .alert-tip .alert-title { color: #1a7f37; }
+        .alert-important {
+            border-left-color: #8250df;
+            background-color: #fbefff;
+        }
+        .alert-important .alert-title { color: #8250df; }
+        .alert-warning {
+            border-left-color: #9a6700;
+            background-color: #fff8c5;
+        }
+        .alert-warning .alert-title { color: #9a6700; }
+        .alert-caution {
+            border-left-color: #cf222e;
+            background-color: #ffebe9;
+        }
+        .alert-caution .alert-title { color: #cf222e; }
+        ul.checklist {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        ul.checklist li {
+            margin-bottom: 8px;
+        }
+        ul.checklist input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        figure.doc-figure {
+            margin: 16px 0;
+            padding: 10px;
+            background: #f6f8fa;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            text-align: center;
+        }
+        figure.doc-figure img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            display: block;
+            margin: 0 auto;
+        }
+        figure.doc-figure figcaption {
+            margin-top: 8px;
+            font-size: 0.9em;
+            color: #57606a;
+        }
+    </style>
+</head>
+<body>
+<h1 id="модуль-3-салон-приборная-панель-камеры-и-посадка-водителя">Модуль 3. Салон, приборная панель, камеры и посадка водителя</h1>
+<p><strong>Навигация:</strong> <a href="./README.html">README</a> | <a href="./01_Minimal_Car_QuickStart.html">01. Минимальный автомобиль</a> | <a href="./02_Exterior_Lights_and_World.html">02. Экстерьер, свет и мир</a> | <strong>03. Салон, приборка и камеры</strong> | <a href="./04_Mirrors_and_Wipers.html">04. Зеркала и дворники</a> | <a href="./05_Sounds_and_FMOD.html">05. Звуки и FMOD</a> | <a href="./06_Advanced_Specs_Logic_and_Reference.html">06. Комплектации, логика и шпаргалка</a></p>
+<hr>
+<p>В этом модуле мы соберём полноценный вид из кабины:</p>
+<ul>
+    <li>импортируем и настроим материалы салона;</li>
+    <li>подключим вращающийся руль;</li>
+    <li>оживим стрелки и контрольные лампы приборной панели;</li>
+    <li>расставим все 5 игровых камер;</li>
+    <li>настроим посадку водителя и место под пользовательскую игрушку в салоне.</li>
+</ul>
+<hr>
+<h2 id="1-модель-салона-и-контейнер-interiorobjects">1. Модель салона и контейнер <code>InteriorObjects</code></h2>
+<h3 id="11-подготовка-3d-модели-салона">1.1. Подготовка 3D-модели салона</h3>
+<figure class="doc-figure">
+    <img src="./images/m3_salon_3d_overview.png" alt="Общий вид подготовленной 3D-модели салона" loading="lazy">
+    <figcaption>Общий вид подготовленной 3D-модели салона</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m3_salon_3d_dashboard.png" alt="Детализация приборной панели и отдельных элементов для Material ID" loading="lazy">
+    <figcaption>Детализация приборной панели и отдельных элементов для Material ID</figcaption>
+</figure>
+<ol>
+    <li>Салон должен быть <strong>единой моделью</strong> (руль, стрелки приборной панели и зеркала экспортируются отдельно).</li>
+    <li>Модель направлена вдоль оси <strong><code>+X</code></strong> и находится в тех же мировых координатах, что и кузов (<code>Body</code>), с масштабом <code>1:1</code> в сантиметрах.</li>
+    <li>Все элементы имеют UV-развёртку на <strong>0-м канале</strong>.</li>
+    <li>Каждый функциональный элемент (обшивка, стекло приборки, строчка, плафон центрального зеркала, каждый индикатор дашборда и подсвечиваемые кнопки) должен иметь свой <strong>Material ID (слот материала)</strong>.</li>
+    <li>Светящиеся индикаторы приборной панели и обозначения органов управления выполняются в виде отдельных полигонов/элементов меша со своими Material ID и развёрткой на 0-м канале.</li>
+</ol>
+<h3 id="12-импорт-салона-в-ue-58">1.2. Импорт салона в UE 5.8</h3>
+<ol>
+    <li>Импортируйте <code>.fbx</code> салона в <code>MyFirstCar/Meshes/</code>.</li>
+    <li>Выставьте <strong><code>Material Import Method = Do Not Create Material</code></strong> и <strong><code>Build Nanite = False</code></strong>.</li>
+    <li>В Акторе у меша салона всё равно выставляется <strong><code>NoCollision</code></strong> (физическая коллизия нужна только на <code>Body</code>), поэтому <code>Generate Missing Collision</code> можно отключить.</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m3_salon_import.png" alt="Настройки импорта Static Mesh салона" loading="lazy">
+    <figcaption>Настройки импорта Static Mesh салона</figcaption>
+</figure>
+<h3 id="13-материалы-салона-mi_mod_">1.3. Материалы салона (<code>MI_Mod_*</code>)</h3>
+<p>Все текстуры салона также должны иметь <strong><code>Virtual Texture Streaming = True</code></strong> (и <code>Masks (no sRGB)</code> для <code>MRA</code>-карт). Создавайте <code>Material Instance</code> от следующих родительских материалов из <code>Content/Common/MasterMaterials/VehicleMaterials/ModMaterials/</code>:</p>
+<table>
+    <thead>
+        <tr>
+            <th>Элемент салона</th>
+            <th>Родительский материал</th>
+            <th>Примечание</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Обшивка, торпедо, сиденья, пластик</td>
+            <td><strong><code>MI_Mod_Vehicle_Interior</code></strong></td>
+            <td>Основной PBR-материал салона.</td>
+        </tr>
+        <tr>
+            <td>Защитное стекло приборной панели</td>
+            <td><strong><code>MI_Mod_PanelGlass</code></strong></td>
+            <td>Прозрачное стекло над шкалами.</td>
+        </tr>
+        <tr>
+            <td>Детали с маской прозрачности (оплётка руля, строчка сидений)</td>
+            <td><strong><code>MI_Mod_Stiches</code></strong> <em>(обратите внимание: без <code>t</code>)</em></td>
+            <td>Поддерживает маску прозрачности (Opacity).</td>
+        </tr>
+        <tr>
+            <td>Плафон / корпус центрального зеркала</td>
+            <td><strong><code>MI_Mod_Mirror</code></strong></td>
+            <td>Используется для корпуса/плафона салонного зеркала (не для отражающей поверхности!).</td>
+        </tr>
+        <tr>
+            <td>Иконки-индикаторы на приборной панели</td>
+            <td><strong><code>MI_Mod_Emissive_Ikons</code></strong> <em>(через <code>k</code>)</em></td>
+            <td>Рекомендуется использовать готовый атлас <code>T_Dashboard_D</code> / <code>T_Dashboard_E</code> / <code>T_DashboardMask</code> из <code>CieBensVGruppe/Textures/</code>.</td>
+        </tr>
+        <tr>
+            <td>Светящиеся шкалы и стрелки приборки</td>
+            <td><strong><code>MI_Mod_Emissive_Panel</code></strong></td>
+            <td>Для стрелок (<code>SpeedometrArrow</code>, <code>RPMArrow</code> и др.) и шкал (<code>Dashboard</code>).</td>
+        </tr>
+        <tr>
+            <td>Подсвечиваемые кнопки и переключатели в салоне</td>
+            <td><strong><code>MI_Mod_Emissive_Saloon</code></strong></td>
+            <td>Кнопки стеклоподъёмников, климат-контроля и т. п.</td>
+        </tr>
+    </tbody>
+</table>
+<figure class="doc-figure">
+    <img src="./images/m3_mat_interior.png" alt="Параметры MI_Mod_Vehicle_Interior" loading="lazy">
+    <figcaption>Параметры MI_Mod_Vehicle_Interior</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m3_mat_panelglass.png" alt="Параметры MI_Mod_PanelGlass" loading="lazy">
+    <figcaption>Параметры MI_Mod_PanelGlass</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m3_mat_stiches.png" alt="Параметры MI_Mod_Stiches" loading="lazy">
+    <figcaption>Параметры MI_Mod_Stiches</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m3_mat_mirror_housing.png" alt="Параметры MI_Mod_Mirror (плафон центрального зеркала)" loading="lazy">
+    <figcaption>Параметры MI_Mod_Mirror (плафон центрального зеркала)</figcaption>
+</figure>
+<h3 id="14-размещение-салона-в-акторе-interiorobjects">1.4. Размещение салона в Акторе (<code>InteriorObjects</code>)</h3>
+<ol>
+    <li>Откройте Актор <code>V_&lt;ИмяМода&gt;</code>.</li>
+    <li>Выделите <code>DefaultSceneRoot</code> → нажмите <strong><code>+ Add</code></strong> → <strong>Scene</strong> и назовите компонент строго <strong><code>InteriorObjects</code></strong> (<code>Location = 0, 0, 0</code>, <code>Rotation = 0, 0, 0</code>).</li>
+    <li>Добавьте дочерним к <code>InteriorObjects</code> компонент <code>StaticMeshComponent</code> с вашим мешем салона (<code>Collision Presets = NoCollision</code>, <code>Receives Decals = False</code>). Все остальные элементы интерьера (руль, стрелки и т. д.) также удобно крепить внутрь <code>InteriorObjects</code>.</li>
+</ol>
+<hr>
+<h2 id="2-рулевое-колесо-steeringwheel">2. Рулевое колесо (<code>SteeringWheel</code>)</h2>
+<ol>
+    <li><strong>Подготовка 3D-модели:</strong> пивот руля в центре вращения (<code>0, 0, 0</code>), лицевая часть руля смотрит вдоль оси <strong><code>Z</code></strong> (ось вращения руля — <strong><code>Z</code></strong>). Импортируйте без коллизии и без создания материалов.</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m3_steering_wheel_axes.png" alt="Ориентация осей 3D-модели руля" loading="lazy">
+    <figcaption>Ориентация осей 3D-модели руля</figcaption>
+</figure>
+<ol>
+    <li><strong>Подключение в Акторе:</strong>
+<ul>
+    <li>Внутри <code>InteriorObjects</code> добавьте <code>StaticMeshComponent</code> с мешем руля (<code>NoCollision</code>).</li>
+    <li>Выставьте ему нужный <strong><code>Location</code></strong> и <strong><code>Rotation</code></strong> на рулевой колонке салона.</li>
+    <li>Добавьте <strong><code>ControlBlock</code></strong> с именем <strong><code>SteeringWheel</code></strong> (свойств добавлять не нужно).</li>
+</ul>
+</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m3_steering_wheel_cb.png" alt="Настройка ControlBlock SteeringWheel" loading="lazy">
+    <figcaption>Настройка ControlBlock SteeringWheel</figcaption>
+</figure>
+<hr>
+<h2 id="3-приборная-панель-dashboard-стрелки-и-индикаторы">3. Приборная панель (<code>Dashboard</code>): стрелки и индикаторы</h2>
+<h3 id="31-стрелки-приборной-панели">3.1. Стрелки приборной панели</h3>
+<ol>
+    <li><strong>Подготовка 3D-модели стрелки:</strong>
+<ul>
+    <li>Пивот стрелки в центре её вращения (<code>0, 0, 0</code>).</li>
+    <li>Лицевая сторона стрелки смотрит на зрителя по оси <strong><code>+Z</code></strong>, а сама стрелка (её «остриё») указывает вдоль оси <strong><code>+X</code></strong>.</li>
+</ul>
+</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m3_arrow_axes.png" alt="Ориентация 3D-модели стрелки приборной панели (Z на зрителя, X направление стрелки)" loading="lazy">
+    <figcaption>Ориентация 3D-модели стрелки приборной панели (Z на зрителя, X направление стрелки)</figcaption>
+</figure>
+<ol>
+    <li><strong>Установка на Акторе:</strong>
+<ul>
+    <li>Добавьте <code>StaticMeshComponent</code> для каждой стрелки (внутрь <code>InteriorObjects</code>, <code>NoCollision</code>).</li>
+    <li>Выставьте <code>Location</code> и <code>Rotation</code> каждой стрелки так, чтобы она <strong>указывала ровно на нулевое (минимальное) значение шкалы</strong>.</li>
+</ul>
+</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m3_arrow_zero_position.png" alt="Выставление стрелки в нулевое положение на шкале" loading="lazy">
+    <figcaption>Выставление стрелки в нулевое положение на шкале</figcaption>
+</figure>
+<ol>
+    <li><strong>Настройка <code>ControlBlock</code> для каждой стрелки:</strong></li>
+</ol>
+<table>
+    <thead>
+        <tr>
+            <th>Стрелка</th>
+            <th>Имя <code>ControlBlock</code></th>
+            <th>Свойства (<code>Properties</code>, тип <strong><code>Control Property Float</code></strong>)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Спидометр</strong></td>
+            <td><code>SpeedArrow</code></td>
+            <td>• <code>MaxAngle</code> — угол поворота (в градусах) от нуля до максимума шкалы<br>• <code>MaxValue</code> — максимальная скорость на шкале (например, <code>260.0</code>)</td>
+        </tr>
+        <tr>
+            <td><strong>Тахометр (RPM)</strong></td>
+            <td><code>RPMArrow</code></td>
+            <td>• <code>MaxAngle</code> — угол до максимума шкалы (например, <code>237.0</code>)<br>• <code>MaxValue</code> — максимальные обороты на шкале (например, <code>6000.0</code>)</td>
+        </tr>
+        <tr>
+            <td><strong>Уровень топлива</strong></td>
+            <td><code>FuelArrow</code></td>
+            <td>• <code>MaxAngle</code> — угол от пустого бака до полного</td>
+        </tr>
+        <tr>
+            <td><strong>Температура ОЖ</strong></td>
+            <td><code>CoolantTemperatureArrow</code></td>
+            <td>• <code>MaxAngle</code> — угол от минимума до максимума шкалы<br>• <code>MinValue</code> — минимальная температура на шкале (например, <code>50.0</code>)<br>• <code>MaxValue</code> — максимальная температура на шкале (например, <code>130.0</code>)</td>
+        </tr>
+    </tbody>
+</table>
+<p><em>(Наглядный пример заполнения <code>RPMArrow</code> приведён в <a href="./01_Minimal_Car_QuickStart.html#45-знакомство-с-controlblock-и-добавление-базовой-камеры-thirdpersonback">Модуле 1</a>.)</em></p>
+<h3 id="32-индикаторы-и-подсветка-приборной-панели-salonlights">3.2. Индикаторы и подсветка приборной панели (<code>SalonLights</code>)</h3>
+<p>Для работы контрольных ламп на приборной панели нужно выполнить 2 шага:</p>
+<h4 id="шаг-1-назначить-правильные-slot-name-на-меше-салона-приборки">Шаг 1. Назначить правильные <code>Slot Name</code> на меше салона / приборки</h4>
+<p>Для иконок удобно использовать готовые текстуры <code>T_Dashboard_D</code> (цвет) и <code>T_DashboardMask</code> / <code>T_Dashboard_E</code> из <code>CieBensVGruppe/Textures/</code> вместе с родительским материалом <strong><code>MI_Mod_Emissive_Ikons</code></strong>.</p>
+<figure class="doc-figure">
+    <img src="./images/m3_dashboard_icons_diffuse.png" alt="Атлас цветных иконок приборной панели T_Dashboard_D" loading="lazy">
+    <figcaption>Атлас цветных иконок приборной панели T_Dashboard_D</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m3_dashboard_icons_mask.png" alt="Маска свечения иконок приборной панели" loading="lazy">
+    <figcaption>Маска свечения иконок приборной панели</figcaption>
+</figure>
+<p>Откройте Static Mesh салона (и меши стрелок) и в <strong>Material Slots</strong> пропишите нужные <strong><code>Slot Name</code></strong> из сводной таблицы ниже.</p>
+<figure class="doc-figure">
+    <img src="./images/m3_dashboard_material_slots.png" alt="Назначение Slot Name для индикаторов на Static Mesh салона" loading="lazy">
+    <figcaption>Назначение Slot Name для индикаторов на Static Mesh салона</figcaption>
+</figure>
+<h4 id="шаг-2-добавить-controlblock-salonlights-или-скопировать-dashboardcontroller">Шаг 2. Добавить <code>ControlBlock</code> <code>SalonLights</code> (или скопировать <code>DashboardController</code>)</h4>
+<div class="alert alert-tip">
+    <div class="alert-title">Совет (TIP)</div>
+<p><strong>Самый быстрый способ для новичков:</strong><br>
+Если вам не нужна нестандартная схема индикаторов, откройте эталонный <code>V_CieBensVGruppe</code>, выберите в дереве <code>Components</code> компонент <strong><code>DashboardController</code></strong>, нажмите <strong><code>Ctrl + C</code></strong>, откройте ваш Актор <code>V_&lt;ИмяМода&gt;</code> и нажмите <strong><code>Ctrl + V</code></strong>! Все 23 привязки уже настроены внутри — вам останется только задать соответствующие <code>Slot Name</code> на меше салона.</p>
+
+</div>
+<p>Если вы настраиваете привязку вручную:</p>
+<ol>
+    <li>Создайте пустой <code>SceneComponent</code> (или выберите меш салона) и добавьте <strong><code>ControlBlock</code></strong> с именем <strong><code>SalonLights</code></strong>.</li>
+    <li>В <code>Properties</code> добавляйте пары:
+<ul>
+    <li><strong>Ключ (слева):</strong> имя выходного параметра из физики (<code>*Intensity</code>).</li>
+    <li><strong>Значение (справа):</strong> тип <strong><code>Control Property String Array</code></strong>, внутри <code>Values</code> — один или несколько <strong><code>Slot Name</code></strong> материалов, свечением которых управляет этот параметр.</li>
+</ul>
+</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m3_salonlights_cb.png" alt="Настройка ControlBlock SalonLights с массивом имён слотов материалов" loading="lazy">
+    <figcaption>Настройка ControlBlock SalonLights с массивом имён слотов материалов</figcaption>
+</figure>
+<h4 id="сводная-таблица-индикаторов-и-подсветки-salonlights">Сводная таблица индикаторов и подсветки (<code>SalonLights</code>)</h4>
+<div class="alert alert-warning">
+    <div class="alert-title">Внимание (WARNING)</div>
+<p>Обратите внимание на точное написание слота <strong><code>SpeedometrArrow</code></strong> (без буквы <code>e</code> после <code>t</code>) — писать строго так!</p>
+
+</div>
+<table>
+    <thead>
+        <tr>
+            <th>Параметр из физики (ключ в <code>SalonLights</code>)</th>
+            <th>Рекомендуемый <code>Slot Name</code> материала</th>
+            <th>Назначение</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>LowBeamIconIntensity</code></td>
+            <td><code>LowBeamIcon</code></td>
+            <td>Индикатор ближнего света фар</td>
+        </tr>
+        <tr>
+            <td><code>HighBeamIconIntensity</code></td>
+            <td><code>HighBeamIcon</code></td>
+            <td>Индикатор дальнего света фар</td>
+        </tr>
+        <tr>
+            <td><code>ParkingLightsIntensity</code></td>
+            <td><code>ParkingLightsIcon</code></td>
+            <td>Индикатор габаритных огней</td>
+        </tr>
+        <tr>
+            <td><code>FrontFogLightsIntensity</code></td>
+            <td><code>FrontFogLightsIcon</code></td>
+            <td>Индикатор передних противотуманных фар</td>
+        </tr>
+        <tr>
+            <td><code>RearFogLightsIntensity</code></td>
+            <td><code>RearFogLightsIcon</code></td>
+            <td>Индикатор задних противотуманных фонарей</td>
+        </tr>
+        <tr>
+            <td><code>LeftTurnLightIconIntensity</code></td>
+            <td><code>LeftTurnLightIcon</code> <em>(или общий <code>TurnLightIcon</code>)</em></td>
+            <td>Индикатор левого поворотника / аварийки</td>
+        </tr>
+        <tr>
+            <td><code>RightTurnLightIconIntensity</code></td>
+            <td><code>RightTurnLightIcon</code> <em>(или общий <code>TurnLightIcon</code>)</em></td>
+            <td>Индикатор правого поворотника / аварийки</td>
+        </tr>
+        <tr>
+            <td><code>HazardLightIconIntensity</code></td>
+            <td><code>HazardLightIcon</code></td>
+            <td>Индикатор кнопки аварийной сигнализации</td>
+        </tr>
+        <tr>
+            <td><code>SafetyBeltIconIntensity</code></td>
+            <td><code>SafetyBeltIcon</code></td>
+            <td>Индикатор непристёгнутого ремня безопасности</td>
+        </tr>
+        <tr>
+            <td><code>ParkingBrakeIconIntensity</code></td>
+            <td><code>ParkingBrakeIcon</code></td>
+            <td>Индикатор стояночного тормоза (ручника)</td>
+        </tr>
+        <tr>
+            <td><code>BatteryIconIntensity</code></td>
+            <td><code>BatteryIcon</code></td>
+            <td>Индикатор разряда аккумулятора</td>
+        </tr>
+        <tr>
+            <td><code>FuelIconIntensity</code></td>
+            <td><code>FuelIcon</code></td>
+            <td>Индикатор критического (резервного) уровня топлива</td>
+        </tr>
+        <tr>
+            <td><code>OilIconIntensity</code></td>
+            <td><code>OilIcon</code></td>
+            <td>Индикатор низкого давления масла ДВС</td>
+        </tr>
+        <tr>
+            <td><code>OverheatIconIntensity</code></td>
+            <td><code>OverheatIcon</code></td>
+            <td>Индикатор перегрева охлаждающей жидкости</td>
+        </tr>
+        <tr>
+            <td><code>EmergencyStopIconIntensity</code></td>
+            <td><code>EmergencyStopIcon</code></td>
+            <td>Критическая лампа «STOP» (немедленно остановить и заглушить ДВС)</td>
+        </tr>
+        <tr>
+            <td><code>PowerSteeringIconIntensity</code></td>
+            <td><code>PowerSteeringIcon</code></td>
+            <td>Индикатор неисправности усилителя руля</td>
+        </tr>
+        <tr>
+            <td><code>AbsActiveIconIntensity</code></td>
+            <td><code>AbsIcon</code></td>
+            <td>Индикатор срабатывания / проверки системы ABS</td>
+        </tr>
+        <tr>
+            <td><code>AbsDisableIconIntensity</code></td>
+            <td><code>AbsIcon</code></td>
+            <td>Индикатор отключения / неисправности системы ABS</td>
+        </tr>
+        <tr>
+            <td><code>TcsActiveIconIntensity</code></td>
+            <td><code>TCSActiveIcon</code></td>
+            <td>Индикатор активного срабатывания системы стабилизации TCS (ESP)</td>
+        </tr>
+        <tr>
+            <td><code>TcsDisableIconIntensity</code></td>
+            <td><code>TCSDisableIcon</code></td>
+            <td>Индикатор выключенной системы стабилизации TCS (ESP)</td>
+        </tr>
+        <tr>
+            <td><code>AirbagIconIntensity</code></td>
+            <td><code>AirbagIcon</code></td>
+            <td>Индикатор подушки безопасности (самодиагностика при включении зажигания)</td>
+        </tr>
+        <tr>
+            <td><code>ExhaustSystemIconIntensity</code></td>
+            <td><code>ExhaustSystemIcon</code></td>
+            <td>Индикатор неисправности выхлопной системы / Check Engine</td>
+        </tr>
+        <tr>
+            <td><code>CheckIconsIntensity</code></td>
+            <td><code>CheckIcons</code></td>
+            <td>Вспомогательный канал: загорается только при самодиагностике ламп при включении зажигания (для декоративных иконок без отдельной логики)</td>
+        </tr>
+        <tr>
+            <td><code>DashboardIntensity</code></td>
+            <td><code>Dashboard</code>, <code>SpeedometrArrow</code>, <code>RPMArrow</code>, <code>FuelArrow</code>, <code>TemperatureArrow</code>, <code>InteriorButton</code>, <code>MainDisplay</code>, <code>SecondDisplay</code></td>
+            <td>Общая подсветка приборной панели, стрелок, кнопок салона и дисплеев</td>
+        </tr>
+    </tbody>
+</table>
+<div class="alert alert-note">
+    <div class="alert-title">Примечание (NOTE)</div>
+<p><strong>Про бортовые мониторы / мультимедиа-экраны:</strong><br>
+На текущий момент отдельная инструкция и функционал настройки интерактивных мониторов в модах отсутствуют (можно использовать статическую подсветку через слоты <code>MainDisplay</code> / <code>SecondDisplay</code>).</p>
+
+</div>
+<hr>
+<h2 id="4-игровые-камеры-автомобиля">4. Игровые камеры автомобиля</h2>
+<p>Все камеры настраиваются одинаково: вы добавляете компонент в Актор <code>V_&lt;ИмяМода&gt;</code>, выставляете его положение/поворот и вешаете <strong><code>ControlBlock</code></strong> с именем <strong><code>Camera</code></strong>.</p>
+<table>
+    <thead>
+        <tr>
+            <th>Тип камеры (<code>Type</code>, <code>String</code>)</th>
+            <th>Какой компонент создать</th>
+            <th>Дополнительные свойства</th>
+            <th>Как расположить</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong><code>ThirdPersonBack</code></strong></td>
+            <td><code>SceneComponent</code></td>
+            <td>Опц. <code>ArmLength</code> (<code>Float</code>, напр. <code>600.0</code>)</td>
+            <td>Позиция задаёт центр вращения камеры (обычно центр автомобиля). Камера смотрит сзади.</td>
+        </tr>
+        <tr>
+            <td><strong><code>ThirdPersonFront</code></strong></td>
+            <td><code>SceneComponent</code></td>
+            <td>Опц. <code>ArmLength</code> (<code>Float</code>)</td>
+            <td>Позиция задаёт центр вращения камеры. Камера смотрит спереди.</td>
+        </tr>
+        <tr>
+            <td><strong><code>FirstPerson</code></strong></td>
+            <td><code>CameraComponent</code> или <code>SceneComponent</code></td>
+            <td>Нет</td>
+            <td>Позиция и поворот глаз водителя в салоне (удобно использовать <code>CameraComponent</code>, чтобы сразу видеть превью кадра в редакторе!).</td>
+        </tr>
+        <tr>
+            <td><strong><code>Windshield</code></strong></td>
+            <td><code>CameraComponent</code> или <code>SceneComponent</code></td>
+            <td>Нет</td>
+            <td>Вид от лобового стекла / капота (выставьте позицию и поворот).</td>
+        </tr>
+        <tr>
+            <td><strong><code>TopDown</code></strong></td>
+            <td><code>SceneComponent</code></td>
+            <td>Опц. <code>ArmLength</code> (<code>Float</code>)</td>
+            <td>Позиция — строго в центре автомобиля (камера вида сверху).</td>
+        </tr>
+    </tbody>
+</table>
+<figure class="doc-figure">
+    <img src="./images/m1_camera_thirdperson_cb.png" alt="Камера ThirdPersonBack и ControlBlock Camera (используйте правильное имя ArmLength)" loading="lazy">
+    <figcaption>Камера ThirdPersonBack и ControlBlock Camera (используйте правильное имя ArmLength)</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m3_camera_firstperson.png" alt="Расположение камеры FirstPerson (вид от глаз водителя)" loading="lazy">
+    <figcaption>Расположение камеры FirstPerson (вид от глаз водителя)</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m3_camera_windshield.png" alt="Расположение камеры Windshield (вид с лобового стекла)" loading="lazy">
+    <figcaption>Расположение камеры Windshield (вид с лобового стекла)</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m3_camera_topdown.png" alt="Расположение камеры TopDown (вид сверху в центре авто)" loading="lazy">
+    <figcaption>Расположение камеры TopDown (вид сверху в центре авто)</figcaption>
+</figure>
+<hr>
+<h2 id="5-посадка-водителя-настройка-сидений-seats">5. Посадка водителя (настройка сидений <code>Seats</code>)</h2>
+<p>На текущий момент в пользовательских автомобилях можно посадить только водителя. Для этого используется <strong>сокет на Static Mesh сиденья/салона</strong> и <strong><code>ControlBlock</code> <code>Seats</code></strong>.</p>
+<h3 id="шаг-1-создание-сокета-_landing-в-static-mesh">Шаг 1. Создание сокета <code>_Landing</code> в Static Mesh</h3>
+<ol>
+    <li>Откройте Static Mesh, содержащий водительское сиденье (обычно это меш салона), двойным кликом.</li>
+    <li>В верхнем меню откройте <strong>Window → Socket Manager</strong>.</li>
+    <li>Нажмите <strong><code>+</code></strong> (Create Socket) и назовите сокет по правилу <strong><code>&lt;ИмяНабора&gt;_Landing</code></strong>, например <strong><code>Seat0_Landing</code></strong>.
+<ul>
+    <li><code>&lt;ИмяНабора&gt;</code> — любое удобное имя на латинице (в примере <code>Seat0</code>).</li>
+    <li><code>_Landing</code> — обязательный программный суффикс (на текущий момент требуется <strong>только</strong> <code>_Landing</code>).</li>
+</ul>
+</li>
+    <li>Переместите сокет в угол стыка подушки и спинки водительского сиденья так, чтобы <strong>красная ось <code>+X</code></strong> смотрела вперёд параллельно подушке сиденья (в сторону руля), а <strong>синяя ось <code>+Z</code></strong> — вверх.</li>
+    <li>Нажмите <strong>Save</strong>.</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m3_seat_socket_front.png" alt="Позиция сокета Seat0_Landing на водительском сиденье — вид спереди" loading="lazy">
+    <figcaption>Позиция сокета Seat0_Landing на водительском сиденье — вид спереди</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m3_seat_socket_side.png" alt="Позиция сокета Seat0_Landing на водительском сиденье — вид сбоку" loading="lazy">
+    <figcaption>Позиция сокета Seat0_Landing на водительском сиденье — вид сбоку</figcaption>
+</figure>
+<h3 id="шаг-2-добавление-controlblock-seats-в-акторе">Шаг 2. Добавление <code>ControlBlock</code> <code>Seats</code> в Акторе</h3>
+<ol>
+    <li>Откройте Актор <code>V_&lt;ИмяМода&gt;</code> и выделите тот <code>StaticMeshComponent</code>, в меше которого вы только что создали сокет <code>Seat0_Landing</code>.</li>
+    <li>Добавьте <code>Asset User Data → Control Asset Data</code> → <strong><code>ControlBlock</code></strong> с именем <strong><code>Seats</code></strong>:
+<ul>
+    <li>Свойство 1: имя <strong><code>Names</code></strong>, тип <strong><code>Control Property String Array</code></strong> → добавьте элемент <strong><code>Seat0</code></strong> (только префикс, <strong>без</strong> <code>_Landing</code>!).</li>
+    <li>Свойство 2 <em>(если на этом меше находится место водителя)</em>: имя <strong><code>DriverIndex</code></strong>, тип <strong><code>Control Property Int</code></strong> → укажите индекс водительского места из массива <code>Names</code> (для <code>Index [0]</code> это <strong><code>0</code></strong>).</li>
+</ul>
+</li>
+    <li>Нажмите <strong>Compile</strong> и <strong>Save</strong>.</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m3_seat_cb.png" alt="Настройка ControlBlock Seats с Names и DriverIndex" loading="lazy">
+    <figcaption>Настройка ControlBlock Seats с Names и DriverIndex</figcaption>
+</figure>
+<hr>
+<h2 id="6-место-для-игрушки-в-салоне-cartoy">6. Место для игрушки в салоне (<code>CarToy</code>)</h2>
+<p>Чтобы игроки могли ставить на торпедо пользовательские игрушки из мастерской, нужно указать точку крепления:</p>
+<ol>
+    <li>В Акторе <code>V_&lt;ИмяМода&gt;</code> добавьте любой компонент, унаследованный от <code>SceneComponent</code> (удобнее всего использовать <code>SkeletalMeshComponent</code> или <code>StaticMeshComponent</code> с приложенной к шаблону моделью космонавта <strong><code>SM_Cosmonaft_Anim</code></strong> из <code>Content/Common/Enviroment/Cosmonaft/</code> — она поможет точно прикинуть размер и поворот на торпедо, а в самой игре эта тестовая модель автоматически скроется!).</li>
+    <li>Выставьте <code>NoCollision</code>, расположите компонент на торпедо и добавьте <strong><code>ControlBlock</code></strong> с именем <strong><code>CarToy</code></strong> (без свойств).</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m3_cartoy_cosmonaft.png" alt="Расстановка точки для игрушки в салоне с помощью превью-модели SM_Cosmonaft_Anim" loading="lazy">
+    <figcaption>Расстановка точки для игрушки в салоне с помощью превью-модели SM_Cosmonaft_Anim</figcaption>
+</figure>
+<hr>
+<p><strong>Следующий шаг:</strong> переходите к <strong><a href="./04_Mirrors_and_Wipers.html">Модулю 4. Зеркала заднего вида и дворники</a></strong>, чтобы настроить обзорность и работу стеклоочистителей.</p>
+
+</body>
+</html>

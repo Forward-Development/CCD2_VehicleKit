@@ -1,0 +1,541 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 1. Quick Start: Minimal Working Vehicle</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({ startOnLoad: true });</script>
+    <style>
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 32px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1f2328;
+            background-color: #ffffff;
+        }
+        h1, h2, h3, h4 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        h1 { font-size: 2em; padding-bottom: 0.3em; border-bottom: 1px solid #d0d7de; }
+        h2 { font-size: 1.5em; padding-bottom: 0.3em; border-bottom: 1px solid #d0d7de; }
+        h3 { font-size: 1.25em; }
+        hr { height: 0.25em; padding: 0; margin: 24px 0; background-color: #d0d7de; border: 0; }
+        a { color: #0969da; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+        th, td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; vertical-align: top; }
+        th { background: #f6f8fa; font-weight: 600; }
+        tr:nth-child(even) { background: #f6f8fa; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        code { background: #eff1f3; padding: 2px 5px; border-radius: 4px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 85%; }
+        pre { background: #f6f8fa; padding: 14px; border-radius: 6px; overflow-x: auto; border: 1px solid #d0d7de; }
+        pre code { background: transparent; padding: 0; font-size: 100%; }
+        pre.mermaid { background: #ffffff; text-align: center; }
+        .alert { padding: 12px 16px; margin: 16px 0; border-left: 4px solid; border-radius: 6px; background: #f6f8fa; }
+        .alert-title { font-weight: 600; margin-bottom: 6px; }
+        .alert p:last-child, .alert ul:last-child, .alert ol:last-child { margin-bottom: 0; }
+        .alert-note { border-left-color: #0969da; background-color: #ddf4ff; }
+        .alert-note .alert-title { color: #0969da; }
+        .alert-tip { border-left-color: #1a7f37; background-color: #dafbe1; }
+        .alert-tip .alert-title { color: #1a7f37; }
+        .alert-important { border-left-color: #8250df; background-color: #fbefff; }
+        .alert-important .alert-title { color: #8250df; }
+        .alert-warning { border-left-color: #9a6700; background-color: #fff8c5; }
+        .alert-warning .alert-title { color: #9a6700; }
+        .alert-caution { border-left-color: #cf222e; background-color: #ffebe9; }
+        .alert-caution .alert-title { color: #cf222e; }
+        ul.checklist { list-style-type: none; padding-left: 0; }
+        ul.checklist li { margin-bottom: 8px; }
+        ul.checklist input[type="checkbox"] { margin-right: 8px; }
+        figure.doc-figure { margin: 16px 0; padding: 10px; background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 6px; text-align: center; }
+        figure.doc-figure img { max-width: 100%; height: auto; border-radius: 4px; display: block; margin: 0 auto; }
+        figure.doc-figure figcaption { margin-top: 8px; font-size: 0.9em; color: #57606a; }
+    </style>
+</head>
+<body>
+<h1 id="module-1-quick-start-minimal-working-vehicle">Module 1. Quick Start: Minimal Working Vehicle</h1>
+<p><strong>Navigation:</strong> <a href="./README.html">README</a> | <strong>01. Minimal Car</strong> | <a href="./02_Exterior_Lights_and_World.html">02. Exterior, Lights &amp; World</a> | <a href="./03_Interior_Dashboard_Cameras_Seats.html">03. Interior, Dashboard &amp; Cameras</a> | <a href="./04_Mirrors_and_Wipers.html">04. Mirrors &amp; Wipers</a> | <a href="./05_Sounds_and_FMOD.html">05. Sounds &amp; FMOD</a> | <a href="./06_Advanced_Specs_Logic_and_Reference.html">06. Specs, Logic &amp; Reference</a></p>
+<hr>
+<p>In this module, you will go <strong>from an empty folder to a drivable vehicle in-game</strong>: prepare and import a body and 4 wheels, assign basic materials, hook up minimal physics, assemble the Vehicle Actor with a basic camera, create the specification asset (<code>DA_*</code>), build a <code>.pak</code>, test it locally in <strong>City Car Driving 2.0</strong>, and learn how to publish it to Steam Workshop.</p>
+<div class="alert alert-note">
+    <div class="alert-title">Note</div>
+<p><strong>What is intentionally omitted from Module 1:</strong><br>
+Interior, mirrors, wipers, headlights, license plates, custom sounds, <code>LogicBox</code>, and <code>FuelTank</code> are <strong>not required</strong> for the car to spawn and drive. You can add all of those step by step in Modules 2–6.</p>
+
+</div>
+<pre class="mermaid">
+flowchart TD
+    S1["Step 1. Mod Folder &amp; Physics Configs"] --&gt; S2["Step 2. 3D Export (Body + 4 Wheels)"]
+    S2 --&gt; S3["Step 3. UE 5.8 Import &amp; Basic Materials"]
+    S3 --&gt; S4["Step 4. Assemble Actor V_ModName&lt;br/&gt;(Body + 4 Wheels + Camera)"]
+    S4 --&gt; S5["Step 5. Minimal Vehicle.ini Edits&lt;br/&gt;(Mount, Length, Radius)"]
+    S5 --&gt; S6["Step 6. Vehicle Spec DA_ModName&lt;br/&gt;(PDA_PrototypedVehicleSpecification)"]
+    S6 --&gt; S7["Step 7. Build .pak, Local Test&lt;br/&gt;&amp; Steam Workshop Upload"]
+</pre>
+<hr>
+<h2 id="step-1-creating-the-mod-folder--copying-base-physics">Step 1. Creating the Mod Folder &amp; Copying Base Physics</h2>
+<h3 id="11-create-the-mod-folder-in-ue">1.1. Create the Mod Folder in UE</h3>
+<ol>
+    <li>Open <code>CityCarDriving2.uproject</code> in Unreal Engine 5.8.</li>
+    <li>Open <strong>Content Browser</strong> (<code>Ctrl + Space</code>), click <strong>Settings</strong> (top-right gear icon), and make sure <strong>Show Plugin Content</strong> is checked.</li>
+    <li>In the left folder tree, navigate to <code>All → Plugins → Mods Content</code>.</li>
+    <li>Right-click in the empty area → <strong>New Folder</strong> and name it using Latin letters with no spaces, e.g. <strong><code>MyFirstCar</code></strong>.</li>
+    <li>Inside <code>MyFirstCar</code>, create subfolders to keep things tidy: <code>Meshes</code>, <code>Materials</code>, <code>Textures</code>.</li>
+</ol>
+<h3 id="12-copy-base-physics-files-vehiclelib">1.2. Copy Base Physics Files (<code>VehicleLib</code>)</h3>
+<ol>
+    <li>In the Content Browser, right-click your <code>MyFirstCar</code> folder → <strong>Show in Explorer</strong> — Windows File Explorer will open <code>...\Plugins\Mods\Content\MyFirstCar\</code>.</li>
+    <li>Open another Explorer window to browse the ready-made physics samples:
+<ul>
+    <li><code>Docs\Samples\VehicleLibConfigs\Vehicle012_HangugEclauto\</code> <em>(petrol sedan, great general-purpose starting point)</em></li>
+    <li>or <code>Docs\Samples\VehicleLibConfigs\Vehicle002_UlgaresGroberolf\</code></li>
+    <li>or <code>Plugins\Mods\Content\CieBensVGruppe\</code> <em>(AWD diesel)</em>.</li>
+</ul>
+</li>
+    <li>Copy three files into <code>Plugins\Mods\Content\MyFirstCar\</code>:
+<ul>
+    <li><strong><code>Vehicle.ini</code></strong></li>
+    <li><strong><code>options.xml</code></strong></li>
+    <li><strong><code>Engine.csv</code></strong> <em>(if your chosen sample uses differently named <code>.csv</code> files, copy those; if copying from <code>CieBensVGruppe</code>, also copy <code>AwdAuto.xml</code> and <code>AwdManual.xml</code>)</em>.</li>
+</ul>
+</li>
+</ol>
+<h3 id="13-update-relative-paths-inside-vehicleini-and-optionsxml">1.3. Update Relative Paths Inside <code>Vehicle.ini</code> and <code>options.xml</code></h3>
+<p>Open the copied <code>Vehicle.ini</code> and <code>options.xml</code> in any text editor (Notepad, Notepad++, VS Code) saved as <strong>UTF-8</strong>.</p>
+<p>All paths inside these files are resolved relative to the base game's <code>Content/</code> folder:</p>
+<ul>
+    <li>Shared game files (<code>Common/Vehicles/MotorCars/...</code>) <strong>do not need changes</strong> — they resolve automatically.</li>
+    <li>References to files <strong>inside your mod folder</strong> must start with <code>../Plugins/Mods/Content/&lt;ModName&gt;/</code>.</li>
+</ul>
+<p>Update the sample car name to your mod folder name (<code>MyFirstCar</code>) in the lines below:</p>
+<p><strong>In <code>Vehicle.ini</code>:</strong></p>
+<pre><code class="language-ini">[Vehicle]
+; If using a standard built-in game schema (recommended to start):
+DefaultSchema = Common/Vehicles/MotorCars/Schemes/FwdAuto.xml
+; (or if you copied a local schema into your mod folder: ../Plugins/Mods/Content/MyFirstCar/AwdAuto.xml)
+
+[Engine]
+PowerCurves = ../Plugins/Mods/Content/MyFirstCar/Engine.csv</code></pre>
+<p><strong>In <code>options.xml</code>:</strong></p>
+<pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;Options&gt;
+    &lt;AvailableOptions&gt;
+        &lt;Option Name="TransmissionType" SetSchema="true"&gt;
+            &lt;OptionValue Value="Auto" SchemaName="Common/Vehicles/MotorCars/Schemes/FwdAuto.xml" /&gt;
+            &lt;OptionValue Value="Manual" SchemaName="Common/Vehicles/MotorCars/Schemes/FwdManual.xml" /&gt;
+        &lt;/Option&gt;
+    &lt;/AvailableOptions&gt;
+&lt;/Options&gt;</code></pre>
+<div class="alert alert-caution">
+    <div class="alert-title">Caution</div>
+<p><strong>Three strict <code>Vehicle.ini</code> syntax rules:</strong></p>
+<ol>
+    <li>The separator for lists and 3D vectors is <strong>a semicolon <code>;</code> with NO space before <code>;</code>!</strong>
+<ul>
+    <li>Correct: <code>Mount = 1.63; 0.85; 0.4455</code></li>
+    <li>Error: <code>Mount = 1.63 ; 0.85 ; 0.4455</code> (a space before <code>;</code> starts an inline comment and drops everything to the right!).</li>
+</ul>
+</li>
+    <li>Decimal separator is strictly a <strong>dot <code>.</code></strong> (never a comma).</li>
+    <li>Save files in <strong>UTF-8</strong> encoding.</li>
+</ol>
+
+</div>
+<hr>
+<h2 id="step-2-preparing--exporting-3d-models-body--4-wheels">Step 2. Preparing &amp; Exporting 3D Models (Body &amp; 4 Wheels)</h2>
+<h3 id="21-critical-coordinate--scale-rules-especially-for-blender">2.1. Critical Coordinate &amp; Scale Rules (Especially for Blender!)</h3>
+<div class="alert alert-warning">
+    <div class="alert-title">Warning</div>
+<p><strong>Read this carefully before exporting from Blender!</strong><br>
+In Unreal Engine, 1 unit = <strong>1 centimeter</strong>, the front of the car faces <strong><code>+X</code></strong>, and up is <strong><code>+Z</code></strong>.<br>
+<strong>You must NEVER scale the mesh or Actor inside Unreal Engine (<code>Scale</code> must always remain <code>1.0, 1.0, 1.0</code>) — otherwise physics and suspension will break!</strong></p>
+
+</div>
+<p>Recommendations for exporting <strong>FBX</strong> from <strong>Blender</strong>:</p>
+<ol>
+    <li><strong>Model scale:</strong>
+<ul>
+    <li>In Unreal Engine, the car must have real-world dimensions in centimeters (e.g., length ~450 cm, width ~180 cm, height ~150 cm).</li>
+    <li>If you modeled in Blender in meters (<code>Unit Scale = 1.0</code>) and export scaling causes issues, scale the model up by <strong>100x</strong> directly in Blender and apply transforms (<strong><code>Ctrl + A</code> → <code>Apply All Transforms</code></strong>), or work in centimeters from the start (<code>Scene Properties → Units → Metric</code>, <code>Unit Scale = 0.01</code>, <code>Length = Centimeters</code>) with <code>Scale = 1.0</code> applied.</li>
+</ul>
+</li>
+    <li><strong>Axis orientation in FBX Export (<code>File → Export → FBX</code>):</strong>
+<ul>
+    <li>Under <strong>Transform</strong>, set:
+<ul>
+    <li><strong>Forward:</strong> <code>-X Forward</code></li>
+    <li><strong>Up:</strong> <code>Z Up</code></li>
+</ul>
+</li>
+    <li>Under <strong>Geometry</strong>, set <strong>Smoothing:</strong> <code>Face</code> (prevents smoothing group warnings in UE).</li>
+</ul>
+</li>
+</ol>
+<h3 id="22-body-3d-model-requirements-body">2.2. Body 3D Model Requirements (<code>Body</code>)</h3>
+<figure class="doc-figure">
+    <img src="./images/m1_body_3d_axes.png" alt="3D body model orientation and axes" loading="lazy">
+    <figcaption>3D body model orientation and axes</figcaption>
+</figure>
+<ol>
+    <li>The main body volume should be a <strong>single unified mesh</strong> (extra trim pieces like bumpers or hood can be attached later as child meshes, while the primary physical body is one <code>Body</code> mesh).</li>
+    <li>The front of the car points along <strong><code>+X</code></strong>, centered at the world origin <code>(0, 0, 0)</code>.</li>
+    <li>All surfaces must have UV unwrapping on <strong>UV channel 0</strong>.</li>
+    <li>Functional elements (painted body, trim/chrome, glass, lamps) must each have their own <strong>Material ID</strong> (material slot).</li>
+</ol>
+<h3 id="23-wheel-3d-model-requirements-wheel">2.3. Wheel 3D Model Requirements (<code>Wheel</code>)</h3>
+<figure class="doc-figure">
+    <img src="./images/m1_wheel_3d_pivot.png" alt="Front-left wheel 3D model pivot and axes (CieBensVGruppe)" loading="lazy">
+    <figcaption>Front-left wheel 3D model pivot and axes (CieBensVGruppe)</figcaption>
+</figure>
+<ol>
+    <li>Each wheel's <strong>Pivot (Origin)</strong> must sit at the <strong>exact geometric center of the wheel</strong> <code>(0, 0, 0)</code>.</li>
+    <li>The wheel rotation axis is <strong><code>Y</code></strong> (rolling forward along <code>+X</code>).</li>
+    <li>Split materials into at least 2 slots: <strong>tire</strong> and <strong>rim</strong>.</li>
+    <li>If left and right wheels differ (directional tread or rim offset), export separate left/right meshes (or all 4 if rear tires are wider).</li>
+</ol>
+<hr>
+<h2 id="step-3-importing-models--setting-up-basic-materials-in-ue-58">Step 3. Importing Models &amp; Setting Up Basic Materials in UE 5.8</h2>
+<h3 id="31-importing-the-body-body">3.1. Importing the Body (<code>Body</code>)</h3>
+<ol>
+    <li>Open your <code>MyFirstCar/Meshes</code> folder in the Content Browser.</li>
+    <li>Drag and drop your body <code>.fbx</code> file from Explorer into the Content Browser (or click <strong>Import</strong>).</li>
+    <li>In the import dialog, verify these key settings:
+<ul>
+    <li><strong><code>Generate Missing Collision</code></strong> — <strong>ON</strong> (if you did not author custom <code>UCX_</code> collision in your 3D editor; the body requires collision for impacts!).</li>
+    <li><strong><code>Material Import Method</code></strong> — select <strong><code>Do Not Create Material</code></strong> (so UE doesn't auto-generate incompatible base materials).</li>
+    <li><strong><code>Build Nanite</code></strong> — <strong>OFF</strong> (Nanite is disabled in this project).</li>
+    <li><strong><code>Import Uniform Scale</code></strong> — leave at <strong><code>1.0</code></strong>.</li>
+</ul>
+</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m1_import_body_1.png" alt="Body Static Mesh import options — top section" loading="lazy">
+    <figcaption>Body Static Mesh import options — top section</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m1_import_body_2.png" alt="Body Static Mesh import options — transform and mesh settings" loading="lazy">
+    <figcaption>Body Static Mesh import options — transform and mesh settings</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m1_import_materials_none.png" alt="Import options — selecting Do Not Create Material" loading="lazy">
+    <figcaption>Import options — selecting Do Not Create Material</figcaption>
+</figure>
+<ol>
+    <li>Click <strong>Import All</strong>.</li>
+    <li><strong>Quick size check after import:</strong> double-click the imported body mesh. In the top-left of the 3D viewport, check <strong><code>Approx Size</code></strong>. A regular passenger car should read around <code>450 × 180 × 150</code> (centimeters). If it reads <code>4 × 2 × 1</code>, the model exported 100x too small — return to Step 2.1!</li>
+</ol>
+<h3 id="32-importing-the-wheels-wheel">3.2. Importing the Wheels (<code>Wheel</code>)</h3>
+<p>Import the wheels into <code>MyFirstCar/Meshes</code> the same way, <strong>with one critical difference</strong>:</p>
+<ul>
+    <li><strong><code>Generate Missing Collision</code></strong> — must be <strong>OFF</strong>! Wheel meshes must <strong>NOT</strong> have collision (road contact is simulated via <code>WheelRaycast</code> in <code>VehicleLib</code>).</li>
+    <li><strong><code>Material Import Method</code></strong> — <strong><code>Do Not Create Material</code></strong>.</li>
+</ul>
+<figure class="doc-figure">
+    <img src="./images/m1_import_wheel_nocollision.png" alt="Wheel import settings — Generate Missing Collision disabled" loading="lazy">
+    <figcaption>Wheel import settings — Generate Missing Collision disabled</figcaption>
+</figure>
+<h3 id="33-textures--basic-materials">3.3. Textures &amp; Basic Materials</h3>
+<div class="alert alert-caution">
+    <div class="alert-title">Caution</div>
+<p><strong>Core Material Rule in CCD 2.0:</strong><br>
+Mods <strong>do NOT support</strong> custom <code>Master Materials</code>!<br>
+You must strictly create <strong>Material Instances</strong> inheriting from the pre-built parent materials located at:<br>
+<code>Content/Common/MasterMaterials/VehicleMaterials/ModMaterials/</code></p>
+
+</div>
+<figure class="doc-figure">
+    <img src="./images/m1_master_materials_list.png" alt="All available MI_Mod_* parent materials" loading="lazy">
+    <figcaption>All available MI_Mod_* parent materials</figcaption>
+</figure>
+<h4 id="preparing-textures-if-importing-your-own">Preparing Textures (if importing your own)</h4>
+<p>Drag your textures (<code>.png</code> / <code>.tga</code>) into <code>MyFirstCar/Textures</code>. Double-click each imported texture:</p>
+<ol>
+    <li><strong>Virtual Texture (required for ALL mod textures!):</strong> in <strong>Details</strong> (right panel), search <code>Virtual</code> and enable <strong><code>Virtual Texture Streaming</code></strong>. A <code>VT</code> badge will appear in the texture thumbnail corner.</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m1_texture_virtual_texture.png" alt="Enabling Virtual Texture Streaming on a texture" loading="lazy">
+    <figcaption>Enabling Virtual Texture Streaming on a texture</figcaption>
+</figure>
+<ol>
+    <li><strong>MRA Map Compression</strong> <em>(channel-packed mask: R = Metallic, G = Roughness, B = Ambient Occlusion)</em>: search <code>Compression</code> in Details and set <strong><code>Compression Settings = Masks (no sRGB)</code></strong>.</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m1_texture_mra_mask.png" alt="Setting Compression Settings to Masks (no sRGB) for MRA maps" loading="lazy">
+    <figcaption>Setting Compression Settings to Masks (no sRGB) for MRA maps</figcaption>
+</figure>
+<ol>
+    <li>Click <strong>Save</strong> (<code>Ctrl + S</code>).</li>
+</ol>
+<h4 id="minimal-material-set-for-module-1">Minimal Material Set for Module 1</h4>
+<p>To make your car look clean right away, create 3 basic <strong>Material Instances</strong>:</p>
+<ol>
+    <li>Navigate to <code>Content/Common/MasterMaterials/VehicleMaterials/ModMaterials/</code> in the Content Browser.</li>
+    <li>Right-click a parent material → <strong>Create Material Instance</strong>, then move the created asset into your <code>MyFirstCar/Materials/</code> folder:
+<ul>
+    <li>From <strong><code>MI_Mod_CarPaint</code></strong> → <code>MI_MyFirstCar_Paint</code> (painted body — you can pick a paint color even without textures!).</li>
+    <li>From <strong><code>MI_Mod_Exterior</code></strong> → <code>MI_MyFirstCar_Exterior</code> (plastic, metal, wheel rims).</li>
+    <li>From <strong><code>MI_Mod_Tyre</code></strong> → <code>MI_MyFirstCar_Tyre</code> (tires).</li>
+</ul>
+</li>
+    <li>Double-click each <code>MI_*</code>, check the boxes next to parameters you want to override (color/textures), assign your textures, and click <strong>Save</strong>.</li>
+    <li>Open the body and wheel Static Meshes and assign your <code>MI_*</code> assets to their <strong>Material Slots</strong> in Details. Click <strong>Save</strong>.</li>
+</ol>
+<p><em>(Full reference for all 14 <code>MI_Mod_*</code> materials, liveries, glass, and lights is in <a href="./02_Exterior_Lights_and_World.html">Module 2</a> and <a href="./03_Interior_Dashboard_Cameras_Seats.html">Module 3</a>.)</em></p>
+<hr>
+<h2 id="step-4-assembling-the-minimal-vehicle-actor-v_myfirstcar">Step 4. Assembling the Minimal Vehicle Actor (<code>V_MyFirstCar</code>)</h2>
+<p>The Vehicle Actor is a Blueprint container holding the body, wheels, and cameras.</p>
+<h3 id="41-general-rules-for-all-actor-nodes">4.1. General Rules for All Actor Nodes</h3>
+<p>Keep these 3 rules in mind across every module:</p>
+<ol>
+    <li><strong><code>Scale</code> is always <code>(1.0, 1.0, 1.0)</code></strong> on the Actor and every component.</li>
+    <li><strong>Collision off by default:</strong> on every component except <code>Body</code>, set <code>Collision Presets = NoCollision</code> and disable <code>Receives Decals</code>.</li>
+    <li><strong>Unmodified Transform:</strong> important named nodes (such as <code>Body</code>) keep <code>Location</code> and <code>Rotation</code> at <code>(0, 0, 0)</code> unless explicitly stated otherwise. You may attach additional decorative child meshes to any node (with <code>NoCollision</code> and any desired Transform).</li>
+</ol>
+<h3 id="42-create-the-actor-blueprint">4.2. Create the Actor Blueprint</h3>
+<ol>
+    <li>Open the root of your mod folder <code>Plugins/Mods Content/MyFirstCar/</code>.</li>
+    <li>Right-click in empty space → <strong>Blueprint Class</strong>.</li>
+    <li>Pick <strong>Actor</strong> as the parent class.</li>
+    <li>Name it <strong><code>V_MyFirstCar</code></strong> and double-click to open it.</li>
+</ol>
+<h3 id="43-add-the-body-body">4.3. Add the Body (<code>Body</code>)</h3>
+<ol>
+    <li>In the left <strong>Components</strong> panel, click <strong><code>+ Add</code></strong> → search <code>Static Mesh</code> → select <strong>Static Mesh</strong>.</li>
+    <li>Rename it strictly to <strong><code>Body</code></strong> (case-sensitive!). Make sure it is attached to <code>DefaultSceneRoot</code> with <code>Location</code> and <code>Rotation</code> at <code>(0, 0, 0)</code>.</li>
+    <li>Select <strong><code>Body</code></strong> and configure in <strong>Details</strong> (right panel):
+<ul>
+    <li><strong>Static Mesh:</strong> assign your imported body mesh.</li>
+    <li><strong>Collision → Collision Presets:</strong> select <strong><code>BlockAllDynamic</code></strong>.</li>
+    <li><strong>Physics → Mass (kg):</strong> check the box next to <code>Mass (kg)</code> (<code>Override Mass</code>) and enter the <strong>sprung body mass</strong> in kilograms (curb weight minus the 4 wheels; typically <code>1200–1500</code> kg for a sedan, <code>2100</code> kg for a minivan).</li>
+    <li><strong>Physics → Advanced → Center Of Mass Offset:</strong> offset in centimeters <code>(X, Y, Z)</code> relative to the geometric collision center. For a first test, leave at <code>(0, 0, 0)</code> or lower <code>Z</code> slightly (e.g., <code>Z = -20</code>) for extra stability. <em>(See <a href="../VehicleLib_HTML/00_Quick_Start.html">VehicleLib_MD/00_Quick_Start.md</a> for the exact weight-distribution formula.)</em></li>
+</ul>
+</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m1_body_physics_mass.png" alt="Mass and Center Of Mass Offset settings on the Body component" loading="lazy">
+    <figcaption>Mass and Center Of Mass Offset settings on the Body component</figcaption>
+</figure>
+<h3 id="44-add-the-4-wheels-wheel">4.4. Add the 4 Wheels (<code>Wheel*</code>)</h3>
+<div class="alert alert-caution">
+    <div class="alert-title">Caution</div>
+<p><strong>In standard schemas, the rear axle is named <code>Back</code> — NOT <code>Rear</code>!</strong><br>
+Use these exact 4 component names:</p>
+<ul>
+    <li><code>WheelFrontLeft</code> — front left</li>
+    <li><code>WheelFrontRight</code> — front right</li>
+    <li><code>WheelBackLeft</code> — rear left</li>
+    <li><code>WheelBackRight</code> — rear right</li>
+</ul>
+
+</div>
+<p>In Module 1 (without suspension calipers), attach wheels directly to <code>Body</code>:</p>
+<ol>
+    <li>Select <strong><code>Body</code></strong> in <strong>Components</strong>, click <strong><code>+ Add</code></strong> → <strong>Static Mesh</strong>, and name it <strong><code>WheelFrontLeft</code></strong>.</li>
+    <li>Assign your front-left wheel mesh, set <code>Collision Presets = NoCollision</code>, and uncheck <code>Receives Decals</code>.</li>
+    <li>Under <strong>Transform → Location</strong>, set the wheel position in centimeters at <strong>full suspension compression</strong> (the top of suspension travel, matching <code>Mount</code> in <code>Vehicle.ini</code>; see Step 5).</li>
+    <li>Repeat for <code>WheelFrontRight</code>, <code>WheelBackLeft</code>, and <code>WheelBackRight</code>.</li>
+</ol>
+<p><em>(When you add non-rotating brake calipers <code>SuspensionFrontLeft/Right/BackLeft/Right</code> in <a href="./02_Exterior_Lights_and_World.html">Module 2</a>, <code>Location</code> moves to <code>Suspension*</code> and each child <code>Wheel*</code> becomes <code>Location = (0, 0, 0)</code>.)</em></p>
+<pre class="mermaid">
+flowchart TD
+    Root["DefaultSceneRoot&lt;br/&gt;Scale = (1, 1, 1)"] --&gt; Body["Body (StaticMeshComponent)&lt;br/&gt;Collision: BlockAllDynamic&lt;br/&gt;Mass (kg) + Center Of Mass Offset"]
+    Body --&gt; WFL["WheelFrontLeft&lt;br/&gt;NoCollision, Location = Mount (cm)"]
+    Body --&gt; WFR["WheelFrontRight&lt;br/&gt;NoCollision, Location = Mount (cm)"]
+    Body --&gt; WBL["WheelBackLeft&lt;br/&gt;NoCollision, Location = Mount (cm)"]
+    Body --&gt; WBR["WheelBackRight&lt;br/&gt;NoCollision, Location = Mount (cm)"]
+    Root --&gt; Cam["ThirdPersonBack (SceneComponent)&lt;br/&gt;ControlBlock: Camera"]
+</pre>
+<h3 id="45-learning-controlblock-and-adding-a-basic-camera-thirdpersonback">4.5. Learning <code>ControlBlock</code> and Adding a Basic Camera (<code>ThirdPersonBack</code>)</h3>
+<p>Let's add one basic third-person camera so you get a good view of your car right away, and learn CCD 2.0's core configuration mechanism — <strong><code>ControlBlock</code></strong>.</p>
+<div class="alert alert-note">
+    <div class="alert-title">Note</div>
+<p><strong>What about the other cameras (<code>FirstPerson</code>, <code>Windshield</code>, <code>ThirdPersonFront</code>, <code>TopDown</code>)?</strong><br>
+Any cameras you haven't manually created yet will <strong>still exist in-game</strong>, but at default positions that may not quite fit your specific vehicle's dimensions. You can fine-tune all 5 cameras in <a href="./03_Interior_Dashboard_Cameras_Seats.html#4-vehicle-cameras">Module 3</a>.</p>
+
+</div>
+<ol>
+    <li>Select <code>DefaultSceneRoot</code> → click <strong><code>+ Add</code></strong> → <strong>Scene</strong> (creates a <code>SceneComponent</code>). Name it <strong><code>Cam_ThirdPersonBack</code></strong>.</li>
+    <li>Set its <strong>Location</strong> roughly at the center of the car (camera orbit pivot, e.g., <code>X = 0, Y = 0, Z = 130</code> cm).</li>
+    <li>Attach a <strong><code>ControlBlock</code></strong> (memorize this workflow — it is used throughout the entire guide):
+<ul>
+    <li>With <code>Cam_ThirdPersonBack</code> selected, type <strong><code>Asset User Data</code></strong> in the <strong>Details</strong> search box.</li>
+    <li>Click <strong><code>+</code></strong> next to <code>Asset User Data</code> → in <code>Index [0]</code>, pick <strong><code>Control Asset Data</code></strong>.</li>
+    <li>Expand <code>Index [0]</code> → click <strong><code>+</code></strong> next to <strong><code>Control Blocks</code></strong>.</li>
+    <li>In the left text box, type <strong><code>Camera</code></strong>. Make sure the right dropdown says <strong><code>Control Block</code></strong>.</li>
+    <li>Expand <strong><code>Camera</code></strong> → click <strong><code>+</code></strong> next to <strong><code>Properties</code></strong> twice to add 2 properties:
+<ol>
+    <li>Left name: <strong><code>Type</code></strong> → right type: <strong><code>Control Property String</code></strong> → expand and set <code>Value</code> to <strong><code>ThirdPersonBack</code></strong>.</li>
+    <li><em>(Optional)</em> Left name: <strong><code>ArmLength</code></strong> → right type: <strong><code>Control Property Float</code></strong> → expand and set <code>Value</code> to the camera distance in centimeters, e.g. <strong><code>600.0</code></strong>. <em>(Note: the screenshot below shows an older typo <code>ArmLenght</code>, but the current version uses the correct spelling <strong><code>ArmLength</code></strong>.)</em></li>
+</ol>
+</li>
+</ul>
+</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m1_controlblock_example.png" alt="Example of ControlBlock structure in Asset User Data" loading="lazy">
+    <figcaption>Example of ControlBlock structure in Asset User Data</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m1_camera_thirdperson_cb.png" alt="ThirdPersonBack camera with ControlBlock Camera (use the correct spelling ArmLength)" loading="lazy">
+    <figcaption>ThirdPersonBack camera with ControlBlock Camera (use the correct spelling ArmLength)</figcaption>
+</figure>
+<ol>
+    <li><strong>Check:</strong> look at the <strong>Components</strong> tree on the left — <code>Cam_ThirdPersonBack</code> should automatically <strong>highlight in green</strong>!</li>
+    <li>Click <strong>Compile</strong> and <strong>Save</strong> in the top-left toolbar of the Blueprint Editor.</li>
+</ol>
+<hr>
+<h2 id="step-5-minimal-geometry--wheel-setup-in-vehicleini">Step 5. Minimal Geometry &amp; Wheel Setup in <code>Vehicle.ini</code></h2>
+<p>Open <code>Plugins\Mods\Content\MyFirstCar\Vehicle.ini</code> and align the physics coordinates with your 3D model (remember: <code>Vehicle.ini</code> uses <strong>meters</strong>, while Unreal Engine uses <strong>centimeters</strong>!).</p>
+<h3 id="51-converting-location-ue--mount-vehicleini">5.1. Converting <code>Location</code> (UE) → <code>Mount</code> (<code>Vehicle.ini</code>)</h3>
+<div class="alert alert-important">
+    <div class="alert-title">Important</div>
+<p><strong>Coordinate conversion rule from UE to <code>Vehicle.ini</code>:</strong></p>
+<ol>
+    <li>Divide <code>X, Y, Z</code> by <strong>100</strong> (centimeters → meters).</li>
+    <li><strong>Invert the sign of <code>Y</code>!</strong> In UE, the left side of the car is negative <code>Y</code> (<code>Y &lt; 0</code>), whereas in <code>Vehicle.ini</code>, left wheels have <strong>positive <code>Y</code></strong> (<code>Y &gt; 0</code>) and right wheels have <strong>negative <code>Y</code></strong> (<code>Y &lt; 0</code>).</li>
+</ol>
+
+</div>
+<p>Example for the front-left wheel:</p>
+<ul>
+    <li>In UE (<code>Location</code> of <code>WheelFrontLeft</code> / <code>SuspensionFrontLeft</code>): <code>X = 163 cm</code>, <code>Y = -85 cm</code>, <code>Z = 44.55 cm</code> (fully compressed suspension position).</li>
+    <li>In <code>Vehicle.ini</code>:</li>
+</ul>
+<pre><code class="language-ini">[SuspensionFrontLeft]
+Length = 0.20
+Mount = 1.63; 0.85; 0.4455</code></pre>
+<div class="alert alert-tip">
+    <div class="alert-title">Tip</div>
+<p><strong>How <code>Mount.Z</code>, <code>Length</code>, and resting wheel height relate:</strong><br>
+At rest, the car settles by about one-third of suspension travel (<code>NormalSag = 0.33</code>).<br>
+If you know the desired resting wheel-arch center <code>(X_cm, Y_cm, Z_cm)</code>, the top compressed mount point <code>Mount.Z</code> is:<br>
+<code>Mount.Z = (Z_cm / 100) + (1 - 0.33) * Length</code><br>
+For example, with arch center <code>Z = 31 cm</code> and travel <code>Length = 0.20 m</code>: <code>Mount.Z = 0.31 + 0.67 * 0.20 = 0.444 m</code> (<code>44.4 cm</code> in UE).</p>
+
+</div>
+<p>Fill in <code>Mount</code> and <code>Length</code> for all four suspension sections:</p>
+<ul>
+    <li><code>[SuspensionFrontLeft]</code> (<code>Y &gt; 0</code>)</li>
+    <li><code>[SuspensionFrontRight]</code> (<code>Y &lt; 0</code>)</li>
+    <li><code>[SuspensionBackLeft]</code> (<code>Y &gt; 0</code>)</li>
+    <li><code>[SuspensionBackRight]</code> (<code>Y &lt; 0</code>)</li>
+</ul>
+<h3 id="52-wheel-radius--wheelbase">5.2. Wheel Radius &amp; Wheelbase</h3>
+<ol>
+    <li>In <code>[WheelFrontLeft]</code>, <code>[WheelFrontRight]</code>, <code>[WheelBackLeft]</code>, <code>[WheelBackRight]</code>, set your wheel radius in <strong>meters</strong> (measure the 3D wheel diameter, divide by 2, and subtract ~1 cm for static tire deflection):</li>
+</ol>
+<pre><code class="language-ini">[WheelFrontLeft]
+Radius = 0.345</code></pre>
+<ol>
+    <li>In <code>[Steering]</code>, set the wheelbase (distance between front and rear axles) in meters:</li>
+</ol>
+<pre><code class="language-ini">[Steering]
+InteraxleDistance = 2.75   ; = (MountFront.X - MountBack.X)</code></pre>
+<p><em>(Once your car drives cleanly, see <strong><a href="../VehicleLib_HTML/00_Quick_Start.html">VehicleLib_MD/00_Quick_Start.md</a></strong> for full spring/damper, <code>Engine.csv</code>, and gearbox tuning.)</em></p>
+<hr>
+<h2 id="step-6-creating-the-vehicle-specification-pda_prototypedvehiclespecification">Step 6. Creating the Vehicle Specification (<code>PDA_PrototypedVehicleSpecification</code>)</h2>
+<p>For the game to discover your vehicle and list it in the garage menu, create a <strong>Data Asset</strong>:</p>
+<ol>
+    <li>Open the root of your mod folder <code>MyFirstCar/</code> in the Content Browser.</li>
+    <li>Right-click in empty space → <strong>Data</strong> (or <strong>Miscellaneous</strong>) → <strong>Data Asset</strong>.</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m1_pda_create_menu.png" alt="Creating a Data Asset from the Content Browser context menu" loading="lazy">
+    <figcaption>Creating a Data Asset from the Content Browser context menu</figcaption>
+</figure>
+<ol>
+    <li>Search for and select <strong><code>PDA_PrototypedVehicleSpecification</code></strong> → click <strong>Select</strong>.</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m1_pda_select_class.png" alt="Selecting PDA_PrototypedVehicleSpecification as the Data Asset class" loading="lazy">
+    <figcaption>Selecting PDA_PrototypedVehicleSpecification as the Data Asset class</figcaption>
+</figure>
+<ol>
+    <li>Name the asset <strong><code>DA_MyFirstCar</code></strong> and double-click to open it.</li>
+    <li>Fill out the <strong>Prototype</strong> section:
+<ul>
+    <li><strong><code>Prototype</code>:</strong> select your Vehicle Actor Blueprint <strong><code>V_MyFirstCar</code></strong>.</li>
+    <li><strong><code>Prototype Version</code>:</strong> set to <strong><code>1</code></strong> (vehicle loader version).</li>
+</ul>
+</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m1_pda_prototype.png" alt="Setting Prototype and PrototypeVersion" loading="lazy">
+    <figcaption>Setting Prototype and PrototypeVersion</figcaption>
+</figure>
+<ol>
+    <li>Fill out the <strong>mandatory specifications</strong> (<strong>Vehicle Specifications</strong> section):
+<ul>
+    <li><strong><code>Name</code>:</strong> the vehicle's display name in-game (type text directly; no String Table is needed).</li>
+    <li><strong><code>Image</code>:</strong> menu preview image (import any <code>.png</code> into <code>Textures/</code> with Virtual Texture enabled, or temporarily pick an existing one).</li>
+    <li><strong><code>Class</code>:</strong> choose the vehicle class from the dropdown (e.g., <code>Economy</code>).</li>
+    <li><strong><code>Engine Types</code>:</strong> click <code>+</code> to add <strong>at least one</strong> engine entry — required because it defines the vehicle's <strong><code>Fuel Type</code></strong> (<code>Gasoline</code>, <code>Diesel</code>, etc.).</li>
+    <li><strong><code>Transmission Types</code>:</strong> it is best to add both <code>Automatic</code> and <code>Manual</code> and bind them to <code>options.xml</code>:
+<ul>
+    <li>For <code>Index [0]</code> (<code>Automatic</code>): enable <strong><code>Bound to Option</code></strong>, set <strong><code>Option Name = TransmissionType</code></strong>, <strong><code>Option Value = Auto</code></strong>.</li>
+    <li>For <code>Index [1]</code> (<code>Manual</code>): enable <strong><code>Bound to Option</code></strong>, set <strong><code>Option Name = TransmissionType</code></strong>, <strong><code>Option Value = Manual</code></strong>.</li>
+    <li><code>Option Name</code> and <code>Option Value</code> must <strong>match <code>options.xml</code> character for character</strong>!</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m1_pda_mandatory_specs.png" alt="Mandatory Vehicle Specifications fields" loading="lazy">
+    <figcaption>Mandatory Vehicle Specifications fields</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m1_pda_bound_option.png" alt="Binding Transmission Types to options.xml via Bound to Option" loading="lazy">
+    <figcaption>Binding Transmission Types to options.xml via Bound to Option</figcaption>
+</figure>
+<ol>
+    <li>Click <strong>File → Save All</strong> (<code>Ctrl + Shift + S</code>) in UE.</li>
+</ol>
+<hr>
+<h2 id="step-7-building-the-pak-local-testing--steam-workshop-upload">Step 7. Building the <code>.pak</code>, Local Testing &amp; Steam Workshop Upload</h2>
+<h3 id="71-packaging-your-mod-into-pak">7.1. Packaging Your Mod into <code>.pak</code></h3>
+<ol>
+    <li>Make sure all UE assets are saved (<strong>File → Save All</strong>).</li>
+    <li>In the root of <code>CCD2_VehicleKit</code>, double-click <strong><code>build_mod_dlc.bat</code></strong>.</li>
+    <li>Wait for the console to finish. On success, you will see:
+<pre><code class="language-text">DLC build successful: ...\Saved\DLC\Windows\Mods.pak</code></pre>
+<p><em>(The sample vehicle <code>CieBensVGruppe</code> contains the <code>L_IGNORE</code> label and is automatically excluded from your <code>.pak</code>.)</em></p>
+</li>
+    <li>Open <code>\Saved\DLC\Windows\</code>, find <strong><code>Mods.pak</code></strong>, and <strong>rename it</strong> to your mod's name, e.g. <strong><code>MyFirstCar.pak</code></strong>.</li>
+</ol>
+<h3 id="72-local-testing-in-city-car-driving-20-before-publishing">7.2. Local Testing in City Car Driving 2.0 (Before Publishing)</h3>
+<ol>
+    <li>Copy your renamed <strong><code>MyFirstCar.pak</code></strong> into your installed game folder:
+<pre><code class="language-text">&lt;Game Install Directory&gt;\CityCarDriving2\Content\Paks\</code></pre>
+</li>
+    <li>Launch <strong>City Car Driving 2.0</strong> and pick your car in the vehicle selection menu.</li>
+</ol>
+<h3 id="73-module-1-verification-checklist">7.3. Module 1 Verification Checklist</h3>
+<p>Before moving on to exterior details, interior, and audio, verify the fundamentals:</p>
+<ul class="checklist">
+    <li><input type="checkbox" disabled> Your vehicle appears in the vehicle menu with the right name, preview image, and Auto/Manual selection.</li>
+    <li><input type="checkbox" disabled> On map load, the car sits evenly on all 4 wheels without sinking through the ground or launching into the air.</li>
+    <li><input type="checkbox" disabled> Wheels sit at the right height inside the arches and are not swapped left-to-right (<code>Y</code> inversion is correct).</li>
+    <li><input type="checkbox" disabled> The <code>ThirdPersonBack</code> camera orbits smoothly around the car at a comfortable distance.</li>
+    <li><input type="checkbox" disabled> The engine starts, the car accelerates, wheels spin in the right direction, front wheels steer, and brakes stop the car.</li>
+    <li><input type="checkbox" disabled> Lightly touching a curb or wall triggers <code>Body</code> collision properly.</li>
+</ul>
+<h3 id="74-publishing-to-steam-workshop">7.4. Publishing to Steam Workshop</h3>
+<p>When your mod is tested and ready to share, follow <strong>Step 4</strong> of the official Steam Workshop publishing guide:</p>
+<ul>
+    <li><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3763865332" target="_blank" rel="noopener">https://steamcommunity.com/sharedfiles/filedetails/?id=3763865332</a></li>
+</ul>
+<hr>
+<p><strong>Congratulations — your first car is driving in CCD 2.0!</strong><br>
+<strong>Next step:</strong> continue to <strong><a href="./02_Exterior_Lights_and_World.html">Module 2. Exterior, Lights, Suspension &amp; World Interaction</a></strong> to add brake calipers, working lights, license plates, refueling, and world interaction.</p>
+
+</body>
+</html>

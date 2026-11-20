@@ -1,0 +1,201 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 4. Mirrors &amp; Wipers</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({ startOnLoad: true });</script>
+    <style>
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 32px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1f2328;
+            background-color: #ffffff;
+        }
+        h1, h2, h3, h4 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        h1 { font-size: 2em; padding-bottom: 0.3em; border-bottom: 1px solid #d0d7de; }
+        h2 { font-size: 1.5em; padding-bottom: 0.3em; border-bottom: 1px solid #d0d7de; }
+        h3 { font-size: 1.25em; }
+        hr { height: 0.25em; padding: 0; margin: 24px 0; background-color: #d0d7de; border: 0; }
+        a { color: #0969da; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+        th, td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; vertical-align: top; }
+        th { background: #f6f8fa; font-weight: 600; }
+        tr:nth-child(even) { background: #f6f8fa; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        code { background: #eff1f3; padding: 2px 5px; border-radius: 4px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 85%; }
+        pre { background: #f6f8fa; padding: 14px; border-radius: 6px; overflow-x: auto; border: 1px solid #d0d7de; }
+        pre code { background: transparent; padding: 0; font-size: 100%; }
+        pre.mermaid { background: #ffffff; text-align: center; }
+        .alert { padding: 12px 16px; margin: 16px 0; border-left: 4px solid; border-radius: 6px; background: #f6f8fa; }
+        .alert-title { font-weight: 600; margin-bottom: 6px; }
+        .alert p:last-child, .alert ul:last-child, .alert ol:last-child { margin-bottom: 0; }
+        .alert-note { border-left-color: #0969da; background-color: #ddf4ff; }
+        .alert-note .alert-title { color: #0969da; }
+        .alert-tip { border-left-color: #1a7f37; background-color: #dafbe1; }
+        .alert-tip .alert-title { color: #1a7f37; }
+        .alert-important { border-left-color: #8250df; background-color: #fbefff; }
+        .alert-important .alert-title { color: #8250df; }
+        .alert-warning { border-left-color: #9a6700; background-color: #fff8c5; }
+        .alert-warning .alert-title { color: #9a6700; }
+        .alert-caution { border-left-color: #cf222e; background-color: #ffebe9; }
+        .alert-caution .alert-title { color: #cf222e; }
+        ul.checklist { list-style-type: none; padding-left: 0; }
+        ul.checklist li { margin-bottom: 8px; }
+        ul.checklist input[type="checkbox"] { margin-right: 8px; }
+        figure.doc-figure { margin: 16px 0; padding: 10px; background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 6px; text-align: center; }
+        figure.doc-figure img { max-width: 100%; height: auto; border-radius: 4px; display: block; margin: 0 auto; }
+        figure.doc-figure figcaption { margin-top: 8px; font-size: 0.9em; color: #57606a; }
+    </style>
+</head>
+<body>
+<h1 id="module-4-mirrors--wipers">Module 4. Mirrors &amp; Wipers</h1>
+<p><strong>Navigation:</strong> <a href="./README.html">README</a> | <a href="./01_Minimal_Car_QuickStart.html">01. Minimal Car</a> | <a href="./02_Exterior_Lights_and_World.html">02. Exterior, Lights &amp; World</a> | <a href="./03_Interior_Dashboard_Cameras_Seats.html">03. Interior, Dashboard &amp; Cameras</a> | <strong>04. Mirrors &amp; Wipers</strong> | <a href="./05_Sounds_and_FMOD.html">05. Sounds &amp; FMOD</a> | <a href="./06_Advanced_Specs_Logic_and_Reference.html">06. Specs, Logic &amp; Reference</a></p>
+<hr>
+<p>In this module, you will configure two key driving-simulator features:</p>
+<ol>
+    <li><strong>Rear-view mirrors</strong> (left, right, and interior center) — rendered live via dedicated capture cameras.</li>
+    <li><strong>Windshield wipers</strong> (front and optional rear) — driven by skeletal animation.</li>
+</ol>
+<hr>
+<h2 id="1-rear-view-mirrors-mirror">1. Rear-View Mirrors (<code>Mirror</code>)</h2>
+<p>Mirror reflections in City Car Driving 2.0 are powered by render cameras bound to separate reflective surface meshes.</p>
+<h3 id="11-preparing--importing-mirror-meshes">1.1. Preparing &amp; Importing Mirror Meshes</h3>
+<figure class="doc-figure">
+    <img src="./images/m4_mirror_3d_axes.png" alt="3D mirror reflective surface orientation (+Z up/normal, +Y down)" loading="lazy">
+    <figcaption>3D mirror reflective surface orientation (+Z up/normal, +Y down)</figcaption>
+</figure>
+<ol>
+    <li>Export a <strong>separate mesh for each mirror</strong> (left, right, center) — containing only the reflective glass surface (keep the mirror housing on the body/interior).</li>
+    <li><strong>Strict axis orientation:</strong>
+<ul>
+    <li><strong><code>+Z</code> axis</strong> defines the reflective face normal (pointing straight up along <code>+Z</code>, with the mirror surface lying in the <code>XY</code> plane!).</li>
+    <li><strong><code>+Y</code> axis</strong> points <strong>downward</strong> along the mirror glass.</li>
+</ul>
+<p><em>(This alignment is required by the UV generation script, which projects vertex <code>X</code> and <code>Y</code> coordinates.)</em></p>
+</li>
+    <li><strong>Import into UE:</strong> same as wheels — <strong><code>Generate Missing Collision = False</code></strong>, <strong><code>Material Import Method = Do Not Create Material</code></strong>, <strong><code>Build Nanite = False</code></strong>.</li>
+    <li><strong>Material:</strong> <strong>leave the material unassigned</strong> on the reflective surface — the game automatically assigns the live reflection material. <em>(Reminder: <code>MI_Mod_Mirror</code> is only for the center mirror housing, not the reflective glass.)</em></li>
+</ol>
+<h3 id="12-adding-the-camera-socket--generating-uvs-in-ue">1.2. Adding the <code>Camera</code> Socket &amp; Generating UVs in UE</h3>
+<p>Repeat these 2 steps for <strong>every</strong> mirror Static Mesh:</p>
+<h4 id="step-1-add-the-camera-socket">Step 1. Add the <code>Camera</code> Socket</h4>
+<ol>
+    <li>Double-click the mirror Static Mesh to open it.</li>
+    <li>Open <strong>Window → Socket Manager</strong> and click <strong><code>+</code></strong> (Create Socket).</li>
+    <li>Rename the socket strictly to <strong><code>Camera</code></strong>.</li>
+    <li>Adjust the socket's <strong><code>Relative Rotation</code></strong> as needed — this rotation determines where the mirror capture camera looks.</li>
+    <li>Click <strong>Save</strong> and close the mesh editor.</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m4_mirror_socket_uv.png" alt="Camera socket setup and generated UVs across all 3 mirrors" loading="lazy">
+    <figcaption>Camera socket setup and generated UVs across all 3 mirrors</figcaption>
+</figure>
+<h4 id="step-2-run-the-uv-generation-script-generate-uvs-by-vertex-positions">Step 2. Run the UV Generation Script (<code>Generate UVs by Vertex Positions</code>)</h4>
+<ol>
+    <li>In the <strong>Content Browser</strong>, right-click the mirror Static Mesh asset.</li>
+    <li>Choose:
+<p><strong><code>Scripted Asset Actions → UV → Generate UVs by Vertex Positions</code></strong></p>
+</li>
+    <li>The script automatically generates UVs from vertex positions on <strong>UV channel 1</strong>, stores mirror bounds in asset metadata, and enables <code>Allow CPU Access</code>.</li>
+    <li><strong>Be sure to Save the asset</strong> (<code>Ctrl + S</code> or <strong>RMB → Save</strong>) so the <code>*</code> icon disappears!</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m4_mirror_script_menu.png" alt="Running Scripted Asset Actions → UV → Generate UVs by Vertex Positions" loading="lazy">
+    <figcaption>Running Scripted Asset Actions → UV → Generate UVs by Vertex Positions</figcaption>
+</figure>
+<h3 id="13-attaching-mirrors-in-actor-v_modname">1.3. Attaching Mirrors in Actor <code>V_&lt;ModName&gt;</code></h3>
+<ol>
+    <li>Add a <code>StaticMeshComponent</code> for each mirror (e.g., under <code>Body</code> for side mirrors and <code>InteriorObjects</code> for the center mirror), with <strong><code>NoCollision</code></strong> and <strong><code>Receives Decals = False</code></strong>.</li>
+    <li>Position and rotate each mirror into its housing on the car.</li>
+    <li>On each mirror component, add <code>Asset User Data → Control Asset Data</code> → <strong><code>ControlBlock</code></strong> named <strong><code>Mirror</code></strong>:
+<ul>
+    <li><em>(Optional)</em> Add property <strong><code>FOV</code></strong> of type <strong><code>Control Property Float</code></strong> (mirror camera field of view in degrees).</li>
+    <li><strong>Recommended <code>FOV</code> range: <code>20–40</code></strong> (higher values hurt performance and distort distance perception).</li>
+</ul>
+</li>
+    <li>Click <strong>Compile</strong> and <strong>Save</strong>.</li>
+</ol>
+<hr>
+<h2 id="2-windshield-wipers-wippers">2. Windshield Wipers (<code>Wippers</code>)</h2>
+<p>Wipers in City Car Driving 2.0 are driven by <strong>skeletal animation</strong>.</p>
+<h3 id="21-preparing-the-3d-model--animation">2.1. Preparing the 3D Model &amp; Animation</h3>
+<figure class="doc-figure">
+    <img src="./images/m4_wipers_skeleton.png" alt="Sample wiper Skeletal Mesh and bone hierarchy" loading="lazy">
+    <figcaption>Sample wiper Skeletal Mesh and bone hierarchy</figcaption>
+</figure>
+<ol>
+    <li>Rig the wiper arms and blades to a skeleton (Armature) in your 3D editor and animate the sweep motion.</li>
+    <li><strong>Important about the animation cycle:</strong> your <code>Animation Sequence</code> must contain <strong>only the first half of the cycle</strong> — sweeping from the resting (bottom) position to the extreme (top) position! The game plays the return stroke automatically.</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m4_wipers_animation_cycle.png" alt="Wiper animation sequence: frame 0% (rest) to frame 100% (top extreme)" loading="lazy">
+    <figcaption>Wiper animation sequence: frame 0% (rest) to frame 100% (top extreme)</figcaption>
+</figure>
+<ol>
+    <li>If your vehicle has both front and rear wipers, export them as <strong>two separate Skeletal Meshes</strong> (front wipers together in one mesh, rear wiper in another).</li>
+</ol>
+<h3 id="22-importing--assigning-material">2.2. Importing &amp; Assigning Material</h3>
+<ol>
+    <li>Import the wiper <code>.fbx</code> into <code>MyFirstCar/Meshes/</code>. In the import dialog:
+<ul>
+    <li>Enable <strong><code>Skeletal Mesh</code></strong> and <strong><code>Import Animations</code></strong>.</li>
+    <li>Disable <strong><code>Generate Missing Collision</code></strong> and set <strong><code>Material Import Method = Do Not Create Material</code></strong>.</li>
+    <li>This creates a <code>Skeletal Mesh</code>, <code>Skeleton</code>, and <code>Animation Sequence</code>.</li>
+</ul>
+</li>
+    <li>Create a Material Instance from <strong><code>MI_Mod_Wipers</code></strong> (<code>Content/Common/MasterMaterials/VehicleMaterials/ModMaterials/MI_Mod_Wipers</code>) and assign it to the <code>Skeletal Mesh</code>.</li>
+</ol>
+<div class="alert alert-note">
+    <div class="alert-title">Note</div>
+<p><strong>About wiper wiping-zone sockets (visible in <code>CieBensVGruppe</code>):</strong><br>
+If you inspect <code>SM_CieBensVGruppe_Wipers</code>, you will see sockets like <code>LeftUpper</code>, <code>LeftBottom</code>, <code>RightUpper</code>, <code>RightBottom</code> on the bones. <strong>Wiper sockets are currently NOT used in modded vehicles and do not need to be created</strong> (glass raindrop wiping is not yet enabled for mods).</p>
+
+</div>
+<h3 id="23-attaching-wipers-in-actor-v_modname">2.3. Attaching Wipers in Actor <code>V_&lt;ModName&gt;</code></h3>
+<div class="alert alert-warning">
+    <div class="alert-title">Warning</div>
+<p><strong>Watch the exact <code>ControlBlock</code> spelling:</strong><br>
+In the game code, this block is spelled <strong><code>Wippers</code></strong> — <strong>with two <code>p</code>s</strong>! Writing <code>Wipers</code> will cause wipers not to work.</p>
+
+</div>
+<ol>
+    <li>Open <code>V_&lt;ModName&gt;</code> and add a <strong><code>Skeletal Mesh</code></strong> component (<code>+ Add → Skeletal Mesh</code>) with <strong><code>NoCollision</code></strong> and <strong><code>Receives Decals = False</code></strong>.</li>
+    <li>Position it on the windshield (or rear window).</li>
+    <li>In <strong>Details</strong>, configure:
+<ul>
+    <li><strong>Mesh → Skeletal Mesh Asset:</strong> select your imported wiper <code>Skeletal Mesh</code>.</li>
+    <li><strong>Animation → Animation Mode:</strong> select <strong><code>Use Animation Asset</code></strong>.</li>
+    <li><strong>Animation → Anim to Play:</strong> select your <code>Animation Sequence</code> (first half of the sweep).</li>
+</ul>
+</li>
+    <li>Add <code>Asset User Data → Control Asset Data</code> → <strong><code>ControlBlock</code></strong> named <strong><code>Wippers</code></strong>:
+<ul>
+    <li>Add property <strong><code>Side</code></strong> of type <strong><code>Control Property String</code></strong>:
+<ul>
+    <li><strong><code>Front</code></strong> — for front wipers;</li>
+    <li><strong><code>Rear</code></strong> — for the rear wiper.</li>
+</ul>
+</li>
+</ul>
+</li>
+    <li>Make sure <code>FrontWindshieldWiper_Resistance &gt; 0</code> (and <code>BackWindshieldWiper_Resistance &gt; 0</code> if you have a rear wiper) is set in <code>[CarElectrics]</code> inside <code>Vehicle.ini</code>.</li>
+    <li>Click <strong>Compile</strong> and <strong>Save</strong>.</li>
+</ol>
+<hr>
+<p><strong>Next step:</strong> continue to <strong><a href="./05_Sounds_and_FMOD.html">Module 5. Vehicle Sounds &amp; FMOD Studio</a></strong> to customize your car's audio.</p>
+
+</body>
+</html>

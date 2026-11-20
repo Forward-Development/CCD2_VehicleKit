@@ -1,0 +1,594 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Physics Configuration Guide for City Car Driving 2.0</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '', right: '', display: true}, {left: '$', right: '$', display: false}]});"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({ startOnLoad: true });</script>
+    <style>
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 32px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1f2328;
+            background-color: #ffffff;
+        }
+        h1, h2, h3, h4 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        h1 { font-size: 2em; padding-bottom: 0.3em; border-bottom: 1px solid #d0d7de; }
+        h2 { font-size: 1.5em; padding-bottom: 0.3em; border-bottom: 1px solid #d0d7de; }
+        h3 { font-size: 1.25em; }
+        hr { height: 0.25em; padding: 0; margin: 24px 0; background-color: #d0d7de; border: 0; }
+        a { color: #0969da; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+        th, td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; vertical-align: top; }
+        th { background: #f6f8fa; font-weight: 600; }
+        tr:nth-child(even) { background: #f6f8fa; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        code { background: #eff1f3; padding: 2px 5px; border-radius: 4px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 85%; }
+        pre { background: #f6f8fa; padding: 14px; border-radius: 6px; overflow-x: auto; border: 1px solid #d0d7de; }
+        pre code { background: transparent; padding: 0; font-size: 100%; }
+        pre.mermaid { background: #ffffff; text-align: center; }
+        .alert { padding: 12px 16px; margin: 16px 0; border-left: 4px solid; border-radius: 6px; background: #f6f8fa; }
+        .alert-title { font-weight: 600; margin-bottom: 6px; }
+        .alert p:last-child, .alert ul:last-child, .alert ol:last-child { margin-bottom: 0; }
+        .alert-note { border-left-color: #0969da; background-color: #ddf4ff; }
+        .alert-note .alert-title { color: #0969da; }
+        .alert-tip { border-left-color: #1a7f37; background-color: #dafbe1; }
+        .alert-tip .alert-title { color: #1a7f37; }
+        .alert-important { border-left-color: #8250df; background-color: #fbefff; }
+        .alert-important .alert-title { color: #8250df; }
+        .alert-warning { border-left-color: #9a6700; background-color: #fff8c5; }
+        .alert-warning .alert-title { color: #9a6700; }
+        .alert-caution { border-left-color: #cf222e; background-color: #ffebe9; }
+        .alert-caution .alert-title { color: #cf222e; }
+        ul.checklist { list-style-type: none; padding-left: 0; }
+        ul.checklist li { margin-bottom: 8px; }
+        ul.checklist input[type="checkbox"] { margin-right: 8px; }
+        figure.doc-figure { margin: 16px 0; padding: 10px; background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 6px; text-align: center; }
+        figure.doc-figure img { max-width: 100%; height: auto; border-radius: 4px; display: block; margin: 0 auto; }
+        figure.doc-figure figcaption { margin-top: 8px; font-size: 0.9em; color: #57606a; }
+    </style>
+</head>
+<body>
+<h1 id="vehicle-physics-configuration-guide-for-city-car-driving-20">Vehicle Physics Configuration Guide for City Car Driving 2.0</h1>
+<p><strong>Navigation:</strong> <strong>README</strong> | <a href="./00_Quick_Start.html">00. Quick Start</a> | <a href="./01_Architecture_and_Config.html">01. Architecture &amp; Configs</a> | <a href="./02_Named_IO_and_States.html">02. Named I/O &amp; States</a> | <a href="./03_Components_TorqueTrain.html">03. TorqueTrain</a> | <a href="./04_Components_Electrics.html">04. Electrics</a> | <a href="./05_Components_Chassis_and_Subsystems.html">05. Chassis &amp; Subsystems</a></p>
+<hr>
+<p>Welcome to the practical modding guide and reference for configuring vehicle physics in <strong>City Car Driving 2.0</strong>, built on Unreal Engine 5.</p>
+<p>In <strong>City Car Driving 2.0</strong>, all physics for the powertrain, drivetrain, suspension, tires, brakes, steering, and onboard electrical system are configured declaratively via text configuration files (<code>Vehicle.ini</code>, <code>options.xml</code>, <code>.xml</code> schemas, and <code>.csv</code> curve tables) along with asset properties in the Unreal Engine 5 editor.</p>
+<hr>
+<h2 id="1-documentation-table-of-contents">1. Documentation Table of Contents</h2>
+<table>
+    <thead>
+        <tr>
+            <th class="text-center">#</th>
+            <th>Section</th>
+            <th>Contents</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="text-center"><strong>—</strong></td>
+            <td><strong><a href="./README.html">README.md</a></strong> <em>(current file)</em></td>
+            <td>Layout of mod physics files, reference of all 46 component classes supported in CCD 2.0 (<code>Class="..."</code> in XML) with their standard section names in <code>Vehicle.ini</code>, and a table of measurement units.</td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>00</strong></td>
+            <td><strong><a href="./00_Quick_Start.html">00_Quick_Start.md</a></strong></td>
+            <td><strong>Quick Start:</strong> mod file layout and path rules, configuring the <code>Body</code> chassis (<code>Override Mass</code>, <code>Center Of Mass Offset</code>) and wheels in Blueprint, selecting an XML schema and <code>options.xml</code>, step-by-step calculation formulas for suspension, tires, <code>Engine.csv</code>, and gearbox, plus a 5-test verification checklist.</td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>01</strong></td>
+            <td><strong><a href="./01_Architecture_and_Config.html">01_Architecture_and_Config.md</a></strong></td>
+            <td>Path resolution for mod files and base game resources, <code>Vehicle.ini</code> and <code>options.xml</code> syntax, breakdown of the 6 standard XML schemas in <code>Common/Vehicles/MotorCars/Schemes/*.xml</code>, creating a custom schema (using <code>EngineDiesel</code> + <code>Turbocharger</code> as an example), <code>.csv</code> table formats (<code>Engine.csv</code>), and trailer coupling (<code>&lt;VehicleAttachment&gt;</code>).</td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>02</strong></td>
+            <td><strong><a href="./02_Named_IO_and_States.html">02_Named_IO_and_States.md</a></strong></td>
+            <td>Structure of <code>&lt;InputElements&gt;</code>, <code>&lt;InputProcessors&gt;</code>, <code>&lt;OutputElements&gt;</code>, and <code>&lt;StateElements&gt;</code>, complete tables of standard inputs/outputs/states in CCD 2.0, and a consolidated reference of all internal names (<code>InternalName</code>) across all 46 supported component classes.</td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>03</strong></td>
+            <td><strong><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></strong></td>
+            <td><code>.ini</code> parameter reference for engines and drivetrain: ICE (<code>EngineGazoline</code>, <code>EngineDiesel</code>), starter (<code>EngineElectric</code>, <code>Bendix</code>), clutch (<code>ClutchFriction</code>), torque converter (<code>HydraulicTorqueConverter</code>), gearboxes (<code>GearBox</code>, <code>GearBoxAutomatic</code>), differentials (<code>DifferentialOpen</code>), brakes (<code>BrakeFriction*</code>), tires (<code>WheelRaycast</code>), and accessories (<code>Generator</code>, <code>Pump</code>, <code>Compressor</code>).</td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>04</strong></td>
+            <td><strong><a href="./04_Components_Electrics.html">04_Components_Electrics.md</a></strong></td>
+            <td>Onboard electrical network reference: electric circuits (<code>ElectricCircuit</code>), battery (<code>Battery</code>), individual consumers (<code>ElectricElement</code>), and the integrated body electrics, lighting, wipers, and dashboard unit (<code>CarElectrics</code>).</td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>05</strong></td>
+            <td><strong><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></strong></td>
+            <td>Chassis and subsystems reference: suspension (<code>Suspension1Spring</code>), steering (<code>Steering2Ackermann</code>), pneumatics and turbocharging (<code>Turbocharger</code>), tanks (<code>Tank</code>), aerodynamics (<code>AerodynamicsCarSimple</code>), controllers (<code>FuelControllerComputer</code>, <code>AbsTcs</code>, <code>GearBoxAutomaticLogic</code>, <code>IgnitionKeyProcessor</code>), and telemetry (<code>Speedometer</code>, <code>PowerSteering</code>, <code>FuelConsumptionMeter</code>).</td>
+        </tr>
+    </tbody>
+</table>
+<hr>
+<h2 id="2-which-files-make-up-vehicle-physics-in-city-car-driving-20">2. Which Files Make Up Vehicle Physics in City Car Driving 2.0</h2>
+<p>Inside the mod plugin folder (<code>Plugins/Mods/Content/&lt;ModName&gt;/</code>), alongside the Unreal Engine assets (<code>V_&lt;ModName&gt;.uasset</code>, <code>DA_&lt;ModName&gt;.uasset</code>, <code>ST_&lt;ModName&gt;.uasset</code>), reside the text physics configuration files. These files can reference both shared base-game resources under <code>Content/Common/Vehicles/MotorCars/</code> and custom files inside the mod folder itself.</p>
+<pre class="mermaid">
+flowchart TD
+    DA["DA_&lt;ModName&gt;.uasset&lt;br/&gt;(Transmission &amp; configuration selection in menu)"] --&gt;|"Options (e.g., TransmissionType=Auto)"| OPT["options.xml&lt;br/&gt;(Mod folder)"]
+    BP["V_&lt;ModName&gt;.uasset&lt;br/&gt;(Body mesh, mass, CoM, wheels)"] --&gt;|"Chassis rigid body"| SIM["Vehicle Physics Model"]
+    OPT --&gt;|"SetSchema='true' (or DefaultSchema)"| XML["Vehicle XML Schema&lt;br/&gt;(Common/.../Schemes/*.xml or local)"]
+    OPT --&gt;|"Section suffixes .Option.Value"| INI["Vehicle.ini&lt;br/&gt;(Mod folder)"]
+    XML --&gt;|"Components &amp; links layout"| SIM
+    INI --&gt;|"Parameters of [ComponentName] sections"| SIM
+    INI --&gt;|"Paths to curve tables"| CSV["Engine.csv (in mod folder)&lt;br/&gt;+ shared tables Common/.../Tables/*.csv"]
+    CSV --&gt; SIM
+</pre>
+<table>
+    <thead>
+        <tr>
+            <th>File</th>
+            <th>Location</th>
+            <th>Purpose</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong><code>Vehicle.ini</code></strong></td>
+            <td><code>Plugins/Mods/Content/&lt;ModName&gt;/Vehicle.ini</code></td>
+            <td><strong>Required</strong> main configuration file. Contains the <code>[Vehicle]</code> section (<code>DefaultSchema</code>), <code>[ComponentName]</code> sections with parameters for each unit in the XML schema, and configuration override sections <code>[ComponentName.Option.Value]</code>.</td>
+        </tr>
+        <tr>
+            <td><strong><code>options.xml</code></strong></td>
+            <td><code>Plugins/Mods/Content/&lt;ModName&gt;/options.xml</code></td>
+            <td>Defines available trim/configuration options (<code>&lt;AvailableOptions&gt;</code>, e.g., <code>TransmissionType</code> with values <code>Auto</code> and <code>Manual</code>), their compatibility rules (<code>&lt;Compatibilities&gt;</code>), and switches the XML schema file when <code>SetSchema="true"</code>.</td>
+        </tr>
+        <tr>
+            <td><strong>Schema <code>.xml</code></strong></td>
+            <td><code>Content/Common/Vehicles/MotorCars/Schemes/*.xml</code> <em>(or mod folder)</em></td>
+            <td>Root tag <code>&lt;Vehicle&gt;</code>. Defines the list of components (<code>&lt;Components&gt;</code>), links between them (<code>&lt;Links&gt;</code>), telemetry channels (<code>&lt;OutputElements&gt;</code>), states (<code>&lt;StateElements&gt;</code>), and controls (<code>&lt;InputElements&gt;</code>, <code>&lt;InputProcessors&gt;</code>).</td>
+        </tr>
+        <tr>
+            <td><strong><code>Engine.csv</code></strong></td>
+            <td><code>Plugins/Mods/Content/&lt;ModName&gt;/Engine.csv</code></td>
+            <td>2D table of engine combustion torque and mechanical losses indexed by <code>RPM</code> and throttle pedal percentage (<code>0..100%</code>), referenced via the <code>PowerCurves</code> parameter in the <code>[Engine]</code> section.</td>
+        </tr>
+        <tr>
+            <td><strong>Shared <code>.csv</code> tables</strong></td>
+            <td><code>Content/Common/Vehicles/MotorCars/Tables/*.csv</code></td>
+            <td>Standard 1D and 2D tables for spring progression (<code>SpringProgression.csv</code>), ICE vibrations (<code>EngineVibration.csv</code>), tire grip (<code>WheelForceLat.csv</code>, <code>WheelForceLon.csv</code>), camber curves, and rolling resistance.</td>
+        </tr>
+        <tr>
+            <td><strong>Coupling schema <code>.xml</code></strong></td>
+            <td>Trailer coupling path <em>(optional)</em></td>
+            <td>Root tag <code>&lt;VehicleAttachment&gt;</code>. Describes inter-vehicle connections (<code>&lt;MasterLinks&gt;</code> and <code>&lt;SlaveLinks&gt;</code>) when coupling a tractor with a trailer.</td>
+        </tr>
+    </tbody>
+</table>
+<hr>
+<h2 id="3-reference-of-all-46-component-classes-class-in-xml">3. Reference of All 46 Component Classes (<code>Class="..."</code> in XML)</h2>
+<p>The <code>Class</code> attribute in <code>&lt;Component Name="..." Class="..." /&gt;</code> specifies the component type, while the <code>Name</code> attribute specifies the name of its <code>[Name]</code> section in <code>Vehicle.ini</code>.</p>
+<table>
+    <thead>
+        <tr>
+            <th class="text-center">#</th>
+            <th>XML Class (<code>Class</code>)</th>
+            <th>Standard <code>[Name]</code> Section in <code>Vehicle.ini</code> (CCD 2.0)</th>
+            <th>Component Purpose</th>
+            <th>Documentation Section</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="text-center"><strong>1</strong></td>
+            <td><code>EngineGazoline</code></td>
+            <td><code>[Engine]</code></td>
+            <td>Spark-ignition gasoline ICE (used in all 6 standard schemas, including as a universal ICE when combining transmission and engine options).</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>2</strong></td>
+            <td><code>EngineDiesel</code></td>
+            <td><code>[Engine]</code></td>
+            <td>Compression-ignition diesel ICE (for local diesel schemas).</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>3</strong></td>
+            <td><code>EngineElectric</code></td>
+            <td><code>[Starter]</code></td>
+            <td>DC electric motor (starter).</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>4</strong></td>
+            <td><code>ExternalVelocityMotor</code></td>
+            <td><em>(custom section)</em></td>
+            <td>Drive motor with an external <code>ShaftRpm</code> target speed governed by <code>TorqueCurve</code>.</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>5</strong></td>
+            <td><code>ClutchFriction</code></td>
+            <td><code>[Clutch]</code> <em>(in <code>*Manual.xml</code>)</em></td>
+            <td>Friction clutch for manual transmission.</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>6</strong></td>
+            <td><code>HydraulicTorqueConverter</code></td>
+            <td><code>[TorqueConverter]</code> <em>(in <code>*Auto.xml</code>)</em></td>
+            <td>Automatic transmission hydraulic torque converter with lockup clutch.</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>7</strong></td>
+            <td><code>VariableTorqueConverter</code></td>
+            <td><em>(custom section)</em></td>
+            <td>Continuously variable transmission (CVT) with smoothly varying gear ratio.</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>8</strong></td>
+            <td><code>Bendix</code></td>
+            <td><code>[StarterBendix]</code></td>
+            <td>Starter overrunning clutch (Bendix drive).</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>9</strong></td>
+            <td><code>GearBox</code></td>
+            <td><code>[GearBox]</code> <em>(in <code>*Manual.xml</code>)</em></td>
+            <td>Manual transmission (MT) or transfer case.</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>10</strong></td>
+            <td><code>GearBoxAutomatic</code></td>
+            <td><code>[GearBoxAutomatic]</code> <em>(in <code>*Auto.xml</code>)</em></td>
+            <td>Planetary automatic transmission (AT) with automatic shifting and torque converter control.</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>11</strong></td>
+            <td><code>DifferentialOpen</code></td>
+            <td><code>[DifferentialAxle]</code>, <code>[DifferentialWheelFront]</code>, <code>[DifferentialWheelBack]</code> <em>(in <code>Awd*</code>)</em>; <code>[Differential]</code> <em>(in <code>Fwd*</code>, <code>Rwd*</code>)</em></td>
+            <td>Symmetrical center or axle differential with final drive <code>GearRatio</code> and lock flag <code>Locked</code>.</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>12</strong></td>
+            <td><code>Reducer</code></td>
+            <td><code>[StarterGear]</code></td>
+            <td>Reduction gear with a fixed <code>GearRatio</code>.</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>13</strong></td>
+            <td><code>Relay</code></td>
+            <td><code>[StarterRelay]</code>, <code>[FrontAxisRelay]</code> <em>(in <code>Awd*</code>)</em></td>
+            <td>Disconnecting coupling (starter relay or front-axle engagement coupling).</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>14</strong></td>
+            <td><code>Retarder</code></td>
+            <td><em>(custom section)</em></td>
+            <td>Transmission retarder brake (for trucks and buses).</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>15</strong></td>
+            <td><code>BrakeFriction</code></td>
+            <td><code>[BrakeFrontLeft]</code>, <code>[BrakeFrontRight]</code>, <code>[BrakeBackLeft]</code>, <code>[BrakeBackRight]</code></td>
+            <td>Wheel brake mechanism (service + parking brake).</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>16</strong></td>
+            <td><code>BrakeFrictionPneumatic</code></td>
+            <td><em>(custom section)</em></td>
+            <td>Pneumatic brake mechanism with spring-brake energy accumulator.</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>17</strong></td>
+            <td><code>WheelRaycast</code></td>
+            <td><code>[WheelFrontLeft]</code>, <code>[WheelFrontRight]</code>, <code>[WheelBackLeft]</code>, <code>[WheelBackRight]</code></td>
+            <td>Raycast wheel and pneumatic tire model.</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>18</strong></td>
+            <td><code>Compressor</code></td>
+            <td><em>(custom section)</em></td>
+            <td>Air compressor for a pneumatic system.</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>19</strong></td>
+            <td><code>Generator</code></td>
+            <td><code>[Generator]</code></td>
+            <td>Onboard electrical network alternator.</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a>, <a href="./04_Components_Electrics.html">04_Components_Electrics.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>20</strong></td>
+            <td><code>Pump</code></td>
+            <td><code>[GearBoxAutomaticPump]</code> <em>(in <code>*Auto.xml</code>)</em></td>
+            <td>Automatic transmission oil pump.</td>
+            <td><a href="./03_Components_TorqueTrain.html">03_Components_TorqueTrain.md</a>, <a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>21</strong></td>
+            <td><code>ElectricCircuit</code></td>
+            <td><code>[BatteryElectricCircuit]</code>, <code>[GeneratorElectricCircuit]</code>, <code>[IgnitionElectricCircuit]</code></td>
+            <td>Parallel electrical circuit (onboard network node).</td>
+            <td><a href="./04_Components_Electrics.html">04_Components_Electrics.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>22</strong></td>
+            <td><code>Battery</code></td>
+            <td><code>[Battery]</code></td>
+            <td>Storage battery.</td>
+            <td><a href="./04_Components_Electrics.html">04_Components_Electrics.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>23</strong></td>
+            <td><code>ElectricElement</code></td>
+            <td><em>(custom section)</em></td>
+            <td>Standalone resistive electrical load.</td>
+            <td><a href="./04_Components_Electrics.html">04_Components_Electrics.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>24</strong></td>
+            <td><code>CarElectrics</code></td>
+            <td><code>[CarElectrics]</code></td>
+            <td>Body electrics unit: lights, turn signals, wipers, dashboard, buzzers.</td>
+            <td><a href="./04_Components_Electrics.html">04_Components_Electrics.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>25</strong></td>
+            <td><code>Suspension1Spring</code></td>
+            <td><code>[SuspensionFrontLeft]</code>, <code>[SuspensionFrontRight]</code>, <code>[SuspensionBackLeft]</code>, <code>[SuspensionBackRight]</code></td>
+            <td>Coil-spring and damper wheel suspension with progression and camber curves.</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>26</strong></td>
+            <td><code>Suspension1Constant</code></td>
+            <td><em>(custom section)</em></td>
+            <td>Rigid constant-load suspension (for rail vehicles).</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>27</strong></td>
+            <td><code>Steering2Ackermann</code></td>
+            <td><code>[Steering]</code></td>
+            <td>Two-wheel steered-axle Ackermann steering linkage.</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>28</strong></td>
+            <td><code>SteeringSimple</code></td>
+            <td><em>(custom section)</em></td>
+            <td>Simplified wheel steering mechanism without Ackermann geometry.</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>29</strong></td>
+            <td><code>Receiver</code></td>
+            <td><em>(custom section)</em></td>
+            <td>Compressed-air receiver tank.</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>30</strong></td>
+            <td><code>ValveMultiCircuit</code></td>
+            <td><em>(custom section)</em></td>
+            <td>Multi-circuit protection valve for pneumatic systems.</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>31</strong></td>
+            <td><code>ActuatorPneumatic1Chamber</code></td>
+            <td><em>(custom section)</em></td>
+            <td>Single-chamber spring-return pneumatic actuator.</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>32</strong></td>
+            <td><code>ActuatorPneumatic2Chamber</code></td>
+            <td><em>(custom section)</em></td>
+            <td>Dual-chamber pneumatic cylinder (bus door actuator, etc.).</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>33</strong></td>
+            <td><code>Turbocharger</code></td>
+            <td><code>[Turbocharger]</code> <em>(in local turbo schemas)</em></td>
+            <td>ICE turbocharger with configurable boost and <code>LagTime</code>.</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>34</strong></td>
+            <td><code>Tank</code></td>
+            <td><code>[FuelTank]</code>, <code>[OilTank]</code> <em>(in <code>*Auto.xml</code>)</em></td>
+            <td>Fuel or oil tank.</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>35</strong></td>
+            <td><code>AerodynamicsCarSimple</code></td>
+            <td><code>[Aerodynamics]</code></td>
+            <td>Aerodynamic drag (<code>DragCoeff</code>) and lift/downforce (<code>LiftCoeff</code>).</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>36</strong></td>
+            <td><code>ExternalThruster</code></td>
+            <td><em>(custom section)</em></td>
+            <td>External linear thruster.</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>37</strong></td>
+            <td><code>FuelControllerComputer</code></td>
+            <td><code>[Idler]</code></td>
+            <td>ECU for fuel delivery, idle speed (<code>IdleRpm</code>, <code>WarmupRpm</code>), and speed limiter.</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>38</strong></td>
+            <td><code>FuelControllerMechanical</code></td>
+            <td><em>(custom section)</em></td>
+            <td>Carburetor fuel controller with manual choke (<code>Choke</code>).</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>39</strong></td>
+            <td><code>AbsTcs</code></td>
+            <td><code>[AbsTcs]</code></td>
+            <td>ABS, traction control (TCS), and electronic brakeforce distribution (EBD) unit.</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>40</strong></td>
+            <td><code>ClutchInputProcessor</code></td>
+            <td><code>[ClutchPedal]</code> <em>(in <code>*Manual.xml</code>)</em></td>
+            <td>Clutch pedal travel curve processor (<code>Power</code>).</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>41</strong></td>
+            <td><code>GearBoxAutomaticLogic</code></td>
+            <td><code>[GearBoxLogic]</code> <em>(in <code>*Auto.xml</code>)</em></td>
+            <td>Passenger-car automatic transmission selector (<code>P</code>, <code>R</code>, <code>N</code>, <code>D</code>).</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>42</strong></td>
+            <td><code>GearBoxAutomaticLogicBus</code></td>
+            <td><em>(custom section)</em></td>
+            <td>Bus push-button automatic transmission selector (<code>D</code>, <code>N</code>, <code>R</code>) with auto-neutral.</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>43</strong></td>
+            <td><code>IgnitionKeyProcessor</code></td>
+            <td><code>[IgnitionKey]</code></td>
+            <td>Ignition switch (<code>0 = Off</code>, <code>1 = Ignition</code>, <code>2 = Starter</code>).</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>44</strong></td>
+            <td><code>Speedometer</code></td>
+            <td><code>[Speedometer]</code></td>
+            <td>Speed sensor and odometer (<code>MetersPerRotation</code>).</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>45</strong></td>
+            <td><code>PowerSteering</code></td>
+            <td><code>[PowerSteering]</code></td>
+            <td>Hydraulic/electric power steering and Force Feedback calculation.</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>46</strong></td>
+            <td><code>FuelConsumptionMeter</code></td>
+            <td><em>(custom section)</em></td>
+            <td>Trip computer for average fuel consumption.</td>
+            <td><a href="./05_Components_Chassis_and_Subsystems.html">05_Components_Chassis_and_Subsystems.md</a></td>
+        </tr>
+    </tbody>
+</table>
+<hr>
+<h2 id="4-measurement-units-in-vehicleini-csv-and-unreal-engine-5">4. Measurement Units in <code>Vehicle.ini</code>, <code>.csv</code>, and Unreal Engine 5</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Quantity</th>
+            <th>In <code>Vehicle.ini</code> and <code>.csv</code> Tables</th>
+            <th>In Output Channels (<code>OutputElements</code>)</th>
+            <th>In Unreal Engine 5 Editor</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Coordinates, dimensions, radii, suspension travel</strong></td>
+            <td><strong>meters ($\text{m}$)</strong> <em>(pneumatic valve diameters <code>*Diameter</code> are in $\text{mm}$)</em></td>
+            <td>meters ($\text{m}$)</td>
+            <td><strong>centimeters ($\text{cm}$)</strong> ($1\text{ m} = 100\text{ cm}$)</td>
+        </tr>
+        <tr>
+            <td><strong>Chassis coordinate system (<code>Mount</code>, etc.)</strong></td>
+            <td>Right-handed CS: <strong><code>X</code> — forward, <code>Y</code> — left, <code>Z</code> — up</strong> (m)</td>
+            <td>—</td>
+            <td>Left-handed CS: <strong><code>X</code> — forward, <code>Y</code> — right, <code>Z</code> — up</strong> (cm)</td>
+        </tr>
+        <tr>
+            <td><strong>Vehicle speed</strong></td>
+            <td>$\text{m/s}$ <em>(except <code>SpeedLimit</code> in <code>[Idler]</code> and <code>SafetyBelt*Speed</code> in <code>[CarElectrics]</code> — those are in $\text{km/h}$)</em></td>
+            <td><strong>$\text{m/s}$</strong> (<code>Speed</code> and <code>DashboardSpeed</code>; multiply by $3.6$ to convert to $\text{km/h}$)</td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td><strong>Shaft rotational speed</strong></td>
+            <td><strong>$\text{RPM}$</strong> <em>(except <code>StaticFrictionTorqueMaxAngVelocity</code> in <code>[Wheel*]</code> — in $\text{rad/s}$)</em></td>
+            <td><strong>$\text{RPM}$</strong> <em>(in the <code>AngularVelocity</code> state — $\text{rad/s}$)</em></td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td><strong>Angles (wheel steer, camber, tire slip)</strong></td>
+            <td><strong>degrees ($^\circ$)</strong></td>
+            <td><code>WheelSteeringAngle</code> — deg.; <code>MaxSteeringAngle</code> — rad.</td>
+            <td>degrees ($^\circ$)</td>
+        </tr>
+        <tr>
+            <td><strong>Mass and moment of inertia</strong></td>
+            <td>kilograms ($\text{kg}$), $\text{kg}\cdot\text{m}^2$</td>
+            <td>$\text{kg}\cdot\text{m}^2$ (<code>ForceFeedbackInertia</code>)</td>
+            <td><code>Body</code> mass in <strong>$\text{kg}$</strong> (<code>Override Mass</code>), <code>COMNudge</code> in <strong>$\text{cm}$</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Force, stiffness, torque</strong></td>
+            <td>$\text{N}$, $\text{N/m}$ (<code>SpringCoeff</code>), $\text{N}\cdot\text{s/m}$ (<code>DampCoeff</code>), $\text{N}\cdot\text{m}$</td>
+            <td>$\text{N}\cdot\text{m}$ (<code>MaxTorque</code>, <code>Load</code>, <code>ForceFeedbackTorque</code>)</td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td><strong>Pressure (tires, oil, pneumatics)</strong></td>
+            <td><strong>bars ($\text{bar}$)</strong> <em>(gauge pressure in tires and compressor; absolute pressure in receivers)</em></td>
+            <td><strong>bars ($\text{bar}$)</strong></td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td><strong>Volume and fuel consumption</strong></td>
+            <td><strong>liters ($\text{L}$)</strong>; <code>AveragingDistance</code> — $\text{km}$, <code>AveragingStep</code> — $\text{m}$</td>
+            <td>volume — $\text{L}$, instantaneous flow — $\text{L/s}$, average in <code>FuelConsumptionMeter</code> — <strong>$\text{L/m}$</strong> (<code>* 1e5</code> = L/100 km)</td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td><strong>Temperature and electrics</strong></td>
+            <td>$^\circ\text{C}$; Volts ($\text{V}$), Amperes ($\text{A}$), Ohms ($\Omega$), battery capacity — $\text{A}\cdot\text{h}$</td>
+            <td>$^\circ\text{C}$, $\text{V}$, $\text{A}$</td>
+            <td>—</td>
+        </tr>
+        <tr>
+            <td><strong>Pedal and throttle position</strong></td>
+            <td>Fraction <strong><code>0.0 .. 1.0</code></strong> in <code>.ini</code> and inputs; percentage <strong><code>0 .. 100</code></strong> in column 1 of <code>Engine.csv</code></td>
+            <td>—</td>
+            <td>—</td>
+        </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

@@ -1,0 +1,408 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Руководство по созданию автомобилей (модов) для City Car Driving 2.0</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({ startOnLoad: true });</script>
+    <style>
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 32px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1f2328;
+            background-color: #ffffff;
+        }
+        h1, h2, h3, h4 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        h1 {
+            font-size: 2em;
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid #d0d7de;
+        }
+        h2 {
+            font-size: 1.5em;
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid #d0d7de;
+        }
+        h3 {
+            font-size: 1.25em;
+        }
+        hr {
+            height: 0.25em;
+            padding: 0;
+            margin: 24px 0;
+            background-color: #d0d7de;
+            border: 0;
+        }
+        a {
+            color: #0969da;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 16px 0;
+        }
+        th, td {
+            border: 1px solid #d0d7de;
+            padding: 8px 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background: #f6f8fa;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background: #f6f8fa;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .text-right {
+            text-align: right;
+        }
+        code {
+            background: #eff1f3;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+            font-size: 85%;
+        }
+        pre {
+            background: #f6f8fa;
+            padding: 14px;
+            border-radius: 6px;
+            overflow-x: auto;
+            border: 1px solid #d0d7de;
+        }
+        pre code {
+            background: transparent;
+            padding: 0;
+            font-size: 100%;
+        }
+        pre.mermaid {
+            background: #ffffff;
+            text-align: center;
+        }
+        .alert {
+            padding: 12px 16px;
+            margin: 16px 0;
+            border-left: 4px solid;
+            border-radius: 6px;
+            background: #f6f8fa;
+        }
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .alert p:last-child, .alert ul:last-child, .alert ol:last-child {
+            margin-bottom: 0;
+        }
+        .alert-note {
+            border-left-color: #0969da;
+            background-color: #ddf4ff;
+        }
+        .alert-note .alert-title { color: #0969da; }
+        .alert-tip {
+            border-left-color: #1a7f37;
+            background-color: #dafbe1;
+        }
+        .alert-tip .alert-title { color: #1a7f37; }
+        .alert-important {
+            border-left-color: #8250df;
+            background-color: #fbefff;
+        }
+        .alert-important .alert-title { color: #8250df; }
+        .alert-warning {
+            border-left-color: #9a6700;
+            background-color: #fff8c5;
+        }
+        .alert-warning .alert-title { color: #9a6700; }
+        .alert-caution {
+            border-left-color: #cf222e;
+            background-color: #ffebe9;
+        }
+        .alert-caution .alert-title { color: #cf222e; }
+        ul.checklist {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        ul.checklist li {
+            margin-bottom: 8px;
+        }
+        ul.checklist input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        figure.doc-figure {
+            margin: 16px 0;
+            padding: 10px;
+            background: #f6f8fa;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            text-align: center;
+        }
+        figure.doc-figure img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            display: block;
+            margin: 0 auto;
+        }
+        figure.doc-figure figcaption {
+            margin-top: 8px;
+            font-size: 0.9em;
+            color: #57606a;
+        }
+    </style>
+</head>
+<body>
+<h1 id="руководство-по-созданию-автомобилей-модов-для-city-car-driving-20">Руководство по созданию автомобилей (модов) для City Car Driving 2.0</h1>
+<p><strong>Навигация:</strong> <strong>README</strong> | <a href="./01_Minimal_Car_QuickStart.html">01. Минимальный автомобиль</a> | <a href="./02_Exterior_Lights_and_World.html">02. Экстерьер, свет и мир</a> | <a href="./03_Interior_Dashboard_Cameras_Seats.html">03. Салон, приборка и камеры</a> | <a href="./04_Mirrors_and_Wipers.html">04. Зеркала и дворники</a> | <a href="./05_Sounds_and_FMOD.html">05. Звуки и FMOD</a> | <a href="./06_Advanced_Specs_Logic_and_Reference.html">06. Комплектации, логика и шпаргалка</a></p>
+<hr>
+<p>Добро пожаловать в пошаговое руководство по созданию пользовательских автомобилей для <strong>City Car Driving 2.0</strong> на базе <strong>Unreal Engine 5.8</strong>.</p>
+<p>Руководство написано так, чтобы им мог пользоваться <strong>любой мододел — даже если вы никогда раньше не открывали Unreal Engine</strong>. Оно разбито на независимые модули по возрастанию сложности: начав с <strong>Модуля 1</strong>, вы соберёте и запустите в игре минимально рабочий автомобиль (кузов + 4 колеса), а затем шаг за шагом доведёте его до полноценного качественного мода.</p>
+<hr>
+<h2 id="1-карта-модулей">1. Карта модулей</h2>
+<pre class="mermaid">
+flowchart LR
+    M0["README&lt;br/&gt;Установка и основы UE"] --&gt; M1["Модуль 1 (MVP)&lt;br/&gt;Кузов + 4 колеса + .pak"]
+    M1 --&gt; M2["Модуль 2&lt;br/&gt;Экстерьер, свет, мир"]
+    M2 --&gt; M3["Модуль 3&lt;br/&gt;Салон, приборка, камеры"]
+    M3 --&gt; M4["Модуль 4&lt;br/&gt;Зеркала и дворники"]
+    M4 --&gt; M5["Модуль 5&lt;br/&gt;Звуки и FMOD"]
+    M5 --&gt; M6["Модуль 6&lt;br/&gt;Комплектации, физика, шпаргалка"]
+</pre>
+<table>
+    <thead>
+        <tr>
+            <th class="text-center">№</th>
+            <th>Модуль</th>
+            <th>Обязательность</th>
+            <th>Результат после прохождения</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="text-center"><strong>—</strong></td>
+            <td><strong><a href="./README.html">README.md</a></strong> <em>(вы здесь)</em></td>
+            <td>Обязательно</td>
+            <td>Установлен UE 5.8, открыт проект-шаблон, понятны базовые термины и навигация в редакторе.</td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>01</strong></td>
+            <td><strong><a href="./01_Minimal_Car_QuickStart.html">01. Минимальный автомобиль (Быстрый старт)</a></strong></td>
+            <td><strong>Обязательно (MVP)</strong></td>
+            <td>Готовый <code>.pak</code> с минимально рабочим автомобилем (кузов, 4 колеса, базовая камера, физика, карточка в меню), проверенный локально в игре и готовый к загрузке в Steam Workshop.</td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>02</strong></td>
+            <td><strong><a href="./02_Exterior_Lights_and_World.html">02. Экстерьер, оптика, подвеска и взаимодействие с миром</a></strong></td>
+            <td>Рекомендуется</td>
+            <td>Полный набор материалов кузова, неподвижные суппорты подвески, горящие фары и реальные источники света, номера, заправка (<code>FuelTank</code>), зона взаимодействия (<code>LogicBox</code>) и защита от дождя (<code>RainBlocker</code>).</td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>03</strong></td>
+            <td><strong><a href="./03_Interior_Dashboard_Cameras_Seats.html">03. Салон, приборная панель, камеры и посадка водителя</a></strong></td>
+            <td>Рекомендуется</td>
+            <td>Интерьер, крутящийся руль, рабочие стрелки и индикаторы приборной панели, все 5 игровых камер, посадка водителя и место для игрушки в салоне.</td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>04</strong></td>
+            <td><strong><a href="./04_Mirrors_and_Wipers.html">04. Зеркала заднего вида и дворники</a></strong></td>
+            <td>Рекомендуется</td>
+            <td>Работающие зеркала заднего вида с настроенными камерами и анимированные стеклоочистители.</td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>05</strong></td>
+            <td><strong><a href="./05_Sounds_and_FMOD.html">05. Звуки автомобиля и работа с FMOD Studio</a></strong></td>
+            <td>Опционально</td>
+            <td>Расстановка и выбор встроенных звуков игры или создание полностью собственных звуковых банков в FMOD Studio.</td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>06</strong></td>
+            <td><strong><a href="./06_Advanced_Specs_Logic_and_Reference.html">06. Комплектации, физика, кастомная логика и шпаргалка</a></strong></td>
+            <td>Продвинутый</td>
+            <td>Характеристики на карточке и переключаемые опции комплектаций (<code>options.xml</code>), переход к тонкой настройке физики (<code>VehicleLib</code>), пользовательская Blueprint-логика и единая таблица-шпаргалка.</td>
+        </tr>
+    </tbody>
+</table>
+<div class="alert alert-tip">
+    <div class="alert-title">Совет (TIP)</div>
+<p><strong>Отдельное руководство по тонкой настройке физики:</strong><br>
+Рядом с этим руководством находится подробный инженерный справочник по физике автомобилей — <strong><a href="../VehicleLib_HTML/README.html">VehicleLib_HTML</a></strong>. В Модуле 1 мы настроим только необходимый минимум физики, чтобы машина поехала, а за тонкой настройкой двигателя, КПП, подвески и шин обращайтесь в <code>VehicleLib_HTML</code>.</p>
+
+</div>
+<hr>
+<h2 id="2-что-нужно-скачать-и-установить">2. Что нужно скачать и установить</h2>
+<ol>
+    <li><strong>Unreal Engine 5.8</strong> — скачайте и установите через <strong>Epic Games Launcher</strong> (вкладка <em>Unreal Engine → Library → Engine Versions → <code>+</code> → 5.8</em>).
+<ul>
+    <li>Для создания и упаковки модов (включая запуск <code>build_mod_dlc.bat</code>) <strong>достаточно стандартной установки UE 5.8 из Epic Games Store</strong> — Visual Studio или сторонние SDK устанавливать не нужно.</li>
+</ul>
+</li>
+    <li><strong>Шаблонный проект <code>CCD2_VehicleKit</code></strong> — скачайте с GitHub:
+<ul>
+    <li><a href="https://github.com/Forward-Development/CCD2_VehicleKit/tree/main" target="_blank" rel="noopener">https://github.com/Forward-Development/CCD2_VehicleKit/tree/main</a></li>
+    <li>Распакуйте проект в папку с <strong>коротким путём на латинице и без пробелов</strong>, например <code>D:\Modding\CCD2_VehicleKit\</code>.</li>
+</ul>
+</li>
+    <li><strong>3D-редактор</strong> (Blender, 3ds Max, Maya или любой другой с экспортом в <code>.fbx</code>).</li>
+    <li><em>(Только для Модуля 5, если хотите полностью свои звуки)</em> <strong>FMOD Studio 2.03.14</strong> и шаблоны проектов:
+<ul>
+    <li><a href="https://github.com/Forward-Development/CCD2_VehicleKit_FMOD" target="_blank" rel="noopener">https://github.com/Forward-Development/CCD2_VehicleKit_FMOD</a></li>
+</ul>
+</li>
+</ol>
+<div class="alert alert-important">
+    <div class="alert-title">Важно (IMPORTANT)</div>
+<p><strong>Не используйте кириллицу и пробелы в пути к проекту и именах папок/файлов мода!</strong><br>
+Вместо <code>D:\Мои моды\Лада Веста\</code> используйте <code>D:\Modding\CCD2_VehicleKit\</code> и имя папки мода <code>MyFirstCar</code>. Это убережёт от ошибок сборки <code>.pak</code>.</p>
+
+</div>
+<hr>
+<h2 id="3-первый-запуск-и-мини-гид-по-unreal-engine-58-для-новичков">3. Первый запуск и мини-гид по Unreal Engine 5.8 для новичков</h2>
+<p>Если вы впервые открываете Unreal Engine — этот раздел сэкономит вам несколько часов.</p>
+<h3 id="31-открытие-проекта">3.1. Открытие проекта</h3>
+<ol>
+    <li>Откройте папку с распакованным <code>CCD2_VehicleKit</code> и дважды кликните по файлу <strong><code>CityCarDriving2.uproject</code></strong>.</li>
+    <li>При <strong>первом запуске</strong> редактор может долго загружаться (5–15 минут) и показывать в правом нижнем углу <code>Compiling Shaders (...)</code>. Это нормально — дождитесь окончания компиляции, повторные запуски будут быстрыми.</li>
+</ol>
+<h3 id="32-главные-окна-редактора-ue">3.2. Главные окна редактора UE</h3>
+<ul>
+    <li><strong>Content Browser / Content Drawer</strong> (открывается снизу по <code>Ctrl + Space</code>): файловый менеджер вашего проекта. Именно здесь лежат все 3D-модели, текстуры, материалы и схемы.</li>
+    <li><strong>Viewport</strong> (большое центральное окно): 3D-сцена.
+<ul>
+    <li>Зажмите <strong>ПКМ</strong> в 3D-окне и нажимайте <strong><code>W</code> / <code>A</code> / <code>S</code> / <code>D</code></strong> (вперёд/влево/назад/вправо), <strong><code>Q</code> / <code>E</code></strong> (вниз/вверх), чтобы летать по сцене.</li>
+    <li>Крутите <strong>колёсико мыши</strong> при зажатой ПКМ, чтобы менять скорость полёта.</li>
+    <li>Нажмите <strong><code>F</code></strong>, чтобы мгновенно подлететь к выделенному объекту.</li>
+    <li>Клавиши <strong><code>W</code> / <code>E</code> / <code>R</code></strong> (без зажатой ПКМ) переключают инструменты <strong>Перемещение / Вращение / Масштаб</strong>.</li>
+</ul>
+</li>
+    <li><strong>Details</strong> (панель справа): все свойства выбранного объекта или компонента. В самом верху панели есть строка <strong>Search</strong> — пользуйтесь ей, чтобы мгновенно находить нужное поле по имени (например, <code>Asset User Data</code>, <code>Collision</code>, <code>Virtual</code>).</li>
+    <li><strong>Сохранение (<code>Ctrl + Shift + S</code>):</strong> в UE изменения в файлах не сохраняются на диск автоматически! Файлы с маленькой звёздочкой <code>*</code> на иконке не сохранены. Перед сборкой мода всегда нажимайте <strong>File → Save All</strong> (<code>Ctrl + Shift + S</code>).</li>
+</ul>
+<h3 id="33-обязательная-настройка-как-увидеть-папку-модов-show-plugin-content">3.3. Обязательная настройка: как увидеть папку модов (<code>Show Plugin Content</code>)</h3>
+<p>По умолчанию Unreal Engine скрывает содержимое плагинов. Чтобы увидеть папку модов:</p>
+<ol>
+    <li>Откройте <strong>Content Browser</strong> (<code>Ctrl + Space</code>).</li>
+    <li>В правом верхнем углу панели Content Browser нажмите кнопку <strong>Settings</strong> (иконка шестерёнки).</li>
+    <li>Поставьте галочку <strong>Show Plugin Content</strong>.</li>
+    <li>В дереве папок слева раскройте <code>All → Plugins → Mods Content</code>. Именно здесь находятся все моды (в том числе готовый пример <code>CieBensVGruppe</code>).</li>
+</ol>
+<div class="alert alert-tip">
+    <div class="alert-title">Совет (TIP)</div>
+<p><strong>Как открыть папку из UE в Проводнике Windows:</strong><br>
+Нажмите <strong>ПКМ</strong> на любой папке в Content Browser и выберите <strong>Show in Explorer</strong>. Это понадобится, чтобы положить текстовые конфиги физики (<code>Vehicle.ini</code>, <code>options.xml</code>, <code>Engine.csv</code>) и звуковые банки (<code>AudioBanks/</code>), которые не отображаются в Content Browser.</p>
+
+</div>
+<h3 id="34-словарь-терминов-ue-простыми-словами">3.4. Словарь терминов UE простыми словами</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Термин в UE</th>
+            <th>Что это такое простыми словами</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Asset (<code>.uasset</code>)</strong></td>
+            <td>Любой файл внутри UE: 3D-модель, текстура, материал, автомобиль, таблица данных.</td>
+        </tr>
+        <tr>
+            <td><strong>Static Mesh (<code>SM_*</code>)</strong></td>
+            <td>Неподвижная 3D-модель без костей (кузов, колесо, салон, руль, стрелка спидометра).</td>
+        </tr>
+        <tr>
+            <td><strong>Skeletal Mesh (<code>SK_*</code>)</strong></td>
+            <td>3D-модель со скелетом и анимацией (в модах CCD 2.0 используется для дворников).</td>
+        </tr>
+        <tr>
+            <td><strong>Master Material / Material Instance (<code>MI_*</code>)</strong></td>
+            <td>Master Material — базовый шейдер игры. В модах <strong>нельзя</strong> создавать свои Master Materials — вы создаёте <strong>Material Instance</strong> (наследник готового <code>MI_Mod_*</code>) и просто подставляете в него свои текстуры и цвет.</td>
+        </tr>
+        <tr>
+            <td><strong>Virtual Texture (<code>VT</code>)</strong></td>
+            <td>Специальный формат потоковой загрузки текстур, обязательный для всех текстур вашего мода.</td>
+        </tr>
+        <tr>
+            <td><strong>Blueprint Class (<code>Actor</code>, <code>V_*</code>)</strong></td>
+            <td>«Контейнер» автомобиля. Внутри него вы собираете воедино кузов, колёса, камеры, фары, салон и задаёте им параметры. После любых правок в Blueprint нажимайте <strong>Compile</strong> (кнопка вверху слева) и <strong>Save</strong>.</td>
+        </tr>
+        <tr>
+            <td><strong>Component</strong></td>
+            <td>Отдельный элемент внутри Актора в левой панели <strong>Components</strong>:<br>• <code>StaticMeshComponent</code> — отображает 3D-модель;<br>• <code>SceneComponent</code> — невидимая точка в пространстве (используется для камер, звуков, топливного бака, группировки узлов);<br>• <code>BoxCollision</code> — невидимый прямоугольный объём (используется для <code>LogicBox</code>).</td>
+        </tr>
+        <tr>
+            <td><strong>Collision (Коллизия)</strong></td>
+            <td>Упрощённая физическая форма, которой объект сталкивается с дорогой и препятствиями. У автомобиля физическую коллизию имеет <strong>только <code>Body</code></strong>.</td>
+        </tr>
+        <tr>
+            <td><strong>Pivot (Пивот)</strong></td>
+            <td>Опорная точка 3D-модели (точка <code>0, 0, 0</code>), вокруг которой объект вращается. Например, у колеса пивот обязан быть ровно в его геометрическом центре.</td>
+        </tr>
+        <tr>
+            <td><strong>Socket (Сокет)</strong></td>
+            <td>Именованная точка привязки, добавляемая прямо внутрь 3D-модели (например, точка посадки водителя <code>Seat0_Landing</code> или точка камеры зеркала <code>Camera</code>).</td>
+        </tr>
+        <tr>
+            <td><strong>ControlBlock (<code>AssetUserData</code>)</strong></td>
+            <td>Фирменный механизм CCD 2.0: специальные метаданные, которые вы прикрепляете к компоненту Актора, чтобы игра поняла, <em>за что отвечает этот компонент</em> (камера, фара, руль, стрелка, зеркало, звук и т. д.).</td>
+        </tr>
+        <tr>
+            <td><strong>Primary Data Asset (<code>PDA_*</code> / <code>DA_*</code>)</strong></td>
+            <td>Файл-анкета («паспорт») вашего автомобиля для меню игры: название, превью-картинка, класс, типы двигателей/КПП и ссылка на Актор.</td>
+        </tr>
+    </tbody>
+</table>
+<div class="alert alert-tip">
+    <div class="alert-title">Совет (TIP)</div>
+<p><strong>Полезная подсказка редактора (зелёная подсветка):</strong><br>
+В проект встроен помощник <code>SimulatorMinimal</code>. Как только вы правильно добавите к любому компоненту Актора <code>Control Asset Data</code> (<code>ControlBlock</code>), имя этого компонента автоматически <strong>подсветится ярко-зелёным</strong> в дереве <strong>Components</strong>! Это быстрый способ визуально проверить, на какие узлы уже навешана логика игры.</p>
+
+</div>
+<hr>
+<h2 id="4-структура-папки-мода-и-пример-ciebensvgruppe">4. Структура папки мода и пример <code>CieBensVGruppe</code></h2>
+<p>Все файлы вашего автомобиля должны лежать внутри одной папки:<br>
+<code>Plugins/Mods/Content/&lt;ИмяМода&gt;/</code> (в Проводнике Windows) или <code>Plugins/Mods Content/&lt;ИмяМода&gt;/</code> (в Content Browser UE).</p>
+<pre><code class="language-text">Plugins/Mods/Content/&lt;ИмяМода&gt;/
+├── V_&lt;ИмяМода&gt;.uasset         ← Актор автомобиля (Blueprint Class)
+├── DA_&lt;ИмяМода&gt;.uasset        ← Паспорт/спецификация авто (PDA_PrototypedVehicleSpecification)
+├── Vehicle.ini                ← Главный файл параметров физики (обязательно)
+├── options.xml                ← Опции комплектаций и привязка XML-схем (обязательно)
+├── Engine.csv                 ← Кривые крутящего момента двигателя (обязательно)
+├── AwdAuto.xml / ...          ← (Опционально) Свои XML-схемы физики
+├── Meshes/                    ← Импортированные 3D-модели (кузов, колёса, салон...)
+├── Materials/                 ← Material Instances, созданные от MI_Mod_*
+├── Textures/                  ← Текстуры (с включённым Virtual Texture)
+├── Blueprints/                ← (Опционально) Компоненты света (SpotLight) и кастомная логика
+└── AudioBanks/                ← (Опционально) Свои звуковые банки FMOD (.bank + GUIDs.txt)</code></pre>
+<h3 id="готовый-эталон-ciebensvgruppe">Готовый эталон <code>CieBensVGruppe</code></h3>
+<p>В папке <code>Plugins/Mods/Content/CieBensVGruppe/</code> уже лежит полностью настроенный автомобиль-пример. Вы можете:</p>
+<ul>
+    <li><strong>Изучать его как эталон</strong> (открыть <code>V_CieBensVGruppe</code>, посмотреть иерархию узлов, <code>ControlBlock</code>, материалы, настройки фар и <code>Vehicle.ini</code>).</li>
+    <li><strong>Или создавать свой мод с нуля</strong> в новой папке <code>Plugins/Mods/Content/&lt;ИмяМода&gt;/</code> — именно этот путь подробно описан в модулях ниже.</li>
+</ul>
+<div class="alert alert-note">
+    <div class="alert-title">Примечание (NOTE)</div>
+<p><strong>Не нужно удалять <code>CieBensVGruppe</code> перед сборкой мода!</strong><br>
+В папке <code>CieBensVGruppe</code> лежит специальный игнор-лейбл <strong><code>L_IGNORE</code></strong> — благодаря ему при упаковке вашего мода через <code>build_mod_dlc.bat</code> эталонный автомобиль <strong>не попадёт</strong> в итоговый <code>.pak</code>.<br>
+Однако если вы решили делать свой автомобиль <em>на базе <code>CieBensVGruppe</code></em> (редактируя или дублируя её), то помимо переименования папки и ключевых ассетов <strong>обязательно удалите файл <code>L_IGNORE</code></strong> из папки автомобиля — иначе ваш мод не попадёт в <code>.pak</code>!</p>
+
+</div>
+<hr>
+<p><strong>Следующий шаг:</strong> переходите к <strong><a href="./01_Minimal_Car_QuickStart.html">Модулю 1. Минимальный автомобиль (Быстрый старт)</a></strong>, чтобы собрать и запустить в игре свою первую машину.</p>
+
+</body>
+</html>

@@ -1,0 +1,301 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Modding Guide for City Car Driving 2.0</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({ startOnLoad: true });</script>
+    <style>
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 32px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1f2328;
+            background-color: #ffffff;
+        }
+        h1, h2, h3, h4 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        h1 { font-size: 2em; padding-bottom: 0.3em; border-bottom: 1px solid #d0d7de; }
+        h2 { font-size: 1.5em; padding-bottom: 0.3em; border-bottom: 1px solid #d0d7de; }
+        h3 { font-size: 1.25em; }
+        hr { height: 0.25em; padding: 0; margin: 24px 0; background-color: #d0d7de; border: 0; }
+        a { color: #0969da; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+        th, td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; vertical-align: top; }
+        th { background: #f6f8fa; font-weight: 600; }
+        tr:nth-child(even) { background: #f6f8fa; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        code { background: #eff1f3; padding: 2px 5px; border-radius: 4px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 85%; }
+        pre { background: #f6f8fa; padding: 14px; border-radius: 6px; overflow-x: auto; border: 1px solid #d0d7de; }
+        pre code { background: transparent; padding: 0; font-size: 100%; }
+        pre.mermaid { background: #ffffff; text-align: center; }
+        .alert { padding: 12px 16px; margin: 16px 0; border-left: 4px solid; border-radius: 6px; background: #f6f8fa; }
+        .alert-title { font-weight: 600; margin-bottom: 6px; }
+        .alert p:last-child, .alert ul:last-child, .alert ol:last-child { margin-bottom: 0; }
+        .alert-note { border-left-color: #0969da; background-color: #ddf4ff; }
+        .alert-note .alert-title { color: #0969da; }
+        .alert-tip { border-left-color: #1a7f37; background-color: #dafbe1; }
+        .alert-tip .alert-title { color: #1a7f37; }
+        .alert-important { border-left-color: #8250df; background-color: #fbefff; }
+        .alert-important .alert-title { color: #8250df; }
+        .alert-warning { border-left-color: #9a6700; background-color: #fff8c5; }
+        .alert-warning .alert-title { color: #9a6700; }
+        .alert-caution { border-left-color: #cf222e; background-color: #ffebe9; }
+        .alert-caution .alert-title { color: #cf222e; }
+        ul.checklist { list-style-type: none; padding-left: 0; }
+        ul.checklist li { margin-bottom: 8px; }
+        ul.checklist input[type="checkbox"] { margin-right: 8px; }
+        figure.doc-figure { margin: 16px 0; padding: 10px; background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 6px; text-align: center; }
+        figure.doc-figure img { max-width: 100%; height: auto; border-radius: 4px; display: block; margin: 0 auto; }
+        figure.doc-figure figcaption { margin-top: 8px; font-size: 0.9em; color: #57606a; }
+    </style>
+</head>
+<body>
+<h1 id="vehicle-modding-guide-for-city-car-driving-20">Vehicle Modding Guide for City Car Driving 2.0</h1>
+<p><strong>Navigation:</strong> <strong>README</strong> | <a href="./01_Minimal_Car_QuickStart.html">01. Minimal Car</a> | <a href="./02_Exterior_Lights_and_World.html">02. Exterior, Lights &amp; World</a> | <a href="./03_Interior_Dashboard_Cameras_Seats.html">03. Interior, Dashboard &amp; Cameras</a> | <a href="./04_Mirrors_and_Wipers.html">04. Mirrors &amp; Wipers</a> | <a href="./05_Sounds_and_FMOD.html">05. Sounds &amp; FMOD</a> | <a href="./06_Advanced_Specs_Logic_and_Reference.html">06. Specs, Logic &amp; Reference</a></p>
+<hr>
+<p>Welcome to the step-by-step guide for creating custom vehicle mods for <strong>City Car Driving 2.0</strong> using <strong>Unreal Engine 5.8</strong>.</p>
+<p>This documentation is written so that <strong>any modder can follow it — even if you have never opened Unreal Engine before</strong>. It is organized into progressive modules by priority: starting with <strong>Module 1</strong>, you will build, package, and drive a minimal working vehicle (a body + 4 wheels) in-game, and then upgrade it step by step into a complete, polished mod.</p>
+<hr>
+<h2 id="1-module-roadmap">1. Module Roadmap</h2>
+<pre class="mermaid">
+flowchart LR
+    M0["README&lt;br/&gt;Setup &amp; UE Basics"] --&gt; M1["Module 1 (MVP)&lt;br/&gt;Body + 4 Wheels + .pak"]
+    M1 --&gt; M2["Module 2&lt;br/&gt;Exterior, Lights &amp; World"]
+    M2 --&gt; M3["Module 3&lt;br/&gt;Interior, Dashboard &amp; Cameras"]
+    M3 --&gt; M4["Module 4&lt;br/&gt;Mirrors &amp; Wipers"]
+    M4 --&gt; M5["Module 5&lt;br/&gt;Sounds &amp; FMOD"]
+    M5 --&gt; M6["Module 6&lt;br/&gt;Specs, Physics &amp; Reference"]
+</pre>
+<table>
+    <thead>
+        <tr>
+            <th class="text-center">#</th>
+            <th>Module</th>
+            <th>Priority</th>
+            <th>Outcome After Completing</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="text-center"><strong>—</strong></td>
+            <td><strong><a href="./README.html">README.md</a></strong> <em>(you are here)</em></td>
+            <td>Required</td>
+            <td>UE 5.8 installed, template project opened, core UE editor concepts and navigation understood.</td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>01</strong></td>
+            <td><strong><a href="./01_Minimal_Car_QuickStart.html">01. Minimal Car (Quick Start)</a></strong></td>
+            <td><strong>Required (MVP)</strong></td>
+            <td>A packaged <code>.pak</code> containing a minimal working car (body, 4 wheels, basic camera, physics, menu specification), tested locally in-game and ready for Steam Workshop.</td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>02</strong></td>
+            <td><strong><a href="./02_Exterior_Lights_and_World.html">02. Exterior, Lights, Suspension &amp; World Interaction</a></strong></td>
+            <td>Recommended</td>
+            <td>Full exterior PBR materials, non-rotating brake calipers (<code>Suspension*</code>), emissive lamps &amp; real light sources, license plates, refueling (<code>FuelTank</code>), world interaction (<code>LogicBox</code>), and rain blocking (<code>RainBlocker</code>).</td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>03</strong></td>
+            <td><strong><a href="./03_Interior_Dashboard_Cameras_Seats.html">03. Interior, Dashboard, Cameras &amp; Driver Seating</a></strong></td>
+            <td>Recommended</td>
+            <td>Cabin interior, rotating steering wheel, working dashboard needles &amp; warning lights, all 5 game cameras, driver seating, and cabin toy mount.</td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>04</strong></td>
+            <td><strong><a href="./04_Mirrors_and_Wipers.html">04. Mirrors &amp; Wipers</a></strong></td>
+            <td>Recommended</td>
+            <td>Working rear-view mirrors with render cameras and animated windshield wipers.</td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>05</strong></td>
+            <td><strong><a href="./05_Sounds_and_FMOD.html">05. Vehicle Sounds &amp; FMOD Studio</a></strong></td>
+            <td>Optional</td>
+            <td>Positioning &amp; picking built-in game sounds, or creating completely custom sound banks in FMOD Studio.</td>
+        </tr>
+        <tr>
+            <td class="text-center"><strong>06</strong></td>
+            <td><strong><a href="./06_Advanced_Specs_Logic_and_Reference.html">06. Configurations, Physics, Custom Logic &amp; Reference</a></strong></td>
+            <td>Advanced</td>
+            <td>Vehicle card stats, switchable options (<code>options.xml</code>), deep physics tuning (<code>VehicleLib</code>), custom Blueprint logic, and the all-in-one cheat sheet.</td>
+        </tr>
+    </tbody>
+</table>
+<div class="alert alert-tip">
+    <div class="alert-title">Tip</div>
+<p><strong>Dedicated Physics Tuning Reference:</strong><br>
+Alongside this guide sits the complete engineering reference for vehicle physics — <strong><a href="../VehicleLib_HTML/README.html">VehicleLib_MD</a></strong>. In Module 1 we only configure the bare minimum needed to get your car driving; for fine-tuning engines, gearboxes, suspension, and tires, refer to <code>VehicleLib_MD</code>.</p>
+
+</div>
+<hr>
+<h2 id="2-software-requirements--downloads">2. Software Requirements &amp; Downloads</h2>
+<ol>
+    <li><strong>Unreal Engine 5.8</strong> — download and install via <strong>Epic Games Launcher</strong> (<em>Unreal Engine → Library → Engine Versions → <code>+</code> → 5.8</em>).
+<ul>
+    <li>A standard <strong>UE 5.8 installation from the Epic Games Store is all you need</strong> to create and package mods (including running <code>build_mod_dlc.bat</code>) — you do not need to install Visual Studio or extra SDKs.</li>
+</ul>
+</li>
+    <li><strong>Template project <code>CCD2_VehicleKit</code></strong> — download from GitHub:
+<ul>
+    <li><a href="https://github.com/Forward-Development/CCD2_VehicleKit/tree/main" target="_blank" rel="noopener">https://github.com/Forward-Development/CCD2_VehicleKit/tree/main</a></li>
+    <li>Extract the project to a <strong>short path using Latin characters only and no spaces</strong>, e.g. <code>D:\Modding\CCD2_VehicleKit\</code>.</li>
+</ul>
+</li>
+    <li><strong>3D Editor</strong> (Blender, 3ds Max, Maya, or any software capable of <code>.fbx</code> export).</li>
+    <li><em>(Module 5 only, if you want fully custom sounds)</em> <strong>FMOD Studio 2.03.14</strong> and template projects:
+<ul>
+    <li><a href="https://github.com/Forward-Development/CCD2_VehicleKit_FMOD" target="_blank" rel="noopener">https://github.com/Forward-Development/CCD2_VehicleKit_FMOD</a></li>
+</ul>
+</li>
+</ol>
+<div class="alert alert-important">
+    <div class="alert-title">Important</div>
+<p><strong>Never use non-Latin characters or spaces in your project path or mod folder/file names!</strong><br>
+Use paths like <code>D:\Modding\CCD2_VehicleKit\</code> and mod folder names like <code>MyFirstCar</code>. This avoids <code>.pak</code> packaging failures.</p>
+
+</div>
+<hr>
+<h2 id="3-first-launch--unreal-engine-58-mini-guide-for-beginners">3. First Launch &amp; Unreal Engine 5.8 Mini-Guide for Beginners</h2>
+<p>If this is your first time using Unreal Engine, this section will save you hours.</p>
+<h3 id="31-opening-the-project">3.1. Opening the Project</h3>
+<ol>
+    <li>Open the extracted <code>CCD2_VehicleKit</code> folder and double-click <strong><code>CityCarDriving2.uproject</code></strong>.</li>
+    <li>On the <strong>first launch</strong>, the editor may take 5–15 minutes to open and display <code>Compiling Shaders (...)</code> in the bottom-right corner. This is normal — let it finish; subsequent launches will be fast.</li>
+</ol>
+<h3 id="32-key-editor-panels--controls">3.2. Key Editor Panels &amp; Controls</h3>
+<ul>
+    <li><strong>Content Browser / Content Drawer</strong> (<code>Ctrl + Space</code>): the file manager for your UE project. All 3D meshes, textures, materials, Blueprints, and data assets live here.</li>
+    <li><strong>Viewport</strong> (large center 3D view):
+<ul>
+    <li>Hold <strong>Right Mouse Button (RMB)</strong> and press <strong><code>W</code> / <code>A</code> / <code>S</code> / <code>D</code></strong> (move) or <strong><code>Q</code> / <code>E</code></strong> (down/up) to fly around.</li>
+    <li>Scroll the <strong>mouse wheel</strong> while holding RMB to adjust camera flight speed.</li>
+    <li>Press <strong><code>F</code></strong> to focus instantly on the currently selected object.</li>
+    <li>Press <strong><code>W</code> / <code>E</code> / <code>R</code></strong> (without holding RMB) to switch between <strong>Move / Rotate / Scale</strong> gizmos.</li>
+</ul>
+</li>
+    <li><strong>Details</strong> (right-hand panel): displays all properties of the selected object or component. Use the <strong>Search</strong> bar at the top of Details to jump directly to any property (e.g., <code>Asset User Data</code>, <code>Collision</code>, <code>Virtual</code>).</li>
+    <li><strong>Saving (<code>Ctrl + Shift + S</code>):</strong> Unreal Engine does not auto-save asset edits to disk! Assets with a small asterisk <code>*</code> on their icon have unsaved changes. Always run <strong>File → Save All</strong> (<code>Ctrl + Shift + S</code>) before packaging your mod.</li>
+</ul>
+<h3 id="33-mandatory-setting-showing-the-mods-folder-show-plugin-content">3.3. Mandatory Setting: Showing the Mods Folder (<code>Show Plugin Content</code>)</h3>
+<p>By default, Unreal Engine hides plugin folders. To see the Mods folder:</p>
+<ol>
+    <li>Open <strong>Content Browser</strong> (<code>Ctrl + Space</code>).</li>
+    <li>Click <strong>Settings</strong> (gear icon in the top-right corner of the Content Browser).</li>
+    <li>Check <strong>Show Plugin Content</strong>.</li>
+    <li>In the left folder tree, expand <code>All → Plugins → Mods Content</code>. All vehicle mods live here (including the sample vehicle <code>CieBensVGruppe</code>).</li>
+</ol>
+<div class="alert alert-tip">
+    <div class="alert-title">Tip</div>
+<p><strong>Opening a UE folder in Windows File Explorer:</strong><br>
+Right-click any folder in the Content Browser and select <strong>Show in Explorer</strong>. You will need this to place text physics configs (<code>Vehicle.ini</code>, <code>options.xml</code>, <code>Engine.csv</code>) and audio banks (<code>AudioBanks/</code>), which do not appear inside the UE Content Browser.</p>
+
+</div>
+<h3 id="34-unreal-engine-glossary-in-plain-english">3.4. Unreal Engine Glossary in Plain English</h3>
+<table>
+    <thead>
+        <tr>
+            <th>UE Term</th>
+            <th>Plain-English Explanation</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Asset (<code>.uasset</code>)</strong></td>
+            <td>Any file inside UE: a 3D mesh, texture, material, vehicle Blueprint, or data table.</td>
+        </tr>
+        <tr>
+            <td><strong>Static Mesh (<code>SM_*</code>)</strong></td>
+            <td>A rigid 3D model without bones (body, wheels, interior, steering wheel, gauge needles).</td>
+        </tr>
+        <tr>
+            <td><strong>Skeletal Mesh (<code>SK_*</code>)</strong></td>
+            <td>A 3D model with a skeleton and animations (used for wipers in CCD 2.0 mods).</td>
+        </tr>
+        <tr>
+            <td><strong>Master Material / Material Instance (<code>MI_*</code>)</strong></td>
+            <td>A Master Material is a base shader. Custom Master Materials are <strong>not supported</strong> in mods — instead, you create a <strong>Material Instance</strong> (inheriting from a provided <code>MI_Mod_*</code> parent) and simply plug in your own textures and colors.</td>
+        </tr>
+        <tr>
+            <td><strong>Virtual Texture (<code>VT</code>)</strong></td>
+            <td>A streaming texture format required for all textures used in your mod.</td>
+        </tr>
+        <tr>
+            <td><strong>Blueprint Class (<code>Actor</code>, <code>V_*</code>)</strong></td>
+            <td>The container for your vehicle. Inside it, you assemble the body, wheels, cameras, lights, interior, and attach game properties. After editing a Blueprint, always click <strong>Compile</strong> (top-left) and <strong>Save</strong>.</td>
+        </tr>
+        <tr>
+            <td><strong>Component</strong></td>
+            <td>An individual element inside an Actor (shown in the left <strong>Components</strong> tree):<br>• <code>StaticMeshComponent</code> — renders a 3D mesh;<br>• <code>SceneComponent</code> — an invisible 3D point (used for cameras, sound emitters, fuel tank, or grouping);<br>• <code>BoxCollision</code> — an invisible bounding box (used for <code>LogicBox</code>).</td>
+        </tr>
+        <tr>
+            <td><strong>Collision</strong></td>
+            <td>Simplified physical geometry used for impacts with the road and obstacles. On a vehicle, <strong>only <code>Body</code></strong> has physical collision.</td>
+        </tr>
+        <tr>
+            <td><strong>Pivot</strong></td>
+            <td>The origin point <code>(0, 0, 0)</code> of a 3D model around which it rotates. For example, a wheel's pivot must sit at its exact geometric center.</td>
+        </tr>
+        <tr>
+            <td><strong>Socket</strong></td>
+            <td>A named attachment point placed inside a 3D mesh (e.g., driver seat anchor <code>Seat0_Landing</code> or mirror capture direction <code>Camera</code>).</td>
+        </tr>
+        <tr>
+            <td><strong>ControlBlock (<code>AssetUserData</code>)</strong></td>
+            <td>CCD 2.0's metadata system attached to Actor components so the game knows <em>what role each component plays</em> (camera, light, steering wheel, needle, mirror, sound, etc.).</td>
+        </tr>
+        <tr>
+            <td><strong>Primary Data Asset (<code>PDA_*</code> / <code>DA_*</code>)</strong></td>
+            <td>Your vehicle's "passport" for the in-game menu: display name, preview image, class, engine/transmission types, and reference to the Actor.</td>
+        </tr>
+    </tbody>
+</table>
+<div class="alert alert-tip">
+    <div class="alert-title">Tip</div>
+<p><strong>Helpful Editor Visual Cue (Green Highlighting):</strong><br>
+The project includes the <code>SimulatorMinimal</code> editor plugin. As soon as you properly attach <code>Control Asset Data</code> (<code>ControlBlock</code>) to any component of your Actor, that component's name will automatically <strong>turn bright green</strong> in the <strong>Components</strong> tree! This makes it easy to spot which components are wired to game systems.</p>
+
+</div>
+<hr>
+<h2 id="4-mod-folder-structure--sample-vehicle-ciebensvgruppe">4. Mod Folder Structure &amp; Sample Vehicle <code>CieBensVGruppe</code></h2>
+<p>All files for your vehicle must reside inside a single folder:<br>
+<code>Plugins/Mods/Content/&lt;ModName&gt;/</code> (in Windows Explorer) or <code>Plugins/Mods Content/&lt;ModName&gt;/</code> (in UE Content Browser).</p>
+<pre><code class="language-text">Plugins/Mods/Content/&lt;ModName&gt;/
+├── V_&lt;ModName&gt;.uasset         ← Vehicle Actor (Blueprint Class)
+├── DA_&lt;ModName&gt;.uasset        ← Vehicle specification (PDA_PrototypedVehicleSpecification)
+├── Vehicle.ini                ← Main physics parameters file (required)
+├── options.xml                ← Configuration options &amp; XML schema mapping (required)
+├── Engine.csv                 ← Engine torque &amp; friction curves (required)
+├── AwdAuto.xml / ...          ← (Optional) Custom physics XML schemas
+├── Meshes/                    ← Imported 3D models (body, wheels, interior...)
+├── Materials/                 ← Material Instances created from MI_Mod_*
+├── Textures/                  ← Textures (with Virtual Texture Streaming enabled)
+├── Blueprints/                ← (Optional) Light components (SpotLight) &amp; custom logic
+└── AudioBanks/                ← (Optional) Custom FMOD sound banks (.bank + GUIDs.txt)</code></pre>
+<h3 id="sample-vehicle-ciebensvgruppe">Sample Vehicle <code>CieBensVGruppe</code></h3>
+<p>A complete, fully configured example car is included at <code>Plugins/Mods/Content/CieBensVGruppe/</code>. You can:</p>
+<ul>
+    <li><strong>Use it as a reference</strong> (open <code>V_CieBensVGruppe</code> to inspect node hierarchy, <code>ControlBlock</code> entries, materials, light setups, and <code>Vehicle.ini</code>).</li>
+    <li><strong>Or build your mod from scratch</strong> in a new folder <code>Plugins/Mods/Content/&lt;ModName&gt;/</code> — this is the clean workflow followed in the modules below.</li>
+</ul>
+<div class="alert alert-note">
+    <div class="alert-title">Note</div>
+<p><strong>You do NOT need to delete <code>CieBensVGruppe</code> before building your mod!</strong><br>
+Inside the <code>CieBensVGruppe</code> folder there is a special ignore label named <strong><code>L_IGNORE</code></strong> — thanks to it, <code>CieBensVGruppe</code> will <strong>not</strong> be packed into your <code>.pak</code> when you run <code>build_mod_dlc.bat</code>.<br>
+However, if you decide to build your own car <em>by editing or duplicating <code>CieBensVGruppe</code></em>, in addition to renaming the folder and key assets you <strong>must delete the <code>L_IGNORE</code> file</strong> from your vehicle's folder — otherwise your car will be excluded from the <code>.pak</code>!</p>
+
+</div>
+<hr>
+<p><strong>Next step:</strong> proceed to <strong><a href="./01_Minimal_Car_QuickStart.html">Module 1. Minimal Car (Quick Start)</a></strong> to build and drive your first vehicle in-game.</p>
+
+</body>
+</html>

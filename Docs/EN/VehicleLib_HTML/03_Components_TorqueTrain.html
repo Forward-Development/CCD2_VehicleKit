@@ -1,0 +1,1562 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>03. Drivetrain and Engine Components in City Car Driving 2.0</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '', right: '', display: true}, {left: '$', right: '$', display: false}]});"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({ startOnLoad: true });</script>
+    <style>
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 32px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1f2328;
+            background-color: #ffffff;
+        }
+        h1, h2, h3, h4 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        h1 { font-size: 2em; padding-bottom: 0.3em; border-bottom: 1px solid #d0d7de; }
+        h2 { font-size: 1.5em; padding-bottom: 0.3em; border-bottom: 1px solid #d0d7de; }
+        h3 { font-size: 1.25em; }
+        hr { height: 0.25em; padding: 0; margin: 24px 0; background-color: #d0d7de; border: 0; }
+        a { color: #0969da; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+        th, td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; vertical-align: top; }
+        th { background: #f6f8fa; font-weight: 600; }
+        tr:nth-child(even) { background: #f6f8fa; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        code { background: #eff1f3; padding: 2px 5px; border-radius: 4px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 85%; }
+        pre { background: #f6f8fa; padding: 14px; border-radius: 6px; overflow-x: auto; border: 1px solid #d0d7de; }
+        pre code { background: transparent; padding: 0; font-size: 100%; }
+        pre.mermaid { background: #ffffff; text-align: center; }
+        .alert { padding: 12px 16px; margin: 16px 0; border-left: 4px solid; border-radius: 6px; background: #f6f8fa; }
+        .alert-title { font-weight: 600; margin-bottom: 6px; }
+        .alert p:last-child, .alert ul:last-child, .alert ol:last-child { margin-bottom: 0; }
+        .alert-note { border-left-color: #0969da; background-color: #ddf4ff; }
+        .alert-note .alert-title { color: #0969da; }
+        .alert-tip { border-left-color: #1a7f37; background-color: #dafbe1; }
+        .alert-tip .alert-title { color: #1a7f37; }
+        .alert-important { border-left-color: #8250df; background-color: #fbefff; }
+        .alert-important .alert-title { color: #8250df; }
+        .alert-warning { border-left-color: #9a6700; background-color: #fff8c5; }
+        .alert-warning .alert-title { color: #9a6700; }
+        .alert-caution { border-left-color: #cf222e; background-color: #ffebe9; }
+        .alert-caution .alert-title { color: #cf222e; }
+        ul.checklist { list-style-type: none; padding-left: 0; }
+        ul.checklist li { margin-bottom: 8px; }
+        ul.checklist input[type="checkbox"] { margin-right: 8px; }
+        figure.doc-figure { margin: 16px 0; padding: 10px; background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 6px; text-align: center; }
+        figure.doc-figure img { max-width: 100%; height: auto; border-radius: 4px; display: block; margin: 0 auto; }
+        figure.doc-figure figcaption { margin-top: 8px; font-size: 0.9em; color: #57606a; }
+    </style>
+</head>
+<body>
+<h1 id="03-drivetrain-and-engine-components-in-city-car-driving-20">03. Drivetrain and Engine Components in City Car Driving 2.0</h1>
+<p><strong>Navigation:</strong> <a href="./README.html">README</a> | <a href="./00_Quick_Start.html">00. Quick Start</a> | <a href="./01_Architecture_and_Config.html">01. Architecture &amp; Configs</a> | <a href="./02_Named_IO_and_States.html">02. Named I/O &amp; States</a> | <strong>03. TorqueTrain</strong> | <a href="./04_Components_Electrics.html">04. Electrics</a> | <a href="./05_Components_Chassis_and_Subsystems.html">05. Chassis &amp; Subsystems</a></p>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+    <li><a href="#1-building-the-drivetrain-chain-in-xml-links-and-common-shaft-parameters-in-vehicleini">Building the Drivetrain Chain in XML (<code>&lt;Links&gt;</code>) and Common Shaft Parameters in <code>Vehicle.ini</code></a></li>
+    <li><a href="#2-engines-enginegazoline-enginediesel-engineelectric-externalvelocitymotor">Engines (<code>EngineGazoline</code>, <code>EngineDiesel</code>, <code>EngineElectric</code>, <code>ExternalVelocityMotor</code>)</a></li>
+    <li><a href="#3-clutch-torque-converter-and-bendix-clutchfriction-hydraulictorqueconverter-variabletorqueconverter-bendix">Clutch, Torque Converter, and Bendix (<code>ClutchFriction</code>, <code>HydraulicTorqueConverter</code>, <code>VariableTorqueConverter</code>, <code>Bendix</code>)</a></li>
+    <li><a href="#4-gearboxes-and-drivetrain-units-gearbox-gearboxautomatic-differentialopen-reducer-relay-retarder">Gearboxes and Drivetrain Units (<code>GearBox</code>, <code>GearBoxAutomatic</code>, <code>DifferentialOpen</code>, <code>Reducer</code>, <code>Relay</code>, <code>Retarder</code>)</a></li>
+    <li><a href="#5-brake-mechanisms-and-wheels-brakefriction-brakefrictionpneumatic-wheelraycast">Brake Mechanisms and Wheels (<code>BrakeFriction</code>, <code>BrakeFrictionPneumatic</code>, <code>WheelRaycast</code>)</a></li>
+    <li><a href="#6-auxiliary-units-generator-pump-compressor-and-complete-vehicleini-example">Auxiliary Units (<code>Generator</code>, <code>Pump</code>, <code>Compressor</code>) and Complete <code>Vehicle.ini</code> Example</a></li>
+</ol>
+<hr>
+<h2 id="1-building-the-drivetrain-chain-in-xml-links-and-common-shaft-parameters-in-vehicleini">1. Building the Drivetrain Chain in XML (<code>&lt;Links&gt;</code>) and Common Shaft Parameters in <code>Vehicle.ini</code></h2>
+<p>In vehicle XML schemes (<code>Common/Vehicles/MotorCars/Schemes/*.xml</code>), all drivetrain units are connected by directed links from the driving shaft to the driven shaft:</p>
+<pre><code class="language-xml">&lt;Link Holder="DrivingComponent" Reference="DrivenComponent" /&gt;</code></pre>
+<p>Torque is transmitted downstream along the <code>Holder -&gt; Reference</code> chain, whereas angular velocity (shaft RPM) and reflected moment of inertia are computed in the reverse direction — from the wheels back to the engine.</p>
+<pre class="mermaid">
+flowchart LR
+    Starter["Starter(EngineElectric)"] --&gt; SRelay["StarterRelay(Relay)"] --&gt; SGear["StarterGear(Reducer)"] --&gt; Bendix["StarterBendix(Bendix)"] --&gt; Engine["Engine(EngineGazoline / EngineDiesel)"]
+    Engine --&gt; Gen["Generator(Generator)"]
+    Engine --&gt; Pump["GearBoxAutomaticPump(Pump, only *Auto.xml)"]
+    Engine --&gt; TC["Clutch / TorqueConverter"] --&gt; GB["GearBox / GearBoxAutomatic"] --&gt; Diff["Differential / DifferentialAxle(DifferentialOpen)"]
+    Diff --&gt; Brakes["BrakeFront* / BrakeBack*(BrakeFriction)"] --&gt; Wheels["WheelFront* / WheelBack*(WheelRaycast)"]
+</pre>
+<h3 id="post-gearbox-chain-differences-in-standard-city-car-driving-20-schemes">Post-Gearbox Chain Differences in Standard City Car Driving 2.0 Schemes</h3>
+<ul>
+    <li><strong>Front-wheel drive (<code>FwdAuto.xml</code>, <code>FwdManual.xml</code>):</strong> The gearbox is connected to a single <code>&lt;Component Name="Differential" Class="DifferentialOpen" /&gt;</code> component that distributes torque to <code>BrakeFrontLeft</code> and <code>BrakeFrontRight</code>. The rear brakes <code>BrakeBackLeft/Right</code> are connected only to their respective wheels <code>WheelBackLeft/Right</code>.</li>
+    <li><strong>Rear-wheel drive (<code>RwdAuto.xml</code>, <code>RwdManual.xml</code>):</strong> The gearbox is connected to <code>&lt;Component Name="Differential" Class="DifferentialOpen" /&gt;</code>, which distributes torque to <code>BrakeBackLeft</code> and <code>BrakeBackRight</code>.</li>
+    <li><strong>All-wheel drive (<code>AwdAuto.xml</code>, <code>AwdManual.xml</code>):</strong> The gearbox is connected to the center differential <strong><code>DifferentialAxle</code></strong> (<code>Class="DifferentialOpen"</code>), from which two branches run to:
+<ol>
+    <li>The front axle engagement clutch <code>FrontAxisRelay</code> (<code>Class="Relay"</code>) $\to$ front differential <code>DifferentialWheelFront</code> $\to$ <code>BrakeFrontLeft</code> and <code>BrakeFrontRight</code>.</li>
+    <li>The rear differential <code>DifferentialWheelBack</code> $\to$ <code>BrakeBackLeft</code> and <code>BrakeBackRight</code>.</li>
+</ol>
+</li>
+</ul>
+<h3 id="summary-registry-of-the-20-drivetrain-and-engine-components">Summary Registry of the 20 Drivetrain and Engine Components</h3>
+<table>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th><code>Class="..."</code> in XML</th>
+            <th>Standard Section in <code>Vehicle.ini</code></th>
+            <th>Component Purpose</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td><code>EngineGazoline</code></td>
+            <td><code>[Engine]</code></td>
+            <td>Gasoline spark-ignition ICE powered by the electrical system (also used as a universal ICE when combining gearbox and engine options)</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td><code>EngineDiesel</code></td>
+            <td><code>[Engine]</code></td>
+            <td>Compression-ignition diesel ICE</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td><code>EngineElectric</code></td>
+            <td><code>[Starter]</code></td>
+            <td>DC electric motor (starter)</td>
+        </tr>
+        <tr>
+            <td>4</td>
+            <td><code>ExternalVelocityMotor</code></td>
+            <td><code>[...]</code></td>
+            <td>Mechanism drive servo motor with an external RPM setpoint</td>
+        </tr>
+        <tr>
+            <td>5</td>
+            <td><code>ClutchFriction</code></td>
+            <td><code>[Clutch]</code></td>
+            <td>Friction clutch (in <code>*Manual.xml</code> schemes)</td>
+        </tr>
+        <tr>
+            <td>6</td>
+            <td><code>HydraulicTorqueConverter</code></td>
+            <td><code>[TorqueConverter]</code></td>
+            <td>Automatic transmission hydraulic torque converter with lock-up clutch (in <code>*Auto.xml</code>)</td>
+        </tr>
+        <tr>
+            <td>7</td>
+            <td><code>VariableTorqueConverter</code></td>
+            <td><code>[...]</code></td>
+            <td>Continuously variable transmission (CVT) with smoothly varying gear ratio</td>
+        </tr>
+        <tr>
+            <td>8</td>
+            <td><code>Bendix</code></td>
+            <td><code>[StarterBendix]</code></td>
+            <td>Starter one-way overrunning clutch (Bendix)</td>
+        </tr>
+        <tr>
+            <td>9</td>
+            <td><code>GearBox</code></td>
+            <td><code>[GearBox]</code></td>
+            <td>Stepped manual gearbox or transfer case</td>
+        </tr>
+        <tr>
+            <td>10</td>
+            <td><code>GearBoxAutomatic</code></td>
+            <td><code>[GearBoxAutomatic]</code></td>
+            <td>Planetary hydromechanical automatic transmission (in <code>*Auto.xml</code>)</td>
+        </tr>
+        <tr>
+            <td>11</td>
+            <td><code>DifferentialOpen</code></td>
+            <td><code>[Differential]</code>, <code>[DifferentialAxle]</code>, <code>[DifferentialWheelFront/Back]</code></td>
+            <td>Symmetrical wheel or center differential with lock</td>
+        </tr>
+        <tr>
+            <td>12</td>
+            <td><code>Reducer</code></td>
+            <td><code>[StarterGear]</code></td>
+            <td>Mechanical gear reducer with a fixed gear ratio</td>
+        </tr>
+        <tr>
+            <td>13</td>
+            <td><code>Relay</code></td>
+            <td><code>[StarterRelay]</code>, <code>[FrontAxisRelay]</code></td>
+            <td>Disconnect clutch (1:1 mechanical relay)</td>
+        </tr>
+        <tr>
+            <td>14</td>
+            <td><code>Retarder</code></td>
+            <td><code>[Retarder]</code></td>
+            <td>Hydrodynamic driveline retarder brake</td>
+        </tr>
+        <tr>
+            <td>15</td>
+            <td><code>BrakeFriction</code></td>
+            <td><code>[BrakeFrontLeft/Right]</code>, <code>[BrakeBackLeft/Right]</code></td>
+            <td>Wheel friction brake mechanism</td>
+        </tr>
+        <tr>
+            <td>16</td>
+            <td><code>BrakeFrictionPneumatic</code></td>
+            <td><code>[BrakeFrontLeft/Right]</code>, <code>[BrakeBackLeft/Right]</code></td>
+            <td>Pneumatic brake with spring brake actuator (trucks/buses)</td>
+        </tr>
+        <tr>
+            <td>17</td>
+            <td><code>WheelRaycast</code></td>
+            <td><code>[WheelFrontLeft/Right]</code>, <code>[WheelBackLeft/Right]</code></td>
+            <td>Raycast pneumatic wheel with Pacejka curves</td>
+        </tr>
+        <tr>
+            <td>18</td>
+            <td><code>Generator</code></td>
+            <td><code>[Generator]</code></td>
+            <td>Automotive alternator with voltage regulator</td>
+        </tr>
+        <tr>
+            <td>19</td>
+            <td><code>Pump</code></td>
+            <td><code>[GearBoxAutomaticPump]</code></td>
+            <td>Driven oil/hydraulic pump</td>
+        </tr>
+        <tr>
+            <td>20</td>
+            <td><code>Compressor</code></td>
+            <td><code>[Compressor]</code></td>
+            <td>Driven pneumatic system air compressor</td>
+        </tr>
+    </tbody>
+</table>
+<h3 id="common-parameters-for-all-drivetrain-and-engine-components-in-vehicleini">Common Parameters for All Drivetrain and Engine Components in <code>Vehicle.ini</code></h3>
+<p>Every one of the 20 components listed above supports the following 5 base rotating-shaft parameters in its <code>Vehicle.ini</code> section:</p>
+<table>
+    <thead>
+        <tr>
+            <th>Key in <code>Vehicle.ini</code></th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Units</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>Inertia</code></td>
+            <td><code>Real</code></td>
+            <td><code>1e-4</code></td>
+            <td>$\text{kg}\cdot\text{m}^2$</td>
+            <td>Intrinsic moment of inertia of the unit's rotating parts. <em>(For <code>WheelRaycast</code>, calculated automatically from mass and radius.)</em></td>
+        </tr>
+        <tr>
+            <td><code>RotationalFrictionConstant</code></td>
+            <td><code>Real</code></td>
+            <td><code>0.0</code></td>
+            <td>$\text{N}\cdot\text{m}$</td>
+            <td>Constant shaft rotational resistance torque ($C_{\text{const}}$).</td>
+        </tr>
+        <tr>
+            <td><code>RotationalFrictionQuadCoeff</code></td>
+            <td><code>Real</code></td>
+            <td><code>0.0</code></td>
+            <td>$\text{N}\cdot\text{m}\cdot\text{s}^2/\text{rad}^2$</td>
+            <td>Quadratic shaft friction coefficient ($C_{\text{quad}}$) multiplied by angular velocity squared $\omega^2$: $M_{\text{rot}} = C_{\text{const}} + C_{\text{quad}}\cdot\omega^2$. <em>(For <code>EngineElectric</code>, calculated automatically.)</em></td>
+        </tr>
+        <tr>
+            <td><code>JammingSpeed</code></td>
+            <td><code>Real</code></td>
+            <td><code>1.0</code></td>
+            <td>$1/\text{s}$</td>
+            <td>Ramp-up rate of braking torque when the shaft jams (<code>Jammed = true</code>).</td>
+        </tr>
+        <tr>
+            <td><code>JammedFrictionMax</code></td>
+            <td><code>Real</code></td>
+            <td><code>1.0</code></td>
+            <td>$\text{N}\cdot\text{m}$</td>
+            <td>Maximum additional resistance torque when the shaft is completely jammed.</td>
+        </tr>
+    </tbody>
+</table>
+<div class="alert alert-note">
+    <div class="alert-title">Note</div>
+<p>Constant shaft load is configured via <code>RotationalFrictionConstant</code>, while speed-dependent losses are configured via <code>RotationalFrictionQuadCoeff</code>. All numeric arrays in <code>Vehicle.ini</code> are written <strong>strictly separated by a semicolon <code>;</code> with no space before <code>;</code></strong> (<code>OilPressureRPM = 0; 750; 6000</code>).</p>
+
+</div>
+<ul>
+    <li><strong>Common output (<code>&lt;OutputElements&gt;</code>):</strong> <code>InternalName="RPM"</code> (<code>Real</code>, RPM) — current rotational speed of the unit's input shaft (except <code>BrakeFrictionPneumatic</code>).</li>
+    <li><strong>Common states (<code>&lt;StateElements&gt;</code>):</strong> <code>InternalName="Jammed"</code> (<code>Boolean</code>) — forced shaft jamming (except <code>[Engine]</code>); <code>InternalName="AngularVelocity"</code> (<code>Real</code>, rad/s) — instantaneous override of shaft angular velocity.</li>
+</ul>
+<hr>
+<h2 id="2-engines-enginegazoline-enginediesel-engineelectric-externalvelocitymotor">2. Engines (<code>EngineGazoline</code>, <code>EngineDiesel</code>, <code>EngineElectric</code>, <code>ExternalVelocityMotor</code>)</h2>
+<h3 id="21-gasoline-and-diesel-ice-engine">2.1. Gasoline and Diesel ICE (<code>[Engine]</code>)</h3>
+<p>In City Car Driving 2.0, the engine section in <code>Vehicle.ini</code> is named <strong><code>[Engine]</code></strong>. Two ICE classes are available in XML schemes: <strong><code>EngineGazoline</code></strong> and <strong><code>EngineDiesel</code></strong>.</p>
+<div class="alert alert-tip">
+    <div class="alert-title">Tip</div>
+<p><strong>Using <code>EngineGazoline</code> as a universal ("base") ICE class when combining "Gasoline / Diesel" and "AT / MT" options:</strong><br>
+In <code>options.xml</code>, the <code>SetSchema="true"</code> attribute is allowed on <strong>only one option</strong> (attempting to bind schema switching to both <code>TransmissionType</code> and <code>EngineType</code> simultaneously will cause a loading error).</p>
+<ul>
+    <li>Therefore, if a vehicle has <strong>two transmission trims</strong> (<code>Auto</code> / <code>Manual</code>) and <strong>two engine trims</strong> (for example, gasoline <code>1.8I</code> and diesel <code>1.6TD</code>), XML schema switching (<code>SetSchema="true"</code>) is bound to the transmission (<code>*Auto.xml</code> and <code>*Manual.xml</code>), while the engine component in both standard schemes remains <strong><code>Class="EngineGazoline"</code></strong>.</li>
+    <li>Because all torque calculation physics from the <code>PowerCurves</code> table, engine braking, <code>RpmLimit</code> fuel cut, idling, warm-up, cooling, and lubrication are <strong>completely identical</strong> between <code>EngineGazoline</code> and <code>EngineDiesel</code>, the diesel trim is modeled directly on top of <code>Class="EngineGazoline"</code> using its own diesel torque curve (<code>PowerCurves</code>) and section overrides <code>[Engine.EngineType.&lt;Diesel&gt;]</code>, <code>[Idler.EngineType.&lt;Diesel&gt;]</code>, <code>[Starter.EngineType.&lt;Diesel&gt;]</code> in <code>Vehicle.ini</code> (while keeping <code>IgnitionResistance = 4</code> and <code>IgnitionMinVoltage = 7</code>):
+<pre><code class="language-ini">[Engine.EngineType.1.8I]
+Volume = 1.8
+RpmLimit = 7000
+PowerCurves = ../Plugins/Mods/Content/&lt;ModName&gt;/Engine_1_8I.csv
+AirPressureRatio = 0.355
+IgnitionResistance = 4
+IgnitionMinVoltage = 7
+
+[Engine.EngineType.1.6TD]
+Volume = 1.6
+RpmLimit = 5000
+MinCombustionRpm = 150
+PowerCurves = ../Plugins/Mods/Content/&lt;ModName&gt;/Engine_1_6TD.csv
+AirPressureRatio = 0.655
+IgnitionResistance = 4
+IgnitionMinVoltage = 7</code></pre>
+</li>
+    <li>The dedicated <strong><code>Class="EngineDiesel"</code></strong> class is only worth using in custom XML schemes for strictly diesel cars or trucks when you need the specific physics of difficult cold compression starts in freezing weather (<code>FuelIgnitionMinTemperature</code>, default <code>-5 °C</code>, base combustion chance <code>0.2</code>, and diesel fuel density <code>850 kg/m³</code> instead of <code>750 kg/m³</code> in <code>EngineGazoline</code>).</li>
+</ul>
+
+</div>
+<p><strong><code>&lt;Links&gt;</code> connections for the <code>Engine</code> component in XML:</strong></p>
+<ul>
+    <li>Outgoing from <code>Engine</code>: mandatory link to the fuel tank <code>&lt;Link Holder="Engine" Reference="FuelTank" /&gt;</code> and at most 1 link to the driven drivetrain shaft (<code>Clutch</code> in <code>*Manual.xml</code> or <code>TorqueConverter</code> in <code>*Auto.xml</code>), plus auxiliary branches to <code>Generator</code> and <code>GearBoxAutomaticPump</code>.</li>
+    <li>Incoming to <code>Engine</code>: from <code>StarterBendix</code>, <code>Idler</code> (<code>Class="FuelControllerComputer"</code>), <code>CarElectrics</code>, <code>GearBoxAutomatic</code> (in <code>*Auto.xml</code>), <code>Turbocharger</code> (if equipped with a turbocharger).</li>
+    <li><strong>Difference between <code>EngineGazoline</code> and <code>EngineDiesel</code> in <code>&lt;Links&gt;</code>:</strong>
+<ul>
+    <li>For <strong><code>EngineGazoline</code></strong>, the spark-plug power link <code>&lt;Link Holder="IgnitionElectricCircuit" Reference="Engine" /&gt;</code> is mandatory (without voltage above <code>IgnitionMinVoltage</code> in the ignition circuit, the engine produces no torque).</li>
+    <li>For <strong><code>EngineDiesel</code></strong>, the <code>IgnitionElectricCircuit -&gt; Engine</code> link is <strong>not supported and must be removed from the XML scheme</strong>! A diesel engine ignites fuel by compression (when combustion chamber temperature exceeds <code>FuelIgnitionMinTemperature</code>), while guaranteed shutoff when turning the key to <code>0</code> is provided by <code>&lt;Link Holder="IgnitionKey" Reference="Idler" /&gt;</code>, which cuts fuel delivery in the idle ECU.</li>
+</ul>
+</li>
+</ul>
+<table>
+    <thead>
+        <tr>
+            <th>Key in <code>Vehicle.ini</code> (<code>[Engine]</code>)</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Units</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>TwoStroked</code></td>
+            <td><code>Boolean</code></td>
+            <td><code>false</code></td>
+            <td>—</td>
+            <td>Engine stroke cycle: <code>false</code> — 4-stroke, <code>true</code> — 2-stroke.</td>
+        </tr>
+        <tr>
+            <td><code>Volume</code></td>
+            <td><code>Real</code></td>
+            <td><code>1.5</code></td>
+            <td>L</td>
+            <td>Engine displacement (affects cylinder filling and hourly fuel consumption).</td>
+        </tr>
+        <tr>
+            <td><code>CylinderCount</code></td>
+            <td><code>Integer</code></td>
+            <td><code>4</code></td>
+            <td>count</td>
+            <td>Number of cylinders (determines vibration frequency <code>VibrationFrequency</code>).</td>
+        </tr>
+        <tr>
+            <td><code>RpmLimit</code></td>
+            <td><code>Real</code></td>
+            <td><code>6000.0</code></td>
+            <td>RPM</td>
+            <td>Rev limiter fuel-cut RPM threshold.</td>
+        </tr>
+        <tr>
+            <td><code>RpmLimitTime</code></td>
+            <td><code>Real</code></td>
+            <td><code>0.1</code></td>
+            <td>s</td>
+            <td>Duration of fuel cutoff upon reaching <code>RpmLimit</code>.</td>
+        </tr>
+        <tr>
+            <td><code>MinStableRpm</code></td>
+            <td><code>Real</code></td>
+            <td><code>500.0</code></td>
+            <td>RPM</td>
+            <td>Minimum stable operating RPM (below this, torque begins to drop erratically).</td>
+        </tr>
+        <tr>
+            <td><code>MinCombustionRpm</code></td>
+            <td><code>Real</code></td>
+            <td><code>50.0</code></td>
+            <td>RPM</td>
+            <td>Minimum cranking RPM at which cylinder combustion can begin.</td>
+        </tr>
+        <tr>
+            <td><code>AirPressureRatio</code></td>
+            <td><code>Real</code></td>
+            <td><code>0.2</code></td>
+            <td>ratio</td>
+            <td>Cylinder air-filling ratio for the reference <code>PowerCurves</code> table.</td>
+        </tr>
+        <tr>
+            <td><code>PowerCurves</code></td>
+            <td><code>String</code></td>
+            <td><code>"engine.csv"</code></td>
+            <td>path</td>
+            <td>Path to the 2D torque and mechanical losses table relative to the <code>Content/</code> folder (for a mod folder: <code>../Plugins/Mods/Content/&lt;ModName&gt;/Engine.csv</code>).</td>
+        </tr>
+        <tr>
+            <td><code>OptimalRpmMin</code></td>
+            <td><code>Real</code></td>
+            <td><code>3000.0</code></td>
+            <td>RPM</td>
+            <td>Lower bound of the optimal ("green") RPM zone.</td>
+        </tr>
+        <tr>
+            <td><code>OptimalRpmMax</code></td>
+            <td><code>Real</code></td>
+            <td><code>4000.0</code></td>
+            <td>RPM</td>
+            <td>Upper bound of the optimal RPM zone.</td>
+        </tr>
+        <tr>
+            <td><code>VibrationCurve</code></td>
+            <td><code>String</code></td>
+            <td><code>"vibration.csv"</code></td>
+            <td>path</td>
+            <td>Path to the 1D table of vibration amplitude vs. <code>RPM / RpmLimit</code> (<code>Common/Vehicles/MotorCars/Tables/EngineVibration.csv</code>).</td>
+        </tr>
+        <tr>
+            <td><code>VibrationAmplitude</code></td>
+            <td><code>Real</code></td>
+            <td><code>0.01</code></td>
+            <td>m</td>
+            <td>Base amplitude multiplier for running engine vibration.</td>
+        </tr>
+        <tr>
+            <td><strong><code>HeatingSpeed</code></strong></td>
+            <td><code>Real</code></td>
+            <td><code>0.3</code></td>
+            <td>°C/s</td>
+            <td>Base coolant warm-up rate at 1000 RPM with no load.</td>
+        </tr>
+        <tr>
+            <td><code>HeatingLoadCoeff</code></td>
+            <td><code>Real</code></td>
+            <td><code>2.5</code></td>
+            <td>dimensionless</td>
+            <td>Factor by which engine heating accelerates under full load (100% throttle).</td>
+        </tr>
+        <tr>
+            <td><code>ThermostatBeginTemperature</code></td>
+            <td><code>Real</code></td>
+            <td><code>80.0</code></td>
+            <td>°C</td>
+            <td>Coolant temperature at which the thermostat starts opening (transition to the large cooling loop).</td>
+        </tr>
+        <tr>
+            <td><code>ThermostatEndTemperature</code></td>
+            <td><code>Real</code></td>
+            <td><code>94.0</code></td>
+            <td>°C</td>
+            <td>Coolant temperature at which the thermostat is fully open.</td>
+        </tr>
+        <tr>
+            <td><code>SmallCircuitCoolingSpeed</code></td>
+            <td><code>Real</code></td>
+            <td><code>0.1</code></td>
+            <td>°C/s</td>
+            <td>Cooling rate via the small circuit (at a 100 °C temperature difference with ambient air).</td>
+        </tr>
+        <tr>
+            <td><code>LargeCircuitCoolingSpeed</code></td>
+            <td><code>Real</code></td>
+            <td><code>0.2</code></td>
+            <td>°C/s</td>
+            <td>Additional cooling rate from the large-circuit radiator.</td>
+        </tr>
+        <tr>
+            <td><code>InmotionCoolingSpeed</code></td>
+            <td><code>Real</code></td>
+            <td><code>1.0</code></td>
+            <td>°C/s</td>
+            <td>Additional cooling rate from oncoming airflow at 100 km/h.</td>
+        </tr>
+        <tr>
+            <td><code>ElectricFan</code></td>
+            <td><code>Boolean</code></td>
+            <td><code>true</code></td>
+            <td>—</td>
+            <td><code>true</code> — temperature-switched electric fan; <code>false</code> — viscous-clutch fan (blows proportionally to <code>RPM</code>).</td>
+        </tr>
+        <tr>
+            <td><code>FanSwitchOnTemperature</code></td>
+            <td><code>Real</code></td>
+            <td><code>99.0</code></td>
+            <td>°C</td>
+            <td>Coolant temperature to switch on the primary cooling fan.</td>
+        </tr>
+        <tr>
+            <td><code>FanSwitchOffTemperature</code></td>
+            <td><code>Real</code></td>
+            <td><code>94.0</code></td>
+            <td>°C</td>
+            <td>Coolant temperature to switch off the primary cooling fan.</td>
+        </tr>
+        <tr>
+            <td><code>FanCoolingSpeed</code></td>
+            <td><code>Real</code></td>
+            <td><code>0.5</code></td>
+            <td>°C/s</td>
+            <td>Cooling rate provided by the active primary fan.</td>
+        </tr>
+        <tr>
+            <td><code>SecondFanSwitchOnTemperature</code></td>
+            <td><code>Real</code></td>
+            <td><code>115.0</code></td>
+            <td>°C</td>
+            <td>Coolant temperature to switch on the secondary fan (switches off at <code>FanSwitchOnTemperature</code>).</td>
+        </tr>
+        <tr>
+            <td><code>SecondFanCoolingSpeed</code></td>
+            <td><code>Real</code></td>
+            <td><code>0.0</code></td>
+            <td>°C/s</td>
+            <td>Cooling rate provided by the secondary fan.</td>
+        </tr>
+        <tr>
+            <td><code>OverheatTemperature</code></td>
+            <td><code>Real</code></td>
+            <td><code>115.0</code></td>
+            <td>°C</td>
+            <td>Coolant temperature threshold that triggers the <code>OverheatIcon</code> warning indicator.</td>
+        </tr>
+        <tr>
+            <td><code>MaxTemperature</code></td>
+            <td><code>Real</code></td>
+            <td><code>130.0</code></td>
+            <td>°C</td>
+            <td>Critical coolant temperature at which the engine permanently seizes.</td>
+        </tr>
+        <tr>
+            <td><code>OilPressureRPM</code></td>
+            <td><code>Array&lt;Real&gt;</code></td>
+            <td>—</td>
+            <td>RPM</td>
+            <td>RPM breakpoints for oil pressure calculation (array size must match <code>OilPressureValues</code>, e.g., <code>0; 750; 6000</code>).</td>
+        </tr>
+        <tr>
+            <td><code>OilPressureValues</code></td>
+            <td><code>Array&lt;Real&gt;</code></td>
+            <td>—</td>
+            <td>bar</td>
+            <td>Oil pressure values at 85 °C corresponding to <code>OilPressureRPM</code> breakpoints (e.g., <code>0; 2; 4.2</code>).</td>
+        </tr>
+        <tr>
+            <td><code>OilLowPressureThreshold</code></td>
+            <td><code>Real</code></td>
+            <td><code>1.5</code></td>
+            <td>bar</td>
+            <td>Minimum operating oil pressure (below this, shaft friction increases and heating accelerates).</td>
+        </tr>
+        <tr>
+            <td><code>OilLowPressureHeatCoeff</code></td>
+            <td><code>Real</code></td>
+            <td><code>2.0</code></td>
+            <td>dimensionless</td>
+            <td>Engine heating rate multiplier at zero oil pressure.</td>
+        </tr>
+        <tr>
+            <td><code>OilLowLevelThreshold</code></td>
+            <td><code>Real</code></td>
+            <td><code>0.5</code></td>
+            <td><code>[0..1]</code></td>
+            <td>Oil level below which lubrication system pressure begins to drop.</td>
+        </tr>
+        <tr>
+            <td><code>OilPressureTemperatureCoeff</code></td>
+            <td><code>Real</code></td>
+            <td><code>0.7</code></td>
+            <td>dimensionless</td>
+            <td>Temperature correction factor for oil pressure relative to 85 °C.</td>
+        </tr>
+        <tr>
+            <td><code>OilPressureMinTemperature</code></td>
+            <td><code>Real</code></td>
+            <td><code>30.0</code></td>
+            <td>°C</td>
+            <td>Lower temperature bound for the oil pressure temperature correction.</td>
+        </tr>
+        <tr>
+            <td><code>OilPressureMaxTemperature</code></td>
+            <td><code>Real</code></td>
+            <td><code>130.0</code></td>
+            <td>°C</td>
+            <td>Upper temperature bound for the oil pressure temperature correction.</td>
+        </tr>
+        <tr>
+            <td><code>OilLevelDropRate</code></td>
+            <td><code>Real</code></td>
+            <td><code>0.01</code></td>
+            <td>$1/\text{s}$</td>
+            <td>Rate of oil level decrease when the <code>OilLevel</code> leak input is active.</td>
+        </tr>
+        <tr>
+            <td><code>MinOilLevelAtLeak</code></td>
+            <td><code>Real</code></td>
+            <td><code>0.0</code></td>
+            <td><code>[0..1]</code></td>
+            <td>Minimum residual oil level during a leak.</td>
+        </tr>
+        <tr>
+            <td><code>IgnitionResistance</code></td>
+            <td><code>Real</code></td>
+            <td><code>4.0</code></td>
+            <td>Ω</td>
+            <td><strong><code>EngineGazoline</code> only:</strong> electrical resistance of the ignition system at <code>RpmLimit</code>.</td>
+        </tr>
+        <tr>
+            <td><code>IgnitionMinVoltage</code></td>
+            <td><code>Real</code></td>
+            <td><code>11.0</code></td>
+            <td>V</td>
+            <td><strong><code>EngineGazoline</code> only:</strong> minimum voltage in <code>IgnitionElectricCircuit</code> required to produce a spark.</td>
+        </tr>
+        <tr>
+            <td><code>FuelIgnitionMinTemperature</code></td>
+            <td><code>Real</code></td>
+            <td><code>-5.0</code></td>
+            <td>°C</td>
+            <td><strong><code>EngineDiesel</code> only:</strong> minimum combustion chamber temperature for compression ignition of diesel fuel (recommended <code>-20..-25</code>).</td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li><strong>Inputs (<code>InternalName</code>):</strong> <code>FuelConsumptionMultiplier</code> (<code>Real</code>), <code>CoolantLeak</code> (<code>Boolean</code>), <code>BrokenCoolingSystem</code> (<code>Boolean</code>), <code>OilLevel</code> (<code>Boolean</code> — oil leak).</li>
+    <li><strong>States (<code>InternalName</code>):</strong> <code>CoolantLevel</code> (<code>Real</code>, <code>[0..1]</code>), <code>CoolantTemperature</code> (<code>Real</code>, °C), <code>OilTemperature</code> (<code>Real</code>, °C), <code>OilLevel</code> (<code>Real</code>, <code>[0..1]</code>), <code>FuelChamberTemperature</code> (<code>Real</code>, °C), <code>BrokenCoolingSystem</code> (<code>Boolean</code>), <code>AngularVelocity</code> (<code>Real</code>, rad/s).</li>
+    <li><strong>Outputs (<code>InternalName</code>):</strong> <code>RPM</code>, <code>RPMLimit</code>, <code>StableRPM</code>, <code>Combustion</code> (<code>Boolean</code>), <code>CoolantTemperature</code>, <code>CoolantLevel</code>, <code>OilTemperature</code>, <code>OilPressure</code>, <code>OilLowPressure</code>, <code>AFRRatio</code>, <code>Load</code> (<code>EngineLoad</code>), <code>MaxTorque</code> (<code>EngineMaxTorque</code>), <code>FuelConsumedTotal</code>, <code>FuelConsumedPerSecond</code>, <code>ThermostatBeginTemperature</code>, <code>OverheatTemperature</code>, <code>VibrationFrequency</code> (<code>EngineVibrationFrequency</code>), <code>VibrationAmplitude</code> (<code>EngineVibrationAmplitude</code>), <code>OptimalRpmMin</code>, <code>OptimalRpmMax</code>, <code>BrokenCoolingSystem</code> (<code>Boolean</code>).</li>
+</ul>
+<h3 id="22-critical-rule-for-calculating-enginecsv-powercurves-and-idling-in-d">2.2. Critical Rule for Calculating <code>Engine.csv</code> (<code>PowerCurves</code>) and Idling in <code>D</code></h3>
+<p>The <code>Engine.csv</code> file defines a 2D torque table as a function of throttle opening percentage (rows: <code>0; 5; 10; 20; 40; 60; 80; 100</code>) and engine speed <code>RPM</code> (columns). Cells are delimited by <code>;</code>, and decimals use a <strong>dot <code>.</code></strong>:</p>
+<pre><code class="language-csv">thr/rpm;0;50;250;500;750;1000;1500;2000;2500;3000;3500;4000;4500;5500
+0;0;0;0;0;0;0;0;0;0;0;0;0;0;0
+5;0;15;40;150;32;24;20;18;15;12;10;6;0;0
+10;0;18;55;180;75;65;58;52;45;38;30;18;5;0
+...
+100;0;20;80;208;288;349;490;498;486;464;440;397;325;2.5
+0;12;15;20;24;28;35;50;58;68;78;88;98;110;10000</code></pre>
+<div class="alert alert-caution">
+    <div class="alert-title">Caution</div>
+<p><strong>Primary rule for calculating the <code>100%</code> throttle row in <code>Engine.csv</code>:</strong><br>
+The last row of the table (after row <code>100</code>, starting with <code>0;...</code>) defines the positive torque of mechanical losses and engine braking $F(\text{RPM}) &gt; 0$. The physics engine <strong>subtracts $F(\text{RPM})$ from every combustion row, including the <code>100%</code> full-throttle row</strong>:</p>
+<p>If you enter the rated torque of $440\text{ N}\cdot\text{m}$ in row <code>100</code> and $60\text{ N}\cdot\text{m}$ in the last friction row, only $380\text{ N}\cdot\text{m}$ will remain at the flywheel (a 20–25% power loss!). To obtain the rated flywheel characteristic $T_{\text{rated}}(\text{RPM})$, row <code>100</code> must contain the <strong>sum</strong> $T_{\text{rated}}(\text{RPM}) + F(\text{RPM})$.</p>
+<p><em>(If a <code>Turbocharger</code> component is added to the XML scheme, each combustion cell <code>(thr, RPM)</code> after adding $F(\text{RPM})$ is additionally divided by the steady-state boost multiplier $\text{ratio}(\text{RPM}, \text{thr})$ at that pedal position <code>thr</code>, while the last friction row $F(\text{RPM})$ is not divided.)</em></p>
+
+</div>
+<div class="alert alert-tip">
+    <div class="alert-title">Tip</div>
+<p><strong>Limitation of the <code>[Idler]</code> idle controller and the "anti-stall hump" in rows <code>5%</code> and <code>10%</code>:</strong><br>
+The idle ECU <code>[Idler]</code> (<code>FuelControllerComputer</code>) computes base throttle opening in an open loop — it searches for the throttle position where combustion torque at <code>IdleRpm</code> equals internal friction $F(\text{IdleRpm})$, without accounting for external torque converter drag in <code>D</code> and without opening the throttle wider when RPM drops below <code>IdleRpm</code>.</p>
+<ul>
+    <li>If you simply raise torque in the <code>5%</code> row at the idle RPM column itself (e.g., <code>750 RPM</code>), <code>[Idler]</code> will close the throttle proportionally, and RPM in <code>D</code> will still sag!</li>
+    <li><strong>Solution:</strong> at the <code>IdleRpm</code> column (<code>750 RPM</code>), set the <code>5%</code> row torque only slightly above friction $F(750)$ (e.g., <code>32 N·m</code> when $F(750) = 28\text{ N}\cdot\text{m}$), and shape a steep rise — an <strong>"anti-stall hump"</strong> — at the adjacent lower column <strong><code>500 RPM</code></strong> (e.g., <code>150 N·m</code> in row <code>5%</code> and <code>180 N·m</code> in row <code>10%</code>). Then, when shifting into <code>D</code> or smoothly releasing the clutch, a small RPM dip from <code>750</code> to <code>660–680 RPM</code> causes a sharp surge in torque and holds idle reliably.</li>
+</ul>
+
+</div>
+<h3 id="23-starter-electric-motor-starter-classengineelectric">2.3. Starter Electric Motor (<code>[Starter]</code>, <code>Class="EngineElectric"</code>)</h3>
+<p>Connects to the electrical grid (<code>&lt;Link Holder="BatteryElectricCircuit" Reference="Starter" /&gt;</code>), ignition switch (<code>&lt;Link Holder="IgnitionKey" Reference="Starter" /&gt;</code>), idle ECU (<code>&lt;Link Holder="Idler" Reference="Starter" /&gt;</code>), and transmits rotation through the starter relay and starter gear reducer (<code>&lt;Link Holder="Starter" Reference="StarterRelay" /&gt;</code>).</p>
+<table>
+    <thead>
+        <tr>
+            <th>Key in <code>Vehicle.ini</code> (<code>[Starter]</code>)</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Units</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>IdleVoltage</code></td>
+            <td><code>Real</code></td>
+            <td><code>12.0</code></td>
+            <td>V</td>
+            <td>Starter no-load voltage.</td>
+        </tr>
+        <tr>
+            <td><code>IdleAmperage</code></td>
+            <td><code>Real</code></td>
+            <td><code>80.0</code></td>
+            <td>A</td>
+            <td>Current draw at no-load speed <code>IdleRPM</code>.</td>
+        </tr>
+        <tr>
+            <td><code>IdleRPM</code></td>
+            <td><code>Real</code></td>
+            <td><code>3000.0</code></td>
+            <td>RPM</td>
+            <td>Maximum free-running starter RPM with no load.</td>
+        </tr>
+        <tr>
+            <td><code>StallVoltage</code></td>
+            <td><code>Real</code></td>
+            <td><code>5.0</code></td>
+            <td>V</td>
+            <td>Terminal voltage with a completely stalled armature.</td>
+        </tr>
+        <tr>
+            <td><code>StallAmperage</code></td>
+            <td><code>Real</code></td>
+            <td><code>700.0</code></td>
+            <td>A</td>
+            <td>Cranking current with a stalled armature.</td>
+        </tr>
+        <tr>
+            <td><code>StallTorque</code></td>
+            <td><code>Real</code></td>
+            <td><code>13.0</code></td>
+            <td>$\text{N}\cdot\text{m}$</td>
+            <td>Maximum starting torque at <code>StallAmperage</code>.</td>
+        </tr>
+    </tbody>
+</table>
+<p><em>(Note: the starter automatically computes its quadratic friction coefficient from the no-load regime <code>IdleRPM</code> / <code>IdleAmperage</code>, so <code>RotationalFrictionQuadCoeff</code> does not need to be set in <code>[Starter]</code>.)</em></p>
+<h3 id="24-external-velocity-setpoint-motor-classexternalvelocitymotor">2.4. External Velocity Setpoint Motor (<code>Class="ExternalVelocityMotor"</code>)</h3>
+<p>Auxiliary drive for special-equipment mechanisms that spins up a driven shaft to target speed <code>ShaftRpm</code>.</p>
+<ul>
+    <li><strong><code>.ini</code> parameters:</strong> <code>TorqueCurve</code> (<code>String</code>, path to 1D torque-vs-RPM table, default <code>"torque.csv"</code>), <code>EnableTorqueFadeByRpmDiff</code> (<code>Boolean</code>, default <code>true</code> — smoothly tapers torque as RPM approaches the setpoint), <code>MinWorkingRpm</code> (<code>Real</code>), <code>MaxWorkingRpm</code> (<code>Real</code>).</li>
+    <li><strong>Input (<code>InternalName</code>):</strong> <code>ShaftRpm</code> (<code>Real</code>, RPM). <strong>Outputs (<code>InternalName</code>):</strong> <code>RPM</code> (<code>Real</code>), <code>ShaftRpm</code> (<code>Real</code>), <code>Position</code> (<code>Real</code>, revolution fraction <code>(-1..1)</code>).</li>
+</ul>
+<hr>
+<h2 id="3-clutch-torque-converter-and-bendix-clutchfriction-hydraulictorqueconverter-variabletorqueconverter-bendix">3. Clutch, Torque Converter, and Bendix (<code>ClutchFriction</code>, <code>HydraulicTorqueConverter</code>, <code>VariableTorqueConverter</code>, <code>Bendix</code>)</h2>
+<h3 id="31-friction-clutch-clutch-classclutchfriction">3.1. Friction Clutch (<code>[Clutch]</code>, <code>Class="ClutchFriction"</code>)</h3>
+<p>Used in manual transmission schemes (<code>*Manual.xml</code>). Linked between the engine and gearbox (<code>Engine -&gt; Clutch -&gt; GearBox</code>), and receives plate engagement from the pedal component <code>&lt;Link Holder="ClutchPedal" Reference="Clutch" /&gt;</code>.</p>
+<table>
+    <thead>
+        <tr>
+            <th>Key in <code>Vehicle.ini</code> (<code>[Clutch]</code>)</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Units</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>MaxTorque</code></td>
+            <td><code>Real</code></td>
+            <td><code>1000.0</code></td>
+            <td>$\text{N}\cdot\text{m}$</td>
+            <td>Maximum friction torque of the fully engaged clutch (recommended <code>1.4–1.6</code> times peak engine torque).</td>
+        </tr>
+        <tr>
+            <td><code>VelocityScale</code></td>
+            <td><code>Real</code></td>
+            <td><code>1.0</code></td>
+            <td>$\text{s}/\text{rad}$</td>
+            <td>Slope of friction torque buildup with respect to angular velocity difference between plates.</td>
+        </tr>
+    </tbody>
+</table>
+<h3 id="32-hydraulic-torque-converter-torqueconverter-classhydraulictorqueconverter">3.2. Hydraulic Torque Converter (<code>[TorqueConverter]</code>, <code>Class="HydraulicTorqueConverter"</code>)</h3>
+<p>Used in automatic transmission schemes (<code>*Auto.xml</code>). Linked in the chain <code>Engine -&gt; TorqueConverter -&gt; GearBoxAutomatic</code>, while the lock-up clutch engagement command arrives via the feedback link <code>&lt;Link Holder="GearBoxAutomatic" Reference="TorqueConverter" /&gt;</code>.</p>
+<table>
+    <thead>
+        <tr>
+            <th>Key in <code>Vehicle.ini</code> (<code>[TorqueConverter]</code>)</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Units</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>MaxRatio</code></td>
+            <td><code>Real</code></td>
+            <td><code>3.0</code></td>
+            <td>dimensionless</td>
+            <td>Maximum torque multiplication ratio when launching from a standstill (typically <code>1.8–2.5</code>).</td>
+        </tr>
+        <tr>
+            <td><code>MaxRatioVelocity</code></td>
+            <td><code>Real</code></td>
+            <td><code>100.0</code></td>
+            <td>RPM</td>
+            <td>Impeller-to-turbine speed difference at which <code>MaxRatio</code> is reached (typically <code>1400–1800</code>).</td>
+        </tr>
+        <tr>
+            <td><code>Torque</code></td>
+            <td><code>Real</code></td>
+            <td><code>3000.0</code></td>
+            <td>$\text{N}\cdot\text{m}$</td>
+            <td>Reference hydraulic load torque on the impeller at speed difference <code>TorqueRpm</code> (<code>25–65</code> for passenger cars).</td>
+        </tr>
+        <tr>
+            <td><code>TorqueRpm</code></td>
+            <td><code>Real</code></td>
+            <td><code>100.0</code></td>
+            <td>RPM</td>
+            <td>Reference impeller-to-turbine RPM difference for quadratic torque calculation: $M_{\text{pump}} = \text{Torque} \cdot (\Delta\text{RPM} / \text{TorqueRpm})^2$ (typically <code>700–800</code>).</td>
+        </tr>
+        <tr>
+            <td><code>LockMaxTorque</code></td>
+            <td><code>Real</code></td>
+            <td><code>1000.0</code></td>
+            <td>$\text{N}\cdot\text{m}$</td>
+            <td>Maximum friction torque of the torque converter lock-up clutch (must comfortably exceed peak engine torque, <code>750–1100</code>).</td>
+        </tr>
+        <tr>
+            <td><code>LockVelocityScale</code></td>
+            <td><code>Real</code></td>
+            <td><code>1000.0</code></td>
+            <td>$\text{s}/\text{rad}$</td>
+            <td>Stiffness of the lock-up clutch with respect to shaft speed difference (<code>10–100</code> for firm lock-up without slip).</td>
+        </tr>
+        <tr>
+            <td><code>ValveStartOpenVelocity</code></td>
+            <td><code>Real</code></td>
+            <td><code>-1.0</code></td>
+            <td>RPM</td>
+            <td>Turbine RPM at which the relief valve starts opening (<code>-1</code> — disabled).</td>
+        </tr>
+        <tr>
+            <td><code>ValveFullOpenVelocity</code></td>
+            <td><code>Real</code></td>
+            <td><code>-1.0</code></td>
+            <td>RPM</td>
+            <td>Turbine RPM at which the relief valve is fully open (<code>-1</code> — disabled).</td>
+        </tr>
+        <tr>
+            <td><code>TransferInertia</code></td>
+            <td><code>Boolean</code></td>
+            <td><code>true</code></td>
+            <td>—</td>
+            <td>Whether to transfer reflected engine flywheel inertia to the automatic transmission input shaft.</td>
+        </tr>
+    </tbody>
+</table>
+<h3 id="33-continuously-variable-converter-classvariabletorqueconverter-and-bendix-starterbendix-classbendix">3.3. Continuously Variable Converter (<code>Class="VariableTorqueConverter"</code>) and Bendix (<code>[StarterBendix]</code>, <code>Class="Bendix"</code>)</h3>
+<ul>
+    <li><strong><code>VariableTorqueConverter</code>:</strong> unit with a smoothly adjustable gear ratio. <code>.ini</code> parameters: <code>GearRatio</code> (<code>1.0</code>), <code>GearRatioMin</code> (<code>1.0</code>), <code>GearRatioMax</code> (<code>100.0</code>). Input: <code>GearRatio</code> (<code>Real</code>). Outputs: <code>RPM</code>, <code>OutRPM</code>.</li>
+    <li><strong><code>Bendix</code> (<code>[StarterBendix]</code>):</strong> one-way overrunning clutch between the starter gear reducer and crankshaft (<code>StarterGear -&gt; StarterBendix -&gt; Engine</code>). Transmits torque only when starter speed exceeds engine speed; once the engine starts, it freewheels freely. Configured with the 5 common shaft parameters.</li>
+</ul>
+<hr>
+<h2 id="4-gearboxes-and-drivetrain-units-gearbox-gearboxautomatic-differentialopen-reducer-relay-retarder">4. Gearboxes and Drivetrain Units (<code>GearBox</code>, <code>GearBoxAutomatic</code>, <code>DifferentialOpen</code>, <code>Reducer</code>, <code>Relay</code>, <code>Retarder</code>)</h2>
+<h3 id="41-manual-gearbox-gearbox-classgearbox">4.1. Manual Gearbox (<code>[GearBox]</code>, <code>Class="GearBox"</code>)</h3>
+<p>Used in <code>*Manual.xml</code> schemes (<code>Clutch -&gt; GearBox -&gt; Differential / DifferentialAxle</code>).</p>
+<table>
+    <thead>
+        <tr>
+            <th>Key in <code>Vehicle.ini</code> (<code>[GearBox]</code>)</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Units</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>Gears</code></td>
+            <td><code>Array&lt;Real&gt;</code></td>
+            <td>—</td>
+            <td>dimensionless</td>
+            <td>List of gear ratios (negative — reverse, positive — forward gears). Example: <code>-4.722; 5.076; 2.610; 1.518; 1.000; 0.791; 0.675</code>.</td>
+        </tr>
+        <tr>
+            <td><code>GearsSynchronized</code></td>
+            <td><code>Array&lt;Bool&gt;</code></td>
+            <td>—</td>
+            <td><code>0</code>/<code>1</code></td>
+            <td>Synchronizer presence flags for each gear in <code>Gears</code> (list length must match <code>Gears</code>, e.g., <code>1; 1; 1; 1; 1; 1; 1</code>).</td>
+        </tr>
+        <tr>
+            <td><code>StartingGear</code></td>
+            <td><code>Integer</code></td>
+            <td><code>-1</code></td>
+            <td>index</td>
+            <td>Initial gear on spawn (<code>-1</code> — neutral, <code>0..N-1</code> — index in the <code>Gears</code> array).</td>
+        </tr>
+        <tr>
+            <td><code>EnableNeutralInput</code></td>
+            <td><code>Boolean</code></td>
+            <td><code>true</code></td>
+            <td>—</td>
+            <td>Whether shifting to neutral (<code>-1</code>) is permitted.</td>
+        </tr>
+        <tr>
+            <td><code>MaxTorqueToNeutral</code></td>
+            <td><code>Real</code></td>
+            <td><code>10.0</code></td>
+            <td>$\text{N}\cdot\text{m}$</td>
+            <td>Maximum output shaft torque allowing a gear to be pulled into neutral without pressing the clutch (recommended <code>50</code>).</td>
+        </tr>
+        <tr>
+            <td><code>MaxRPMDiffToShift</code></td>
+            <td><code>Real</code></td>
+            <td><code>50.0</code></td>
+            <td>RPM</td>
+            <td>Maximum RPM difference between synchronized shafts to engage a gear from neutral.</td>
+        </tr>
+        <tr>
+            <td><code>SynchronizerFrictionCoeff</code></td>
+            <td><code>Real</code></td>
+            <td><code>0.5</code></td>
+            <td>$\text{N}\cdot\text{m}\cdot\text{s}/\text{rad}$</td>
+            <td>Viscous friction coefficient of the synchronizer.</td>
+        </tr>
+        <tr>
+            <td><code>SynchronizerMaxFrictionTorque</code></td>
+            <td><code>Real</code></td>
+            <td><code>3.0</code></td>
+            <td>$\text{N}\cdot\text{m}$</td>
+            <td>Maximum synchronizing friction torque on the input shaft.</td>
+        </tr>
+    </tbody>
+</table>
+<div class="alert alert-tip">
+    <div class="alert-title">Tip</div>
+<p><strong>Manual transmission synchronizer tuning recommendations:</strong><br>
+For crisp, quick engagement of first gear from neutral while simultaneously applying throttle, it is recommended to set the synchronization tolerance to <strong><code>MaxRPMDiffToShift = 200..250</code></strong> and synchronizer friction torque to <strong><code>SynchronizerMaxFrictionTorque = 10..15</code></strong>.</p>
+
+</div>
+<ul>
+    <li><strong>Input (<code>InternalName</code>):</strong> <code>Gear</code> (<code>Integer</code>, <code>-1</code> — neutral, <code>0</code> — reverse, <code>1..N-1</code> — forward gears). <strong>State:</strong> <code>Gear</code> (<code>Integer</code>). <strong>Outputs:</strong> <code>RPM</code>, <code>Gear</code>, <code>GearRatio</code>, <code>GearCount</code>, <code>EnableNeutralInput</code>.</li>
+</ul>
+<h3 id="42-hydromechanical-automatic-gearbox-gearboxautomatic-classgearboxautomatic">4.2. Hydromechanical Automatic Gearbox (<code>[GearBoxAutomatic]</code>, <code>Class="GearBoxAutomatic"</code>)</h3>
+<p>Used in <code>*Auto.xml</code> schemes. Has 3 mandatory outgoing links in <code>&lt;Links&gt;</code>: <code>&lt;Link Holder="GearBoxAutomatic" Reference="Engine" /&gt;</code> (reads engine RPM), <code>&lt;Link Holder="GearBoxAutomatic" Reference="TorqueConverter" /&gt;</code> (controls torque converter lock-up), and <code>&lt;Link Holder="GearBoxAutomatic" Reference="DifferentialAxle" /&gt;</code> (or <code>Differential</code> in <code>FwdAuto</code>/<code>RwdAuto</code>). Working fluid pressure is supplied by <code>GearBoxAutomaticPump</code>, and <code>P/R/N/D</code> selector modes come from <code>GearBoxLogic</code>.</p>
+<table>
+    <thead>
+        <tr>
+            <th>Key in <code>Vehicle.ini</code> (<code>[GearBoxAutomatic]</code>)</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Units</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>Gears</code></td>
+            <td><code>Array&lt;Real&gt;</code></td>
+            <td>—</td>
+            <td>dimensionless</td>
+            <td>List of gear ratios (negative — reverse, positive — forward; <code>0</code> is forbidden, values must be unique).</td>
+        </tr>
+        <tr>
+            <td><code>LockTorqueConverter</code></td>
+            <td><code>Array&lt;Bool&gt;</code></td>
+            <td>—</td>
+            <td><code>0</code>/<code>1</code></td>
+            <td>Whether torque converter lock-up is allowed in each gear from <code>Gears</code> (typically <code>0; 1; 1; ...</code>). Array size must match <code>Gears</code>.</td>
+        </tr>
+        <tr>
+            <td><code>OilWorkPressure</code></td>
+            <td><code>Real</code></td>
+            <td><code>0.0</code></td>
+            <td>bar</td>
+            <td>Minimum oil pressure from <code>GearBoxAutomaticPump</code> required to engage gears (typically <code>3.5</code>).</td>
+        </tr>
+        <tr>
+            <td><code>GearChangeTime</code></td>
+            <td><code>Real</code></td>
+            <td><code>0.5</code></td>
+            <td>s</td>
+            <td>Duration of a smooth gear shift (<code>0.25–0.50</code>).</td>
+        </tr>
+        <tr>
+            <td><code>ChangeGearWaitTime</code></td>
+            <td><code>Real</code></td>
+            <td><code>1.0</code></td>
+            <td>s</td>
+            <td>Minimum pause between two consecutive shifts (<code>0.30–0.60</code>).</td>
+        </tr>
+        <tr>
+            <td><code>MaxGearStep</code></td>
+            <td><code>Integer</code></td>
+            <td>all gears</td>
+            <td>count</td>
+            <td>Maximum number of gears the transmission can skip in a single kickdown shift (recommended <code>2–3</code>).</td>
+        </tr>
+        <tr>
+            <td><code>PreferredGearRatioDiffPercent</code></td>
+            <td><code>Real</code></td>
+            <td><code>0.1</code></td>
+            <td>fraction</td>
+            <td>Hysteresis threshold of relative gear ratio advantage required to trigger a shift (<code>0.12–0.35</code>).</td>
+        </tr>
+        <tr>
+            <td><code>LockTorqueConverterRpm</code></td>
+            <td><code>Real</code></td>
+            <td><code>3000.0</code></td>
+            <td>RPM</td>
+            <td>Minimum AT input shaft (torque converter turbine) RPM above which lock-up engagement is allowed.</td>
+        </tr>
+        <tr>
+            <td><code>UnlockTorqueConverterRpm</code></td>
+            <td><code>Real</code></td>
+            <td><code>1500.0</code></td>
+            <td>RPM</td>
+            <td>AT input shaft RPM below which the torque converter lock-up is forcibly disengaged.</td>
+        </tr>
+        <tr>
+            <td><code>TorqueConverterLockTime</code></td>
+            <td><code>Real</code></td>
+            <td><code>1.0</code></td>
+            <td>s</td>
+            <td>Time for full engagement/disengagement of the torque converter lock-up clutch.</td>
+        </tr>
+        <tr>
+            <td><code>ShiftAccelerator</code></td>
+            <td><code>Array&lt;Real&gt;</code></td>
+            <td>—</td>
+            <td><code>[0..1]</code></td>
+            <td>Throttle pedal position breakpoints (e.g., <code>0; 0.1; 0.2; 0.4; 0.6; 0.8; 1</code>).</td>
+        </tr>
+        <tr>
+            <td><code>OptimalRpm</code></td>
+            <td><code>Array&lt;Real&gt;</code></td>
+            <td>—</td>
+            <td>RPM</td>
+            <td>Target engine RPM for selecting the optimal gear at each <code>ShiftAccelerator</code> breakpoint.</td>
+        </tr>
+        <tr>
+            <td><code>MaxRpm</code></td>
+            <td><code>Array&lt;Real&gt;</code></td>
+            <td>—</td>
+            <td>RPM</td>
+            <td>Upper engine RPM limit for forced upshift at each <code>ShiftAccelerator</code> breakpoint.</td>
+        </tr>
+        <tr>
+            <td><code>TorqueConverterLockDiff</code></td>
+            <td><code>Array&lt;Real&gt;</code></td>
+            <td>—</td>
+            <td>RPM</td>
+            <td>Maximum impeller-to-turbine RPM difference at which torque converter lock-up is permitted to engage.</td>
+        </tr>
+        <tr>
+            <td><code>ParkingFriction</code></td>
+            <td><code>Real</code></td>
+            <td><code>10000.0</code></td>
+            <td>$\text{N}\cdot\text{m}$</td>
+            <td>Braking torque of the parking pawl on the output shaft in selector mode <code>P</code>.</td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li><strong>Input (<code>InternalName</code>):</strong> <code>Accelerator</code> (<code>Real</code>, <code>[0..1]</code>). <strong>Output (<code>InternalName</code>):</strong> <code>RPM</code> (<code>Real</code>). <em>(Channels <code>AutoShifterState</code>, <code>AutoShifterCurrentGear</code>, <code>AutoShifterTargetGear</code>, <code>AutoShifterMaxGear</code> belong to the <code>GearBoxLogic</code> component; see <a href="./05_Components_Chassis_and_Subsystems.html">05. Chassis &amp; Subsystems</a>.)</em></li>
+</ul>
+<div class="alert alert-tip">
+    <div class="alert-title">Tip</div>
+<p><strong><code>[GearBoxAutomatic]</code> tuning recommendations:</strong></p>
+<ol>
+    <li><strong>Input shaft hydromechanical losses (<code>RotationalFrictionQuadCoeff</code>):</strong> because quadratic friction is applied to the AT input shaft before gear ratio multiplication, modern passenger-car automatics work best with <code>RotationalFrictionQuadCoeff = 2.0e-4 .. 3.0e-4</code> and <code>RotationalFrictionConstant = 1.5</code>.</li>
+    <li><strong>Coordinating shift points (<code>OptimalRpm</code>, <code>MaxRpm</code>) and lock-up (<code>TorqueConverterLockDiff</code>):</strong> during a gear change, the torque converter clutch briefly unlocks and engine RPM rises under load by the converter slip amount. Set <code>MaxRpm</code> above the unlocked converter RPM (<code>3150..4200</code> for diesel and <code>4500..6400</code> for gasoline engines), and tune normal shift points through the <code>OptimalRpm</code> array with a sufficiently wide lock-up engagement tolerance <code>TorqueConverterLockDiff</code> (<code>650..2100</code>).</li>
+    <li><strong>Unlocking the torque converter under hard braking (<code>UnlockTorqueConverterRpm</code> and <code>TorqueConverterLockTime</code>):</strong> so the lock-up clutch disengages before the wheels lock/stop during emergency braking to a halt, set <code>UnlockTorqueConverterRpm</code> with margin above idle RPM (<code>1200..1250</code> with <code>LockTorqueConverterRpm = 1350..1400</code>) and a clutch actuation time <code>TorqueConverterLockTime = 0.25..0.30</code>.</li>
+</ol>
+
+</div>
+<h3 id="43-differentials-classdifferentialopen">4.3. Differentials (<code>Class="DifferentialOpen"</code>)</h3>
+<p>Symmetrical differential with final drive ratio <code>GearRatio</code>, distributing torque to exactly <strong>2 mandatory driven shafts</strong>.</p>
+<ul>
+    <li><strong>Section names in <code>Vehicle.ini</code>:</strong> in <code>Fwd*.xml</code> and <code>Rwd*.xml</code> schemes, the single differential is named <strong><code>[Differential]</code></strong>; in <code>Awd*.xml</code> schemes, three sections are used — center <strong><code>[DifferentialAxle]</code></strong> (carrying the final drive <code>GearRatio</code>), front axle <strong><code>[DifferentialWheelFront]</code></strong> (<code>GearRatio = 1.0</code>), and rear axle <strong><code>[DifferentialWheelBack]</code></strong> (<code>GearRatio = 1.0</code>).</li>
+</ul>
+<table>
+    <thead>
+        <tr>
+            <th>Key in <code>Vehicle.ini</code></th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Units</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>GearRatio</code></td>
+            <td><code>Real</code></td>
+            <td><code>4.0</code></td>
+            <td>dimensionless</td>
+            <td>Final drive gear ratio (must not be <code>0</code>).</td>
+        </tr>
+        <tr>
+            <td><code>Locked</code></td>
+            <td><code>Boolean</code></td>
+            <td><code>false</code></td>
+            <td>—</td>
+            <td>Whether the differential is locked by default when the vehicle spawns.</td>
+        </tr>
+        <tr>
+            <td><code>DisableInput</code></td>
+            <td><code>Boolean</code></td>
+            <td><code>false</code></td>
+            <td>—</td>
+            <td>If <code>true</code>, ignores the external <code>Lock</code> input.</td>
+        </tr>
+        <tr>
+            <td><code>LockVelocityCoeff</code></td>
+            <td><code>Real</code></td>
+            <td><code>0.05</code></td>
+            <td>$\text{s}/\text{rad}$</td>
+            <td>Rate of torque transfer to the slower-spinning half-shaft when locked.</td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li><strong>Input (<code>InternalName</code>):</strong> <code>Lock</code> (<code>Boolean</code>). <strong>Outputs (<code>InternalName</code>):</strong> <code>RPM</code> (<code>Real</code>), <code>Locked</code> (<code>Boolean</code>).</li>
+</ul>
+<div class="alert alert-tip">
+    <div class="alert-title">Tip</div>
+<p><strong>Tuning the center <code>[DifferentialAxle]</code> for permanent all-wheel drive (AWD):</strong><br>
+For vehicles with permanent all-wheel drive, keep the center differential <code>[DifferentialAxle]</code> unlocked (<strong><code>Locked = false</code></strong>) so the front and rear axles can rotate freely at different angular velocities while cornering.</p>
+
+</div>
+<h3 id="44-gear-reducer-classreducer-clutch-relay-classrelay-and-retarder-classretarder">4.4. Gear Reducer (<code>Class="Reducer"</code>), Clutch Relay (<code>Class="Relay"</code>), and Retarder (<code>Class="Retarder"</code>)</h3>
+<ul>
+    <li><strong><code>Reducer</code> (section <code>[StarterGear]</code>):</strong> gear reducer with a fixed gear ratio. <code>.ini</code> parameter: <code>GearRatio</code> (<code>Real</code>, default <code>1.0</code>, typically <code>10..12</code> in <code>[StarterGear]</code>). Outputs: <code>RPM</code>, <code>OutRPM</code>.</li>
+    <li><strong><code>Relay</code> (sections <code>[StarterRelay]</code> and <code>[FrontAxisRelay]</code>):</strong> controllable 1:1 coupling that engages or interrupts power flow. <code>.ini</code> parameter: <code>Enabled</code> (<code>Boolean</code>, default <code>true</code>; set to <code>false</code> in <code>[StarterRelay]</code>, whereas in <code>Awd*.xml</code> the <code>AWD</code> input with <code>DefaultValue="true"</code> automatically enables <code>FrontAxisRelay</code>). Input: <code>Enable</code> (<code>Boolean</code>). Outputs: <code>RPM</code>, <code>Enabled</code>.</li>
+    <li><strong><code>Retarder</code>:</strong> driveline retarder brake for trucks and buses. <code>.ini</code> parameters: <code>Rpm</code> (<code>Array&lt;Real&gt;</code>, required RPM list), <code>Torque</code> (<code>Array&lt;Real&gt;</code>, required braking torque list in N·m of the same length), <code>TorqueMultiplier</code> (<code>Array&lt;Real&gt;</code>, torque fractions <code>[0..1]</code> per stage), <code>DiscreteInput</code> (<code>Boolean</code>), <code>TimeLag</code> (<code>Real</code>, s, default <code>0.1</code>). Inputs: <code>Enabled</code> (<code>Boolean</code>), <code>Brake</code> (<code>Real</code>), <code>BrakeStage</code> (<code>Integer</code>). Outputs: <code>RPM</code>, <code>Enabled</code>, <code>DiscreteInput</code>, <code>RelativeTorque</code>.</li>
+</ul>
+<hr>
+<h2 id="5-brake-mechanisms-and-wheels-brakefriction-brakefrictionpneumatic-wheelraycast">5. Brake Mechanisms and Wheels (<code>BrakeFriction</code>, <code>BrakeFrictionPneumatic</code>, <code>WheelRaycast</code>)</h2>
+<h3 id="51-wheel-friction-brake-classbrakefriction">5.1. Wheel Friction Brake (<code>Class="BrakeFriction"</code>)</h3>
+<p>Placed directly ahead of each wheel (<code>Brake* -&gt; Wheel*</code>). Across all standard CCD 2.0 schemes, rear brake and rear wheel sections use <strong><code>Back</code></strong>, not <code>Rear</code>: <strong><code>[BrakeFrontLeft]</code></strong>, <strong><code>[BrakeFrontRight]</code></strong>, <strong><code>[BrakeBackLeft]</code></strong>, <strong><code>[BrakeBackRight]</code></strong> and <strong><code>[WheelFrontLeft]</code></strong>, <strong><code>[WheelFrontRight]</code></strong>, <strong><code>[WheelBackLeft]</code></strong>, <strong><code>[WheelBackRight]</code></strong>.</p>
+<table>
+    <thead>
+        <tr>
+            <th>Key in <code>Vehicle.ini</code> (<code>[Brake*]</code>)</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Units</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>MaxTorque</code></td>
+            <td><code>Real</code></td>
+            <td><code>500.0</code></td>
+            <td>$\text{N}\cdot\text{m}$</td>
+            <td>Maximum caliper braking torque at 100% pedal depression (typically <code>2500–3800</code> front and <code>1400–2200</code> rear).</td>
+        </tr>
+        <tr>
+            <td><code>ParkingBrakePower</code></td>
+            <td><code>Real</code></td>
+            <td><code>0.0</code></td>
+            <td><code>[0..1]</code></td>
+            <td>Parking brake (handbrake) effectiveness as a fraction of <code>MaxTorque</code> (set <code>0.7–1.0</code> on rear brakes <code>BrakeBackLeft/Right</code>).</td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li><strong>Inputs (<code>InternalName</code>):</strong> <code>Brake</code> (<code>Real</code>, <code>[0..1]</code>), <code>ParkingBrake</code> (<code>Real</code>, <code>[0..1]</code>), <code>BrokenBrake</code> (<code>Boolean</code>). <strong>Output (<code>InternalName</code>):</strong> <code>RPM</code> (<code>Real</code>).</li>
+</ul>
+<h3 id="52-pneumatic-brake-with-spring-brake-actuator-classbrakefrictionpneumatic">5.2. Pneumatic Brake with Spring Brake Actuator (<code>Class="BrakeFrictionPneumatic"</code>)</h3>
+<p>Used on trucks and buses with air brake systems. Contains a direct-acting service brake chamber (<code>Main*</code>) and a reverse-acting spring parking brake actuator (<code>SpringLock*</code>, which clamps the shoes when air is exhausted by the handbrake or when circuit pressure drops).</p>
+<ul>
+    <li><strong>Receiver link order rule in <code>&lt;Links&gt;</code>:</strong> in addition to the wheel link (<code>WheelRaycast</code>), the component takes two pneumatic receiver links in a <strong>strictly fixed order</strong>: the <strong>first link</strong> supplies the service brake chamber (<code>Main</code>), and the <strong>second link</strong> supplies the spring parking brake actuator (<code>SpringLock</code>, mandatory when <code>SpringLock = true</code>).</li>
+    <li><strong><code>.ini</code> parameters:</strong> <code>MaxTorque</code> (<code>500.0</code> N·m), <code>MainMaxBrakePower</code> (<code>1.0</code>), <code>SpringLock</code> (<code>Boolean</code>, <code>false</code>), <code>SpringLockMaxBrakePower</code> (<code>1.0</code>), <code>PressureDelta</code> (<code>1.0</code> bar), <code>FeedDiameter</code> (<code>10.0</code> mm), <code>LeakageDiameter</code> (<code>5.0</code> mm); service chamber parameters <code>MainMinVolume</code> (<code>1.0</code> L), <code>MainMaxVolume</code> (<code>2.0</code> L), <code>MainMinVolumePressure</code> (<code>4.0</code> bar), <code>MainMaxVolumePressure</code> (<code>7.0</code> bar), <code>MainWorkPressure</code> (<code>6.0</code> bar), <code>MainMaxPressure</code> (<code>8.0</code> bar), <code>MainBlowOffDiameter</code> (<code>5.0</code> mm), <code>MainInitialPressure</code>; analogous spring actuator parameters with the <code>SpringLock*</code> prefix (<code>SpringLockMinVolume</code>, <code>SpringLockMaxVolume</code>, <code>SpringLockMinVolumePressure</code>, <code>SpringLockMaxVolumePressure</code>, <code>SpringLockWorkPressure</code>, <code>SpringLockMaxPressure</code>, <code>SpringLockBlowOffDiameter</code>, <code>SpringLockInitialPressure</code>).</li>
+    <li><strong>Inputs (<code>InternalName</code>):</strong> <code>Brake</code> (<code>Real</code>), <code>ParkingBrake</code> (<code>Real</code>), <code>BrokenBrake</code> (<code>Boolean</code>). <strong>Outputs (<code>InternalName</code>):</strong> <code>MinPressure</code>, <code>MinWorkPressure</code>, <code>WorkPressure</code>, <code>SpringLockMinPressure</code>, <code>SpringLockWorkPressure</code>, <code>PressureLevel</code>, <code>AirFlowIntensityLevel</code>, <code>PressureLevelSpringLock</code>, <code>AirFlowIntensityLevelSpringLock</code>.</li>
+</ul>
+<h3 id="53-raycast-pneumatic-wheel-wheel-classwheelraycast">5.3. Raycast Pneumatic Wheel (<code>[Wheel*]</code>, <code>Class="WheelRaycast"</code>)</h3>
+<p>Terminal node of a drivetrain branch (cannot have outgoing <code>&lt;Link Holder="Wheel*" ... /&gt;</code> links). Intrinsic wheel moment of inertia is calculated automatically on load via $J = 0.5 \cdot \text{Mass} \cdot \text{Radius}^2$ (<code>Inertia</code> does not need to be specified in <code>[Wheel*]</code> sections).</p>
+<table>
+    <thead>
+        <tr>
+            <th>Key in <code>Vehicle.ini</code> (<code>[Wheel*]</code>)</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Units</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>Radius</code></td>
+            <td><code>Real</code></td>
+            <td><code>0.4</code></td>
+            <td>m</td>
+            <td>Static loaded rolling radius at nominal <code>WorkingPressure</code> (<code>8–12 mm</code> smaller than the unloaded 3D mesh radius).</td>
+        </tr>
+        <tr>
+            <td><code>MinRadius</code></td>
+            <td><code>Real</code></td>
+            <td><code>0.8 * Radius</code></td>
+            <td>m</td>
+            <td>Rim radius (minimum radius of a completely deflated wheel).</td>
+        </tr>
+        <tr>
+            <td><code>MaxRadius</code></td>
+            <td><code>Real</code></td>
+            <td><code>1.05 * Radius</code></td>
+            <td>m</td>
+            <td>Overinflated wheel radius at <code>TyreMaxPressure</code>.</td>
+        </tr>
+        <tr>
+            <td><code>Width</code></td>
+            <td><code>Real</code></td>
+            <td><code>0.3</code></td>
+            <td>m</td>
+            <td>Tire section width (e.g., <code>0.245</code> for <code>245/45 R19</code>).</td>
+        </tr>
+        <tr>
+            <td><code>Mass</code></td>
+            <td><code>Real</code></td>
+            <td><code>20.0</code></td>
+            <td>kg</td>
+            <td>Unsprung mass of the wheel assembly (determines rotational inertia $0.5 \cdot \text{Mass} \cdot \text{Radius}^2$).</td>
+        </tr>
+        <tr>
+            <td><code>FrictionCoeff</code></td>
+            <td><code>Real</code></td>
+            <td><code>1.0</code></td>
+            <td>dimensionless</td>
+            <td>Overall tire-to-road friction coefficient (typically <code>0.90–1.00</code>).</td>
+        </tr>
+        <tr>
+            <td><strong><code>ForceCurveLoad</code></strong></td>
+            <td><code>Real</code></td>
+            <td><code>1000.0</code></td>
+            <td>N</td>
+            <td>Nominal vertical load $F_{N0}$ at which the grip curves are normalized.</td>
+        </tr>
+        <tr>
+            <td><code>RollingResistanceCoeff</code></td>
+            <td><code>Real</code></td>
+            <td><code>0.011</code></td>
+            <td>dimensionless</td>
+            <td>Base rolling resistance coefficient.</td>
+        </tr>
+        <tr>
+            <td><code>RollingResistanceCurves</code></td>
+            <td><code>String</code></td>
+            <td>— <em>(required)</em></td>
+            <td>path</td>
+            <td>2D rolling resistance table (<code>Common/Vehicles/MotorCars/Tables/WheelRollingResistance.csv</code>).</td>
+        </tr>
+        <tr>
+            <td><code>ForceCurveLongitudinal</code></td>
+            <td><code>String</code></td>
+            <td>— <em>(required)</em></td>
+            <td>path</td>
+            <td>1D longitudinal force curve vs. slip in % (<code>Common/Vehicles/MotorCars/Tables/WheelForceLon.csv</code>).</td>
+        </tr>
+        <tr>
+            <td><code>ForceCurveLateral</code></td>
+            <td><code>String</code></td>
+            <td>— <em>(required)</em></td>
+            <td>path</td>
+            <td>1D lateral force curve vs. slip angle in degrees (<code>Common/Vehicles/MotorCars/Tables/WheelForceLat.csv</code>).</td>
+        </tr>
+        <tr>
+            <td><code>AligningTorqueCurve</code></td>
+            <td><code>String</code></td>
+            <td>— <em>(required)</em></td>
+            <td>path</td>
+            <td>1D self-aligning torque curve (<code>Common/Vehicles/MotorCars/Tables/WheelAlignTorque.csv</code>; must cross <code>0</code> at the peak of <code>ForceCurveLateral</code>).</td>
+        </tr>
+        <tr>
+            <td><code>CamberToSlipAngleCurve</code></td>
+            <td><code>String</code></td>
+            <td>— <em>(required)</em></td>
+            <td>path</td>
+            <td>1D curve of slip angle offset vs. camber (<code>Common/Vehicles/Tables/Dummy2d.csv</code> or <code>WheelCamberToSlipAngle.csv</code>).</td>
+        </tr>
+        <tr>
+            <td><code>StaticAligningTorqueCoeff</code></td>
+            <td><code>Real</code></td>
+            <td><code>0.0</code></td>
+            <td>m</td>
+            <td>Steering centering torque coefficient when turning wheels at a standstill (typically <code>-0.002</code> left and <code>0.002</code> right on front wheels).</td>
+        </tr>
+        <tr>
+            <td><code>StaticAligningTorqueCurve</code></td>
+            <td><code>String</code></td>
+            <td><code>""</code></td>
+            <td>path</td>
+            <td>1D static aligning torque curve (<code>Common/Vehicles/MotorCars/Tables/WheelStaticAligningTorque.csv</code>, required when <code>StaticAligningTorqueCoeff != 0</code>).</td>
+        </tr>
+        <tr>
+            <td><code>StaticFrictionTorqueMaxAngVelocity</code></td>
+            <td><code>Real</code></td>
+            <td><code>1.0</code></td>
+            <td>rad/s</td>
+            <td>Wheel angular speed up to which static steering resistance applies (typically <code>2.5</code>).</td>
+        </tr>
+        <tr>
+            <td><code>LatStaticFrictionMaxLinVelocity</code></td>
+            <td><code>Real</code></td>
+            <td><code>2.0</code></td>
+            <td>m/s</td>
+            <td>Linear velocity threshold for lateral static friction hold.</td>
+        </tr>
+        <tr>
+            <td><code>LonStaticFrictionMaxLinVelocity</code></td>
+            <td><code>Real</code></td>
+            <td><code>0.2</code></td>
+            <td>m/s</td>
+            <td>Linear velocity threshold for longitudinal static friction hold.</td>
+        </tr>
+        <tr>
+            <td><code>LonStaticFrictionMaxAngVelocity</code></td>
+            <td><code>Real</code></td>
+            <td><code>0.01</code></td>
+            <td>rad/s</td>
+            <td>Wheel angular velocity threshold for longitudinal static friction hold.</td>
+        </tr>
+        <tr>
+            <td><code>RelaxationLength</code></td>
+            <td><code>Real</code></td>
+            <td><code>0.1</code></td>
+            <td>m</td>
+            <td>Tire lateral force relaxation length.</td>
+        </tr>
+        <tr>
+            <td><code>SlipAngleMinVelocity</code></td>
+            <td><code>Real</code></td>
+            <td><code>3.0</code></td>
+            <td>m/s</td>
+            <td>Smoothing velocity for slip angle calculation at low speeds.</td>
+        </tr>
+        <tr>
+            <td><code>SingularSlipRatioVelocity</code></td>
+            <td><code>Real</code></td>
+            <td><code>0.2</code></td>
+            <td>m/s</td>
+            <td>Slip threshold velocity when pulling away from a standstill.</td>
+        </tr>
+        <tr>
+            <td><code>WorkingPressure</code></td>
+            <td><code>Real</code></td>
+            <td><code>2.0</code></td>
+            <td>bar</td>
+            <td>Nominal gauge tire pressure (applied on vehicle spawn, e.g., <code>2.2–2.8</code>).</td>
+        </tr>
+        <tr>
+            <td><code>CriticalPressure</code></td>
+            <td><code>Real</code></td>
+            <td><code>WorkingPressure - 1</code></td>
+            <td>bar</td>
+            <td>Pressure threshold triggering the <code>LowTirePressureIcon</code> flat-tire warning.</td>
+        </tr>
+        <tr>
+            <td><code>TyreMaxPressure</code></td>
+            <td><code>Real</code></td>
+            <td><code>8.0</code></td>
+            <td>bar</td>
+            <td>Maximum pressure of the tire air chamber (<code>TyreWorkPressure</code>, <code>TyreBlowOffDiameter</code> — valve parameters).</td>
+        </tr>
+        <tr>
+            <td><code>BlowoutHoleSquare</code></td>
+            <td><code>Real</code></td>
+            <td>auto</td>
+            <td>$\text{m}^2$</td>
+            <td>Air bleed orifice area on puncture (<code>Blowout = true</code>).</td>
+        </tr>
+        <tr>
+            <td><code>PressureToSteeringCoeff</code></td>
+            <td><code>Real</code></td>
+            <td><code>0.0</code></td>
+            <td>dimensionless</td>
+            <td>Coefficient of steering pull toward a deflated wheel (<code>PressureToSteeringCurve</code> — curve path).</td>
+        </tr>
+        <tr>
+            <td><code>SlipRatioToPacejkaCoeffK</code> / <code>B</code></td>
+            <td><code>Real</code></td>
+            <td><code>-0.4</code> / <code>1.4</code></td>
+            <td>dimensionless</td>
+            <td>Linear coefficients $K$ and $B$ scaling the longitudinal slip X-axis by relative load $F_N / \text{ForceCurveLoad}$.</td>
+        </tr>
+        <tr>
+            <td><code>PacejkaToLonForceCoeffK</code> / <code>B</code></td>
+            <td><code>Real</code></td>
+            <td><code>-0.2</code> / <code>1.2</code></td>
+            <td>dimensionless</td>
+            <td>Coefficients $K$ and $B$ scaling longitudinal force by relative load.</td>
+        </tr>
+        <tr>
+            <td><code>SlipAngleToPacejkaCoeffK</code> / <code>B</code></td>
+            <td><code>Real</code></td>
+            <td><code>-0.1</code> / <code>1.1</code></td>
+            <td>dimensionless</td>
+            <td>Coefficients $K$ and $B$ scaling the lateral slip angle X-axis by relative load.</td>
+        </tr>
+        <tr>
+            <td><code>PacejkaToLatForceCoeffK</code> / <code>B</code></td>
+            <td><code>Real</code></td>
+            <td><code>-0.25</code> / <code>1.25</code></td>
+            <td>dimensionless</td>
+            <td>Coefficients $K$ and $B$ scaling lateral force by relative load ($K = -0.25 &lt; 0$ produces nonlinear tire load sensitivity).</td>
+        </tr>
+        <tr>
+            <td><strong><code>PacejkaAlignTorqueCoeffK</code> / <code>B</code></strong></td>
+            <td><code>Real</code></td>
+            <td><code>-0.25</code> / <code>1.25</code></td>
+            <td>dimensionless</td>
+            <td>Coefficients $K$ and $B$ scaling self-aligning torque by load <em>(spelled <strong>without</strong> <code>To</code> in the middle of the name!)</em>.</td>
+        </tr>
+    </tbody>
+</table>
+<div class="alert alert-tip">
+    <div class="alert-title">Tip</div>
+<p><strong>Fine-tuning handling balance via <code>ForceCurveLoad</code>:</strong><br>
+Because of the negative coefficient <code>PacejkaToLatForceCoeffK = -0.25</code>, a tire loaded beyond its <code>ForceCurveLoad</code> loses relative lateral grip coefficient. For the front wheels, set <code>ForceCurveLoad</code> equal to the static vertical load on one front wheel ($F_{\text{stat,f}} \approx 0.5 \cdot m_{\text{front}} \cdot 9.81$), and for the rear wheels set it <strong>8–15% higher</strong> than the static rear wheel load ($F_{\text{stat,r}}$). This produces natural understeer without front-axle plowing.</p>
+
+</div>
+<ul>
+    <li><strong>Inputs (<code>InternalName</code>):</strong> <code>Blowout</code> (<code>Boolean</code> — tire puncture), <code>NoSlip</code> (<code>Boolean</code> — ideal grip <code>PerfectWheels</code> mode). <strong>State:</strong> <code>Pressure</code> (<code>Real</code>, bar). <strong>Outputs:</strong> <code>RPM</code>, <code>WorkingPressure</code>, <code>LowPressure</code>, <code>Pressure</code>.</li>
+</ul>
+<hr>
+<h2 id="6-auxiliary-units-generator-pump-compressor-and-complete-vehicleini-example">6. Auxiliary Units (<code>Generator</code>, <code>Pump</code>, <code>Compressor</code>) and Complete <code>Vehicle.ini</code> Example</h2>
+<h3 id="61-electrical-alternator-generator-classgenerator">6.1. Electrical Alternator (<code>[Generator]</code>, <code>Class="Generator"</code>)</h3>
+<p>Driven by the engine (<code>&lt;Link Holder="Engine" Reference="Generator" /&gt;</code>), powers the alternator circuit (<code>&lt;Link Holder="GeneratorElectricCircuit" Reference="Generator" /&gt;</code>), and is monitored by the instrument cluster (<code>&lt;Link Holder="CarElectrics" Reference="Generator" /&gt;</code>).</p>
+<table>
+    <thead>
+        <tr>
+            <th>Key in <code>Vehicle.ini</code> (<code>[Generator]</code>)</th>
+            <th>Type</th>
+            <th>Default</th>
+            <th>Units</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>GearRatio</code></td>
+            <td><code>Real</code></td>
+            <td><code>1.0</code></td>
+            <td>dimensionless</td>
+            <td>Alternator belt pulley drive ratio (<code>2.0–2.5</code>, rotor spins <code>GearRatio</code> times faster than the crankshaft).</td>
+        </tr>
+        <tr>
+            <td><code>MaxAmperage</code></td>
+            <td><code>Real</code></td>
+            <td><code>80.0</code></td>
+            <td>A</td>
+            <td>Maximum alternator output current (<code>80–150</code>).</td>
+        </tr>
+        <tr>
+            <td><code>MinVoltage</code></td>
+            <td><code>Real</code></td>
+            <td><code>13.0</code></td>
+            <td>V</td>
+            <td>Minimum cut-in voltage for the alternator to feed the grid (<code>13.2</code>).</td>
+        </tr>
+        <tr>
+            <td><code>MaxVoltage</code></td>
+            <td><code>Real</code></td>
+            <td><code>14.0</code></td>
+            <td>V</td>
+            <td>Regulated charging voltage held by the voltage regulator (<code>14.4–14.7</code>).</td>
+        </tr>
+        <tr>
+            <td><code>Resistance</code></td>
+            <td><code>Real</code></td>
+            <td><code>1.0</code></td>
+            <td>Ω</td>
+            <td>Internal resistance of the alternator windings.</td>
+        </tr>
+        <tr>
+            <td><code>MinAmperageRpm</code></td>
+            <td><code>Real</code></td>
+            <td><code>0.0</code></td>
+            <td>RPM</td>
+            <td>Alternator rotor RPM (already multiplied by <code>GearRatio</code>) at which current generation starts (<code>600–1000</code>).</td>
+        </tr>
+        <tr>
+            <td><code>MaxAmperageRpm</code></td>
+            <td><code>Real</code></td>
+            <td><code>6000.0</code></td>
+            <td>RPM</td>
+            <td>Alternator rotor RPM at which full output current <code>MaxAmperage</code> is reached.</td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li><strong>Input (<code>InternalName</code>):</strong> <code>Broken</code> (<code>Boolean</code> — alternator failure). <strong>Output (<code>InternalName</code>):</strong> <code>RPM</code> (<code>Real</code>).</li>
+</ul>
+<h3 id="62-hydraulic--oil-pump-gearboxautomaticpump-classpump-and-compressor-classcompressor">6.2. Hydraulic / Oil Pump (<code>[GearBoxAutomaticPump]</code>, <code>Class="Pump"</code>) and Compressor (<code>Class="Compressor"</code>)</h3>
+<ul>
+    <li><strong><code>Pump</code> (<code>[GearBoxAutomaticPump]</code> in <code>*Auto.xml</code>):</strong> driven by the engine (<code>Engine -&gt; GearBoxAutomaticPump</code>), requires a mandatory tank link <code>&lt;Link Holder="GearBoxAutomaticPump" Reference="OilTank" /&gt;</code>, and supplies pressure to the automatic transmission (<code>GearBoxAutomaticPump -&gt; GearBoxAutomatic</code>).
+<ul>
+    <li><strong><code>.ini</code> parameters:</strong> <code>MaxPressure</code> (<code>1.0</code> bar; typically <code>7.0</code> in <code>*Auto.xml</code> — must exceed AT <code>OilWorkPressure</code>), <code>MaxPressureRpm</code> (<code>1.0</code> RPM; typically <code>650–800</code> — must not exceed idle RPM!), <code>MaxPressureVolume</code> (<code>1.0</code> L), <code>MaxPressureFriction</code> (<code>0.0</code> N·m; typically <code>1.5–2.0</code>). <strong>Outputs:</strong> <code>RPM</code>, <code>Pressure</code>.</li>
+</ul>
+</li>
+    <li><strong><code>Compressor</code>:</strong> driven air compressor for truck/bus pneumatic systems. Requires a mandatory link <code>&lt;Link Holder="Compressor" Reference="ReceiverOrProtectionValveName" /&gt;</code>.
+<ul>
+    <li><strong><code>.ini</code> parameters:</strong> <code>Volume</code> (<code>1.0</code> L/rev), <code>ActivatePressure</code> (<code>6.0</code> bar), <code>DeactivatePressure</code> (<code>8.0</code> bar), <code>OutputRef</code> (<code>1000.0</code> L/min), <code>RpmRef</code> (<code>1000.0</code> RPM), <code>PressureRef</code> (<code>8.0</code> bar), <code>ResistanceTorqueRef</code> (<code>100.0</code> N·m). <strong>Output:</strong> <code>RPM</code>.</li>
+</ul>
+</li>
+</ul>
+<h3 id="63-sample-configured-drivetrain-and-ice-sections-in-vehicleini-ccd-20">6.3. Sample Configured Drivetrain and ICE Sections in <code>Vehicle.ini</code> (CCD 2.0)</h3>
+<pre><code class="language-ini">[Starter]
+Inertia = 1e-3
+RotationalFrictionConstant = 0.5
+StallVoltage = 9.0
+StallAmperage = 850
+StallTorque = 24
+IdleVoltage = 12.0
+IdleAmperage = 95
+IdleRPM = 7000
+
+[Engine]
+Inertia = 0.24
+Volume = 2.143
+CylinderCount = 4
+RpmLimit = 4600
+RpmLimitTime = 0.25
+MinCombustionRpm = 150
+MinStableRpm = 380
+PowerCurves = ../Plugins/Mods/Content/CieBensVGruppe/Engine.csv
+HeatingSpeed = 0.25
+ThermostatBeginTemperature = 82
+ThermostatEndTemperature = 95
+FanSwitchOffTemperature = 92
+FanSwitchOnTemperature = 98
+FanCoolingSpeed = 2.0
+OverheatTemperature = 112
+LargeCircuitCoolingSpeed = 0.3
+OilPressureRPM = 0; 750; 2500; 4600
+OilPressureValues = 0; 1.8; 3.8; 4.5
+AirPressureRatio = 0.355
+IgnitionResistance = 4.0
+IgnitionMinVoltage = 7.0
+VibrationCurve = Common/Vehicles/MotorCars/Tables/EngineVibration.csv
+VibrationAmplitude = 0.0075
+
+[TorqueConverter]
+MaxRatio = 1.85
+MaxRatioVelocity = 1500
+Torque = 62
+TorqueRpm = 750
+LockMaxTorque = 850
+LockVelocityScale = 100
+
+[GearBoxAutomatic]
+Inertia = 1e-4
+RotationalFrictionConstant = 1.5
+RotationalFrictionQuadCoeff = 2.6e-4
+Gears = -3.416; 4.377; 2.859; 1.921; 1.368; 1.000; 0.820; 0.728
+LockTorqueConverter = 0; 1; 1; 1; 1; 1; 1; 1
+GearChangeTime = 0.26
+ChangeGearWaitTime = 0.45
+MaxGearStep = 3
+PreferredGearRatioDiffPercent = 0.14
+LockTorqueConverterRpm = 1360
+UnlockTorqueConverterRpm = 1220
+TorqueConverterLockTime = 0.26
+ShiftAccelerator = 0; 0.1; 0.2; 0.4; 0.6; 0.8; 1
+OptimalRpm = 1420; 1520; 1660; 2040; 2550; 3100; 3400
+MaxRpm = 3150; 3250; 3350; 3550; 3780; 4000; 4200
+TorqueConverterLockDiff = 650; 800; 950; 1250; 1550; 1850; 2100
+OilWorkPressure = 3.5
+
+[DifferentialAxle.TransmissionType.Auto]
+Inertia = 1e-4
+GearRatio = 3.267
+Locked = false</code></pre>
+
+</body>
+</html>

@@ -1,0 +1,463 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Модуль 6. Комплектации, глубокая физика, кастомная логика и сводная шпаргалка</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({ startOnLoad: true });</script>
+    <style>
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 32px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1f2328;
+            background-color: #ffffff;
+        }
+        h1, h2, h3, h4 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        h1 {
+            font-size: 2em;
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid #d0d7de;
+        }
+        h2 {
+            font-size: 1.5em;
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid #d0d7de;
+        }
+        h3 {
+            font-size: 1.25em;
+        }
+        hr {
+            height: 0.25em;
+            padding: 0;
+            margin: 24px 0;
+            background-color: #d0d7de;
+            border: 0;
+        }
+        a {
+            color: #0969da;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 16px 0;
+        }
+        th, td {
+            border: 1px solid #d0d7de;
+            padding: 8px 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background: #f6f8fa;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background: #f6f8fa;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .text-right {
+            text-align: right;
+        }
+        code {
+            background: #eff1f3;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+            font-size: 85%;
+        }
+        pre {
+            background: #f6f8fa;
+            padding: 14px;
+            border-radius: 6px;
+            overflow-x: auto;
+            border: 1px solid #d0d7de;
+        }
+        pre code {
+            background: transparent;
+            padding: 0;
+            font-size: 100%;
+        }
+        pre.mermaid {
+            background: #ffffff;
+            text-align: center;
+        }
+        .alert {
+            padding: 12px 16px;
+            margin: 16px 0;
+            border-left: 4px solid;
+            border-radius: 6px;
+            background: #f6f8fa;
+        }
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .alert p:last-child, .alert ul:last-child, .alert ol:last-child {
+            margin-bottom: 0;
+        }
+        .alert-note {
+            border-left-color: #0969da;
+            background-color: #ddf4ff;
+        }
+        .alert-note .alert-title { color: #0969da; }
+        .alert-tip {
+            border-left-color: #1a7f37;
+            background-color: #dafbe1;
+        }
+        .alert-tip .alert-title { color: #1a7f37; }
+        .alert-important {
+            border-left-color: #8250df;
+            background-color: #fbefff;
+        }
+        .alert-important .alert-title { color: #8250df; }
+        .alert-warning {
+            border-left-color: #9a6700;
+            background-color: #fff8c5;
+        }
+        .alert-warning .alert-title { color: #9a6700; }
+        .alert-caution {
+            border-left-color: #cf222e;
+            background-color: #ffebe9;
+        }
+        .alert-caution .alert-title { color: #cf222e; }
+        ul.checklist {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        ul.checklist li {
+            margin-bottom: 8px;
+        }
+        ul.checklist input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        figure.doc-figure {
+            margin: 16px 0;
+            padding: 10px;
+            background: #f6f8fa;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            text-align: center;
+        }
+        figure.doc-figure img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            display: block;
+            margin: 0 auto;
+        }
+        figure.doc-figure figcaption {
+            margin-top: 8px;
+            font-size: 0.9em;
+            color: #57606a;
+        }
+    </style>
+</head>
+<body>
+<h1 id="модуль-6-комплектации-глубокая-физика-кастомная-логика-и-сводная-шпаргалка">Модуль 6. Комплектации, глубокая физика, кастомная логика и сводная шпаргалка</h1>
+<p><strong>Навигация:</strong> <a href="./README.html">README</a> | <a href="./01_Minimal_Car_QuickStart.html">01. Минимальный автомобиль</a> | <a href="./02_Exterior_Lights_and_World.html">02. Экстерьер, свет и мир</a> | <a href="./03_Interior_Dashboard_Cameras_Seats.html">03. Салон, приборка и камеры</a> | <a href="./04_Mirrors_and_Wipers.html">04. Зеркала и дворники</a> | <a href="./05_Sounds_and_FMOD.html">05. Звуки и FMOD</a> | <strong>06. Комплектации, логика и шпаргалка</strong></p>
+<hr>
+<p>В финальном модуле собраны продвинутые возможности оформления и настройки мода, а также <strong>единая шпаргалка</strong> по всем <code>ControlBlock</code>, родительским материалам <code>MI_Mod_*</code> и особым именам из кода.</p>
+<hr>
+<h2 id="1-расширенные-спецификации-в-da_имямода-pda_prototypedvehiclespecification">1. Расширенные спецификации в <code>DA_&lt;ИмяМода&gt;</code> (<code>PDA_PrototypedVehicleSpecification</code>)</h2>
+<p>Базовые обязательные поля (<code>Name</code>, <code>Image</code>, <code>Class</code>, <code>EngineTypes</code>, <code>TransmissionTypes</code>) вы уже настроили в <a href="./01_Minimal_Car_QuickStart.html#шаг-6-создание-паспорта-автомобиля-pda_prototypedvehiclespecification">Модуле 1</a>. Помимо них в секции <strong>Custom</strong> доступны два мощных инструмента:</p>
+<h3 id="11-косметические-характеристики-на-карточке-customspecifications">1.1. Косметические характеристики на карточке (<code>CustomSpecifications</code>)</h3>
+<p>Позволяют вывести любые справочные параметры автомобиля (привод, максимальная скорость, грузоподъёмность, мощность и т. д.) прямо на карточку выбора транспорта в меню.</p>
+<ul>
+    <li>На карточке автомобиля сейчас отображаются <strong>первые 5 параметров</strong> из списка <code>CustomSpecifications</code>.</li>
+    <li>У каждого элемента заполняются поля <code>Name</code> (название характеристики) и <code>Value</code> (значение).</li>
+</ul>
+<figure class="doc-figure">
+    <img src="./images/m6_custom_specs_ue.png" alt="Настройка списка CustomSpecifications в Data Asset" loading="lazy">
+    <figcaption>Настройка списка CustomSpecifications в Data Asset</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m6_custom_specs_card.png" alt="Отображение CustomSpecifications на карточке автомобиля в меню игры" loading="lazy">
+    <figcaption>Отображение CustomSpecifications на карточке автомобиля в меню игры</figcaption>
+</figure>
+<h3 id="12-функциональные-переключаемые-комплектации-multispecifications">1.2. Функциональные переключаемые комплектации (<code>MultiSpecifications</code>)</h3>
+<p>Работают точно так же, как выбор типа КПП (<code>TransmissionTypes</code>), и позволяют игроку <strong>прямо в меню настроек автомобиля</strong> переключать любые ваши физические опции — например, тип шин (летние/зимние/спорт), разные двигатели, подвески или пакеты настроек!</p>
+<p>Как связать <code>MultiSpecifications</code> с физикой:</p>
+<ol>
+    <li>В <strong><code>DA_&lt;ИмяМода&gt;</code> → <code>MultiSpecifications</code></strong> добавьте новую спецификацию (например, <code>Name = "Tire Type"</code>), внутри её массива <code>Values</code> добавьте варианты (например, <code>Summer</code>, <code>Sport</code>), включите на каждом <strong><code>Bound to Option</code></strong> и укажите <strong><code>Option Name</code></strong> и <strong><code>Option Value</code></strong>.</li>
+    <li>В файле <strong><code>options.xml</code></strong> в папке мода объявите опцию с точно такими же именами (с <code>SetSchema="false"</code>, так как <code>SetSchema="true"</code> может быть только у одной опции — обычно у <code>TransmissionType</code>):</li>
+</ol>
+<pre><code class="language-xml">&lt;Option Name="TireType" SetSchema="false"&gt;
+    &lt;OptionValue Value="Summer" /&gt;
+    &lt;OptionValue Value="Sport" /&gt;
+&lt;/Option&gt;</code></pre>
+<ol>
+    <li>В файле <strong><code>Vehicle.ini</code></strong> добавьте секции переопределения параметров вида <code>[ИмяКомпонента.ИмяОпции.ЗначениеОпции]</code>:</li>
+</ol>
+<pre><code class="language-ini">[WheelFrontLeft.TireType.Sport]
+FrictionCoeff = 1.15</code></pre>
+<ol>
+    <li>Все связанные с опциями <code>MultiSpecifications</code> <strong>автоматически появятся</strong> в меню настроек выбранного автомобиля в игре!</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m6_multi_specs_ue.png" alt="Настройка MultiSpecifications с привязкой к опциям" loading="lazy">
+    <figcaption>Настройка MultiSpecifications с привязкой к опциям</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m6_multi_specs_menu.png" alt="Отображение MultiSpecifications в игровом меню настроек автомобиля" loading="lazy">
+    <figcaption>Отображение MultiSpecifications в игровом меню настроек автомобиля</figcaption>
+</figure>
+<hr>
+<h2 id="2-переход-к-глубокой-настройке-физики-vehiclelib">2. Переход к глубокой настройке физики (<code>VehicleLib</code>)</h2>
+<p>Все стандартные XML-схемы и таблицы кривых лежат в основном проекте по путям:</p>
+<ul>
+    <li>Схемы: <strong><code>Content/Common/Vehicles/MotorCars/Schemes/</code></strong> (<code>AwdAuto.xml</code>, <code>AwdManual.xml</code>, <code>FwdAuto.xml</code>, <code>FwdManual.xml</code>, <code>RwdAuto.xml</code>, <code>RwdManual.xml</code>)</li>
+    <li>Таблицы кривых: <strong><code>Content/Common/Vehicles/MotorCars/Tables/</code></strong> (<code>SpringProgression.csv</code>, <code>EngineVibration.csv</code>, <code>WheelForceLat.csv</code>, <code>WheelForceLon.csv</code> и др.)</li>
+</ul>
+<div class="alert alert-important">
+    <div class="alert-title">Важно (IMPORTANT)</div>
+<p><strong>Правило редактирования схем и таблиц:</strong><br>
+Никогда не изменяйте файлы внутри <code>Content/Common/Vehicles/MotorCars/</code> — они не попадут в ваш <code>.pak</code>!<br>
+Если вы хотите изменить схему или кривую под свой автомобиль — <strong>скопируйте файл в папку вашего мода</strong> <code>Plugins/Mods/Content/&lt;ИмяМода&gt;/</code> и пропишите к нему относительный путь <code>../Plugins/Mods/Content/&lt;ИмяМода&gt;/&lt;Файл&gt;</code> в <code>Vehicle.ini</code> / <code>options.xml</code>.</p>
+
+</div>
+<p>Подробный справочник по всем 46 классам компонентов физики, формулам расчёта и каналам ввода/вывода находится в отдельном руководстве <strong><code>VehicleLib_HTML</code></strong>:</p>
+<ul>
+    <li><strong><a href="../VehicleLib_HTML/README.html">README (VehicleLib)</a></strong> — архитектура файлов и единицы измерения</li>
+    <li><strong><a href="../VehicleLib_HTML/00_Quick_Start.html">00. Быстрый старт физики</a></strong> — формулы расчёта массы, ЦТ, подвески, <code>Engine.csv</code>, АКПП/МКПП и 5 контрольных тестов</li>
+    <li><strong><a href="../VehicleLib_HTML/01_Architecture_and_Config.html">01. Архитектура и конфиги</a></strong> — создание своих XML-схем (например, <code>EngineDiesel + Turbocharger</code>), форматы <code>.csv</code></li>
+    <li><strong><a href="../VehicleLib_HTML/02_Named_IO_and_States.html">02. Именованный ввод/вывод</a></strong> — все каналы <code>*Intensity</code>, входы и состояния</li>
+    <li><strong><a href="../VehicleLib_HTML/03_Components_TorqueTrain.html">03. Трансмиссия</a></strong> — ДВС, стартер, сцепление, ГДТ, КПП, дифференциалы, тормоза, шины</li>
+    <li><strong><a href="../VehicleLib_HTML/04_Components_Electrics.html">04. Электрика</a></strong> — цепи, АКБ, <code>CarElectrics</code></li>
+    <li><strong><a href="../VehicleLib_HTML/05_Components_Chassis_and_Subsystems.html">05. Шасси и подсистемы</a></strong> — подвеска, рулевое, турбонаддув, аэродинамика, ABS/TCS</li>
+</ul>
+<hr>
+<h2 id="3-пользовательская-логика-custom-blueprint-logic">3. Пользовательская логика (Custom Blueprint Logic)</h2>
+<p>Если вы умеете работать с Blueprints в Unreal Engine и хотите добавить автомобилю собственную интерактивную логику (анимацию спойлера, дополнительные эффекты и т. п.):</p>
+<div class="alert alert-caution">
+    <div class="alert-title">Осторожно (CAUTION)</div>
+<p><strong>Не пишите пользовательскую логику прямо в Event Graph самого Актора автомобиля (<code>V_&lt;ИмяМода&gt;</code>)!</strong><br>
+Вместо этого создайте отдельный <strong><code>ActorComponent</code></strong> (<code>ПКМ в Content Browser → Blueprint Class → Actor Component</code>), напишите всю логику внутри него и добавьте этот компонент в ваш Актор.<br>
+На таком пользовательском компоненте <strong>НЕ должно быть <code>ControlBlock</code> (<code>Control Asset Data</code>)</strong> — тогда игра не будет его перехватывать, и он будет работать штатно.</p>
+
+</div>
+<hr>
+<h2 id="4-сводная-шпаргалка-reference">4. Сводная шпаргалка (Reference)</h2>
+<h3 id="41-особые-написания-в-коде-не-исправлять">4.1. Особые написания в коде (НЕ исправлять!)</h3>
+<div class="alert alert-warning">
+    <div class="alert-title">Внимание (WARNING)</div>
+<p>Следующие имена зашиты в движок именно в таком виде — пишите их <strong>символ в символ</strong>, не «исправляя» орфографию:</p>
+<ul>
+    <li><code>ControlBlock</code> дворников: <strong><code>Wippers</code></strong> <em>(с двумя <code>p</code>)</em></li>
+    <li>Типы звуков подвески: <strong><code>SuspentionSound_FR</code></strong>, <strong><code>SuspentionSound_FL</code></strong> <em>(через <code>t</code>)</em></li>
+    <li>Слот подсветки стрелки спидометра: <strong><code>SpeedometrArrow</code></strong> <em>(без буквы <code>e</code>)</em></li>
+    <li>Родительские материалы: <strong><code>MI_Mod_Emissive_Ikons</code></strong> <em>(через <code>k</code>)</em>, <strong><code>MI_Mod_Stiches</code></strong> <em>(без <code>t</code>)</em></li>
+    <li>Задняя ось в Акторе и <code>Vehicle.ini</code>: <strong><code>Back</code></strong> (<code>SuspensionBackLeft/Right</code>, <code>WheelBackLeft/Right</code>), а <strong>НЕ</strong> <code>Rear</code>!</li>
+</ul>
+
+</div>
+<hr>
+<h3 id="42-полная-таблица-всех-controlblock">4.2. Полная таблица всех <code>ControlBlock</code></h3>
+<table>
+    <thead>
+        <tr>
+            <th>Имя <code>ControlBlock</code></th>
+            <th>Куда вешается</th>
+            <th>Свойства (<code>Properties</code>: имя, тип, значения)</th>
+            <th class="text-center">Модуль</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong><code>Camera</code></strong></td>
+            <td><code>SceneComponent</code> / <code>CameraComponent</code></td>
+            <td><code>Type</code> (<code>String</code>: <code>ThirdPersonBack</code>, <code>ThirdPersonFront</code>, <code>FirstPerson</code>, <code>Windshield</code>, <code>TopDown</code>); опц. <code>ArmLength</code> (<code>Float</code>)</td>
+            <td class="text-center"><a href="./01_Minimal_Car_QuickStart.html">1</a>, <a href="./03_Interior_Dashboard_Cameras_Seats.html">3</a></td>
+        </tr>
+        <tr>
+            <td><strong><code>Light</code></strong></td>
+            <td><code>BP_ExportSpotLight</code> / <code>SpotLightComponent</code></td>
+            <td><code>PhysicsOutput</code> (<code>StringArray</code>: <code>LowBeamIntensity</code>, <code>HighBeamIntensity</code>, <code>StopLightIntensity</code> и др.)</td>
+            <td class="text-center"><a href="./02_Exterior_Lights_and_World.html">2</a></td>
+        </tr>
+        <tr>
+            <td><strong><code>LogicBox</code></strong></td>
+            <td><code>BoxCollision</code></td>
+            <td><em>(нет свойств)</em></td>
+            <td class="text-center"><a href="./02_Exterior_Lights_and_World.html">2</a></td>
+        </tr>
+        <tr>
+            <td><strong><code>FuelTank</code></strong></td>
+            <td><code>SceneComponent</code> <em>(в нулевых трансформах родителя)</em></td>
+            <td><em>(нет свойств)</em></td>
+            <td class="text-center"><a href="./02_Exterior_Lights_and_World.html">2</a></td>
+        </tr>
+        <tr>
+            <td><strong><code>RainBlocker</code></strong></td>
+            <td><code>StaticMeshComponent</code> <em>(с <code>MM_Wireframe</code>)</em></td>
+            <td><em>(нет свойств)</em></td>
+            <td class="text-center"><a href="./02_Exterior_Lights_and_World.html">2</a></td>
+        </tr>
+        <tr>
+            <td><strong><code>SteeringWheel</code></strong></td>
+            <td><code>StaticMeshComponent</code> <em>(внутри <code>InteriorObjects</code>)</em></td>
+            <td><em>(нет свойств)</em></td>
+            <td class="text-center"><a href="./03_Interior_Dashboard_Cameras_Seats.html">3</a></td>
+        </tr>
+        <tr>
+            <td><strong><code>SpeedArrow</code></strong></td>
+            <td><code>StaticMeshComponent</code> <em>(стрелка в позиции 0)</em></td>
+            <td><code>MaxAngle</code> (<code>Float</code>), <code>MaxValue</code> (<code>Float</code>)</td>
+            <td class="text-center"><a href="./03_Interior_Dashboard_Cameras_Seats.html">3</a></td>
+        </tr>
+        <tr>
+            <td><strong><code>RPMArrow</code></strong></td>
+            <td><code>StaticMeshComponent</code> <em>(стрелка в позиции 0)</em></td>
+            <td><code>MaxAngle</code> (<code>Float</code>), <code>MaxValue</code> (<code>Float</code>)</td>
+            <td class="text-center"><a href="./03_Interior_Dashboard_Cameras_Seats.html">3</a></td>
+        </tr>
+        <tr>
+            <td><strong><code>FuelArrow</code></strong></td>
+            <td><code>StaticMeshComponent</code> <em>(стрелка в позиции 0)</em></td>
+            <td><code>MaxAngle</code> (<code>Float</code>)</td>
+            <td class="text-center"><a href="./03_Interior_Dashboard_Cameras_Seats.html">3</a></td>
+        </tr>
+        <tr>
+            <td><strong><code>CoolantTemperatureArrow</code></strong></td>
+            <td><code>StaticMeshComponent</code> <em>(стрелка в позиции 0)</em></td>
+            <td><code>MaxAngle</code> (<code>Float</code>), <code>MinValue</code> (<code>Float</code>), <code>MaxValue</code> (<code>Float</code>)</td>
+            <td class="text-center"><a href="./03_Interior_Dashboard_Cameras_Seats.html">3</a></td>
+        </tr>
+        <tr>
+            <td><strong><code>SalonLights</code></strong></td>
+            <td><code>SceneComponent</code> <em>(или скопированный <code>DashboardController</code>)</em></td>
+            <td>Ключ = канал физики (<code>*Intensity</code>), значение = <code>StringArray</code> имён слотов материалов</td>
+            <td class="text-center"><a href="./03_Interior_Dashboard_Cameras_Seats.html">3</a></td>
+        </tr>
+        <tr>
+            <td><strong><code>Seats</code></strong></td>
+            <td><code>StaticMeshComponent</code> <em>(с сокетами <code>&lt;Имя&gt;_Landing</code>)</em></td>
+            <td><code>Names</code> (<code>StringArray</code>, напр. <code>["Seat0"]</code>), опц. <code>DriverIndex</code> (<code>Int</code>, напр. <code>0</code>)</td>
+            <td class="text-center"><a href="./03_Interior_Dashboard_Cameras_Seats.html">3</a></td>
+        </tr>
+        <tr>
+            <td><strong><code>CarToy</code></strong></td>
+            <td><code>SceneComponent</code> <em>(или <code>SM_Cosmonaft_Anim</code>)</em></td>
+            <td><em>(нет свойств)</em></td>
+            <td class="text-center"><a href="./03_Interior_Dashboard_Cameras_Seats.html">3</a></td>
+        </tr>
+        <tr>
+            <td><strong><code>Mirror</code></strong></td>
+            <td><code>StaticMeshComponent</code> <em>(с сокетом <code>Camera</code> и UV1)</em></td>
+            <td>опц. <code>FOV</code> (<code>Float</code>, реком. <code>20–40</code>)</td>
+            <td class="text-center"><a href="./04_Mirrors_and_Wipers.html">4</a></td>
+        </tr>
+        <tr>
+            <td><strong><code>Wippers</code></strong> <em>(два <code>p</code>!)</em></td>
+            <td><code>SkeletalMeshComponent</code> <em>(Animation Asset)</em></td>
+            <td><code>Side</code> (<code>String</code>: <code>Front</code> или <code>Rear</code>)</td>
+            <td class="text-center"><a href="./04_Mirrors_and_Wipers.html">4</a></td>
+        </tr>
+        <tr>
+            <td><strong><code>SoundEvent</code></strong></td>
+            <td><code>SceneComponent</code></td>
+            <td><code>Type</code> (<code>String</code>, обяз.); опц. <code>MinimumAttenuationDistance</code> / <code>MaximumAttenuationDistance</code> (<code>Float</code>); парой <code>Bank</code> (<code>String</code>) + <code>EventName</code> (<code>String</code>)</td>
+            <td class="text-center"><a href="./05_Sounds_and_FMOD.html">5</a></td>
+        </tr>
+    </tbody>
+</table>
+<hr>
+<h3 id="43-полный-справочник-всех-14-родительских-материалов-modmaterials">4.3. Полный справочник всех 14 родительских материалов (<code>ModMaterials</code>)</h3>
+<p>Папка в проекте: <code>Content/Common/MasterMaterials/VehicleMaterials/ModMaterials/</code></p>
+<table>
+    <thead>
+        <tr>
+            <th>Материал</th>
+            <th>Назначение</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>MI_Mod_CarPaint</code></td>
+            <td>Окрашенные части кузова (поддерживает текстуру ливреи <code>Livery</code> с альфа-маской).</td>
+        </tr>
+        <tr>
+            <td><code>MI_Mod_Exterior</code></td>
+            <td>Пластик, хром, неокрашенные элементы кузова, диски колёс, суппорты.</td>
+        </tr>
+        <tr>
+            <td><code>MI_Mod_Tyre</code></td>
+            <td>Покрышки (шины) колёс.</td>
+        </tr>
+        <tr>
+            <td><code>MI_Mod_Glass</code></td>
+            <td>Стёкла автомобиля и плафоны фар (прозрачные и цветные).</td>
+        </tr>
+        <tr>
+            <td><code>MI_Mod_Emissive_Beam</code></td>
+            <td>Внешние светящиеся элементы кузова (лампы фар, поворотников, стоп-сигналов).</td>
+        </tr>
+        <tr>
+            <td><code>MI_Mod_Wipers</code></td>
+            <td>Щётки и поводки стеклоочистителей (дворников).</td>
+        </tr>
+        <tr>
+            <td><code>MI_Mod_Vehicle_Interior</code></td>
+            <td>Обшивка, торпедо, сиденья и основные поверхности салона.</td>
+        </tr>
+        <tr>
+            <td><code>MI_Mod_PanelGlass</code></td>
+            <td>Защитное стекло приборной панели.</td>
+        </tr>
+        <tr>
+            <td><code>MI_Mod_Stiches</code></td>
+            <td>Материалы салона с маской прозрачности (строчка сидений, оплётка руля).</td>
+        </tr>
+        <tr>
+            <td><code>MI_Mod_Mirror</code></td>
+            <td>Материал плафона / корпуса центрального салонного зеркала.</td>
+        </tr>
+        <tr>
+            <td><code>MI_Mod_Emissive_Ikons</code></td>
+            <td>Светящиеся иконки-индикаторы на приборной панели (дашборде).</td>
+        </tr>
+        <tr>
+            <td><code>MI_Mod_Emissive_Panel</code></td>
+            <td>Светящиеся элементы приборной панели (стрелки, шкалы).</td>
+        </tr>
+        <tr>
+            <td><code>MI_Mod_Emissive_Saloon</code></td>
+            <td>Подсвечиваемые кнопки в салоне (стеклоподъёмники, переключатели и т. п.).</td>
+        </tr>
+        <tr>
+            <td><code>MI_Mod_LicensePlate</code></td>
+            <td><strong>Не используется</strong> в модах (слот <code>LicensePlates</code> оставляется пустым, игра подставляет материал сама).</td>
+        </tr>
+    </tbody>
+</table>
+<hr>
+<h2 id="5-финальный-чек-лист-перед-публикацией-в-steam-workshop">5. Финальный чек-лист перед публикацией в Steam Workshop</h2>
+<ul class="checklist">
+    <li><input type="checkbox" disabled> Все файлы мода лежат строго внутри <code>Plugins/Mods/Content/&lt;ИмяМода&gt;/</code>, в именах нет кириллицы и пробелов.</li>
+    <li><input type="checkbox" disabled> Все текстуры имеют включённый <code>Virtual Texture Streaming</code> (метка <code>VT</code>), все <code>MRA</code>-карты имеют <code>Compression Settings = Masks (no sRGB)</code>, текстуры световых пятен <code>LFM_VehicleLightSpot</code> — <code>Alpha</code>.</li>
+    <li><input type="checkbox" disabled> Не использовано ни одного кастомного <code>Master Material</code> — только <code>Material Instance</code> от <code>MI_Mod_*</code>.</li>
+    <li><input type="checkbox" disabled> У Актора и всех компонентов <code>Scale = (1.0, 1.0, 1.0)</code>.</li>
+    <li><input type="checkbox" disabled> Физическая коллизия <code>BlockAllDynamic</code> настроена <strong>только</strong> на <code>Body</code>; на всех остальных узлах (колёса, суппорты, салон, стёкла, зеркала, дворники) выставлено <code>NoCollision</code> и отключено <code>Receives Decals</code>.</li>
+    <li><input type="checkbox" disabled> Все пути в <code>Vehicle.ini</code> и <code>options.xml</code> указывают на вашу папку (<code>../Plugins/Mods/Content/&lt;ИмяМода&gt;/...</code>) или общие пути <code>Common/...</code>, а перед точкой с запятой <code>;</code> нет пробелов.</li>
+    <li><input type="checkbox" disabled> На всех зеркалах добавлен сокет <code>Camera</code>, запущен <code>Generate UVs by Vertex Positions</code> и ассеты сохранены.</li>
+    <li><input type="checkbox" disabled> Все изменённые файлы в UE сохранены (<code>Ctrl + Shift + S</code>), все Blueprints скомпилированы (<strong>Compile</strong> без ошибок).</li>
+    <li><input type="checkbox" disabled> Мод собран через <code>build_mod_dlc.bat</code>, файл <code>\Saved\DLC\Windows\Mods.pak</code> переименован в <code>&lt;ИмяМода&gt;.pak</code> и проверен локально в <code>CityCarDriving2/Content/Paks/</code>.</li>
+    <li><input type="checkbox" disabled> Автомобиль протестирован днём, ночью (свет и приборка), в дождь (<code>RainBlocker</code> и дворники), на АЗС (<code>FuelTank</code>) и во всех камерах.</li>
+</ul>
+
+</body>
+</html>

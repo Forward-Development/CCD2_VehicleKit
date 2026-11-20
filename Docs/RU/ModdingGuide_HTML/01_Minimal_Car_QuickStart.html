@@ -1,0 +1,648 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Модуль 1. Быстрый старт: минимально рабочий автомобиль</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({ startOnLoad: true });</script>
+    <style>
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 32px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1f2328;
+            background-color: #ffffff;
+        }
+        h1, h2, h3, h4 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        h1 {
+            font-size: 2em;
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid #d0d7de;
+        }
+        h2 {
+            font-size: 1.5em;
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid #d0d7de;
+        }
+        h3 {
+            font-size: 1.25em;
+        }
+        hr {
+            height: 0.25em;
+            padding: 0;
+            margin: 24px 0;
+            background-color: #d0d7de;
+            border: 0;
+        }
+        a {
+            color: #0969da;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 16px 0;
+        }
+        th, td {
+            border: 1px solid #d0d7de;
+            padding: 8px 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background: #f6f8fa;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background: #f6f8fa;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .text-right {
+            text-align: right;
+        }
+        code {
+            background: #eff1f3;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+            font-size: 85%;
+        }
+        pre {
+            background: #f6f8fa;
+            padding: 14px;
+            border-radius: 6px;
+            overflow-x: auto;
+            border: 1px solid #d0d7de;
+        }
+        pre code {
+            background: transparent;
+            padding: 0;
+            font-size: 100%;
+        }
+        pre.mermaid {
+            background: #ffffff;
+            text-align: center;
+        }
+        .alert {
+            padding: 12px 16px;
+            margin: 16px 0;
+            border-left: 4px solid;
+            border-radius: 6px;
+            background: #f6f8fa;
+        }
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .alert p:last-child, .alert ul:last-child, .alert ol:last-child {
+            margin-bottom: 0;
+        }
+        .alert-note {
+            border-left-color: #0969da;
+            background-color: #ddf4ff;
+        }
+        .alert-note .alert-title { color: #0969da; }
+        .alert-tip {
+            border-left-color: #1a7f37;
+            background-color: #dafbe1;
+        }
+        .alert-tip .alert-title { color: #1a7f37; }
+        .alert-important {
+            border-left-color: #8250df;
+            background-color: #fbefff;
+        }
+        .alert-important .alert-title { color: #8250df; }
+        .alert-warning {
+            border-left-color: #9a6700;
+            background-color: #fff8c5;
+        }
+        .alert-warning .alert-title { color: #9a6700; }
+        .alert-caution {
+            border-left-color: #cf222e;
+            background-color: #ffebe9;
+        }
+        .alert-caution .alert-title { color: #cf222e; }
+        ul.checklist {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        ul.checklist li {
+            margin-bottom: 8px;
+        }
+        ul.checklist input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        figure.doc-figure {
+            margin: 16px 0;
+            padding: 10px;
+            background: #f6f8fa;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            text-align: center;
+        }
+        figure.doc-figure img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            display: block;
+            margin: 0 auto;
+        }
+        figure.doc-figure figcaption {
+            margin-top: 8px;
+            font-size: 0.9em;
+            color: #57606a;
+        }
+    </style>
+</head>
+<body>
+<h1 id="модуль-1-быстрый-старт-минимально-рабочий-автомобиль">Модуль 1. Быстрый старт: минимально рабочий автомобиль</h1>
+<p><strong>Навигация:</strong> <a href="./README.html">README</a> | <strong>01. Минимальный автомобиль</strong> | <a href="./02_Exterior_Lights_and_World.html">02. Экстерьер, свет и мир</a> | <a href="./03_Interior_Dashboard_Cameras_Seats.html">03. Салон, приборка и камеры</a> | <a href="./04_Mirrors_and_Wipers.html">04. Зеркала и дворники</a> | <a href="./05_Sounds_and_FMOD.html">05. Звуки и FMOD</a> | <a href="./06_Advanced_Specs_Logic_and_Reference.html">06. Комплектации, логика и шпаргалка</a></p>
+<hr>
+<p>В этом модуле вы пройдёте <strong>весь минимально необходимый путь с нуля</strong>: подготовите и импортируете кузов и 4 колеса, назначите базовые материалы, подключите минимальную физику, соберёте Актор автомобиля с базовой камерой, оформите паспорт автомобиля (<code>DA_*</code>), соберёте <code>.pak</code>, протестируете его локально в <strong>City Car Driving 2.0</strong> и узнаете, как опубликовать мод в Steam Workshop.</p>
+<div class="alert alert-note">
+    <div class="alert-title">Примечание (NOTE)</div>
+<p><strong>Что сознательно НЕ входит в Модуль 1:</strong><br>
+Салон, зеркала, дворники, фары, номера, звуки, <code>LogicBox</code> и <code>FuelTank</code> <strong>не обязательны</strong> для запуска — игра заспавнит автомобиль и позволит на нём ездить и без них. Всё это вы сможете спокойно добавить позже в Модулях 2–6.</p>
+
+</div>
+<pre class="mermaid">
+flowchart TD
+    S1["Шаг 1. Папка мода и файлы физики"] --&gt; S2["Шаг 2. Экспорт 3D (кузов + 4 колеса)"]
+    S2 --&gt; S3["Шаг 3. Импорт в UE 5.8 и базовые материалы"]
+    S3 --&gt; S4["Шаг 4. Сборка Актора V_ModName&lt;br/&gt;(Body + 4 колеса + камера)"]
+    S4 --&gt; S5["Шаг 5. Минимальные правки Vehicle.ini&lt;br/&gt;(Mount, Length, Radius)"]
+    S5 --&gt; S6["Шаг 6. Паспорт авто DA_ModName&lt;br/&gt;(PDA_PrototypedVehicleSpecification)"]
+    S6 --&gt; S7["Шаг 7. Сборка .pak, локальный тест&lt;br/&gt;и публикация в Steam Workshop"]
+</pre>
+<hr>
+<h2 id="шаг-1-создание-папки-мода-и-копирование-базовой-физики">Шаг 1. Создание папки мода и копирование базовой физики</h2>
+<h3 id="11-создаём-папку-мода-в-ue">1.1. Создаём папку мода в UE</h3>
+<ol>
+    <li>Откройте проект <code>CityCarDriving2.uproject</code> в Unreal Engine 5.8.</li>
+    <li>Откройте <strong>Content Browser</strong> (<code>Ctrl + Space</code>), нажмите <strong>Settings</strong> (шестерёнка справа вверху) и включите <strong>Show Plugin Content</strong> (если ещё не включено).</li>
+    <li>В дереве папок слева перейдите в <code>All → Plugins → Mods Content</code>.</li>
+    <li>Нажмите <strong>ПКМ</strong> на пустом месте → <strong>New Folder</strong> и назовите папку латиницей без пробелов, например <strong><code>MyFirstCar</code></strong>.</li>
+    <li>Внутри <code>MyFirstCar</code> для порядка сразу создайте подпапки: <code>Meshes</code>, <code>Materials</code>, <code>Textures</code>.</li>
+</ol>
+<h3 id="12-копируем-файлы-физики-vehiclelib">1.2. Копируем файлы физики (<code>VehicleLib</code>)</h3>
+<ol>
+    <li>В Content Browser нажмите <strong>ПКМ</strong> по вашей папке <code>MyFirstCar</code> → <strong>Show in Explorer</strong> — откроется папка <code>...\Plugins\Mods\Content\MyFirstCar\</code> в Проводнике Windows.</li>
+    <li>Откройте вторую вкладку Проводника и перейдите в папку готовых примеров физики:
+<ul>
+    <li><code>Docs\Samples\VehicleLibConfigs\Vehicle012_HangugEclauto\</code> <em>(бензиновый седан, хороший универсальный старт)</em></li>
+    <li>или <code>Docs\Samples\VehicleLibConfigs\Vehicle002_UlgaresGroberolf\</code></li>
+    <li>или <code>Plugins\Mods\Content\CieBensVGruppe\</code> <em>(полный привод, дизель)</em>.</li>
+</ul>
+</li>
+    <li>Скопируйте в вашу папку <code>Plugins\Mods\Content\MyFirstCar\</code> три файла:
+<ul>
+    <li><strong><code>Vehicle.ini</code></strong></li>
+    <li><strong><code>options.xml</code></strong></li>
+    <li><strong><code>Engine.csv</code></strong> <em>(если выбрали пример с другими именами <code>.csv</code>, скопируйте и их; если копировали из <code>CieBensVGruppe</code>, скопируйте также <code>AwdAuto.xml</code> и <code>AwdManual.xml</code>)</em>.</li>
+</ul>
+</li>
+</ol>
+<h3 id="13-исправляем-пути-внутри-vehicleini-и-optionsxml">1.3. Исправляем пути внутри <code>Vehicle.ini</code> и <code>options.xml</code></h3>
+<p>Откройте скопированные <code>Vehicle.ini</code> и <code>options.xml</code> в любом текстовом редакторе (Блокнот, Notepad++, VS Code) в кодировке <strong>UTF-8</strong>.</p>
+<p>Все пути внутри этих файлов отсчитываются от папки <code>Content/</code> основной игры:</p>
+<ul>
+    <li>Общие файлы игры (<code>Common/Vehicles/MotorCars/...</code>) <strong>менять не нужно</strong> — они работают автоматически.</li>
+    <li>Ссылки на файлы <strong>внутри папки вашего мода</strong> должны начинаться с <code>../Plugins/Mods/Content/&lt;ИмяМода&gt;/</code>.</li>
+</ul>
+<p>Проверьте и замените имя чужой машины на имя вашей папки (<code>MyFirstCar</code>) в следующих строках:</p>
+<p><strong>В <code>Vehicle.ini</code>:</strong></p>
+<pre><code class="language-ini">[Vehicle]
+; Если используете стандартную схему игры (рекомендуется для старта):
+DefaultSchema = Common/Vehicles/MotorCars/Schemes/FwdAuto.xml
+; (или если копировали локальную схему в папку мода: ../Plugins/Mods/Content/MyFirstCar/AwdAuto.xml)
+
+[Engine]
+PowerCurves = ../Plugins/Mods/Content/MyFirstCar/Engine.csv</code></pre>
+<p><strong>В <code>options.xml</code>:</strong></p>
+<pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;Options&gt;
+    &lt;AvailableOptions&gt;
+        &lt;Option Name="TransmissionType" SetSchema="true"&gt;
+            &lt;OptionValue Value="Auto" SchemaName="Common/Vehicles/MotorCars/Schemes/FwdAuto.xml" /&gt;
+            &lt;OptionValue Value="Manual" SchemaName="Common/Vehicles/MotorCars/Schemes/FwdManual.xml" /&gt;
+        &lt;/Option&gt;
+    &lt;/AvailableOptions&gt;
+&lt;/Options&gt;</code></pre>
+<div class="alert alert-caution">
+    <div class="alert-title">Осторожно (CAUTION)</div>
+<p><strong>Три жёстких правила синтаксиса <code>Vehicle.ini</code>:</strong></p>
+<ol>
+    <li>Разделитель чисел в списках и координатах — <strong>точка с запятой <code>;</code> БЕЗ пробела перед <code>;</code>!</strong>
+<ul>
+    <li>Правильно: <code>Mount = 1.63; 0.85; 0.4455</code></li>
+    <li>Ошибка: <code>Mount = 1.63 ; 0.85 ; 0.4455</code> (пробел перед <code>;</code> воспринимается как комментарий и обрежет всё, что правее!).</li>
+</ul>
+</li>
+    <li>Десятичный разделитель — строго <strong>точка <code>.</code></strong> (не запятая).</li>
+    <li>Сохраняйте файлы в кодировке <strong>UTF-8</strong>.</li>
+</ol>
+
+</div>
+<hr>
+<h2 id="шаг-2-подготовка-и-экспорт-3d-моделей-кузов-и-4-колеса">Шаг 2. Подготовка и экспорт 3D-моделей (кузов и 4 колеса)</h2>
+<h3 id="21-критические-правила-координат-и-масштаба-особенно-для-blender">2.1. Критические правила координат и масштаба (особенно для Blender!)</h3>
+<div class="alert alert-warning">
+    <div class="alert-title">Внимание (WARNING)</div>
+<p><strong>Обязательно прочитайте перед экспортом из Blender!</strong><br>
+В Unreal Engine 1 единица измерения = <strong>1 сантиметр</strong>, перед автомобиля направлен вдоль оси <strong><code>+X</code></strong>, верх — вдоль оси <strong><code>+Z</code></strong>.<br>
+<strong>В самом редакторе UE нельзя масштабировать меш или Актор автомобиля (<code>Scale</code> всегда должен оставаться <code>1.0, 1.0, 1.0</code>) — иначе сломается физика и подвеска!</strong></p>
+
+</div>
+<p>Рекомендации по экспорту из <strong>Blender</strong> в формат <strong>FBX</strong>:</p>
+<ol>
+    <li><strong>Масштаб модели:</strong>
+<ul>
+    <li>В Unreal Engine автомобиль должен иметь реальные размеры в сантиметрах (например, длина ~450 см, ширина ~180 см, высота ~150 см).</li>
+    <li>Если вы моделировали в Blender в метрах (<code>Unit Scale = 1.0</code>) и при экспорте с масштабом возникают ошибки — увеличьте модель в Blender в <strong>100 раз</strong> и обязательно примените трансформации (<strong><code>Ctrl + A</code> → <code>Apply All Transforms</code></strong>), либо работайте сразу в сантиметрах (<code>Scene Properties → Units → Metric</code>, <code>Unit Scale = 0.01</code>, <code>Length = Centimeters</code>) с применённым <code>Scale = 1.0</code>.</li>
+</ul>
+</li>
+    <li><strong>Направление осей при экспорте FBX (<code>File → Export → FBX</code>):</strong>
+<ul>
+    <li>В разделе <strong>Transform</strong> окна экспорта выставите:
+<ul>
+    <li><strong>Forward:</strong> <code>-X Forward</code></li>
+    <li><strong>Up:</strong> <code>Z Up</code></li>
+</ul>
+</li>
+    <li>В разделе <strong>Geometry</strong> выставите <strong>Smoothing:</strong> <code>Face</code> (чтобы избежать предупреждений о группах сглаживания в UE).</li>
+</ul>
+</li>
+</ol>
+<h3 id="22-требования-к-3d-модели-кузова-body">2.2. Требования к 3D-модели кузова (<code>Body</code>)</h3>
+<figure class="doc-figure">
+    <img src="./images/m1_body_3d_axes.png" alt="Ориентация и оси 3D-модели кузова" loading="lazy">
+    <figcaption>Ориентация и оси 3D-модели кузова</figcaption>
+</figure>
+<ol>
+    <li>Основной объём кузова должен быть <strong>единой моделью</strong> (отдельные декоративные детали вроде бамперов/капота позже можно навесить дочерними мешами, но основной физический объём — один меш <code>Body</code>).</li>
+    <li>Модель направлена передом вдоль оси <strong><code>+X</code></strong> и расположена в центре координатной сетки (<code>0, 0, 0</code>).</li>
+    <li>Все элементы имеют UV-развёртку на <strong>0-м UV-канале</strong>.</li>
+    <li>Разные по типу поверхности элементы (окрашенный кузов, чёрный пластик/хром, стёкла, фары) должны иметь отдельные <strong>Material ID</strong> (слоты материалов).</li>
+</ol>
+<h3 id="23-требования-к-3d-моделям-колёс-wheel">2.3. Требования к 3D-моделям колёс (<code>Wheel</code>)</h3>
+<figure class="doc-figure">
+    <img src="./images/m1_wheel_3d_pivot.png" alt="Пивот и оси 3D-модели левого переднего колеса CieBensVGruppe" loading="lazy">
+    <figcaption>Пивот и оси 3D-модели левого переднего колеса CieBensVGruppe</figcaption>
+</figure>
+<ol>
+    <li><strong>Пивот (Origin)</strong> модели каждого колеса обязан находиться <strong>строго в геометрическом центре колеса</strong> (<code>0, 0, 0</code>).</li>
+    <li>Ось вращения колеса — <strong><code>Y</code></strong> (колесо катится вдоль оси <code>+X</code>).</li>
+    <li>Разделите материалы минимум на 2 слота: <strong>покрышка</strong> (шина) и <strong>диск</strong>.</li>
+    <li>Если левые и правые колёса отличаются направленным рисунком протектора или вылетом диска — экспортируйте отдельные модели для левой и правой стороны (или все 4, если задние шире передних).</li>
+</ol>
+<hr>
+<h2 id="шаг-3-импорт-моделей-и-настройка-базовых-материалов-в-ue-58">Шаг 3. Импорт моделей и настройка базовых материалов в UE 5.8</h2>
+<h3 id="31-импорт-кузова-body">3.1. Импорт кузова (<code>Body</code>)</h3>
+<ol>
+    <li>В Content Browser откройте вашу папку <code>MyFirstCar/Meshes</code>.</li>
+    <li>Перетащите <code>.fbx</code>-файл кузова из Проводника прямо в окно Content Browser (или нажмите кнопку <strong>Import</strong>).</li>
+    <li>В открывшемся окне импорта обязательно проверьте:
+<ul>
+    <li><strong><code>Generate Missing Collision</code></strong> — <strong>ВКЛЮЧИТЬ</strong> (если вы не делали собственную <code>UCX_</code>-коллизию в 3D-редакторе; кузову обязательно нужна коллизия для столкновений!).</li>
+    <li><strong><code>Material Import Method</code></strong> — выберите <strong><code>Do Not Create Material</code></strong> (чтобы UE не создавал несовместимые базовые материалы автоматически).</li>
+    <li><strong><code>Build Nanite</code></strong> — <strong>ВЫКЛЮЧИТЬ</strong> (Nanite в проекте отключён).</li>
+    <li><strong><code>Import Uniform Scale</code></strong> — оставьте <strong><code>1.0</code></strong>.</li>
+</ul>
+</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m1_import_body_1.png" alt="Окно импорта Static Mesh кузова — верхняя часть" loading="lazy">
+    <figcaption>Окно импорта Static Mesh кузова — верхняя часть</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m1_import_body_2.png" alt="Окно импорта Static Mesh кузова — трансформация и настройки" loading="lazy">
+    <figcaption>Окно импорта Static Mesh кузова — трансформация и настройки</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m1_import_materials_none.png" alt="Окно импорта — выбор Do Not Create Material" loading="lazy">
+    <figcaption>Окно импорта — выбор Do Not Create Material</figcaption>
+</figure>
+<ol>
+    <li>Нажмите <strong>Import All</strong>.</li>
+    <li><strong>Быстрая проверка размера после импорта:</strong> дважды кликните на импортированный меш кузова. В левом верхнем углу 3D-окна посмотрите строку <strong><code>Approx Size</code></strong>. Для обычного легкового авто цифры должны быть порядка <code>450 × 180 × 150</code> (в сантиметрах). Если видите <code>4 × 2 × 1</code> — модель экспортировалась в 100 раз меньше, вернитесь к Шагу 2.1!</li>
+</ol>
+<h3 id="32-импорт-колёс-wheel">3.2. Импорт колёс (<code>Wheel</code>)</h3>
+<p>Импорт колёс выполняется точно так же в папку <code>MyFirstCar/Meshes</code>, <strong>но с одним критическим отличием</strong>:</p>
+<ul>
+    <li><strong><code>Generate Missing Collision</code></strong> — обязательно <strong>ВЫКЛЮЧИТЬ</strong>! У моделей колёс <strong>не должно быть коллизии</strong> (физический контакт с дорогой считает система <code>WheelRaycast</code> из <code>VehicleLib</code>).</li>
+    <li><strong><code>Material Import Method</code></strong> — <strong><code>Do Not Create Material</code></strong>.</li>
+</ul>
+<figure class="doc-figure">
+    <img src="./images/m1_import_wheel_nocollision.png" alt="Настройки импорта колеса — коллизия выключена" loading="lazy">
+    <figcaption>Настройки импорта колеса — коллизия выключена</figcaption>
+</figure>
+<h3 id="33-настройка-текстур-и-базовых-материалов">3.3. Настройка текстур и базовых материалов</h3>
+<div class="alert alert-caution">
+    <div class="alert-title">Осторожно (CAUTION)</div>
+<p><strong>Главное правило материалов в CCD 2.0:</strong><br>
+Моды <strong>НЕ поддерживают</strong> пользовательские <code>Master Materials</code>!<br>
+Вы обязаны использовать только <strong>Material Instance</strong>, созданные на основе подготовленных разработчиками материалов из папки:<br>
+<code>Content/Common/MasterMaterials/VehicleMaterials/ModMaterials/</code></p>
+
+</div>
+<figure class="doc-figure">
+    <img src="./images/m1_master_materials_list.png" alt="Список всех доступных родительских материалов MI_Mod_*" loading="lazy">
+    <figcaption>Список всех доступных родительских материалов MI_Mod_*</figcaption>
+</figure>
+<h4 id="подготовка-текстур-если-импортируете-свои-текстуры">Подготовка текстур (если импортируете свои текстуры)</h4>
+<p>Перетащите текстуры (<code>.png</code> / <code>.tga</code>) в папку <code>MyFirstCar/Textures</code>. Для каждой импортированной текстуры откройте её двойным кликом:</p>
+<ol>
+    <li><strong>Virtual Texture (обязательно для ВСЕХ текстур мода!):</strong> в панели <strong>Details</strong> справа в поиске введите <code>Virtual</code> и поставьте галочку <strong><code>Virtual Texture Streaming</code></strong>. В углу миниатюры текстуры появится метка <code>VT</code>.</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m1_texture_virtual_texture.png" alt="Включение Virtual Texture Streaming на текстуре" loading="lazy">
+    <figcaption>Включение Virtual Texture Streaming на текстуре</figcaption>
+</figure>
+<ol>
+    <li><strong>Компрессия для MRA-карты</strong> <em>(текстура-маска, где канал R = Metallic, G = Roughness, B = Ambient Occlusion)</em>: в поиске Details введите <code>Compression</code> и выберите <strong><code>Compression Settings = Masks (no sRGB)</code></strong>.</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m1_texture_mra_mask.png" alt="Установка Masks (no sRGB) для MRA-карты" loading="lazy">
+    <figcaption>Установка Masks (no sRGB) для MRA-карты</figcaption>
+</figure>
+<ol>
+    <li>Нажмите <strong>Save</strong> (<code>Ctrl + S</code>).</li>
+</ol>
+<h4 id="минимальный-набор-материалов-для-модуля-1">Минимальный набор материалов для Модуля 1</h4>
+<p>Чтобы машина уже выглядела аккуратно, создайте 3 базовых <strong>Material Instance</strong>:</p>
+<ol>
+    <li>В Content Browser перейдите в <code>Content/Common/MasterMaterials/VehicleMaterials/ModMaterials/</code>.</li>
+    <li>Нажмите <strong>ПКМ</strong> по нужному родительскому материалу → <strong>Create Material Instance</strong> и перетащите созданный файл в вашу папку <code>MyFirstCar/Materials/</code>:
+<ul>
+    <li>От <strong><code>MI_Mod_CarPaint</code></strong> → <code>MI_MyFirstCar_Paint</code> (окрашенный кузов — можно просто задать цвет даже без текстур!).</li>
+    <li>От <strong><code>MI_Mod_Exterior</code></strong> → <code>MI_MyFirstCar_Exterior</code> (пластик, металл, диски колёс).</li>
+    <li>От <strong><code>MI_Mod_Tyre</code></strong> → <code>MI_MyFirstCar_Tyre</code> (покрышки колёс).</li>
+</ul>
+</li>
+    <li>Откройте каждый созданный <code>MI_*</code> двойным кликом, поставьте галочки слева от нужных параметров (цвет / текстуры), выберите свои текстуры и нажмите <strong>Save</strong>.</li>
+    <li>Откройте Static Mesh кузова и колёс двойным кликом и в панели <strong>Details → Material Slots</strong> назначьте созданные <code>MI_*</code> в соответствующие слоты. Нажмите <strong>Save</strong>.</li>
+</ol>
+<p><em>(Подробный разбор всех 14 материалов <code>MI_Mod_*</code>, ливрей, стёкол и фар — в <a href="./02_Exterior_Lights_and_World.html">Модуле 2</a> и <a href="./03_Interior_Dashboard_Cameras_Seats.html">Модуле 3</a>.)</em></p>
+<hr>
+<h2 id="шаг-4-сборка-минимального-актора-автомобиля-v_myfirstcar">Шаг 4. Сборка минимального Актора автомобиля (<code>V_MyFirstCar</code>)</h2>
+<p>Актор автомобиля — это Blueprint-контейнер, в котором собираются кузов, колёса и камеры.</p>
+<h3 id="41-общие-правила-для-всех-узлов-актора">4.1. Общие правила для всех узлов Актора</h3>
+<p>Запомните 3 базовых правила (они действуют во всех модулях):</p>
+<ol>
+    <li><strong>Scale всегда <code>(1.0, 1.0, 1.0)</code></strong> у самого Актора и всех его компонентов.</li>
+    <li><strong>Коллизия по умолчанию выключена:</strong> у всех компонентов (кроме <code>Body</code>) выставляйте <code>Collision Presets = NoCollision</code> и снимайте галочку <code>Receives Decals</code> (по умолчанию выключено).</li>
+    <li><strong>Немодифицированный Transform:</strong> у важных именованных узлов (например, <code>Body</code>) <code>Location</code> и <code>Rotation</code> остаются <code>(0, 0, 0)</code>, если в инструкции явно не указано иное. К любому узлу можно прикрепить свои дополнительные декоративные меши (с <code>NoCollision</code> и любым нужным Transform).</li>
+</ol>
+<h3 id="42-создание-blueprint-актора">4.2. Создание Blueprint Актора</h3>
+<ol>
+    <li>В Content Browser откройте корень вашей папки мода <code>Plugins/Mods Content/MyFirstCar/</code>.</li>
+    <li>Нажмите <strong>ПКМ</strong> на пустом месте → <strong>Blueprint Class</strong>.</li>
+    <li>В окне <em>Pick Parent Class</em> выберите <strong>Actor</strong>.</li>
+    <li>Назовите файл <strong><code>V_MyFirstCar</code></strong> и откройте его двойным кликом.</li>
+</ol>
+<h3 id="43-добавление-кузова-body">4.3. Добавление кузова (<code>Body</code>)</h3>
+<ol>
+    <li>В левой панели <strong>Components</strong> нажмите кнопку <strong><code>+ Add</code></strong> → введите <code>Static Mesh</code> → выберите <strong>Static Mesh</strong>.</li>
+    <li>Переименуйте компонент строго в <strong><code>Body</code></strong> (регистр важен!). Убедитесь, что он прикреплён к <code>DefaultSceneRoot</code>, а его <code>Location</code> и <code>Rotation</code> равны <code>(0, 0, 0)</code>.</li>
+    <li>Выделите <strong><code>Body</code></strong> и в панели <strong>Details</strong> справа настройте:
+<ul>
+    <li><strong>Static Mesh:</strong> выберите ваш импортированный меш кузова.</li>
+    <li><strong>Collision → Collision Presets:</strong> выберите <strong><code>BlockAllDynamic</code></strong>.</li>
+    <li><strong>Physics → Mass (kg):</strong> поставьте галочку слева от <code>Mass (kg)</code> (<code>Override Mass</code>) и укажите <strong>подрессоренную массу кузова</strong> в килограммах (масса автомобиля минус масса 4 колёс; для обычного седана это примерно <code>1200–1500</code> кг, для минивэна — <code>2100</code> кг).</li>
+    <li><strong>Physics → Advanced → Center Of Mass Offset:</strong> смещение центра масс в сантиметрах <code>(X, Y, Z)</code> от геометрического центра коллизии. Для первого теста можно оставить <code>(0, 0, 0)</code> или слегка опустить по <code>Z</code> (например, <code>Z = -20</code>), чтобы машина была устойчивее. <em>(Точная формула расчёта развесовки приведена в <a href="../VehicleLib_HTML/00_Quick_Start.html">VehicleLib_HTML/00_Quick_Start.html</a>.)</em></li>
+</ul>
+</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m1_body_physics_mass.png" alt="Настройка массы и смещения центра масс на компоненте Body" loading="lazy">
+    <figcaption>Настройка массы и смещения центра масс на компоненте Body</figcaption>
+</figure>
+<h3 id="44-добавление-4-колёс-wheel">4.4. Добавление 4 колёс (<code>Wheel*</code>)</h3>
+<div class="alert alert-caution">
+    <div class="alert-title">Осторожно (CAUTION)</div>
+<p><strong>Задняя ось в стандартных схемах называется <code>Back</code>, а НЕ <code>Rear</code>!</strong><br>
+Используйте строго эти 4 имени:</p>
+<ul>
+    <li><code>WheelFrontLeft</code> — переднее левое</li>
+    <li><code>WheelFrontRight</code> — переднее правое</li>
+    <li><code>WheelBackLeft</code> — заднее левое</li>
+    <li><code>WheelBackRight</code> — заднее правое</li>
+</ul>
+
+</div>
+<p>В Модуле 1 (без суппортов подвески) колёса крепятся напрямую к <code>Body</code>:</p>
+<ol>
+    <li>Выделите в дереве <strong>Components</strong> компонент <strong><code>Body</code></strong>, нажмите <strong><code>+ Add</code></strong> → <strong>Static Mesh</strong> и назовите его <strong><code>WheelFrontLeft</code></strong>.</li>
+    <li>В <strong>Details</strong> выберите меш переднего левого колеса, выставите <code>Collision Presets = NoCollision</code> и отключите <code>Receives Decals</code>.</li>
+    <li>В поле <strong>Transform → Location</strong> задайте позицию колеса в сантиметрах — <strong>такую, при которой подвеска максимально прожата вверх</strong> (верхняя точка хода стойки, совпадающая с точкой <code>Mount</code> в <code>Vehicle.ini</code>; подробнее в Шаге 5).</li>
+    <li>Повторите шаги 1–3 для остальных трёх колёс: <code>WheelFrontRight</code>, <code>WheelBackLeft</code>, <code>WheelBackRight</code>.</li>
+</ol>
+<p><em>(Если позже вы добавите неподвижные суппорты подвески <code>SuspensionFrontLeft/Right/BackLeft/Right</code> в <a href="./02_Exterior_Lights_and_World.html">Модуле 2</a>, то координаты <code>Location</code> перенесутся на них, а у дочерних <code>Wheel*</code> станет <code>Location = (0, 0, 0)</code>.)</em></p>
+<pre class="mermaid">
+flowchart TD
+    Root["DefaultSceneRoot&lt;br/&gt;Scale = (1, 1, 1)"] --&gt; Body["Body (StaticMeshComponent)&lt;br/&gt;Collision: BlockAllDynamic&lt;br/&gt;Mass (kg) + Center Of Mass Offset"]
+    Body --&gt; WFL["WheelFrontLeft&lt;br/&gt;NoCollision, Location = Mount (см)"]
+    Body --&gt; WFR["WheelFrontRight&lt;br/&gt;NoCollision, Location = Mount (см)"]
+    Body --&gt; WBL["WheelBackLeft&lt;br/&gt;NoCollision, Location = Mount (см)"]
+    Body --&gt; WBR["WheelBackRight&lt;br/&gt;NoCollision, Location = Mount (см)"]
+    Root --&gt; Cam["ThirdPersonBack (SceneComponent)&lt;br/&gt;ControlBlock: Camera"]
+</pre>
+<h3 id="45-знакомство-с-controlblock-и-добавление-базовой-камеры-thirdpersonback">4.5. Знакомство с <code>ControlBlock</code> и добавление базовой камеры (<code>ThirdPersonBack</code>)</h3>
+<p>Чтобы в игре вы видели свой автомобиль со стороны под удобным ракурсом, добавим одну базовую камеру третьего лица и заодно освоим главный механизм настройки компонентов — <strong><code>ControlBlock</code></strong>.</p>
+<div class="alert alert-note">
+    <div class="alert-title">Примечание (NOTE)</div>
+<p><strong>А что с остальными камерами (<code>FirstPerson</code>, <code>Windshield</code>, <code>ThirdPersonFront</code>, <code>TopDown</code>)?</strong><br>
+Все остальные камеры, которые вы пока не создали вручную, в игре <strong>всё равно будут доступны</strong>, но расположатся в стандартных точках по умолчанию — они могут не совсем подходить под габариты вашего конкретного автомобиля. Точно расставить все 5 камер под свой кузов вы сможете в <a href="./03_Interior_Dashboard_Cameras_Seats.html#4-игровые-камеры-автомобиля">Модуле 3</a>.</p>
+
+</div>
+<ol>
+    <li>Выделите <code>DefaultSceneRoot</code> → нажмите <strong><code>+ Add</code></strong> → <strong>Scene</strong> (создастся <code>SceneComponent</code>). Назовите его <strong><code>Cam_ThirdPersonBack</code></strong>.</li>
+    <li>Выставьте ему <strong>Location</strong> примерно в центре автомобиля (ось вращения камеры, например <code>X = 0, Y = 0, Z = 130</code> см).</li>
+    <li>Теперь прикрепим к нему <strong><code>ControlBlock</code></strong> (запомните эту последовательность — она используется по всему руководству):
+<ul>
+    <li>Не снимая выделения с <code>Cam_ThirdPersonBack</code>, в панели <strong>Details</strong> справа в строке поиска введите <strong><code>Asset User Data</code></strong>.</li>
+    <li>Напротив <code>Asset User Data</code> нажмите <strong><code>+</code></strong> → в появившемся слоте <code>Index [0]</code> выберите из списка <strong><code>Control Asset Data</code></strong>.</li>
+    <li>Раскройте <code>Index [0]</code> → напротив <strong><code>Control Blocks</code></strong> нажмите <strong><code>+</code></strong>.</li>
+    <li>В левое текстовое поле впишите имя блока: <strong><code>Camera</code></strong>. В правом выпадающем списке убедитесь, что выбрано <strong><code>Control Block</code></strong>.</li>
+    <li>Раскройте <strong><code>Camera</code></strong> → напротив <strong><code>Properties</code></strong> нажмите <strong><code>+</code></strong> два раза, чтобы добавить 2 свойства:
+<ol>
+    <li>Имя слева: <strong><code>Type</code></strong> → тип справа: <strong><code>Control Property String</code></strong> → раскройте и в <code>Value</code> напишите <strong><code>ThirdPersonBack</code></strong>.</li>
+    <li><em>(Опционально)</em> Имя слева: <strong><code>ArmLength</code></strong> → тип справа: <strong><code>Control Property Float</code></strong> → раскройте и в <code>Value</code> напишите дистанцию в сантиметрах, например <strong><code>600.0</code></strong>. <em>(На скриншоте ниже указано старое написание с опечаткой, но в актуальной версии используется правильное имя <strong><code>ArmLength</code></strong>.)</em></li>
+</ol>
+</li>
+</ul>
+</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m1_controlblock_example.png" alt="Пример структуры ControlBlock в панели Asset User Data" loading="lazy">
+    <figcaption>Пример структуры ControlBlock в панели Asset User Data</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m1_camera_thirdperson_cb.png" alt="Настройка камеры ThirdPersonBack с ControlBlock Camera (используйте правильное имя ArmLength)" loading="lazy">
+    <figcaption>Настройка камеры ThirdPersonBack с ControlBlock Camera (используйте правильное имя ArmLength)</figcaption>
+</figure>
+<ol>
+    <li><strong>Проверка:</strong> посмотрите на дерево <strong>Components</strong> слева — компонент <code>Cam_ThirdPersonBack</code> должен автоматически <strong>подсветиться зелёным</strong>!</li>
+    <li>Нажмите кнопки <strong>Compile</strong> и <strong>Save</strong> в левом верхнем углу Blueprint Editor.</li>
+</ol>
+<hr>
+<h2 id="шаг-5-минимальная-настройка-координат-и-колёс-в-vehicleini">Шаг 5. Минимальная настройка координат и колёс в <code>Vehicle.ini</code></h2>
+<p>Откройте <code>Plugins\Mods\Content\MyFirstCar\Vehicle.ini</code> и синхронизируйте геометрию вашего 3D-автомобиля с физикой (все единицы в <code>Vehicle.ini</code> — в <strong>метрах</strong>, тогда как в Unreal Engine — в <strong>сантиметрах</strong>!):</p>
+<h3 id="51-перевод-координат-location-ue-mount-vehicleini">5.1. Перевод координат <code>Location</code> (UE) → <code>Mount</code> (<code>Vehicle.ini</code>)</h3>
+<div class="alert alert-important">
+    <div class="alert-title">Важно (IMPORTANT)</div>
+<p><strong>Правило перевода координат из UE в <code>Vehicle.ini</code>:</strong></p>
+<ol>
+    <li>Поделите все 3 координаты <code>X, Y, Z</code> на <strong>100</strong> (перевод из сантиметров в метры).</li>
+    <li><strong>Инвертируйте знак оси <code>Y</code>!</strong> В UE левая сторона автомобиля имеет отрицательный <code>Y</code> (<code>Y &lt; 0</code>), а в <code>Vehicle.ini</code> левые колёса имеют <strong>положительный <code>Y</code></strong> (<code>Y &gt; 0</code>), правые — <strong>отрицательный <code>Y</code></strong> (<code>Y &lt; 0</code>).</li>
+</ol>
+
+</div>
+<p>Пример для переднего левого колеса:</p>
+<ul>
+    <li>В UE (<code>Location</code> узла <code>WheelFrontLeft</code> / <code>SuspensionFrontLeft</code>): <code>X = 163 см</code>, <code>Y = -85 см</code>, <code>Z = 44.55 см</code> (положение при максимально прожатой подвеске).</li>
+    <li>В <code>Vehicle.ini</code>:</li>
+</ul>
+<pre><code class="language-ini">[SuspensionFrontLeft]
+Length = 0.20
+Mount = 1.63; 0.85; 0.4455</code></pre>
+<div class="alert alert-tip">
+    <div class="alert-title">Совет (TIP)</div>
+<p><strong>Как связаны <code>Mount.Z</code>, <code>Length</code> и положение колеса в покое?</strong><br>
+В статике автомобиль просаживается под собственным весом примерно на треть хода подвески (<code>NormalSag = 0.33</code>).<br>
+Если вы знаете желаемый центр колёсной арки в спокойном состоянии <code>(X_см, Y_см, Z_см)</code>, то верхняя точка сжатой стойки <code>Mount.Z</code> вычисляется по формуле из <code>VehicleLib</code>:<br>
+<code>Mount.Z = (Z_см / 100) + (1 - 0.33) * Length</code><br>
+Например, при центре арки <code>Z = 31 см</code> и ходе подвески <code>Length = 0.20 м</code>: <code>Mount.Z = 0.31 + 0.67 * 0.20 = 0.444 м</code> (<code>44.4 см</code> в UE).</p>
+
+</div>
+<p>Пропишите корректные <code>Mount</code> и <code>Length</code> для всех четырёх секций:</p>
+<ul>
+    <li><code>[SuspensionFrontLeft]</code> (<code>Y &gt; 0</code>)</li>
+    <li><code>[SuspensionFrontRight]</code> (<code>Y &lt; 0</code>)</li>
+    <li><code>[SuspensionBackLeft]</code> (<code>Y &gt; 0</code>)</li>
+    <li><code>[SuspensionBackRight]</code> (<code>Y &lt; 0</code>)</li>
+</ul>
+<h3 id="52-радиус-колёс-и-колёсная-база">5.2. Радиус колёс и колёсная база</h3>
+<ol>
+    <li>В секциях <code>[WheelFrontLeft]</code>, <code>[WheelFrontRight]</code>, <code>[WheelBackLeft]</code>, <code>[WheelBackRight]</code> укажите радиус вашего колеса в <strong>метрах</strong> (измерьте диаметр 3D-меша колеса, поделите пополам и вычтите ~1 см на прогиб шины под весом авто):</li>
+</ol>
+<pre><code class="language-ini">[WheelFrontLeft]
+Radius = 0.345</code></pre>
+<ol>
+    <li>В секции <code>[Steering]</code> укажите расстояние между передней и задней осью в метрах:</li>
+</ol>
+<pre><code class="language-ini">[Steering]
+InteraxleDistance = 2.75   ; = (MountFront.X - MountBack.X)</code></pre>
+<p><em>(Когда машина уверенно поедет, для точной настройки жёсткости пружин, двигателя <code>Engine.csv</code> и КПП воспользуйтесь руководством <strong><a href="../VehicleLib_HTML/00_Quick_Start.html">VehicleLib_HTML/00_Quick_Start.html</a></strong>.)</em></p>
+<hr>
+<h2 id="шаг-6-создание-паспорта-автомобиля-pda_prototypedvehiclespecification">Шаг 6. Создание паспорта автомобиля (<code>PDA_PrototypedVehicleSpecification</code>)</h2>
+<p>Чтобы игра увидела ваш автомобиль и показала его в списке выбора машин, нужен специальный <strong>Data Asset</strong>.</p>
+<ol>
+    <li>В Content Browser откройте корень вашей папки <code>MyFirstCar/</code>.</li>
+    <li>Нажмите <strong>ПКМ</strong> на пустом месте → <strong>Data</strong> (или <strong>Miscellaneous</strong>) → <strong>Data Asset</strong>.</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m1_pda_create_menu.png" alt="Меню создания Data Asset в Content Browser" loading="lazy">
+    <figcaption>Меню создания Data Asset в Content Browser</figcaption>
+</figure>
+<ol>
+    <li>В открывшемся окне найдите и выберите класс <strong><code>PDA_PrototypedVehicleSpecification</code></strong> → нажмите <strong>Select</strong>.</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m1_pda_select_class.png" alt="Выбор родительского класса PDA_PrototypedVehicleSpecification" loading="lazy">
+    <figcaption>Выбор родительского класса PDA_PrototypedVehicleSpecification</figcaption>
+</figure>
+<ol>
+    <li>Назовите файл <strong><code>DA_MyFirstCar</code></strong> и откройте его двойным кликом.</li>
+    <li>Заполните секцию <strong>Prototype</strong>:
+<ul>
+    <li><strong><code>Prototype</code>:</strong> выберите ваш Blueprint Актора <strong><code>V_MyFirstCar</code></strong>.</li>
+    <li><strong><code>Prototype Version</code>:</strong> укажите <strong><code>1</code></strong> (версия загрузчика автомобиля).</li>
+</ul>
+</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m1_pda_prototype.png" alt="Заполнение полей Prototype и PrototypeVersion" loading="lazy">
+    <figcaption>Заполнение полей Prototype и PrototypeVersion</figcaption>
+</figure>
+<ol>
+    <li>Заполните <strong>обязательные спецификации</strong> (секция <strong>Vehicle Specifications</strong>):
+<ul>
+    <li><strong><code>Name</code>:</strong> отображаемое название автомобиля в игре (можно писать текст напрямую, <code>String Table</code> создавать не обязательно).</li>
+    <li><strong><code>Image</code>:</strong> превью-картинка автомобиля для меню (импортируйте любую <code>.png</code> картинку в <code>Textures/</code> с включённым Virtual Texture или временно выберите существующую из шаблона).</li>
+    <li><strong><code>Class</code>:</strong> выберите класс автомобиля из выпадающего списка (например, <code>Economy</code>).</li>
+    <li><strong><code>Engine Types</code>:</strong> нажмите <code>+</code>, чтобы добавить <strong>минимум один</strong> тип двигателя — это поле обязательно, так как именно оно определяет тип топлива (<code>Fuel Type</code>: <code>Gasoline</code>, <code>Diesel</code> и т. д.).</li>
+    <li><strong><code>Transmission Types</code>:</strong> желательно сразу добавить два варианта — <code>Automatic</code> и <code>Manual</code> — и привязать их к <code>options.xml</code>:
+<ul>
+    <li>Для <code>Index [0]</code> (<code>Automatic</code>): поставьте галочку <strong><code>Bound to Option</code></strong>, впишите <strong><code>Option Name = TransmissionType</code></strong>, <strong><code>Option Value = Auto</code></strong>.</li>
+    <li>Для <code>Index [1]</code> (<code>Manual</code>): поставьте галочку <strong><code>Bound to Option</code></strong>, впишите <strong><code>Option Name = TransmissionType</code></strong>, <strong><code>Option Value = Manual</code></strong>.</li>
+    <li>Значения <code>Option Name</code> и <code>Option Value</code> должны <strong>символ в символ совпадать</strong> с полями в вашем <code>options.xml</code>!</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m1_pda_mandatory_specs.png" alt="Обязательные поля спецификаций автомобиля" loading="lazy">
+    <figcaption>Обязательные поля спецификаций автомобиля</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m1_pda_bound_option.png" alt="Привязка типов трансмиссии через Bound to Option к options.xml" loading="lazy">
+    <figcaption>Привязка типов трансмиссии через Bound to Option к options.xml</figcaption>
+</figure>
+<ol>
+    <li>Нажмите <strong>Save All</strong> (<code>Ctrl + Shift + S</code>) в редакторе UE.</li>
+</ol>
+<hr>
+<h2 id="шаг-7-сборка-pak-локальный-тест-и-публикация-в-steam-workshop">Шаг 7. Сборка <code>.pak</code>, локальный тест и публикация в Steam Workshop</h2>
+<h3 id="71-упаковка-мода-в-pak">7.1. Упаковка мода в <code>.pak</code></h3>
+<ol>
+    <li>Убедитесь, что все файлы в редакторе UE сохранены (<strong>File → Save All</strong>). Редактор можно закрыть или оставить открытым.</li>
+    <li>В корневой папке проекта <code>CCD2_VehicleKit</code> найдите и запустите двойным кликом скрипт <strong><code>build_mod_dlc.bat</code></strong>.</li>
+    <li>Дождитесь завершения работы консоли. При успешной сборке в конце появится строка:
+<pre><code class="language-text">DLC build successful: ...\Saved\DLC\Windows\Mods.pak</code></pre>
+<p><em>(Эталонный автомобиль <code>CieBensVGruppe</code> помечен специальным игнор-лейблом <code>L_IGNORE</code> и в ваш <code>.pak</code> не попадёт.)</em></p>
+</li>
+    <li>Перейдите в папку <code>\Saved\DLC\Windows\</code>, найдите файл <strong><code>Mods.pak</code></strong> и <strong>переименуйте его</strong> по имени вашего мода, например <strong><code>MyFirstCar.pak</code></strong>.</li>
+</ol>
+<h3 id="72-локальное-тестирование-в-игре-ccd-20-до-публикации">7.2. Локальное тестирование в игре CCD 2.0 (до публикации)</h3>
+<ol>
+    <li>Скопируйте переименованный файл <strong><code>MyFirstCar.pak</code></strong> в папку с установленной игрой:
+<pre><code class="language-text">&lt;Папка установки игры&gt;\CityCarDriving2\Content\Paks\</code></pre>
+</li>
+    <li>Запустите <strong>City Car Driving 2.0</strong> и выберите ваш автомобиль в меню выбора транспорта.</li>
+</ol>
+<h3 id="73-контрольный-чек-лист-проверки-модуля-1">7.3. Контрольный чек-лист проверки Модуля 1</h3>
+<p>Перед тем как переходить к красоте (экстерьеру, салону и звукам), убедитесь, что база работает идеально:</p>
+<ul class="checklist">
+    <li><input type="checkbox" disabled> Автомобиль отображается в меню выбора машин с правильным именем, превью и выбором АКПП/МКПП.</li>
+    <li><input type="checkbox" disabled> После загрузки на карту машина стоит на колёсах ровно, не проваливается под землю и не улетает в небо.</li>
+    <li><input type="checkbox" disabled> Колёса находятся в арках на правильной высоте и не перепутаны по сторонам (<code>Y</code> инвертирован верно).</li>
+    <li><input type="checkbox" disabled> Камера третьего лица (<code>ThirdPersonBack</code>) вращается вокруг центра машины на комфортном расстоянии.</li>
+    <li><input type="checkbox" disabled> Двигатель заводится, машина разгоняется, колёса крутятся в правильную сторону, передние колёса поворачивают, тормоз останавливает машину.</li>
+    <li><input type="checkbox" disabled> При лёгком столкновении с бордюром/стеной срабатывает коллизия <code>Body</code>.</li>
+</ul>
+<h3 id="74-публикация-в-steam-workshop">7.4. Публикация в Steam Workshop</h3>
+<p>Когда мод проверен и готов к публикации для других игроков, воспользуйтесь официальной инструкцией по загрузке в Steam Workshop (<strong>пункт 4</strong>):</p>
+<ul>
+    <li><a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3763865332" target="_blank" rel="noopener">https://steamcommunity.com/sharedfiles/filedetails/?id=3763865332</a></li>
+</ul>
+<hr>
+<p><strong>Поздравляем — ваш первый автомобиль уже ездит в CCD 2.0!</strong><br>
+<strong>Следующий шаг:</strong> переходите к <strong><a href="./02_Exterior_Lights_and_World.html">Модулю 2. Экстерьер, оптика, подвеска и взаимодействие с миром</a></strong>, чтобы добавить суппорты, фары, реальные источники света, номера, заправку и взаимодействие с миром.</p>
+
+</body>
+</html>

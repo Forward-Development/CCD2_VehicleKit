@@ -1,0 +1,311 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>00. Quick Start: Configuring Vehicle Physics in City Car Driving 2.0</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '', right: '', display: true}, {left: '$', right: '$', display: false}]});"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({ startOnLoad: true });</script>
+    <style>
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 32px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1f2328;
+            background-color: #ffffff;
+        }
+        h1, h2, h3, h4 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        h1 { font-size: 2em; padding-bottom: 0.3em; border-bottom: 1px solid #d0d7de; }
+        h2 { font-size: 1.5em; padding-bottom: 0.3em; border-bottom: 1px solid #d0d7de; }
+        h3 { font-size: 1.25em; }
+        hr { height: 0.25em; padding: 0; margin: 24px 0; background-color: #d0d7de; border: 0; }
+        a { color: #0969da; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+        th, td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; vertical-align: top; }
+        th { background: #f6f8fa; font-weight: 600; }
+        tr:nth-child(even) { background: #f6f8fa; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        code { background: #eff1f3; padding: 2px 5px; border-radius: 4px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 85%; }
+        pre { background: #f6f8fa; padding: 14px; border-radius: 6px; overflow-x: auto; border: 1px solid #d0d7de; }
+        pre code { background: transparent; padding: 0; font-size: 100%; }
+        pre.mermaid { background: #ffffff; text-align: center; }
+        .alert { padding: 12px 16px; margin: 16px 0; border-left: 4px solid; border-radius: 6px; background: #f6f8fa; }
+        .alert-title { font-weight: 600; margin-bottom: 6px; }
+        .alert p:last-child, .alert ul:last-child, .alert ol:last-child { margin-bottom: 0; }
+        .alert-note { border-left-color: #0969da; background-color: #ddf4ff; }
+        .alert-note .alert-title { color: #0969da; }
+        .alert-tip { border-left-color: #1a7f37; background-color: #dafbe1; }
+        .alert-tip .alert-title { color: #1a7f37; }
+        .alert-important { border-left-color: #8250df; background-color: #fbefff; }
+        .alert-important .alert-title { color: #8250df; }
+        .alert-warning { border-left-color: #9a6700; background-color: #fff8c5; }
+        .alert-warning .alert-title { color: #9a6700; }
+        .alert-caution { border-left-color: #cf222e; background-color: #ffebe9; }
+        .alert-caution .alert-title { color: #cf222e; }
+        ul.checklist { list-style-type: none; padding-left: 0; }
+        ul.checklist li { margin-bottom: 8px; }
+        ul.checklist input[type="checkbox"] { margin-right: 8px; }
+        figure.doc-figure { margin: 16px 0; padding: 10px; background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 6px; text-align: center; }
+        figure.doc-figure img { max-width: 100%; height: auto; border-radius: 4px; display: block; margin: 0 auto; }
+        figure.doc-figure figcaption { margin-top: 8px; font-size: 0.9em; color: #57606a; }
+    </style>
+</head>
+<body>
+<h1 id="00-quick-start-configuring-vehicle-physics-in-city-car-driving-20">00. Quick Start: Configuring Vehicle Physics in City Car Driving 2.0</h1>
+<p><strong>Navigation:</strong> <a href="./README.html">README</a> | <strong>00. Quick Start</strong> | <a href="./01_Architecture_and_Config.html">01. Architecture &amp; Configs</a> | <a href="./02_Named_IO_and_States.html">02. Named I/O &amp; States</a> | <a href="./03_Components_TorqueTrain.html">03. TorqueTrain</a> | <a href="./04_Components_Electrics.html">04. Electrics</a> | <a href="./05_Components_Chassis_and_Subsystems.html">05. Chassis &amp; Subsystems</a></p>
+<hr>
+<p>This section is a concise practical guide to assembling and calculating the physics of a modded vehicle in <strong>City Car Driving 2.0</strong> from scratch. Detailed references for every component and telemetry channel are provided in sections <a href="./01_Architecture_and_Config.html">01</a>–<a href="./05_Components_Chassis_and_Subsystems.html">05</a>.</p>
+<hr>
+<h2 id="1-physics-file-layout-and-path-rules-vehicleini-optionsxml-enginecsv-xml">1. Physics File Layout and Path Rules (<code>Vehicle.ini</code>, <code>options.xml</code>, <code>Engine.csv</code>, <code>*.xml</code>)</h2>
+<p>Inside the mod plugin folder <code>Plugins/Mods/Content/&lt;ModName&gt;/</code>, alongside the Unreal Engine 5 assets (<code>V_&lt;ModName&gt;.uasset</code>, <code>DA_&lt;ModName&gt;.uasset</code>, <code>ST_&lt;ModName&gt;.uasset</code>), place the <strong>UTF-8</strong>-encoded text physics configuration files:</p>
+<ul>
+    <li><strong><code>Vehicle.ini</code></strong> — main configuration file containing parameters for all vehicle units;</li>
+    <li><strong><code>options.xml</code></strong> — definition of available configurations (switching AT/MT, selecting engine variants);</li>
+    <li><strong><code>Engine.csv</code></strong> — 2D table of ICE combustion torque and mechanical losses;</li>
+    <li><em>(Optional)</em> local XML schema files (<code>AwdAuto.xml</code>, <code>AwdManual.xml</code>, etc.) and curve tables (<code>.csv</code>).</li>
+</ul>
+<h3 id="11-path-resolution-rules-relative-to-content">1.1. Path Resolution Rules Relative to <code>Content/</code></h3>
+<p>All paths inside <code>Vehicle.ini</code> and <code>options.xml</code> are resolved <strong>relative to the root <code>Content/</code> directory of the base game project</strong>:</p>
+<ol>
+    <li><strong>Shared base-game resources (<code>Content/Common/Vehicles/MotorCars/...</code>):</strong> written directly without a leading slash:
+<pre><code class="language-ini">DefaultSchema = Common/Vehicles/MotorCars/Schemes/AwdAuto.xml
+ProgressionCurve = Common/Vehicles/MotorCars/Tables/SpringProgression.csv</code></pre>
+</li>
+    <li><strong>Custom files inside the mod folder (<code>Plugins/Mods/Content/&lt;ModName&gt;/...</code>):</strong> require stepping out of <code>Content/</code> using <code>../Plugins/Mods/Content/&lt;ModName&gt;/...</code>:
+<pre><code class="language-ini">PowerCurves = ../Plugins/Mods/Content/CieBensVGruppe/Engine.csv</code></pre>
+</li>
+</ol>
+<h3 id="12-critical-vehicleini-and-csv-syntax-rules">1.2. Critical <code>Vehicle.ini</code> and <code>.csv</code> Syntax Rules</h3>
+<div class="alert alert-caution">
+    <div class="alert-title">Caution</div>
+<p><strong>Three syntax rules whose violation breaks parameter parsing:</strong></p>
+<ol>
+    <li><strong>The separator for lists and 3D vectors is strictly a semicolon <code>;</code> with NO space before <code>;</code>!</strong>
+<p>Commas <code>,</code> are not supported, and a "space before <code>;</code>" sequence (<code>" ;"</code>) is interpreted by the <code>.ini</code> parser as the start of an end-of-line comment, discarding all subsequent numbers:</p>
+<pre><code class="language-ini">Mount = 1.63; 0.85; 0.4455                                  ; CORRECT
+Gears = -3.416; 4.377; 2.859; 1.921; 1.368; 1.000; 0.820    ; CORRECT
+Mount = 1.63 ; 0.85 ; 0.4455                                ; ERROR: space before ';' truncates 0.85 and 0.4455!</code></pre>
+</li>
+    <li><strong>The decimal separator is strictly a dot <code>.</code></strong> (both in <code>Vehicle.ini</code> and in all <code>.csv</code> tables).</li>
+    <li><strong>Section header length limit is at most <code>49</code> characters</strong> inside the square brackets <code>[...]</code> (including option suffixes <code>.OptionName.OptionValue</code>), and the single-line length limit is at most <code>400</code> characters.</li>
+</ol>
+
+</div>
+<p>A detailed description of <code>.ini</code> syntax and table formats is provided in <a href="./01_Architecture_and_Config.html">Section 01. Architecture &amp; Configs</a>.</p>
+<hr>
+<h2 id="2-mandatory-requirements-for-the-body-physics-chassis-and-wheel-nodes-in-blueprint">2. Mandatory Requirements for the <code>Body</code> Physics Chassis and Wheel Nodes in Blueprint</h2>
+<p>Chassis mass, center of mass, and wheel hierarchy are configured directly in the vehicle Blueprint <code>V_&lt;ModName&gt;.uasset</code> in the Unreal Engine 5 editor:</p>
+<pre class="mermaid">
+flowchart TD
+    Root["DefaultSceneRoot (Scale = 1, 1, 1)"] --&gt; Body["Body (StaticMeshComponent)&lt;br/&gt;Collision: BlockAllDynamic + Simple Collision Physical Material&lt;br/&gt;Override Mass = true, Center Of Mass Offset (cm)"]
+    Root --&gt; SuspFL["SuspensionFrontLeft (Location in cm, NoCollision)"]
+    Root --&gt; SuspFR["SuspensionFrontRight (Location in cm, NoCollision)"]
+    Root --&gt; SuspBL["SuspensionBackLeft (Location in cm, NoCollision)"]
+    Root --&gt; SuspBR["SuspensionBackRight (Location in cm, NoCollision)"]
+    SuspFL --&gt; WheelFL["WheelFrontLeft (Location = 0, 0, 0, NoCollision)"]
+    SuspFR --&gt; WheelFR["WheelFrontRight (Location = 0, 0, 0, NoCollision)"]
+    SuspBL --&gt; WheelBL["WheelBackLeft (Location = 0, 0, 0, NoCollision)"]
+    SuspBR --&gt; WheelBR["WheelBackRight (Location = 0, 0, 0, NoCollision)"]
+</pre>
+<ol>
+    <li><strong>Root chassis mesh <code>Body</code> and unit scale <code>Scale = (1, 1, 1)</code>:</strong>
+<ul>
+    <li>The sole physical chassis mesh must be a <code>StaticMeshComponent</code> named <strong><code>Body</code></strong>, whose mesh asset has convex collision hulls (<code>Simple Collision</code>) and an assigned <strong><code>Simple Collision Physical Material</code></strong>.</li>
+    <li>All other components and meshes in the Blueprint (wheels, suspension hubs, glass, interior and exterior body parts) must use the <strong><code>NoCollision</code></strong> collision preset (<code>Receives Decals = False</code>).</li>
+    <li>The actor and <strong>all</strong> of its components in the Blueprint must have unit scale <strong><code>Scale = (1.0, 1.0, 1.0)</code></strong> (FBX export axes: <code>-X Forward</code>, <code>Z Up</code>).</li>
+</ul>
+</li>
+    <li><strong>Mandatory suspension and wheel node names (rear axle is strictly <code>Back</code>, not <code>Rear</code>!):</strong>
+<ul>
+    <li>Suspension hubs: <strong><code>SuspensionFrontLeft</code></strong>, <strong><code>SuspensionFrontRight</code></strong>, <strong><code>SuspensionBackLeft</code></strong>, <strong><code>SuspensionBackRight</code></strong> (their <code>Location</code> property defines the wheel center coordinates in centimeters).</li>
+    <li>Wheel meshes (children of the corresponding <code>Suspension*</code> with <code>Location = (0, 0, 0)</code>): <strong><code>WheelFrontLeft</code></strong>, <strong><code>WheelFrontRight</code></strong>, <strong><code>WheelBackLeft</code></strong>, <strong><code>WheelBackRight</code></strong>.</li>
+</ul>
+</li>
+    <li><strong>Sprung chassis mass (<code>Override Mass</code>):</strong>
+<ul>
+    <li>In the <strong>Physics</strong> section of the <code>Body</code> component, be sure to check <strong><code>Override Mass</code></strong> and enter the sprung body mass in <strong><code>Mass in Kg</code></strong> (vehicle curb mass with driver minus the mass of all four wheels):
+<p>$$M_{\text{body}} = M_{\text{curb}} - 4 \cdot M_{\text{wheel}}$$</p>
+</li>
+    <li>If <code>Override Mass</code> is left unchecked, the physics engine calculates mass from the collision volume $V$ using the nonlinear formula $M_{\text{auto}} = 1000 \cdot V^{0.75}$, which underestimates the mass of mid-size and large vehicles by nearly half.</li>
+</ul>
+</li>
+    <li><strong>Center of mass offset (<code>Center Of Mass Offset</code> in centimeters):</strong>
+<ul>
+    <li>The <strong><code>Center Of Mass Offset</code></strong> (<code>COMNudge</code>) vector on the <code>Body</code> component is specified in <strong>centimeters (<code>cm</code>)</strong> and represents a <strong>relative offset</strong> $(\Delta X, \Delta Y, \Delta Z)$ from the automatically computed geometric centroid of the collision volume $\text{COM}_{\text{auto}}$:
+<p>$$\text{COM}_{\text{final}} = \text{COM}_{\text{auto}} + \text{Center Of Mass Offset}$$</p>
+</li>
+    <li>To achieve the rated longitudinal weight distribution (where $w_{\text{front}}$ is the front-axle load fraction, e.g., <code>0.54</code> for <code>54% / 46%</code>), compute the target coordinate $X_{\text{target}}$ between the axles $X_{\text{front}}$ and $X_{\text{back}}$ (in <code>cm</code>) and subtract $X_{\text{auto}}$ from it:
+<p>$$X_{\text{target}} = X_{\text{back}} + w_{\text{front}} \cdot (X_{\text{front}} - X_{\text{back}}), \qquad \Delta X = X_{\text{target}} - X_{\text{auto}}$$</p>
+</li>
+    <li>Similarly, set $\Delta Y = -Y_{\text{auto}}$ (to eliminate static roll tilt) and $\Delta Z = Z_{\text{target}} - Z_{\text{auto}}$ (for tall bodies — hatchbacks, crossovers, and minivans — the geometric collision center $Z_{\text{auto}}$ sits too high, so the offset $\Delta Z$ should be negative).</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2 id="3-choosing-an-xml-schema-and-configuring-trims-optionsxml">3. Choosing an XML Schema and Configuring Trims (<code>options.xml</code>)</h2>
+<h3 id="31-differences-between-the-6-standard-xml-schemas-commonvehiclesmotorcarsschemesxml">3.1. Differences Between the 6 Standard XML Schemas (<code>Common/Vehicles/MotorCars/Schemes/*.xml</code>)</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Feature / Unit</th>
+            <th>AT Schemas (<code>*Auto.xml</code>)</th>
+            <th>MT Schemas (<code>*Manual.xml</code>)</th>
+            <th>AWD Schemas (<code>Awd*.xml</code>)</th>
+            <th>2WD Schemas (<code>Fwd*.xml</code>, <code>Rwd*.xml</code>)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Schema files</strong></td>
+            <td><code>AwdAuto.xml</code>, <code>FwdAuto.xml</code>, <code>RwdAuto.xml</code></td>
+            <td><code>AwdManual.xml</code>, <code>FwdManual.xml</code>, <code>RwdManual.xml</code></td>
+            <td><code>AwdAuto.xml</code>, <code>AwdManual.xml</code></td>
+            <td><code>FwdAuto.xml</code>, <code>FwdManual.xml</code>, <code>RwdAuto.xml</code>, <code>RwdManual.xml</code></td>
+        </tr>
+        <tr>
+            <td><strong>Gearbox and clutch / torque converter sections in <code>Vehicle.ini</code></strong></td>
+            <td><strong><code>[GearBoxAutomatic]</code></strong>, <code>[TorqueConverter]</code>, <code>[GearBoxLogic]</code>, <code>[GearBoxAutomaticPump]</code>, <code>[OilTank]</code></td>
+            <td><strong><code>[GearBox]</code></strong>, <code>[Clutch]</code>, <code>[ClutchPedal]</code></td>
+            <td>Depends on <code>Auto</code> / <code>Manual</code></td>
+            <td>Depends on <code>Auto</code> / <code>Manual</code></td>
+        </tr>
+        <tr>
+            <td><strong>Differential sections in <code>Vehicle.ini</code></strong></td>
+            <td>Depends on drivetrain type</td>
+            <td>Depends on drivetrain type</td>
+            <td><strong><code>[DifferentialAxle]</code></strong> <em>(final drive)</em>, <code>[FrontAxisRelay]</code>, <strong><code>[DifferentialWheelFront]</code></strong>, <strong><code>[DifferentialWheelBack]</code></strong></td>
+            <td><strong><code>[Differential]</code></strong> <em>(single differential with final drive)</em></td>
+        </tr>
+        <tr>
+            <td><strong>Rear brake, wheel, and suspension sections</strong></td>
+            <td><code>[BrakeBackLeft/Right]</code>, <code>[WheelBackLeft/Right]</code>, <code>[SuspensionBackLeft/Right]</code></td>
+            <td><code>[BrakeBackLeft/Right]</code>, <code>[WheelBackLeft/Right]</code>, <code>[SuspensionBackLeft/Right]</code></td>
+            <td>Rear axle always uses the <strong><code>Back</code></strong> suffix</td>
+            <td>Rear axle always uses the <strong><code>Back</code></strong> suffix</td>
+        </tr>
+        <tr>
+            <td><strong>How the game detects transmission type (AT vs MT)</strong></td>
+            <td><code>&lt;InputElements&gt;</code> includes the <strong><code>AutoShifterState</code></strong> input</td>
+            <td><code>AutoShifterState</code> is absent (has <code>GearBoxState</code> and <code>Clutch</code>)</td>
+            <td>—</td>
+            <td>—</td>
+        </tr>
+    </tbody>
+</table>
+<h3 id="32-combining-two-options-in-optionsxml-transmission--engine">3.2. Combining Two Options in <code>options.xml</code> (Transmission + Engine)</h3>
+<p>In <code>options.xml</code>, <strong><code>SetSchema="true"</code> may only be set on a single option</strong>. If your vehicle offers both a transmission choice (<code>Auto</code> / <code>Manual</code>) and an engine choice (for example, gasoline and diesel), assign <code>SetSchema="true"</code> to <code>TransmissionType</code> and use <code>EngineGazoline</code> from the standard schemas as a universal base ICE, switching its characteristics and <code>PowerCurves</code> table via <code>[Engine.EngineType.*]</code> and <code>[Idler.EngineType.*]</code> sections in <code>Vehicle.ini</code>:</p>
+<pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;Options&gt;
+    &lt;AvailableOptions&gt;
+        &lt;Option Name="TransmissionType" SetSchema="true"&gt;
+            &lt;OptionValue Value="Auto"   SchemaName="Common/Vehicles/MotorCars/Schemes/AwdAuto.xml" /&gt;
+            &lt;OptionValue Value="Manual" SchemaName="Common/Vehicles/MotorCars/Schemes/AwdManual.xml" /&gt;
+        &lt;/Option&gt;
+        &lt;Option Name="EngineType" SetSchema="false"&gt;
+            &lt;OptionValue Value="2.0I" /&gt;
+            &lt;OptionValue Value="2.2TD" /&gt;
+        &lt;/Option&gt;
+    &lt;/AvailableOptions&gt;
+&lt;/Options&gt;</code></pre>
+<h3 id="33-quick-recipe-for-a-local-enginediesel--turbocharger-schema">3.3. Quick Recipe for a Local <code>EngineDiesel</code> + <code>Turbocharger</code> Schema</h3>
+<p>If you need a custom schema using the <code>EngineDiesel</code> diesel class and a <code>Turbocharger</code>:</p>
+<ol>
+    <li>Copy a base schema (<code>AwdAuto.xml</code> / <code>AwdManual.xml</code>) into your mod folder <code>Plugins/Mods/Content/&lt;ModName&gt;/</code>.</li>
+    <li>In <code>&lt;Components&gt;</code>, change the <code>Engine</code> class to <code>Class="EngineDiesel"</code> and add <code>&lt;Component Name="Turbocharger" Class="Turbocharger" /&gt;</code>.</li>
+    <li>In <code>&lt;Links&gt;</code>, <strong>be sure to remove</strong> <code>&lt;Link Holder="IgnitionElectricCircuit" Reference="Engine" /&gt;</code>, <strong>keep</strong> <code>&lt;Link Holder="IgnitionKey" Reference="Idler" /&gt;</code> (this cuts fuel to stop the diesel engine when the key is turned to <code>0</code>), and add <code>&lt;Link Holder="Turbocharger" Reference="Engine" /&gt;</code>.</li>
+    <li>In <code>&lt;InputProcessors&gt;</code>, add <code>&lt;Processor Input="Accelerator" Component="Turbocharger" InternalName="Throttle" /&gt;</code>, and in <code>Vehicle.ini</code> add a <code>[Turbocharger]</code> section with <code>LagTime = 0.08..0.10</code> (the effective boost smoothing time constant in the game is $\tau_{\text{eff}} = 4 \cdot \text{LagTime} \approx 0.32..0.40\text{ s}$).</li>
+</ol>
+<p>Detailed schema examples and complete input/output tables are provided in sections <a href="./01_Architecture_and_Config.html">01. Architecture &amp; Configs</a> and <a href="./02_Named_IO_and_States.html">02. Named I/O &amp; States</a>.</p>
+<hr>
+<h2 id="4-step-by-step-calculation-of-key-vehicleini-and-enginecsv-parameters">4. Step-by-Step Calculation of Key <code>Vehicle.ini</code> and <code>Engine.csv</code> Parameters</h2>
+<h3 id="step-1-steering-geometry-steering-and-tires-wheel">Step 1. Steering Geometry <code>[Steering]</code> and Tires <code>[Wheel*]</code></h3>
+<ol>
+    <li><strong>Wheelbase (<code>InteraxleDistance</code> in <code>[Steering]</code>):</strong> take the longitudinal coordinates $X_{\text{front,cm}}$ and $X_{\text{back,cm}}$ of the <code>SuspensionFront*</code> and <code>SuspensionBack*</code> nodes from the Blueprint (in <code>cm</code>) and convert the axle spacing to <strong>meters</strong>:
+<p>$$\text{InteraxleDistance} = \frac{X_{\text{front,cm}} - X_{\text{back,cm}}}{100}$$</p>
+</li>
+    <li><strong>Static wheel radius (<code>Radius</code> in <code>[Wheel*]</code>):</strong> measure the unloaded radius of the 3D wheel mesh and subtract the static tire deflection under load ($8{-}12\text{ mm}$). For example, with a $710\text{ mm}$ mesh diameter ($R_{\text{free}} = 0.355\text{ m}$), set <code>Radius = 0.345</code> m.</li>
+    <li><strong>Handling balance (<code>ForceCurveLoad</code> in <code>[Wheel*]</code>):</strong>
+<ul>
+    <li>On the front wheels (<code>[WheelFrontLeft/Right]</code>), set <code>ForceCurveLoad</code> equal to the static vertical load on one front wheel: $\text{ForceCurveLoad}_{\text{front}} \approx F_{\text{stat,f}} = m_{\text{f}} \cdot 9.81$.</li>
+    <li>On the rear wheels (<code>[WheelBackLeft/Right]</code>), set <code>ForceCurveLoad</code> <strong>$5{-}15\%$ higher</strong> than the static vertical load on one rear wheel $F_{\text{stat,r}} = m_{\text{r}} \cdot 9.81$, giving the rear axle a natural stability margin against oversteer/spinout.</li>
+</ul>
+</li>
+</ol>
+<h3 id="step-2-suspension-suspensionfront-and-suspensionback">Step 2. Suspension <code>[SuspensionFront*]</code> and <code>[SuspensionBack*]</code></h3>
+<ol>
+    <li><strong>Upper spring mount point <code>Mount</code> (converting from UE5 left-handed CS in <code>cm</code> to physics right-handed CS in <code>m</code>):</strong>
+<p>Choose the total suspension travel <code>Length</code> (e.g., <code>0.20</code> m front and <code>0.22</code> m rear) and the target static relative sag <code>NormalSag = 0.33</code>. To make the wheels settle cleanly at the wheel-arch center coordinates $(X_{\text{UE}}, Y_{\text{UE}}, Z_{\text{UE}})$ from the Blueprint, compute <code>Mount</code> using:<br>
+$$\text{Mount} = \left(\frac{X_{\text{UE}}}{100};\quad -\frac{Y_{\text{UE}}}{100};\quad \frac{Z_{\text{UE}}}{100} + (1 - \text{NormalSag}) \cdot \text{Length}\right)$$<br>
+<em>(Note the sign flip on $Y$: in <code>Vehicle.ini</code>, left wheels have $Y &gt; 0$ and right wheels have $Y &lt; 0$.)</em></p>
+</li>
+    <li><strong>Spring stiffness <code>SpringCoeff</code>, preload <code>PreloadForce</code>, and damper <code>DampCoeff</code>:</strong>
+<p>At <code>NormalSag = 0.33</code>, the standard progression table <code>Common/Vehicles/MotorCars/Tables/SpringProgression.csv</code> has an effective stiffness multiplier of <strong><code>0.654</code></strong>. Therefore, to hit <code>SpringSag = 0.33</code> accurately under the static corner load $F_{\text{stat}} = m_{\text{corner}} \cdot 9.81$, the parameters are related by:<br>
+$$F_{\text{stat}} = \text{PreloadForce} + 0.654 \cdot \text{SpringCoeff} \cdot \text{Length} \cdot \text{NormalSag}, \qquad \text{DampCoeff} \approx (0.65 \dots 0.75) \cdot 2\sqrt{\text{SpringCoeff} \cdot m_{\text{corner}}}$$</p>
+</li>
+</ol>
+<h3 id="step-3-engine-engine-idle-controller-idler-and-enginecsv-table">Step 3. Engine <code>[Engine]</code>, Idle Controller <code>[Idler]</code>, and <code>Engine.csv</code> Table</h3>
+<ol>
+    <li><strong>Compensating for subtraction of the mechanical loss row $F(\text{RPM})$:</strong>
+<p>In <code>Engine.csv</code>, the last row (labeled <code>0</code> right after row <code>100</code>) specifies positive mechanical friction torque $F(\text{RPM}) &gt; 0$. The engine <strong>always subtracts $F(\text{RPM})$ from the interpolated combustion torque at every throttle position, including <code>100%</code></strong>. Therefore, to achieve the rated crankshaft torque $T_{\text{rated}}(\text{RPM})$, the <code>100%</code> row must store the sum:<br>
+$$T_{100}(\text{RPM}) = T_{\text{rated}}(\text{RPM}) + F(\text{RPM})$$<br>
+If the schema includes a <strong><code>[Turbocharger]</code></strong> component, additionally divide each combustion cell $(r, c)$ by the boost ratio at the corresponding throttle fraction $\text{thr} = \text{row\_pct} / 100$:<br>
+$$\text{ratio}(\text{RPM}, \text{thr}) = 1 + (\text{RefCompressionRatio} - 1)\sqrt{\frac{\max(0,\; \text{RPM}\cdot\text{thr} - \text{MinRpm})}{\text{RefRpm} - \text{MinRpm}}}, \qquad T_{\text{CSV}}(\text{RPM}, \text{thr}) = \frac{T_{\text{target}}(\text{RPM}, \text{thr}) + F(\text{RPM})}{\text{ratio}(\text{RPM}, \text{thr})}$$<br>
+<em>(Do NOT divide the last mechanical loss row $F(\text{RPM})$ by $\text{ratio}$!)</em></p>
+</li>
+    <li><strong>Shaping the "anti-stall hump" in the <code>500 RPM</code> column for the <code>5%–10%</code> rows:</strong>
+<p>The <code>[Idler]</code> controller operates open-loop: it computes the throttle opening so that at <code>IdleRpm</code> combustion torque exactly balances internal friction $F(\text{IdleRpm})$ alone, and it does not open the throttle further when RPM drops under external load (such as shifting an AT into <code>D</code> on the brake or engaging the clutch). To keep the engine idling reliably under load, create a pronounced torque rise in the low-throttle rows (<code>5%</code> and <code>10%</code>) at the <strong><code>500 RPM</code></strong> column (<code>3–5</code> times higher than the torque at the <code>750 RPM</code> column).</p>
+</li>
+</ol>
+<h3 id="step-4-gearbox-differentials-and-speedometer">Step 4. Gearbox, Differentials, and Speedometer</h3>
+<ol>
+    <li><strong>Manual transmission (<code>[Clutch]</code>, <code>[GearBox]</code>):</strong>
+<ul>
+    <li>In <code>[Clutch]</code>, set <code>MaxTorque</code> with a safety margin of $1.4{-}1.6\times$ peak engine torque.</li>
+    <li>In <code>[GearBox]</code>, the first element of the <code>Gears</code> array is reverse (a negative number), followed by forward gears in order (<code>StartingGear = -1</code>). For crisp engagement of first gear from a standstill, configure the synchronizers: <code>MaxRPMDiffToShift = 200..250</code>, <code>SynchronizerMaxFrictionTorque = 10..15</code>.</li>
+</ul>
+</li>
+    <li><strong>Automatic transmission (<code>[TorqueConverter]</code>, <code>[GearBoxAutomatic]</code>):</strong>
+<ul>
+    <li>In <code>[GearBoxAutomatic]</code>, set the input-shaft quadratic friction coefficient <strong><code>RotationalFrictionQuadCoeff = 2.0e-4 .. 3.0e-4</code></strong> (<code>RotationalFrictionConstant = 1.5</code>).</li>
+    <li>In the throttle-indexed shift schedules <code>ShiftAccelerator = 0; 0.1; ...; 1</code>, align the upshift thresholds <strong><code>MaxRpm</code></strong> with the torque converter slip RPM and provide a sufficiently wide lockup window <strong><code>TorqueConverterLockDiff</code></strong> (<code>650..2100</code>) so the lockup clutch engages after each shift.</li>
+    <li>To prevent the engine from stalling during full-force emergency braking in <code>D</code>, configure timely torque converter unlocking: <strong><code>UnlockTorqueConverterRpm = 1200..1250</code></strong> (<code>LockTorqueConverterRpm = 1350..1400</code>) and <strong><code>TorqueConverterLockTime = 0.25..0.30</code></strong>.</li>
+</ul>
+</li>
+    <li><strong>Differentials and speedometer (<code>[Speedometer]</code>):</strong>
+<ul>
+    <li>For full-time AWD vehicles (<code>Awd*.xml</code>), set <strong><code>Locked = false</code></strong> in all three differentials (<code>[DifferentialAxle]</code>, <code>[DifferentialWheelFront]</code>, <code>[DifferentialWheelBack]</code>), and enter the final drive ratio <code>GearRatio</code> in <code>[DifferentialAxle]</code>.</li>
+    <li>In <code>[Speedometer]</code>, calculate the travel distance in meters per single revolution of the final-drive shaft from the static wheel radius $R_{\text{wheel}}$ and final drive ratio $i_{\text{diff}}$:
+<p>$$\text{MetersPerRotation} = \frac{2\pi R_{\text{wheel}}}{i_{\text{diff}}}$$<br>
+<em>(If you want the typical $+2\%$ factory speedometer over-read, multiply the result by <code>1.02</code>.)</em></p>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="step-5-onboard-electrics-carelectrics">Step 5. Onboard Electrics <code>[CarElectrics]</code></h3>
+<p>In the <code>[CarElectrics]</code> section, for every lamp, dashboard indicator, wiper motor, and electric gauge needle used on the vehicle, <strong>be sure to assign a positive electrical resistance <code>&lt;Prefix&gt;_Resistance &gt; 0</code></strong> (for example, <code>100</code> Ohms for warning lamps and gauges, <code>4</code> Ohms for halogen headlights and wipers). Any element left at the default resistance of <code>0.0</code> Ohms is treated as disconnected from the electrical system and will not operate when the ignition is turned on.</p>
+<p>Complete parameter tables for all components are documented in sections <a href="./03_Components_TorqueTrain.html">03. TorqueTrain</a>, <a href="./04_Components_Electrics.html">04. Electrics</a>, and <a href="./05_Components_Chassis_and_Subsystems.html">05. Chassis &amp; Subsystems</a>.</p>
+<hr>
+<h2 id="5-vehicle-verification-checklist-5-core-tests">5. Vehicle Verification Checklist (5 Core Tests)</h2>
+<p>Before finalizing your physics setup, verify the vehicle against these 5 test scenarios on flat horizontal ground:</p>
+<ul class="checklist">
+    <li><input type="checkbox" disabled> <strong>1. Static stance (<code>SpringSag</code> and body angles):</strong> after spawning, the vehicle sits level and motionless (<code>Pitch</code> and <code>Roll</code> near <code>0°</code>), the wheels sit cleanly centered in the wheel arches, and the relative suspension compression output <code>SpringSag</code> on all four corners is around <strong><code>0.33</code></strong> (<code>0.32..0.34</code>).</li>
+    <li><input type="checkbox" disabled> <strong>2. Key startup and shutdown (<code>0 -&gt; 1 -&gt; 2 -&gt; 1 -&gt; 0</code>):</strong> turning the key to ignition (<code>1</code>) lights up the dashboard warning lamps without starting the engine; turning to starter (<code>2</code>) in <code>P</code> or <code>N</code> cranks and starts the engine within <code>0.4–0.7 s</code> and settles at idle (<code>WarmupRpm</code> / <code>IdleRpm</code>), while the starter is inhibited in <code>D</code> and <code>R</code>. Turning the key back to <code>0</code> cuts fuel delivery and brings the engine to a complete stop (<code>RPM = 0</code>).</li>
+    <li><input type="checkbox" disabled> <strong>3. Idling in <code>D</code> on the brake and <code>0–100 km/h</code> acceleration:</strong> shifting the AT selector from <code>N</code> to <code>D</code> while holding the brake drops RPM smoothly by <code>60–100 RPM</code> and holds steady without dipping below <code>MinStableRpm</code>. Releasing the brake lets the car creep forward smoothly (<code>Creep</code>), and full-throttle acceleration from a standstill reaches <code>100 km/h</code> in line with real-world specs.</li>
+    <li><input type="checkbox" disabled> <strong>4. Coasting, kickdown, and emergency braking from <code>100</code> to <code>0 km/h</code> in <code>D</code>:</strong> during gentle driving, the transmission progresses smoothly to top gear and locks the torque converter; lifting off the throttle at speed produces smooth engine braking; flooring the accelerator (<code>Kick-Down</code>) downshifts 2–3 gears; during maximum emergency braking from <code>100 km/h</code> to a complete stop (<code>0 km/h</code>) in <code>D</code>, the torque converter lockup clutch disengages in time and <strong>the engine does not stall</strong>.</li>
+    <li><input type="checkbox" disabled> <strong>5. MT configuration and gauge accuracy:</strong> when the manual transmission option is selected in the menu, the vehicle launches smoothly on the clutch alone, all forward gears and reverse engage cleanly via synchronizers, and the speedometer and tachometer readings match true vehicle speed and the <code>RpmLimit</code> rev cutoff.</li>
+</ul>
+
+</body>
+</html>

@@ -1,0 +1,1159 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>04. Onboard Electrical System and Dashboard (CarElectrics) in City Car Driving 2.0</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '', right: '', display: true}, {left: '$', right: '$', display: false}]});"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({ startOnLoad: true });</script>
+    <style>
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 32px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1f2328;
+            background-color: #ffffff;
+        }
+        h1, h2, h3, h4 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        h1 { font-size: 2em; padding-bottom: 0.3em; border-bottom: 1px solid #d0d7de; }
+        h2 { font-size: 1.5em; padding-bottom: 0.3em; border-bottom: 1px solid #d0d7de; }
+        h3 { font-size: 1.25em; }
+        hr { height: 0.25em; padding: 0; margin: 24px 0; background-color: #d0d7de; border: 0; }
+        a { color: #0969da; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+        th, td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; vertical-align: top; }
+        th { background: #f6f8fa; font-weight: 600; }
+        tr:nth-child(even) { background: #f6f8fa; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        code { background: #eff1f3; padding: 2px 5px; border-radius: 4px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 85%; }
+        pre { background: #f6f8fa; padding: 14px; border-radius: 6px; overflow-x: auto; border: 1px solid #d0d7de; }
+        pre code { background: transparent; padding: 0; font-size: 100%; }
+        pre.mermaid { background: #ffffff; text-align: center; }
+        .alert { padding: 12px 16px; margin: 16px 0; border-left: 4px solid; border-radius: 6px; background: #f6f8fa; }
+        .alert-title { font-weight: 600; margin-bottom: 6px; }
+        .alert p:last-child, .alert ul:last-child, .alert ol:last-child { margin-bottom: 0; }
+        .alert-note { border-left-color: #0969da; background-color: #ddf4ff; }
+        .alert-note .alert-title { color: #0969da; }
+        .alert-tip { border-left-color: #1a7f37; background-color: #dafbe1; }
+        .alert-tip .alert-title { color: #1a7f37; }
+        .alert-important { border-left-color: #8250df; background-color: #fbefff; }
+        .alert-important .alert-title { color: #8250df; }
+        .alert-warning { border-left-color: #9a6700; background-color: #fff8c5; }
+        .alert-warning .alert-title { color: #9a6700; }
+        .alert-caution { border-left-color: #cf222e; background-color: #ffebe9; }
+        .alert-caution .alert-title { color: #cf222e; }
+        ul.checklist { list-style-type: none; padding-left: 0; }
+        ul.checklist li { margin-bottom: 8px; }
+        ul.checklist input[type="checkbox"] { margin-right: 8px; }
+        figure.doc-figure { margin: 16px 0; padding: 10px; background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 6px; text-align: center; }
+        figure.doc-figure img { max-width: 100%; height: auto; border-radius: 4px; display: block; margin: 0 auto; }
+        figure.doc-figure figcaption { margin-top: 8px; font-size: 0.9em; color: #57606a; }
+    </style>
+</head>
+<body>
+<h1 id="04-onboard-electrical-system-and-dashboard-carelectrics-in-city-car-driving-20">04. Onboard Electrical System and Dashboard (<code>CarElectrics</code>) in City Car Driving 2.0</h1>
+<p><strong>Navigation:</strong> <a href="./README.html">README</a> | <a href="./00_Quick_Start.html">00. Quick Start</a> | <a href="./01_Architecture_and_Config.html">01. Architecture &amp; Configs</a> | <a href="./02_Named_IO_and_States.html">02. Named I/O &amp; States</a> | <a href="./03_Components_TorqueTrain.html">03. TorqueTrain</a> | <strong>04. Electrics</strong> | <a href="./05_Components_Chassis_and_Subsystems.html">05. Chassis &amp; Subsystems</a></p>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ol>
+    <li><a href="#1-vehicle-electrical-network-schematic-in-city-car-driving-20">Vehicle Electrical Network Schematic in City Car Driving 2.0</a></li>
+    <li><a href="#2-components-electriccircuit-battery-and-electricelement">Components <code>ElectricCircuit</code>, <code>Battery</code>, and <code>ElectricElement</code></a></li>
+    <li><a href="#3-onboard-electrics-lighting-and-dashboard-carelectrics">Onboard Electrics, Lighting, and Dashboard <code>CarElectrics</code></a></li>
+    <li><a href="#4-ready-to-use-carelectrics-and-battery-example-from-ccd-20">Ready-to-Use <code>[CarElectrics]</code> and <code>[Battery]</code> Example from CCD 2.0</a></li>
+</ol>
+<hr>
+<h2 id="1-vehicle-electrical-network-schematic-in-city-car-driving-20">1. Vehicle Electrical Network Schematic in City Car Driving 2.0</h2>
+<p>In all standard XML schematics (<code>Common/Vehicles/MotorCars/Schemes/*.xml</code>), the onboard DC electrical network is built from three nodal circuits (<code>Class="ElectricCircuit"</code>):</p>
+<ol>
+    <li><strong><code>BatteryElectricCircuit</code></strong> — the always-live power circuit of the battery (<code>Battery</code>) and starter (<code>Starter</code>). It powers devices that operate even with the ignition key removed (hazard lights <code>HazardLight</code>, parking lights <code>ParkingLights</code>, brake lights <code>StopLight</code>, and horn <code>Horn</code>).</li>
+    <li><strong><code>GeneratorElectricCircuit</code></strong> — the alternator circuit (<code>Generator</code>), permanently connected to <code>BatteryElectricCircuit</code>.</li>
+    <li><strong><code>IgnitionElectricCircuit</code></strong> — the switched ignition circuit (Terminal 15). In XML, it is connected to <code>BatteryElectricCircuit</code> with the attribute <strong><code>Connected="false"</code></strong>:</li>
+</ol>
+<pre><code class="language-xml">&lt;Link Holder="BatteryElectricCircuit" Reference="Battery" /&gt;
+&lt;Link Holder="BatteryElectricCircuit" Reference="Starter" /&gt;
+&lt;Link Holder="BatteryElectricCircuit" Reference="CarElectrics" /&gt;
+&lt;Link Holder="BatteryElectricCircuit" Reference="GeneratorElectricCircuit" /&gt;
+&lt;Link Holder="GeneratorElectricCircuit" Reference="Generator" /&gt;
+&lt;Link Holder="BatteryElectricCircuit" Reference="IgnitionElectricCircuit" Connected="false" /&gt;
+&lt;Link Holder="IgnitionElectricCircuit" Reference="Engine" /&gt; &lt;!-- EngineGazoline only! --&gt;
+&lt;Link Holder="IgnitionElectricCircuit" Reference="CarElectrics" /&gt;
+&lt;Link Holder="IgnitionKey" Reference="IgnitionElectricCircuit" /&gt;</code></pre>
+<p>When the driver turns the ignition key (<code>IgnitionKey</code>, <code>Class="IgnitionKeyProcessor"</code>) to position <code>1</code> (<code>Ignition</code>) or <code>2</code> (<code>Starter</code>), <code>IgnitionKey</code> closes the <code>BatteryElectricCircuit -&gt; IgnitionElectricCircuit</code> connection, supplying onboard bus voltage to ignition-switched equipment, headlights, turn signals, wipers, the dashboard, and the spark plugs of a gasoline ICE.</p>
+<div class="alert alert-important">
+    <div class="alert-title">Important</div>
+<p>For devices in <code>[CarElectrics]</code> to receive power from a specific circuit (for example, <code>IgnitionElectricCircuit</code> or <code>BatteryElectricCircuit</code>), a <code>&lt;Link Holder="CircuitName" Reference="CarElectrics" /&gt;</code> link must be declared in <code>&lt;Links&gt;</code>, and that circuit's name must be specified in <code>Vehicle.ini</code> via <code>DefaultCircuitName</code> or <code>&lt;Prefix&gt;_CircuitName</code>.</p>
+
+</div>
+<hr>
+<h2 id="2-components-electriccircuit-battery-and-electricelement">2. Components <code>ElectricCircuit</code>, <code>Battery</code>, and <code>ElectricElement</code></h2>
+<h3 id="21-electrical-circuit-classelectriccircuit">2.1. Electrical Circuit (<code>Class="ElectricCircuit"</code>)</h3>
+<p>Computes the common bus voltage of parallel-connected EMF sources (<code>Battery</code>, <code>Generator</code>) and consumers according to Ohm's law, accounting for their internal resistances. Has no parameters in <code>Vehicle.ini</code>.</p>
+<ul>
+    <li><strong><code>&lt;Links&gt;</code> connections (<code>Holder="CircuitName"</code>):</strong> accepts <code>Battery</code>, <code>Generator</code>, <code>Starter</code>, <code>Engine</code> (<code>EngineGazoline</code>), <code>CarElectrics</code>, standalone <code>ElectricElement</code> components, and child <code>ElectricCircuit</code> circuits (with the optional attribute <code>Connected="true|false"</code>).</li>
+    <li><strong>Input (<code>InternalName</code>):</strong> <code>Master</code> (<code>Boolean</code>) — closes (<code>true</code>) or opens (<code>false</code>) the connection between this circuit and its parent circuit. <strong>Output (<code>InternalName</code>):</strong> <code>Voltage</code> (<code>Real</code>, V) — current bus voltage in the circuit.</li>
+</ul>
+<h3 id="22-battery-battery-classbattery">2.2. Battery (<code>[Battery]</code>, <code>Class="Battery"</code>)</h3>
+<p>A DC power source that discharges under load (especially during starter cranking) and charges whenever the alternator bus voltage exceeds the battery's current EMF.</p>
+<table>
+    <thead>
+        <tr>
+            <th>Key in <code>Vehicle.ini</code> (<code>[Battery]</code>)</th>
+            <th>Type</th>
+            <th class="text-center">Default</th>
+            <th class="text-center">Units</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>VoltageMin</code></td>
+            <td><code>Real</code></td>
+            <td class="text-center"><code>10.0</code></td>
+            <td class="text-center">V</td>
+            <td>Minimum EMF when the battery is completely discharged (<code>10.0–10.5</code>).</td>
+        </tr>
+        <tr>
+            <td><code>VoltageMax</code></td>
+            <td><code>Real</code></td>
+            <td class="text-center"><code>12.0</code></td>
+            <td class="text-center">V</td>
+            <td>Maximum EMF of a fully charged battery (<code>12.6–14.7</code>).</td>
+        </tr>
+        <tr>
+            <td><code>Capacity</code></td>
+            <td><code>Real</code></td>
+            <td class="text-center"><code>60.0</code></td>
+            <td class="text-center">Ah</td>
+            <td>Battery capacity in ampere-hours (<code>55–100</code>).</td>
+        </tr>
+        <tr>
+            <td><code>Resistance</code></td>
+            <td><code>Real</code></td>
+            <td class="text-center"><code>0.02</code></td>
+            <td class="text-center">Ω</td>
+            <td>Base internal resistance of the battery (<code>0.002–0.02</code>).</td>
+        </tr>
+        <tr>
+            <td><code>DischargeResistance</code></td>
+            <td><code>Real</code></td>
+            <td class="text-center"><code>Resistance</code></td>
+            <td class="text-center">Ω</td>
+            <td>Internal resistance while delivering current (discharging).</td>
+        </tr>
+        <tr>
+            <td><code>ChargeResistance</code></td>
+            <td><code>Real</code></td>
+            <td class="text-center"><code>Resistance</code></td>
+            <td class="text-center">Ω</td>
+            <td>Internal resistance while accepting current (charging from the alternator).</td>
+        </tr>
+    </tbody>
+</table>
+<ul>
+    <li><strong>Inputs (<code>InternalName</code>):</strong> <code>Battery</code> (<code>Boolean</code>, default <code>true</code> — battery ground/master disconnect switch), <code>EnableUnlimited</code> (<code>Boolean</code> — infinite charge mode <code>UnlimitedBattery</code>).</li>
+    <li><strong>Outputs (<code>InternalName</code>):</strong> <code>Amperage</code> (<code>Real</code>, A: <code>&gt; 0</code> — discharging, <code>&lt; 0</code> — charging), <code>VoltageMin</code> (<code>Real</code>, V), <code>CapacityRelative</code> (<code>Real</code>, <code>[0..1]</code>), <code>BatteryActive</code> (<code>Boolean</code> — <code>true</code> when the battery is discharging).</li>
+</ul>
+<h3 id="23-standalone-electrical-consumer-classelectricelement">2.3. Standalone Electrical Consumer (<code>Class="ElectricElement"</code>)</h3>
+<p>A general-purpose resistive electrical device (heater, auxiliary light, emergency beacon) connected to an <code>ElectricCircuit</code>.</p>
+<ul>
+    <li><strong><code>.ini</code> parameters:</strong> <code>Resistance</code> (<code>5.0</code> Ω — resistance when turned on), <code>MinVoltage</code> (<code>9.0</code> V — turn-on voltage threshold), <code>NormalVoltage</code> (<code>12.0</code> V — voltage for 100% brightness/power).</li>
+    <li><strong>Input (<code>InternalName</code>):</strong> <code>Enabled</code> (<code>Boolean</code>). <strong>Outputs (<code>InternalName</code>):</strong> <code>Intensity</code> (<code>Real</code>, <code>[0..∞)</code>), <code>Enabled</code> (<code>Boolean</code>).</li>
+</ul>
+<hr>
+<h2 id="3-onboard-electrics-lighting-and-dashboard-carelectrics">3. Onboard Electrics, Lighting, and Dashboard <code>CarElectrics</code></h2>
+<p>The <code>&lt;Component Name="CarElectrics" Class="CarElectrics" /&gt;</code> component (section <strong><code>[CarElectrics]</code></strong> in <code>Vehicle.ini</code>) consolidates all exterior/interior lighting, turn signals, windshield wipers, horn, warning buzzers, telltale warning icons, and analog dashboard gauges.</p>
+<h3 id="31-links-connections-to-carelectrics-in-xml">3.1. <code>&lt;Links&gt;</code> Connections to <code>CarElectrics</code> in XML</h3>
+<p>So that <code>CarElectrics</code> automatically reads component telemetry for dashboard needles and telltale lamps, <code>&lt;Link Holder="CarElectrics" Reference="ComponentName" /&gt;</code> entries are declared in <code>&lt;Links&gt;</code>:</p>
+<table>
+    <thead>
+        <tr>
+            <th>Target Component (<code>Reference</code>)</th>
+            <th class="text-center">XML Attribute in <code>&lt;Link&gt;</code></th>
+            <th>Gauges and Lamps in <code>CarElectrics</code> Driven by This Link</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>Engine</code> (<code>EngineGazoline</code> / <code>EngineDiesel</code>)</td>
+            <td class="text-center">—</td>
+            <td>Tachometer <code>RpmNeedle</code>, coolant temperature gauge <code>CoolantTemperatureNeedle</code>, oil pressure gauge <code>OilNeedle</code>, icons <code>OilIcon</code>, <code>HighOilPressureIcon</code>, <code>OverheatIcon</code>, <code>PowerSteeringIcon</code>, <code>ParkingBrakeIcon</code>, <code>EmergencyStopIcon</code>, <code>BrakeOilLowLevelIcon</code>, buzzer <code>Beeper</code>.</td>
+        </tr>
+        <tr>
+            <td><code>Speedometer</code></td>
+            <td class="text-center">—</td>
+            <td>Speedometer <code>SpeedNeedle</code>, unfastened seatbelt warning icon and buzzer <code>SafetyBeltIcon</code>, <code>SafetyBeltBeeper</code>.</td>
+        </tr>
+        <tr>
+            <td><code>FuelTank</code> (<code>Class="Tank"</code>)</td>
+            <td class="text-center">—</td>
+            <td>Fuel level gauge <code>FuelNeedle</code> (in liters) and low-fuel warning lamp <code>FuelIcon</code>.</td>
+        </tr>
+        <tr>
+            <td><code>Generator</code></td>
+            <td class="text-center">—</td>
+            <td>No-charge battery warning lamp <code>BatteryIcon</code> (turns off once the alternator reaches operating output).</td>
+        </tr>
+        <tr>
+            <td><code>Battery</code></td>
+            <td class="text-center">—</td>
+            <td>Ammeter gauge <code>AmperageNeedle</code>.</td>
+        </tr>
+        <tr>
+            <td><code>IgnitionKey</code> (<code>IgnitionKeyProcessor</code>)</td>
+            <td class="text-center">—</td>
+            <td>Glow plug / pre-heater indicator lamp <code>HeaterControlIcon</code>.</td>
+        </tr>
+        <tr>
+            <td><code>StarterRelay</code> (<code>Class="Relay"</code>)</td>
+            <td class="text-center">—</td>
+            <td>Starter cranking monitor lamp <code>StartControlIcon</code>.</td>
+        </tr>
+        <tr>
+            <td><code>GearBox</code> (in <code>*Manual.xml</code>)</td>
+            <td class="text-center">—</td>
+            <td>Reverse light <code>ReverseLight</code> (illuminates when gear ratio <code>&lt; 0</code>).</td>
+        </tr>
+        <tr>
+            <td><code>GearBox</code></td>
+            <td class="text-center"><code>StartIconGearBox="true"</code></td>
+            <td>Transmission neutral check for the blinking mode of <code>StartControlIcon</code>.</td>
+        </tr>
+        <tr>
+            <td><code>GearBox</code></td>
+            <td class="text-center"><code>Reducer="true"</code></td>
+            <td>Transfer case / range splitter for <code>DownshiftAWDIcon</code> and <code>OverdriveAWDIcon</code>.</td>
+        </tr>
+        <tr>
+            <td><code>Relay</code> (axle couplings)</td>
+            <td class="text-center"><code>AxisRelay="true"</code></td>
+            <td>Driven-axle engagement icons <code>DriveAxis0..2Icon</code>, <code>DownshiftAWDIcon</code>, <code>OverdriveAWDIcon</code> <em>(also require a link with <code>Reducer="true"</code>)</em>.</td>
+        </tr>
+        <tr>
+            <td><code>GearBoxLogic</code> (in <code>*Auto.xml</code>)</td>
+            <td class="text-center">—</td>
+            <td>Reverse light <code>ReverseLight</code> and AT selector mode indicators <code>GearBoxIconN</code>, <code>GearBoxIconR</code>, <code>GearBoxIconD</code>, <code>GearBoxIcon1</code>, <code>GearBoxIcon2</code>.</td>
+        </tr>
+        <tr>
+            <td><code>GearBoxAutomaticPump</code> (<code>Class="Pump"</code>)</td>
+            <td class="text-center">—</td>
+            <td>Transmission oil pressure gauge and warning lamps: <code>GearBoxOilNeedle</code>, <code>GearBoxOilIcon</code>, <code>GearBoxOilHighPressureIcon</code>.</td>
+        </tr>
+        <tr>
+            <td><code>AbsTcs</code></td>
+            <td class="text-center">—</td>
+            <td>Warning/activity icons <code>AbsDisableIcon</code>, <code>AbsActiveIcon</code>, <code>TcsDisableIcon</code>, <code>TcsActiveIcon</code>.</td>
+        </tr>
+        <tr>
+            <td><code>BrakeFrontLeft/Right</code>, <code>BrakeBackLeft/Right</code></td>
+            <td class="text-center">—</td>
+            <td>Parking brake light <code>ParkingBrakeLight</code> (when handbrake is applied <code>&gt; 0.01</code>).</td>
+        </tr>
+        <tr>
+            <td><code>WheelFrontLeft/Right</code>, <code>WheelBackLeft/Right</code></td>
+            <td class="text-center">—</td>
+            <td>Low tire pressure warning lamp (TPMS) <code>LowTirePressureIcon</code>.</td>
+        </tr>
+        <tr>
+            <td>Door actuators (<code>ActuatorPneumatic2Chamber</code>)</td>
+            <td class="text-center">—</td>
+            <td>Open bus/body door warning lamps <code>DoorIcon0</code> .. <code>DoorIcon3</code>.</td>
+        </tr>
+    </tbody>
+</table>
+<h3 id="32-general-parameters-of-carelectrics-in-vehicleini-17-parameters">3.2. General Parameters of <code>[CarElectrics]</code> in <code>Vehicle.ini</code> (17 Parameters)</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Key in <code>Vehicle.ini</code> (<code>[CarElectrics]</code>)</th>
+            <th>Type</th>
+            <th class="text-center">Default</th>
+            <th class="text-center">Units</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>DefaultCircuitName</code></td>
+            <td><code>String</code></td>
+            <td class="text-center"><code>""</code></td>
+            <td class="text-center">circuit name</td>
+            <td>Default electrical circuit name for all elements (usually <code>IgnitionElectricCircuit</code>).</td>
+        </tr>
+        <tr>
+            <td><code>MinVoltage</code></td>
+            <td><code>Real</code></td>
+            <td class="text-center"><code>9.0</code></td>
+            <td class="text-center">V</td>
+            <td>Minimum bus voltage below which lamp brightness is <code>0</code> (<code>0 &lt; MinVoltage &lt;= Voltage</code>).</td>
+        </tr>
+        <tr>
+            <td><code>Voltage</code></td>
+            <td><code>Real</code></td>
+            <td class="text-center"><code>13.0</code></td>
+            <td class="text-center">V</td>
+            <td>Nominal bus voltage at which lamp brightness equals <code>1.0</code> (<code>13.0–14.7</code>).</td>
+        </tr>
+        <tr>
+            <td><code>HasAlwaysLitDashboard</code></td>
+            <td><code>Boolean</code></td>
+            <td class="text-center"><code>false</code></td>
+            <td class="text-center">—</td>
+            <td>If <code>true</code>, the <code>AlwaysLitDashboard</code> instrument cluster backlight stays illuminated whenever ignition is on (regardless of parking lights).</td>
+        </tr>
+        <tr>
+            <td><code>LowFuelLevel</code></td>
+            <td><code>Real</code></td>
+            <td class="text-center"><code>0.1</code></td>
+            <td class="text-center"><code>[0..1]</code></td>
+            <td>Remaining fuel fraction below which the low-fuel warning lamp <code>FuelIcon</code> illuminates (e.g., <code>0.15–0.21</code>).</td>
+        </tr>
+        <tr>
+            <td><code>OilLowPressureThreshold</code></td>
+            <td><code>Real</code></td>
+            <td class="text-center"><code>0.6</code></td>
+            <td class="text-center">bar</td>
+            <td>Critically low engine oil pressure threshold that triggers <code>OilIcon</code>.</td>
+        </tr>
+        <tr>
+            <td><code>OilHighPressureThreshold</code></td>
+            <td><code>Real</code></td>
+            <td class="text-center"><code>6.1</code></td>
+            <td class="text-center">bar</td>
+            <td>Excessively high engine oil pressure threshold for <code>HighOilPressureIcon</code>.</td>
+        </tr>
+        <tr>
+            <td><code>OilPressureConsiderEngine</code></td>
+            <td><code>Boolean</code></td>
+            <td class="text-center"><code>false</code></td>
+            <td class="text-center">—</td>
+            <td>If <code>true</code>, engine oil pressure lamps light up only while the engine is running; if <code>false</code>, they also illuminate with ignition on before engine start.</td>
+        </tr>
+        <tr>
+            <td><code>GearBoxOilLowPressureThreshold</code></td>
+            <td><code>Real</code></td>
+            <td class="text-center"><code>1.0</code></td>
+            <td class="text-center">bar</td>
+            <td>Low transmission oil pressure threshold for <code>GearBoxOilIcon</code>.</td>
+        </tr>
+        <tr>
+            <td><code>GearBoxOilHighPressureThreshold</code></td>
+            <td><code>Real</code></td>
+            <td class="text-center"><code>10.0</code></td>
+            <td class="text-center">bar</td>
+            <td>High transmission oil pressure threshold for <code>GearBoxOilHighPressureIcon</code>.</td>
+        </tr>
+        <tr>
+            <td><code>GearBoxOilPressureConsiderEngine</code></td>
+            <td><code>Boolean</code></td>
+            <td class="text-center"><code>false</code></td>
+            <td class="text-center">—</td>
+            <td>Whether to consider engine running state for transmission oil pressure warning lamps.</td>
+        </tr>
+        <tr>
+            <td><code>HasBrokenBrakeBeeper</code></td>
+            <td><code>Boolean</code></td>
+            <td class="text-center"><code>true</code></td>
+            <td class="text-center">—</td>
+            <td>Whether to activate the warning buzzer <code>Beeper</code> upon brake failure (<code>BrokenBrake = true</code>) while the engine is running.</td>
+        </tr>
+        <tr>
+            <td><code>HasEngineOverheatBeeper</code></td>
+            <td><code>Boolean</code></td>
+            <td class="text-center"><code>true</code></td>
+            <td class="text-center">—</td>
+            <td>Whether to activate the warning buzzer <code>Beeper</code> when the engine overheats (<code>CoolantTemperature &gt; OverheatTemperature</code>).</td>
+        </tr>
+        <tr>
+            <td><code>HeaterControlIcon_BlinkingTime</code></td>
+            <td><code>Real</code></td>
+            <td class="text-center"><code>2.0</code></td>
+            <td class="text-center">s</td>
+            <td>Duration of steady illumination of the glow-plug icon <code>HeaterControlIcon</code> before switching to blinking mode.</td>
+        </tr>
+        <tr>
+            <td><code>SafetyBeltMinSpeed</code></td>
+            <td><code>Real</code></td>
+            <td class="text-center"><code>2.0</code></td>
+            <td class="text-center">km/h</td>
+            <td>Minimum driving speed above which the unfastened seatbelt timer starts counting.</td>
+        </tr>
+        <tr>
+            <td><code>SafetyBeltWarningSpeed</code></td>
+            <td><code>Real</code></td>
+            <td class="text-center"><code>20.0</code></td>
+            <td class="text-center">km/h</td>
+            <td>Speed threshold above which driving unbuckled immediately triggers <code>SafetyBeltBeeper</code> and blinks <code>SafetyBeltIcon</code>.</td>
+        </tr>
+        <tr>
+            <td><code>SafetyBeltWarningTime</code></td>
+            <td><code>Real</code></td>
+            <td class="text-center"><code>60.0</code></td>
+            <td class="text-center">s</td>
+            <td>Duration of driving faster than <code>SafetyBeltMinSpeed</code> unbuckled before <code>SafetyBeltBeeper</code> sounds.</td>
+        </tr>
+    </tbody>
+</table>
+<h3 id="33-configuring-lamps-headlights-turn-signals-wipers-and-gauges-via-prefix_">3.3. Configuring Lamps, Headlights, Turn Signals, Wipers, and Gauges via <code>&lt;Prefix&gt;_*</code></h3>
+<p>Inside <code>[CarElectrics]</code>, each of the 81 devices is configured using keys of the form <code>&lt;ElementPrefix&gt;_&lt;Suffix&gt;</code>:</p>
+<table>
+    <thead>
+        <tr>
+            <th>Element Category</th>
+            <th>Parameter Suffix in <code>[CarElectrics]</code></th>
+            <th>Type</th>
+            <th class="text-center">Default</th>
+            <th class="text-center">Units</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>All 81 elements</strong> (headlights, lamps, icons, buzzers, wipers, needles)</td>
+            <td><code>&lt;Prefix&gt;_Resistance</code></td>
+            <td><code>Real</code></td>
+            <td class="text-center"><strong><code>0.0</code></strong></td>
+            <td class="text-center">Ω</td>
+            <td>Electrical resistance of the active device (<code>1.2–7.0</code> for exterior lights, <code>40</code> for dashboard icons, <code>100</code> for needles).</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><code>&lt;Prefix&gt;_CircuitName</code></td>
+            <td><code>String</code></td>
+            <td class="text-center"><code>DefaultCircuitName</code></td>
+            <td class="text-center">circuit name</td>
+            <td>Per-device circuit assignment (e.g., <code>BatteryElectricCircuit</code> for <code>HazardLight</code>, <code>ParkingLights</code>, <code>StopLight</code>, <code>Horn</code>).</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><code>&lt;Prefix&gt;_ConnectionCheckTime</code></td>
+            <td><code>Real</code></td>
+            <td class="text-center"><code>0.0</code> <em>(or $\infty$)</em></td>
+            <td class="text-center">s</td>
+            <td>Lamp bulb-check duration after power is applied to the circuit (dashboard self-test on key turn).</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><code>&lt;Prefix&gt;_EngineCheckTime</code></td>
+            <td><code>Real</code></td>
+            <td class="text-center"><code>0.0</code></td>
+            <td class="text-center">s</td>
+            <td>Lamp test duration <strong>after engine start</strong> before extinguishing.</td>
+        </tr>
+        <tr>
+            <td><strong>Blinking elements</strong> (<code>*TurnLight*</code>, <code>HazardLight*</code>, <code>SafetyBeltIcon</code>, <code>ParkingBrakeIcon</code>, <code>AbsActiveIcon</code>, <code>TcsActiveIcon</code>, <code>StartControlIcon</code>, <code>HeaterControlIcon</code>, <code>EngineShutdownIcon</code>)</td>
+            <td><code>&lt;Prefix&gt;_Period</code></td>
+            <td><code>Real</code></td>
+            <td class="text-center"><code>0.6</code> (<code>0.0</code> for ABS/TCS)</td>
+            <td class="text-center">s</td>
+            <td>Full blinking cycle period (<code>1.0</code> = 60 flashes/min; <code>0.0</code> lights continuously without blinking).</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><code>&lt;Prefix&gt;_DutyCycle</code></td>
+            <td><code>Real</code></td>
+            <td class="text-center"><code>0.5</code></td>
+            <td class="text-center"><code>[0..1]</code></td>
+            <td>Fraction of the period during which the lamp is lit (<code>0.5</code> = half-period on, half-period off).</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><code>&lt;Prefix&gt;_Blinking</code></td>
+            <td><code>Boolean</code></td>
+            <td class="text-center"><code>true</code></td>
+            <td class="text-center">—</td>
+            <td>Whether blinking is enabled for this element by default.</td>
+        </tr>
+        <tr>
+            <td><strong>Windshield wipers</strong> (<code>FrontWindshieldWiper</code>, <code>BackWindshieldWiper</code>)</td>
+            <td><code>&lt;Prefix&gt;_PeriodicDelay</code></td>
+            <td><code>Real</code></td>
+            <td class="text-center"><code>2.0</code></td>
+            <td class="text-center">s</td>
+            <td>Pause between blade sweeps in intermittent mode (<code>1</code>).</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><code>&lt;Prefix&gt;_PeriodicPhase</code></td>
+            <td><code>Real</code></td>
+            <td class="text-center"><code>2.0</code></td>
+            <td class="text-center">s</td>
+            <td>Full back-and-forth sweep time (<code>0 -&gt; 1 -&gt; 0</code>) in intermittent mode (<code>1</code>).</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><code>&lt;Prefix&gt;_NormalPhase</code></td>
+            <td><code>Real</code></td>
+            <td class="text-center"><code>2.0</code></td>
+            <td class="text-center">s</td>
+            <td>Full back-and-forth sweep time in continuous mode (<code>2</code>) and when returning to park (<code>0</code>).</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><code>&lt;Prefix&gt;_FastPhase</code></td>
+            <td><code>Real</code></td>
+            <td class="text-center"><code>1.0</code></td>
+            <td class="text-center">s</td>
+            <td>Full back-and-forth sweep time in fast mode (<code>3</code>).</td>
+        </tr>
+        <tr>
+            <td><strong>Analog gauges</strong> (<code>*Needle</code>)</td>
+            <td><code>&lt;Prefix&gt;_IsMechanical</code></td>
+            <td><code>Boolean</code></td>
+            <td class="text-center"><code>false</code></td>
+            <td class="text-center">—</td>
+            <td>If <code>true</code>, the gauge is mechanical — always operates without electrical power and does not require <code>_Resistance</code>.</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><code>&lt;Prefix&gt;_DefaultValue</code></td>
+            <td><code>Real</code></td>
+            <td class="text-center"><code>0.0</code></td>
+            <td class="text-center">scale units</td>
+            <td>Needle resting reading when ignition is off (for example, <code>50</code> for <code>CoolantTemperatureNeedle</code>).</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td><code>&lt;Prefix&gt;_ValueSpeed</code></td>
+            <td><code>Real</code></td>
+            <td class="text-center"><code>5.0</code></td>
+            <td class="text-center">$1/\text{s}$</td>
+            <td>Smoothing speed at which the needle tracks its target value.</td>
+        </tr>
+    </tbody>
+</table>
+<div class="alert alert-important">
+    <div class="alert-title">Important</div>
+<p><strong>Two golden rules for configuring <code>[CarElectrics]</code> elements:</strong></p>
+<ol>
+    <li><strong>Zero resistance = device disabled!</strong> By default, all 81 elements have <code>&lt;Prefix&gt;_Resistance = 0.0</code>, which treats them as disconnected from the electrical network so their output to the game is always <strong><code>0.0</code></strong>. For any headlight, warning lamp, buzzer, wiper, or electrical needle to function, <strong>you must assign a positive resistance <code>&lt;Prefix&gt;_Resistance &gt; 0</code> in <code>[CarElectrics]</code></strong> (the only exception is mechanical gauges with <code>&lt;Prefix&gt;_IsMechanical = true</code>).</li>
+    <li><strong><code>&lt;Prefix&gt;_EngineCheckTime</code> quirk:</strong> if you set <code>_EngineCheckTime &gt; 0</code> for a lamp (e.g., <code>ExhaustSystemIcon_EngineCheckTime = 0.5</code>) without setting <code>_ConnectionCheckTime</code>, then <code>_ConnectionCheckTime</code> automatically becomes <strong>infinite</strong> — the lamp stays lit the entire time ignition is on and turns off <code>0.5 s</code> after the engine starts!</li>
+</ol>
+
+</div>
+<h3 id="34-complete-reference-of-all-81-carelectrics-elements-and-their-xml-outputs">3.4. Complete Reference of All 81 <code>[CarElectrics]</code> Elements and Their XML Outputs</h3>
+<p>The "Type" column indicates the supported suffix set: <strong>Basic</strong> (<code>_Resistance</code>, <code>_CircuitName</code>, <code>_ConnectionCheckTime</code>, <code>_EngineCheckTime</code>), <strong>Blinking</strong> (+ <code>_Period</code>, <code>_DutyCycle</code>, <code>_Blinking</code>), <strong>Wiper</strong> (+ <code>_PeriodicDelay</code>, <code>_PeriodicPhase</code>, <code>_NormalPhase</code>, <code>_FastPhase</code>), <strong>Needle</strong> (+ <code>_IsMechanical</code>, <code>_DefaultValue</code>, <code>_ValueSpeed</code>).</p>
+<table>
+    <thead>
+        <tr>
+            <th class="text-center">#</th>
+            <th>Prefix in <code>[CarElectrics]</code></th>
+            <th class="text-center">Type</th>
+            <th>Activation Condition / What It Indicates</th>
+            <th>Output <code>InternalName</code> (<code>Real</code>) in XML</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="text-center">1</td>
+            <td><code>LowBeam</code></td>
+            <td class="text-center">Basic</td>
+            <td><code>LowBeam</code> input (turns off when <code>HighBeam</code> is enabled)</td>
+            <td><code>LowBeamIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">2</td>
+            <td><code>LowBeamIcon</code></td>
+            <td class="text-center">Basic</td>
+            <td>Mirrors <code>LowBeam</code> state</td>
+            <td><code>LowBeamIconIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">3</td>
+            <td><code>HighBeam</code></td>
+            <td class="text-center">Basic</td>
+            <td><code>HighBeam</code> input (with <code>LowBeam</code> on) or <code>HighBeamUnfixed</code></td>
+            <td><code>HighBeamIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">4</td>
+            <td><code>HighBeamIcon</code></td>
+            <td class="text-center">Basic</td>
+            <td>Mirrors <code>HighBeam</code> state</td>
+            <td><code>HighBeamIconIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">5</td>
+            <td><code>ParkingLights</code></td>
+            <td class="text-center">Basic</td>
+            <td><code>ParkingLights</code> input (position/marker lights)</td>
+            <td><code>ParkingLightsIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">6</td>
+            <td><code>ParkingLightsIcon</code></td>
+            <td class="text-center">Basic</td>
+            <td>Mirrors <code>ParkingLights</code> state</td>
+            <td><code>ParkingLightsIconIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">7</td>
+            <td><code>FrontFogLights</code></td>
+            <td class="text-center">Basic</td>
+            <td><code>FrontFogLights</code> input (front fog lamps)</td>
+            <td><code>FrontFogLightsIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">8</td>
+            <td><code>RearFogLights</code></td>
+            <td class="text-center">Basic</td>
+            <td><code>RearFogLights</code> input (rear fog lamps)</td>
+            <td><code>RearFogLightsIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">9</td>
+            <td><code>StopLight</code></td>
+            <td class="text-center">Basic</td>
+            <td>Brake pedal input <code>Brake &gt; 0.01</code></td>
+            <td><code>StopLightIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">10</td>
+            <td><code>ReverseLight</code></td>
+            <td class="text-center">Basic</td>
+            <td>Reverse gear in <code>GearBox</code> (<code>&lt; 0</code>) or <code>R</code> mode in <code>GearBoxLogic</code></td>
+            <td><code>ReverseLightIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">11</td>
+            <td><code>ParkingBrakeLight</code></td>
+            <td class="text-center">Basic</td>
+            <td>Parking brake engaged on <code>Brake*</code> (<code>&gt; 0.01</code>)</td>
+            <td><code>ParkingBrakeLightIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">12</td>
+            <td><code>RetarderLight</code></td>
+            <td class="text-center">Basic</td>
+            <td><code>Retarder</code> input (<code>true</code>)</td>
+            <td><code>RetarderLightIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">13</td>
+            <td><code>LeftTurnLight</code></td>
+            <td class="text-center">Blinking</td>
+            <td><code>LeftTurnLight</code> input (overridden by <code>HazardLight</code>)</td>
+            <td><code>LeftTurnLightIntensity</code> <em>(max with <code>HazardLight</code> and <code>EngineShutdownIcon</code>)</em></td>
+        </tr>
+        <tr>
+            <td class="text-center">14</td>
+            <td><code>LeftTurnLightIcon</code></td>
+            <td class="text-center">Blinking</td>
+            <td>Mirrors <code>LeftTurnLight</code></td>
+            <td><code>LeftTurnLightIconIntensity</code> <em>(max with <code>HazardLightIcon</code> and <code>EngineShutdownIcon</code>)</em></td>
+        </tr>
+        <tr>
+            <td class="text-center">15</td>
+            <td><code>RightTurnLight</code></td>
+            <td class="text-center">Blinking</td>
+            <td><code>RightTurnLight</code> input (overridden by <code>HazardLight</code>)</td>
+            <td><code>RightTurnLightIntensity</code> <em>(max with <code>HazardLight</code> and <code>EngineShutdownIcon</code>)</em></td>
+        </tr>
+        <tr>
+            <td class="text-center">16</td>
+            <td><code>RightTurnLightIcon</code></td>
+            <td class="text-center">Blinking</td>
+            <td>Mirrors <code>RightTurnLight</code></td>
+            <td><code>RightTurnLightIconIntensity</code> <em>(max with <code>HazardLightIcon</code> and <code>EngineShutdownIcon</code>)</em></td>
+        </tr>
+        <tr>
+            <td class="text-center">17</td>
+            <td><code>StartControlIcon</code></td>
+            <td class="text-center">Blinking</td>
+            <td><code>StarterRelay</code> active (blinks if gearbox is not in neutral)</td>
+            <td><code>StartControlIconIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">18</td>
+            <td><code>HeaterControlIcon</code></td>
+            <td class="text-center">Blinking</td>
+            <td>Key in <code>Ignition</code> with engine off (steady, then blinks)</td>
+            <td><code>HeaterControlIconIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">19</td>
+            <td><code>HazardLight</code></td>
+            <td class="text-center">Blinking</td>
+            <td>Hazard flasher input <code>HazardLight</code></td>
+            <td><em>(merged into <code>LeftTurnLightIntensity</code> and <code>RightTurnLightIntensity</code>)</em></td>
+        </tr>
+        <tr>
+            <td class="text-center">20</td>
+            <td><code>HazardLightIcon</code></td>
+            <td class="text-center">Blinking</td>
+            <td>Mirrors <code>HazardLight</code> state</td>
+            <td><code>HazardLightIconIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">21</td>
+            <td><code>Dashboard</code></td>
+            <td class="text-center">Basic</td>
+            <td><code>ParkingLights</code>, <code>LowBeam</code>, or latched <code>HighBeam</code> enabled</td>
+            <td><code>DashboardIntensity</code> <em>(max with <code>AlwaysLitDashboard</code>)</em></td>
+        </tr>
+        <tr>
+            <td class="text-center">22</td>
+            <td><code>AlwaysLitDashboard</code></td>
+            <td class="text-center">Basic</td>
+            <td>Always on when <code>HasAlwaysLitDashboard = true</code></td>
+            <td><em>(merged into <code>DashboardIntensity</code>)</em></td>
+        </tr>
+        <tr>
+            <td class="text-center">23</td>
+            <td><code>SafetyBeltIcon</code></td>
+            <td class="text-center">Blinking</td>
+            <td>Seatbelt unfastened (<code>SafetyBelt = false</code>; blinks when buzzer sounds)</td>
+            <td><code>SafetyBeltIconIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">24</td>
+            <td><code>SafetyBeltBeeper</code></td>
+            <td class="text-center">Basic</td>
+            <td>Driving unbuckled faster than <code>SafetyBeltWarningSpeed</code> or longer than <code>SafetyBeltWarningTime</code></td>
+            <td><code>SafetyBeltBeeperVolume</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">25</td>
+            <td><code>ParkingBrakeIcon</code></td>
+            <td class="text-center">Blinking</td>
+            <td><code>ParkingBrake &gt; 0.01</code> engaged (steady) or <code>BrokenBrake = true</code> (blinks)</td>
+            <td><code>ParkingBrakeIconIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">26</td>
+            <td><code>BatteryIcon</code></td>
+            <td class="text-center">Basic</td>
+            <td>Alternator is not supplying current (<code>Generator</code> inactive)</td>
+            <td><code>BatteryIconIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">27</td>
+            <td><code>Horn</code></td>
+            <td class="text-center">Basic</td>
+            <td>Horn input <code>Horn</code></td>
+            <td><code>HornVolume</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">28</td>
+            <td><code>FrontWindshieldWiper</code></td>
+            <td class="text-center">Wiper</td>
+            <td><code>FrontWindshieldWiper</code> input (<code>0..3</code>)</td>
+            <td><code>FrontWindshieldWiperPhase</code> (<code>[0..1]</code>), <code>FrontWindshieldWiperSpeed</code> ($1/\text{s}$)</td>
+        </tr>
+        <tr>
+            <td class="text-center">29</td>
+            <td><code>BackWindshieldWiper</code></td>
+            <td class="text-center">Wiper</td>
+            <td><code>BackWindshieldWiper</code> input (<code>0..3</code>)</td>
+            <td><code>BackWindshieldWiperPhase</code> (<code>[0..1]</code>), <code>BackWindshieldWiperSpeed</code> ($1/\text{s}$)</td>
+        </tr>
+        <tr>
+            <td class="text-center">30</td>
+            <td><code>FuelIcon</code></td>
+            <td class="text-center">Basic</td>
+            <td>Remaining fuel in <code>FuelTank</code> below <code>LowFuelLevel</code></td>
+            <td><code>FuelIconIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">31</td>
+            <td><code>FuelNeedle</code></td>
+            <td class="text-center">Needle</td>
+            <td>Fuel volume in <code>FuelTank</code> (L)</td>
+            <td><code>Fuel</code> <em>(exported in schematics as <code>DashboardFuel</code>)</em></td>
+        </tr>
+        <tr>
+            <td class="text-center">32</td>
+            <td><code>SpeedNeedle</code></td>
+            <td class="text-center">Needle</td>
+            <td>Speed from <code>Speedometer</code> (m/s)</td>
+            <td><code>Speed</code> <em>(in schematics — <code>DashboardSpeed</code>)</em></td>
+        </tr>
+        <tr>
+            <td class="text-center">33</td>
+            <td><code>RpmNeedle</code></td>
+            <td class="text-center">Needle</td>
+            <td>Crankshaft speed of <code>Engine</code> (RPM)</td>
+            <td><code>RPM</code> <em>(in schematics — <code>DashboardRPM</code>)</em></td>
+        </tr>
+        <tr>
+            <td class="text-center">34</td>
+            <td><code>CoolantTemperatureNeedle</code></td>
+            <td class="text-center">Needle</td>
+            <td>Coolant temperature of <code>Engine</code> (°C)</td>
+            <td><code>CoolantTemperature</code> <em>(in schematics — <code>DashboardCoolantTemperature</code>)</em></td>
+        </tr>
+        <tr>
+            <td class="text-center">35</td>
+            <td><code>OilNeedle</code></td>
+            <td class="text-center">Needle</td>
+            <td>Oil pressure of <code>Engine</code> (bar)</td>
+            <td><code>OilPressure</code> <em>(in schematics — <code>DashboardOilPressure</code>)</em></td>
+        </tr>
+        <tr>
+            <td class="text-center">36</td>
+            <td><code>GearBoxOilNeedle</code></td>
+            <td class="text-center">Needle</td>
+            <td>Gearbox oil pressure from <code>Pump</code> (bar)</td>
+            <td><code>GearBoxOilPressure</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">37</td>
+            <td><code>VoltageNeedle</code></td>
+            <td class="text-center">Needle</td>
+            <td>Circuit voltage with minus sign (<code>-Voltage</code>, V)</td>
+            <td><code>Voltage</code> <em>(in schematics — <code>DashboardVoltage</code>)</em></td>
+        </tr>
+        <tr>
+            <td class="text-center">38</td>
+            <td><code>AmperageNeedle</code></td>
+            <td class="text-center">Needle</td>
+            <td><code>Battery</code> current (A)</td>
+            <td><code>Amperage</code> <em>(in schematics — <code>DashboardAmperage</code>)</em></td>
+        </tr>
+        <tr>
+            <td class="text-center">39</td>
+            <td><code>PneumoPressure0Needle</code></td>
+            <td class="text-center">Needle</td>
+            <td>Vehicle output <code>PneumoPressure0</code> (bar)</td>
+            <td><code>PneumoPressure0</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">40</td>
+            <td><code>PneumoPressure1Needle</code></td>
+            <td class="text-center">Needle</td>
+            <td>Vehicle output <code>PneumoPressure1</code> (bar)</td>
+            <td><code>PneumoPressure1</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">41</td>
+            <td><code>OilIcon</code></td>
+            <td class="text-center">Basic</td>
+            <td>Engine oil pressure <code>&lt; OilLowPressureThreshold</code></td>
+            <td><code>OilIconIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">42</td>
+            <td><code>GearBoxOilIcon</code></td>
+            <td class="text-center">Basic</td>
+            <td>Gearbox oil pressure <code>&lt; GearBoxOilLowPressureThreshold</code></td>
+            <td><code>GearBoxOilIconIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">43</td>
+            <td><code>GearBoxOilHighPressureIcon</code></td>
+            <td class="text-center">Basic</td>
+            <td>Gearbox oil pressure <code>&gt; GearBoxOilHighPressureThreshold</code></td>
+            <td><code>GearBoxOilHighPressureIconIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">44</td>
+            <td><code>OverheatIcon</code></td>
+            <td class="text-center">Basic</td>
+            <td>Engine coolant temperature <code>&gt; OverheatTemperature</code></td>
+            <td><code>OverheatIconIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">45</td>
+            <td><code>Beeper</code></td>
+            <td class="text-center">Basic</td>
+            <td>Brake failure with engine running or engine overheating</td>
+            <td><code>BeeperVolume</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">46</td>
+            <td><code>CheckIcons</code></td>
+            <td class="text-center">Basic</td>
+            <td>Startup self-check (<code>CheckIcons_ConnectionCheckTime</code>)</td>
+            <td><code>CheckIconsIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">47</td>
+            <td><code>AbsDisableIcon</code></td>
+            <td class="text-center">Basic</td>
+            <td>ABS disabled in <code>AbsTcs</code> unit</td>
+            <td><code>AbsDisableIconIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">48</td>
+            <td><code>AbsActiveIcon</code></td>
+            <td class="text-center">Blinking</td>
+            <td>ABS actively intervening in <code>AbsTcs</code></td>
+            <td><code>AbsActiveIconIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">49</td>
+            <td><code>TcsDisableIcon</code></td>
+            <td class="text-center">Basic</td>
+            <td>TCS disabled in <code>AbsTcs</code> unit</td>
+            <td><code>TcsDisableIconIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">50</td>
+            <td><code>TcsActiveIcon</code></td>
+            <td class="text-center">Blinking</td>
+            <td>TCS actively intervening in <code>AbsTcs</code></td>
+            <td><code>TcsActiveIconIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">51</td>
+            <td><code>AirbagIcon</code></td>
+            <td class="text-center">Basic</td>
+            <td>Airbag self-check (<code>_ConnectionCheckTime</code>)</td>
+            <td><code>AirbagIconIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">52</td>
+            <td><code>ExhaustSystemIcon</code></td>
+            <td class="text-center">Basic</td>
+            <td>Exhaust system self-check (<code>_EngineCheckTime</code>)</td>
+            <td><code>ExhaustSystemIconIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">53</td>
+            <td><code>PowerSteeringIcon</code></td>
+            <td class="text-center">Basic</td>
+            <td>Engine RPM <code>&lt; StableRPM / 2</code> or <code>BrokenPowerSteering</code> input</td>
+            <td><code>PowerSteeringIconIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">54</td>
+            <td><code>EmergencyStopIcon</code></td>
+            <td class="text-center">Basic</td>
+            <td>Brake failure, power steering failure, or engine overheat</td>
+            <td><code>EmergencyStopIconIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">55–58</td>
+            <td><code>LowAirPressureIcon0</code>..<code>3</code></td>
+            <td class="text-center">Basic</td>
+            <td>Pressure in pneumatic circuit <code>0..3</code> below <code>MinWorkPneumoPressure0..3</code></td>
+            <td><strong><code>LowPressureIcon0Intensity</code></strong> .. <strong><code>LowPressureIcon3Intensity</code></strong></td>
+        </tr>
+        <tr>
+            <td class="text-center">59–62</td>
+            <td><code>DoorIcon0</code>..<code>3</code></td>
+            <td class="text-center">Basic</td>
+            <td>Corresponding pneumatic door <code>0..3</code> is open (<code>&gt; 0.05</code>)</td>
+            <td><code>DoorIcon0Intensity</code> .. <code>DoorIcon3Intensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">63</td>
+            <td><code>RetarderIcon</code></td>
+            <td class="text-center">Basic</td>
+            <td><code>Retarder</code> input (<code>true</code>)</td>
+            <td><code>RetarderIconIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">64</td>
+            <td><code>LowAirPressureIcon</code></td>
+            <td class="text-center">Basic</td>
+            <td>Low pressure in at least one of the 4 pneumatic circuits</td>
+            <td><strong><code>LowPressureIconIntensity</code></strong></td>
+        </tr>
+        <tr>
+            <td class="text-center">65</td>
+            <td><code>EngineShutdownIcon</code></td>
+            <td class="text-center">Blinking</td>
+            <td><code>ShutdownEngine</code> input (<code>true</code>)</td>
+            <td><strong><code>ShutdownEngineIconIntensity</code></strong></td>
+        </tr>
+        <tr>
+            <td class="text-center">66</td>
+            <td><code>HighOilPressureIcon</code></td>
+            <td class="text-center">Basic</td>
+            <td>Engine oil pressure <code>&gt; OilHighPressureThreshold</code></td>
+            <td><code>HighOilPressureIconIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">67–71</td>
+            <td><code>GearBoxIconN</code>/<code>D</code>/<code>R</code>/<code>1</code>/<code>2</code></td>
+            <td class="text-center">Basic</td>
+            <td><code>GearBoxLogic</code> selector position (<code>N</code>, <code>D</code>, <code>R</code>, <code>D+1</code>, <code>D+2</code>)</td>
+            <td><code>GearBoxIconNIntensity</code>, <code>GearBoxIconDIntensity</code>, <code>GearBoxIconRIntensity</code>, <code>GearBoxIcon1Intensity</code>, <code>GearBoxIcon2Intensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">72</td>
+            <td><code>LowTirePressureIcon</code></td>
+            <td class="text-center">Basic</td>
+            <td>Pressure in at least one tire <code>&lt; CriticalPressure</code></td>
+            <td><code>LowTirePressureIconIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">73</td>
+            <td><code>BrakeOilLowLevelIcon</code></td>
+            <td class="text-center">Basic</td>
+            <td>Brake failure input <code>BrokenBrake = true</code></td>
+            <td><code>BrakeOilLowLevelIconIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">74–76</td>
+            <td><code>DiffLock0Icon</code>..<code>DiffLock2Icon</code></td>
+            <td class="text-center">Basic</td>
+            <td>Differential <code>0..2</code> is locked</td>
+            <td><strong><code>DiffLockIcon0Intensity</code></strong> .. <strong><code>DiffLockIcon2Intensity</code></strong></td>
+        </tr>
+        <tr>
+            <td class="text-center">77–79</td>
+            <td><code>DriveAxis0Icon</code>..<code>DriveAxis2Icon</code></td>
+            <td class="text-center">Basic</td>
+            <td>Driven axle coupling <code>0..2</code> engaged (<code>AxisRelay="true"</code>)</td>
+            <td><strong><code>DriveAxisIcon0Intensity</code></strong> .. <strong><code>DriveAxisIcon2Intensity</code></strong></td>
+        </tr>
+        <tr>
+            <td class="text-center">80</td>
+            <td><code>DownshiftAWDIcon</code></td>
+            <td class="text-center">Basic</td>
+            <td>All axles engaged and low-range transfer gear selected (<code>Reducer="true"</code>)</td>
+            <td><code>DownshiftAWDIconIntensity</code></td>
+        </tr>
+        <tr>
+            <td class="text-center">81</td>
+            <td><code>OverdriveAWDIcon</code></td>
+            <td class="text-center">Basic</td>
+            <td>All axles engaged and high-range transfer gear selected</td>
+            <td><code>OverdriveAWDIconIntensity</code></td>
+        </tr>
+    </tbody>
+</table>
+<p><em>(Additionally, <code>CarElectrics</code> exposes <code>InternalName="EnvironmentTemperature"</code> of type <code>Real</code> — ambient air temperature in °C.)</em></p>
+<h3 id="35-important-icons-with-mismatched-ini-prefix-and-xml-output-names">3.5. Important: Icons with Mismatched <code>.ini</code> Prefix and XML Output Names</h3>
+<p>For the following indicators, the parameter prefix in <code>Vehicle.ini</code> (<code>[CarElectrics]</code>) and the output <code>InternalName</code> in the XML <code>&lt;OutputElements&gt;</code> section are spelled differently — pay close attention:</p>
+<table>
+    <thead>
+        <tr>
+            <th>Parameter Prefix in <code>Vehicle.ini</code> (<code>[CarElectrics]</code>)</th>
+            <th>Exact Output <code>InternalName</code> in <code>&lt;OutputElements&gt;</code> (XML)</th>
+            <th>Difference</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>LowAirPressureIcon0_Resistance</code> .. <code>LowAirPressureIcon3_Resistance</code></td>
+            <td><code>LowPressureIcon0Intensity</code> .. <code>LowPressureIcon3Intensity</code></td>
+            <td>The word <code>Air</code> is omitted in the XML output name</td>
+        </tr>
+        <tr>
+            <td><code>LowAirPressureIcon_Resistance</code></td>
+            <td><code>LowPressureIconIntensity</code></td>
+            <td>The word <code>Air</code> is omitted in the XML output name</td>
+        </tr>
+        <tr>
+            <td><code>EngineShutdownIcon_Resistance</code></td>
+            <td><code>ShutdownEngineIconIntensity</code></td>
+            <td>The words <code>Engine</code> and <code>Shutdown</code> are swapped</td>
+        </tr>
+        <tr>
+            <td><code>DiffLock0Icon_Resistance</code> .. <code>DiffLock2Icon_Resistance</code></td>
+            <td><code>DiffLockIcon0Intensity</code> .. <code>DiffLockIcon2Intensity</code></td>
+            <td>The index <code>0..2</code> precedes <code>Icon</code> in <code>.ini</code>, but follows <code>Icon</code> in XML</td>
+        </tr>
+        <tr>
+            <td><code>DriveAxis0Icon_Resistance</code> .. <code>DriveAxis2Icon_Resistance</code></td>
+            <td><code>DriveAxisIcon0Intensity</code> .. <code>DriveAxisIcon2Intensity</code></td>
+            <td>The index <code>0..2</code> precedes <code>Icon</code> in <code>.ini</code>, but follows <code>Icon</code> in XML</td>
+        </tr>
+    </tbody>
+</table>
+<h3 id="36-inputs-inputprocessors-and-boolean-outputs-of-carelectrics">3.6. Inputs (<code>&lt;InputProcessors&gt;</code>) and Boolean Outputs of <code>CarElectrics</code></h3>
+<ul>
+    <li><strong><code>Real</code> inputs (4 total):</strong> <code>Brake</code> (<code>[0..1]</code> — activates <code>StopLight</code> when <code>&gt; 0.01</code>), <code>ParkingBrake</code> (<code>[0..1]</code> — activates <code>ParkingBrakeIcon</code> when <code>&gt; 0.01</code>), <code>FrontWindshieldWipersTimeDelay</code> and <code>BackWindshieldWipersTimeDelay</code> (<code>[0..∞)</code> s — intermittent wiper pause delay).</li>
+    <li><strong><code>Integer</code> inputs (2 total):</strong> <code>FrontWindshieldWiper</code>, <code>BackWindshieldWiper</code> (<code>0</code> — off with return-to-park, <code>1</code> — intermittent, <code>2</code> — continuous, <code>3</code> — fast).</li>
+    <li><strong><code>Boolean</code> inputs (16 total):</strong>
+<ul>
+    <li>Lights and turn signals: <code>LowBeam</code>, <code>HighBeam</code> (active only together with <code>LowBeam</code> or <code>HighBeamUnfixed</code>), <code>HighBeamUnfixed</code> (flash-to-pass high beam), <code>ParkingLights</code>, <code>FrontFogLights</code>, <code>RearFogLights</code>, <code>LeftTurnLight</code>, <code>RightTurnLight</code>, <code>HazardLight</code>.</li>
+    <li>Systems and faults: <code>Horn</code> (horn), <code>SafetyBelt</code> (<code>true</code> — seatbelt fastened), <code>Retarder</code> (enables <code>RetarderLight</code> and <code>RetarderIcon</code>), <code>ShutdownEngine</code> (enables <code>EngineShutdownIcon</code>), <code>BrokenLighting</code> (disables all 12 exterior lights and dashboard backlight), <code>BrokenBrake</code> (brake system fault), <code>BrokenPowerSteering</code> (power steering failure).</li>
+</ul>
+</li>
+    <li><strong>Boolean outputs (<code>Type="Boolean"</code>, 4 total):</strong> <code>TurnSignal</code> (<code>true</code> during the illuminated phase of turn signals/hazards — for flasher relay audio), <code>FrontWindshieldWiperForward</code> (<code>true</code> during the forward blade sweep <code>0 -&gt; 1</code>), <code>HighBeam</code> (<code>true</code> when high beams are lit), <code>ParkingBrakeLight</code> (<code>true</code> when <code>ParkingBrakeIcon</code> is lit).</li>
+</ul>
+<hr>
+<h2 id="4-ready-to-use-carelectrics-and-battery-example-from-ccd-20">4. Ready-to-Use <code>[CarElectrics]</code> and <code>[Battery]</code> Example from CCD 2.0</h2>
+<pre><code class="language-ini">[Battery]
+VoltageMin = 10.5
+VoltageMax = 14.7
+Capacity = 90
+Resistance = 0.0019
+
+[CarElectrics]
+DefaultCircuitName = IgnitionElectricCircuit
+MinVoltage = 10.5
+Voltage = 14.7
+HasAlwaysLitDashboard = true
+LowFuelLevel = 0.21
+OilLowPressureThreshold = 0.98
+SafetyBeltWarningSpeed = 20
+HasBrokenBrakeBeeper = false
+HasEngineOverheatBeeper = false
+
+LowBeam_Resistance = 1.3
+HighBeam_Resistance = 1.2
+ParkingLights_Resistance = 7
+ParkingLights_CircuitName = BatteryElectricCircuit
+StopLight_Resistance = 7
+StopLight_CircuitName = BatteryElectricCircuit
+ReverseLight_Resistance = 5
+FrontFogLights_Resistance = 7
+RearFogLights_Resistance = 7
+LeftTurnLight_Resistance = 7
+LeftTurnLight_Period = 1.0
+RightTurnLight_Resistance = 7
+RightTurnLight_Period = 1.0
+HazardLight_Resistance = 3.5
+HazardLight_CircuitName = BatteryElectricCircuit
+HazardLight_Period = 1.0
+
+Dashboard_Resistance = 14
+AlwaysLitDashboard_Resistance = 14
+LowBeamIcon_Resistance = 40
+HighBeamIcon_Resistance = 40
+ParkingLightsIcon_Resistance = 40
+LeftTurnLightIcon_Resistance = 40
+RightTurnLightIcon_Resistance = 40
+HazardLightIcon_Resistance = 40
+HazardLightIcon_CircuitName = BatteryElectricCircuit
+SafetyBeltIcon_Resistance = 40
+SafetyBeltIcon_ConnectionCheckTime = 0.8
+SafetyBeltBeeper_Resistance = 40
+ParkingBrakeIcon_Resistance = 40
+ParkingBrakeIcon_ConnectionCheckTime = 1.1
+BatteryIcon_Resistance = 40
+FuelIcon_Resistance = 40
+OilIcon_Resistance = 40
+OverheatIcon_Resistance = 40
+CheckIcons_Resistance = 40
+CheckIcons_ConnectionCheckTime = 1.8
+ExhaustSystemIcon_Resistance = 40
+ExhaustSystemIcon_EngineCheckTime = 0.5
+PowerSteeringIcon_Resistance = 40
+AirbagIcon_Resistance = 40
+AirbagIcon_ConnectionCheckTime = 5.0
+AirbagIcon_EngineCheckTime = 0.5
+AbsActiveIcon_Resistance = 40
+AbsActiveIcon_Period = 0.3
+Horn_Resistance = 5
+Horn_CircuitName = BatteryElectricCircuit
+FrontWindshieldWiper_Resistance = 2.5
+FrontWindshieldWiper_PeriodicDelay = 1.0
+FrontWindshieldWiper_PeriodicPhase = 2.0
+FrontWindshieldWiper_NormalPhase = 2.0
+FrontWindshieldWiper_FastPhase = 1.0
+BackWindshieldWiper_Resistance = 4
+FuelNeedle_Resistance = 100
+FuelNeedle_IsMechanical = true
+SpeedNeedle_Resistance = 100
+RpmNeedle_Resistance = 100
+CoolantTemperatureNeedle_Resistance = 100
+CoolantTemperatureNeedle_DefaultValue = 50</code></pre>
+
+</body>
+</html>

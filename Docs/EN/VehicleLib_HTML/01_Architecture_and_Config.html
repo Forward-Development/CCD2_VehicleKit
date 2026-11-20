@@ -1,0 +1,530 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>01. Configuration Files, Schemas, and Tables in City Car Driving 2.0</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body, {delimiters: [{left: '', right: '', display: true}, {left: '$', right: '$', display: false}]});"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({ startOnLoad: true });</script>
+    <style>
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 32px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1f2328;
+            background-color: #ffffff;
+        }
+        h1, h2, h3, h4 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        h1 { font-size: 2em; padding-bottom: 0.3em; border-bottom: 1px solid #d0d7de; }
+        h2 { font-size: 1.5em; padding-bottom: 0.3em; border-bottom: 1px solid #d0d7de; }
+        h3 { font-size: 1.25em; }
+        hr { height: 0.25em; padding: 0; margin: 24px 0; background-color: #d0d7de; border: 0; }
+        a { color: #0969da; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+        th, td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; vertical-align: top; }
+        th { background: #f6f8fa; font-weight: 600; }
+        tr:nth-child(even) { background: #f6f8fa; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        code { background: #eff1f3; padding: 2px 5px; border-radius: 4px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 85%; }
+        pre { background: #f6f8fa; padding: 14px; border-radius: 6px; overflow-x: auto; border: 1px solid #d0d7de; }
+        pre code { background: transparent; padding: 0; font-size: 100%; }
+        pre.mermaid { background: #ffffff; text-align: center; }
+        .alert { padding: 12px 16px; margin: 16px 0; border-left: 4px solid; border-radius: 6px; background: #f6f8fa; }
+        .alert-title { font-weight: 600; margin-bottom: 6px; }
+        .alert p:last-child, .alert ul:last-child, .alert ol:last-child { margin-bottom: 0; }
+        .alert-note { border-left-color: #0969da; background-color: #ddf4ff; }
+        .alert-note .alert-title { color: #0969da; }
+        .alert-tip { border-left-color: #1a7f37; background-color: #dafbe1; }
+        .alert-tip .alert-title { color: #1a7f37; }
+        .alert-important { border-left-color: #8250df; background-color: #fbefff; }
+        .alert-important .alert-title { color: #8250df; }
+        .alert-warning { border-left-color: #9a6700; background-color: #fff8c5; }
+        .alert-warning .alert-title { color: #9a6700; }
+        .alert-caution { border-left-color: #cf222e; background-color: #ffebe9; }
+        .alert-caution .alert-title { color: #cf222e; }
+        ul.checklist { list-style-type: none; padding-left: 0; }
+        ul.checklist li { margin-bottom: 8px; }
+        ul.checklist input[type="checkbox"] { margin-right: 8px; }
+        figure.doc-figure { margin: 16px 0; padding: 10px; background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 6px; text-align: center; }
+        figure.doc-figure img { max-width: 100%; height: auto; border-radius: 4px; display: block; margin: 0 auto; }
+        figure.doc-figure figcaption { margin-top: 8px; font-size: 0.9em; color: #57606a; }
+    </style>
+</head>
+<body>
+<h1 id="01-configuration-files-schemas-and-tables-in-city-car-driving-20">01. Configuration Files, Schemas, and Tables in City Car Driving 2.0</h1>
+<p><strong>Navigation:</strong> <a href="./README.html">README</a> | <a href="./00_Quick_Start.html">00. Quick Start</a> | <strong>01. Architecture &amp; Configs</strong> | <a href="./02_Named_IO_and_States.html">02. Named I/O &amp; States</a> | <a href="./03_Components_TorqueTrain.html">03. TorqueTrain</a> | <a href="./04_Components_Electrics.html">04. Electrics</a> | <a href="./05_Components_Chassis_and_Subsystems.html">05. Chassis &amp; Subsystems</a></p>
+<hr>
+<h2 id="1-mod-files-and-path-resolution-in-city-car-driving-20">1. Mod Files and Path Resolution in City Car Driving 2.0</h2>
+<p>In <strong>City Car Driving 2.0</strong>, the assets and configuration files for a modded vehicle reside in the mod plugin folder:<br>
+<code>Plugins/Mods/Content/&lt;ModName&gt;/</code> (for example, <code>Plugins/Mods/Content/CieBensVGruppe/</code>).</p>
+<p>The files in the mod folder include:</p>
+<ul>
+    <li><strong><code>V_&lt;ModName&gt;.uasset</code></strong> — vehicle Blueprint prototype (contains the 3D meshes for <code>Body</code>, <code>Wheel*</code>, <code>Suspension*</code>, lights, dashboard, and their physics/controller settings).</li>
+    <li><strong><code>DA_&lt;ModName&gt;.uasset</code></strong> — vehicle data asset card for the vehicle selection menu (maps UI trims/configurations to options in <code>options.xml</code>).</li>
+    <li><strong><code>ST_&lt;ModName&gt;.uasset</code></strong> — localization string table (<code>StringTable</code>).</li>
+    <li><strong><code>Vehicle.ini</code></strong> — main configuration file containing parameters for all physical units.</li>
+    <li><strong><code>options.xml</code></strong> — configuration options definition (e.g., AT/MT selection and XML schema switching).</li>
+    <li><strong><code>Engine.csv</code></strong> — engine combustion torque and mechanical friction loss table.</li>
+    <li><em>(Optional)</em> custom XML schema files (<code>.xml</code>) and curve tables (<code>.csv</code>).</li>
+</ul>
+<h3 id="path-rules-in-vehicleini-and-optionsxml">Path Rules in <code>Vehicle.ini</code> and <code>options.xml</code></h3>
+<p>All paths to schema files (<code>.xml</code>) and curve tables (<code>.csv</code>) written inside <code>Vehicle.ini</code> and <code>options.xml</code> are resolved <strong>relative to the root <code>Content/</code> directory of the base City Car Driving 2.0 game project</strong>:</p>
+<ol>
+    <li><strong>Referencing shared base-game resources (<code>Content/Common/Vehicles/MotorCars/...</code>):</strong>
+<p>Written directly without a leading slash:</p>
+<pre><code class="language-ini">DefaultSchema = Common/Vehicles/MotorCars/Schemes/AwdAuto.xml
+ProgressionCurve = Common/Vehicles/MotorCars/Tables/SpringProgression.csv
+ForceCurveLateral = Common/Vehicles/MotorCars/Tables/WheelForceLat.csv</code></pre>
+</li>
+    <li><strong>Referencing custom files inside the mod folder (<code>Plugins/Mods/Content/&lt;ModName&gt;/...</code>):</strong>
+<p>To navigate out of the base project's <code>Content/</code> folder into the plugin folder <code>Plugins/Mods/Content/&lt;ModName&gt;/</code>, use the relative path <code>../Plugins/Mods/Content/&lt;ModName&gt;/...</code>:</p>
+<pre><code class="language-ini">PowerCurves = ../Plugins/Mods/Content/CieBensVGruppe/Engine.csv</code></pre>
+</li>
+</ol>
+<div class="alert alert-note">
+    <div class="alert-title">Note</div>
+<p>When creating a new mod, make sure the <code>PowerCurves</code> parameter in the <code>[Engine]</code> section points to the <code>Engine.csv</code> file inside your mod folder (<code>../Plugins/Mods/Content/&lt;ModName&gt;/Engine.csv</code>).</p>
+
+</div>
+<hr>
+<h2 id="2-vehicleini-syntax-and-the-optionsxml-system">2. <code>Vehicle.ini</code> Syntax and the <code>options.xml</code> System</h2>
+<h3 id="21-the-vehicle-section-and-component-sections-componentname">2.1. The <code>[Vehicle]</code> Section and Component Sections <code>[ComponentName]</code></h3>
+<p><code>Vehicle.ini</code> is case-sensitive (for both section headers and parameter keys) and must be saved in <strong>UTF-8</strong> encoding.</p>
+<ul>
+    <li>The system section <strong><code>[Vehicle]</code></strong> contains only one parameter — <strong><code>DefaultSchema</code></strong> (the default XML schema path used when no option in <code>options.xml</code> overrides the schema):
+<pre><code class="language-ini">[Vehicle]
+DefaultSchema = Common/Vehicles/MotorCars/Schemes/AwdAuto.xml</code></pre>
+</li>
+    <li>Every other section <strong><code>[ComponentName]</code></strong> corresponds to the <code>Name="..."</code> attribute of a specific component in the XML schema (for example, <code>[Engine]</code>, <code>[Idler]</code>, <code>[GearBoxAutomatic]</code>, <code>[SuspensionFrontLeft]</code>).</li>
+</ul>
+<div class="alert alert-important">
+    <div class="alert-title">Important</div>
+<p><strong>Where are vehicle mass and center of mass configured?</strong><br>
+<code>Vehicle.ini</code> has no parameters for chassis mass or center of mass — they are configured directly on the root physical <strong><code>Body</code></strong> component (<code>StaticMeshComponent</code>) inside the vehicle Blueprint <code>V_&lt;ModName&gt;.uasset</code> in the Unreal Engine 5 editor:</p>
+<ol>
+    <li><strong>Sprung mass (<code>Override Mass</code>):</strong> in the <strong>Physics</strong> section of <code>Body</code>, be sure to enable <strong><code>Override Mass</code></strong> and enter the sprung body mass in <strong><code>Mass in Kg</code></strong> (curb mass minus the mass of all four wheels: $M_{\text{body}} = M_{\text{curb}} - 4 \cdot M_{\text{wheel}}$). If <code>Override Mass</code> is left disabled, UE5 computes mass from the collision volume using the nonlinear formula $1000 \cdot V^{0.75}$, which underestimates the mass of large vehicles by almost half.</li>
+    <li><strong>Center of mass offset (<code>Center Of Mass Offset</code> / <code>COMNudge</code>):</strong> configured under <strong>Physics</strong> in <strong>centimeters</strong> as a relative offset $(\Delta X, \Delta Y, \Delta Z)$ from the automatically calculated geometric centroid of the body collision hulls ($\text{COM}_{\text{final}} = \text{COM}_{\text{auto}} + \text{Center Of Mass Offset}$).</li>
+    <li><strong>Collision physical material:</strong> the <code>Body</code> <code>StaticMesh</code> asset must have a <strong><code>Simple Collision Physical Material</code></strong> assigned, and all other components and meshes in the Blueprint (wheels, suspensions, windows, interior parts) must use the <strong><code>NoCollision</code></strong> collision preset.</li>
+</ol>
+
+</div>
+<h3 id="22-the-optionsxml-trim-system-and-section-overrides-in-vehicleini">2.2. The <code>options.xml</code> Trim System and Section Overrides in <code>Vehicle.ini</code></h3>
+<p>The <code>options.xml</code> file in the mod folder allows a single <code>Vehicle.ini</code> to support multiple vehicle configurations (for example, AT and MT versions or multiple engine variants):</p>
+<pre><code class="language-xml">&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;Options&gt;
+    &lt;AvailableOptions&gt;
+        &lt;!-- Only ONE option in the file may have SetSchema="true" --&gt;
+        &lt;Option Name="TransmissionType" SetSchema="true"&gt;
+            &lt;OptionValue Value="Auto"   SchemaName="Common/Vehicles/MotorCars/Schemes/AwdAuto.xml" /&gt;
+            &lt;OptionValue Value="Manual" SchemaName="Common/Vehicles/MotorCars/Schemes/AwdManual.xml" /&gt;
+        &lt;/Option&gt;
+
+        &lt;!-- Additional engine option (without switching XML schema) --&gt;
+        &lt;Option Name="EngineType" SetSchema="false"&gt;
+            &lt;OptionValue Value="1.6TD" /&gt;
+            &lt;OptionValue Value="1.8I" /&gt;
+        &lt;/Option&gt;
+    &lt;/AvailableOptions&gt;
+
+    &lt;!-- Optional block disabling incompatible combinations --&gt;
+    &lt;Compatibilities&gt;
+        &lt;Compatibility FirstOptionType="EngineType" FirstOptionValue="1.6TD"
+                       SecondOptionType="TransmissionType" SecondOptionValue="Manual"
+                       Enable="false" /&gt;
+    &lt;/Compatibilities&gt;
+&lt;/Options&gt;</code></pre>
+<div class="alert alert-tip">
+    <div class="alert-title">Tip</div>
+<p><strong>How to configure both transmissions (AT/MT) and two engine types (Gasoline/Diesel) at once:</strong><br>
+Because <code>SetSchema="true"</code> in <code>options.xml</code> can only be placed on <strong>one</strong> option, bind <code>SetSchema="true"</code> to transmission selection (<code>TransmissionType</code>: <code>*Auto.xml</code> and <code>*Manual.xml</code>), and use <code>Class="EngineGazoline"</code> from the standard schemas as a universal base ICE. The engine type (gasoline or diesel) is then fully defined through <code>[Engine.EngineType.1.8I]</code> and <code>[Engine.EngineType.1.6TD]</code> sections in <code>Vehicle.ini</code> using different <code>PowerCurves</code> torque tables, operating rev limits <code>RpmLimit</code>, and idle settings <code>[Idler.EngineType.*]</code> (see <a href="./03_Components_TorqueTrain.html">Section 2.1 of document 03</a> for details).</p>
+
+</div>
+<p>To override individual parameters of a component only when a specific option is selected, add a section of the form <strong><code>[ComponentName.OptionName.OptionValue]</code></strong> to <code>Vehicle.ini</code>:</p>
+<pre><code class="language-ini">[DifferentialAxle.TransmissionType.Manual]
+Inertia = 1e-4
+GearRatio = 3.45
+Locked = false
+
+[DifferentialAxle.TransmissionType.Auto]
+Inertia = 1e-4
+GearRatio = 3.267
+Locked = false
+
+[Speedometer.TransmissionType.Manual]
+MetersPerRotation = 0.6408
+
+[Speedometer.TransmissionType.Auto]
+MetersPerRotation = 0.6768</code></pre>
+<p>When the vehicle loads, keys are read from the base <code>[ComponentName]</code> section first, and then keys from any active <code>[ComponentName.OptionName.OptionValue]</code> sections are applied on top.</p>
+<h3 id="23-critical-vehicleini-syntax-rules-and-limits">2.3. Critical <code>Vehicle.ini</code> Syntax Rules and Limits</h3>
+<div class="alert alert-caution">
+    <div class="alert-title">Caution</div>
+<p><strong>Two primary <code>.ini</code> rules whose violation breaks physics loading:</strong></p>
+<ol>
+    <li><strong>The separator for lists and 3D vectors is strictly a semicolon <code>;</code> with NO space before <code>;</code>!</strong>
+<p>Commas <code>,</code> are <strong>not supported</strong> for separating numbers in vectors (<code>Mount</code>) or arrays (<code>Gears</code>, <code>ShiftAccelerator</code>, <code>OptimalRpm</code>). Furthermore, a <strong>"space before <code>;</code>" sequence (<code>" ;"</code>)</strong> is treated by the <code>.ini</code> parser as the beginning of an end-of-line comment, truncating all remaining values!</p>
+<ul>
+    <li><strong>CORRECT</strong> (no space before <code>;</code>; spaces or tabs <em>after</em> <code>;</code> are allowed):
+<pre><code class="language-ini">Mount = 1.63; 0.85; 0.4455
+Gears = -3.416; 4.377; 2.859; 1.921; 1.368; 1.000; 0.820; 0.728</code></pre>
+</li>
+    <li><strong>ERROR</strong> (commas or a space before <code>;</code>):
+<pre><code class="language-ini">Mount = 1.63, 0.85, 0.4455     ; ERROR: commas are not parsed!
+Mount = 1.63 ; 0.85 ; 0.4455   ; ERROR: space before ';' cuts off 0.85 and 0.4455!</code></pre>
+</li>
+</ul>
+</li>
+    <li><strong>Section header and line length limits:</strong>
+<ul>
+    <li>The section name length inside square brackets <code>[...]</code> (including <code>.OptionName.OptionValue</code>) <strong>must not exceed 49 characters</strong> (<code>50</code> bytes including null terminator). Longer headers are truncated and the option override fails to match.</li>
+    <li>A single line in <code>Vehicle.ini</code> <strong>must not exceed 400 characters</strong>.</li>
+</ul>
+</li>
+</ol>
+
+</div>
+<table>
+    <thead>
+        <tr>
+            <th>Parameter Type in <code>.ini</code></th>
+            <th>Formatting Rules</th>
+            <th>Example</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Floating-point number (<code>Real</code>)</strong></td>
+            <td>Decimal point <code>.</code> (not a comma!). Scientific notation <code>1e-4</code> is supported.</td>
+            <td><code>SpringCoeff = 45000.0</code></td>
+        </tr>
+        <tr>
+            <td><strong>Integer (<code>Integer</code>)</strong></td>
+            <td>Signed integer value.</td>
+            <td><code>StartingGear = -1</code></td>
+        </tr>
+        <tr>
+            <td><strong>Boolean flag (<code>Boolean</code>)</strong></td>
+            <td><code>true</code> / <code>false</code> (also <code>1</code> / <code>0</code>, <code>yes</code> / <code>no</code>, <code>on</code> / <code>off</code>).</td>
+            <td><code>Locked = false</code></td>
+        </tr>
+        <tr>
+            <td><strong>String (<code>String</code>)</strong></td>
+            <td>Path or name <strong>without quotes</strong>.</td>
+            <td><code>BodyName = Body</code></td>
+        </tr>
+        <tr>
+            <td><strong>3D vector (<code>Vector3</code>)</strong></td>
+            <td>Exactly 3 numbers separated by <code>;</code> with no space before <code>;</code>.</td>
+            <td><code>Mount = -1.59; -0.85; 0.4589</code></td>
+        </tr>
+        <tr>
+            <td><strong>Numeric array</strong></td>
+            <td>Ordered numbers separated by <code>;</code> with no space before <code>;</code>. In paired lookup arrays (<code>ShiftAccelerator</code>, <code>OilPressureRPM</code>), key values must be strictly ascending.</td>
+            <td><code>OilPressureRPM = 0; 750; 4600</code></td>
+        </tr>
+    </tbody>
+</table>
+<hr>
+<h2 id="3-standard-passenger-car-xml-schemas-in-city-car-driving-20">3. Standard Passenger Car XML Schemas in City Car Driving 2.0</h2>
+<p>The directory <code>Common/Vehicles/MotorCars/Schemes/</code> provides <strong>6 ready-made schemas</strong> covering every combination of drivetrain layout and transmission type:</p>
+<ul>
+    <li><strong>All-Wheel Drive (AWD):</strong> <code>AwdAuto.xml</code> (AT), <code>AwdManual.xml</code> (MT)</li>
+    <li><strong>Front-Wheel Drive (FWD):</strong> <code>FwdAuto.xml</code> (AT), <code>FwdManual.xml</code> (MT)</li>
+    <li><strong>Rear-Wheel Drive (RWD):</strong> <code>RwdAuto.xml</code> (AT), <code>RwdManual.xml</code> (MT)</li>
+</ul>
+<h3 id="31-complete-list-of-componentname-sections-in-vehicleini-for-standard-schemas">3.1. Complete List of <code>[ComponentName]</code> Sections in <code>Vehicle.ini</code> for Standard Schemas</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Subsystem</th>
+            <th>Sections in <code>Vehicle.ini</code> (<code>[Name]</code>)</th>
+            <th>Class (<code>Class</code> in XML)</th>
+            <th>Present in Schemas</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Engine, fuel, and cooling</strong></td>
+            <td><code>[Engine]</code><br><code>[Idler]</code><br><code>[FuelTank]</code></td>
+            <td><code>EngineGazoline</code><br><code>FuelControllerComputer</code><br><code>Tank</code></td>
+            <td>All 6 schemas</td>
+        </tr>
+        <tr>
+            <td><strong>Ignition switch and cranking (starter)</strong></td>
+            <td><code>[IgnitionKey]</code><br><code>[Starter]</code><br><code>[StarterRelay]</code><br><code>[StarterGear]</code><br><code>[StarterBendix]</code></td>
+            <td><code>IgnitionKeyProcessor</code><br><code>EngineElectric</code><br><code>Relay</code><br><code>Reducer</code><br><code>Bendix</code></td>
+            <td>All 6 schemas</td>
+        </tr>
+        <tr>
+            <td><strong>Onboard electrical system and dashboard</strong></td>
+            <td><code>[Battery]</code><br><code>[Generator]</code><br><code>[BatteryElectricCircuit]</code><br><code>[GeneratorElectricCircuit]</code><br><code>[IgnitionElectricCircuit]</code><br><code>[CarElectrics]</code></td>
+            <td><code>Battery</code><br><code>Generator</code><br><code>ElectricCircuit</code><br><code>ElectricCircuit</code><br><code>ElectricCircuit</code><br><code>CarElectrics</code></td>
+            <td>All 6 schemas <em>(no <code>.ini</code> sections are needed for <code>[*ElectricCircuit]</code>)</em></td>
+        </tr>
+        <tr>
+            <td><strong>Transmission: AT (<code>*Auto.xml</code>)</strong></td>
+            <td><strong><code>[GearBoxAutomatic]</code></strong><br><code>[TorqueConverter]</code><br><code>[GearBoxLogic]</code><br><code>[GearBoxAutomaticPump]</code><br><code>[OilTank]</code></td>
+            <td><code>GearBoxAutomatic</code><br><code>HydraulicTorqueConverter</code><br><code>GearBoxAutomaticLogic</code><br><code>Pump</code><br><code>Tank</code></td>
+            <td><strong><code>AwdAuto</code>, <code>FwdAuto</code>, <code>RwdAuto</code> only</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Transmission: MT (<code>*Manual.xml</code>)</strong></td>
+            <td><strong><code>[GearBox]</code></strong><br><code>[Clutch]</code><br><code>[ClutchPedal]</code></td>
+            <td><code>GearBox</code><br><code>ClutchFriction</code><br><code>ClutchInputProcessor</code></td>
+            <td><strong><code>AwdManual</code>, <code>FwdManual</code>, <code>RwdManual</code> only</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Differentials: AWD (<code>Awd*</code>)</strong></td>
+            <td><strong><code>[DifferentialAxle]</code></strong> <em>(center)</em><br><strong><code>[FrontAxisRelay]</code></strong> <em>(front-axle coupling)</em><br><strong><code>[DifferentialWheelFront]</code></strong> <em>(front)</em><br><strong><code>[DifferentialWheelBack]</code></strong> <em>(rear)</em></td>
+            <td><code>DifferentialOpen</code><br><code>Relay</code><br><code>DifferentialOpen</code><br><code>DifferentialOpen</code></td>
+            <td><strong><code>AwdAuto</code> and <code>AwdManual</code> only</strong> <em>(speedometer is linked to <code>DifferentialAxle</code>)</em></td>
+        </tr>
+        <tr>
+            <td><strong>Differential: 2WD (<code>Fwd*</code>, <code>Rwd*</code>)</strong></td>
+            <td><strong><code>[Differential]</code></strong></td>
+            <td><code>DifferentialOpen</code></td>
+            <td><strong><code>FwdAuto</code>, <code>FwdManual</code>, <code>RwdAuto</code>, <code>RwdManual</code> only</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Suspension (4 corners)</strong></td>
+            <td><code>[SuspensionFrontLeft]</code><br><code>[SuspensionFrontRight]</code><br><strong><code>[SuspensionBackLeft]</code></strong><br><strong><code>[SuspensionBackRight]</code></strong></td>
+            <td><code>Suspension1Spring</code></td>
+            <td>All 6 schemas</td>
+        </tr>
+        <tr>
+            <td><strong>Wheels / tires (4 pcs.)</strong></td>
+            <td><code>[WheelFrontLeft]</code><br><code>[WheelFrontRight]</code><br><strong><code>[WheelBackLeft]</code></strong><br><strong><code>[WheelBackRight]</code></strong></td>
+            <td><code>WheelRaycast</code></td>
+            <td>All 6 schemas</td>
+        </tr>
+        <tr>
+            <td><strong>Brake mechanisms (4 pcs.) + ABS</strong></td>
+            <td><code>[BrakeFrontLeft]</code><br><code>[BrakeFrontRight]</code><br><strong><code>[BrakeBackLeft]</code></strong><br><strong><code>[BrakeBackRight]</code></strong><br><code>[AbsTcs]</code></td>
+            <td><code>BrakeFriction</code><br><code>BrakeFriction</code><br><code>BrakeFriction</code><br><code>BrakeFriction</code><br><code>AbsTcs</code></td>
+            <td>All 6 schemas</td>
+        </tr>
+        <tr>
+            <td><strong>Steering, power steering/FFB, speedometer, body</strong></td>
+            <td><code>[Steering]</code><br><code>[PowerSteering]</code><br><code>[Speedometer]</code><br><code>[Aerodynamics]</code></td>
+            <td><code>Steering2Ackermann</code><br><code>PowerSteering</code><br><code>Speedometer</code><br><code>AerodynamicsCarSimple</code></td>
+            <td>All 6 schemas</td>
+        </tr>
+    </tbody>
+</table>
+<div class="alert alert-warning">
+    <div class="alert-title">Warning</div>
+<p><strong>Four critical naming conventions for sections and meshes in City Car Driving 2.0:</strong></p>
+<ol>
+    <li><strong>The rear axle uses <code>Back</code>, NOT <code>Rear</code> (mandatory for Blueprint and standard schemas):</strong>
+<ul>
+    <li>In the vehicle prototype Blueprint (<code>V_&lt;ModName&gt;</code>) and XML schema, the visual and physical wheel and hub nodes <strong>must</strong> be named <code>SuspensionFrontLeft/Right</code>, <strong><code>SuspensionBackLeft/Right</code></strong>, <code>WheelFrontLeft/Right</code>, <strong><code>WheelBackLeft/Right</code></strong> — the game uses these exact names to merge mod components with the base vehicle template and bind 3D wheel meshes to physics.</li>
+    <li>In the standard XML schemas, the rear brake sections are likewise named <strong><code>[BrakeBackLeft]</code></strong> and <strong><code>[BrakeBackRight]</code></strong> (writing <code>Rear</code> in <code>Vehicle.ini</code> will fail to match the XML schema and leave default values active).</li>
+</ul>
+</li>
+    <li><strong>Different differential section names in standard AWD vs FWD/RWD schemas:</strong>
+<p>In the built-in <code>AwdAuto.xml</code> and <code>AwdManual.xml</code> schemas, the center differential is named <strong><code>[DifferentialAxle]</code></strong>, and the axle differentials are <code>[DifferentialWheelFront]</code> and <code>[DifferentialWheelBack]</code>. In 2WD schemas (<code>Fwd*.xml</code>, <code>Rwd*.xml</code>), the single differential is named <strong><code>[Differential]</code></strong>. <em>(In a custom XML schema you can name a differential freely, as long as <code>Name</code> in XML matches <code>[Name]</code> in <code>Vehicle.ini</code>.)</em></p>
+</li>
+    <li><strong>Different AT and MT section names in standard schemas:</strong>
+<p>In the standard <code>*Auto.xml</code> schemas the gearbox is named <strong><code>[GearBoxAutomatic]</code></strong>, whereas in <code>*Manual.xml</code> it is named <strong><code>[GearBox]</code></strong>. <em>(In a custom XML schema the section name is determined by the component's <code>Name</code> attribute in XML.)</em></p>
+</li>
+    <li><strong>Physical chassis mesh name is <code>Body</code> (<code>BodyName = Body</code>):</strong>
+<p>The root physical <code>StaticMeshComponent</code> of the chassis in the vehicle template Blueprint must be named <strong><code>Body</code></strong>. In <code>[Suspension*]</code> and <code>[Aerodynamics]</code>, <code>BodyName</code> already defaults to <code>"Body"</code>, so writing <code>BodyName = Body</code> explicitly is good practice for clarity (you must not specify any other name that does not exist among the Blueprint's physical meshes/bones).</p>
+</li>
+</ol>
+
+</div>
+<hr>
+<h2 id="4-structure-of-a-vehicle-xml-schema-and-creating-a-custom-mod-schema">4. Structure of a <code>&lt;Vehicle&gt;</code> XML Schema and Creating a Custom Mod Schema</h2>
+<p>Every vehicle XML schema file has the root tag <strong><code>&lt;Vehicle&gt;</code></strong> and consists of 6 sections:</p>
+<pre><code class="language-xml">&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;Vehicle&gt;
+    &lt;!-- 1. Component list: Name defines the [Name] section in Vehicle.ini, Class defines the unit type --&gt;
+    &lt;Components&gt;
+        &lt;Component Name="Turbocharger" Class="Turbocharger" /&gt;
+        &lt;Component Name="Engine" Class="EngineDiesel" /&gt;
+        &lt;Component Name="Idler" Class="FuelControllerComputer" /&gt;
+    &lt;/Components&gt;
+    &lt;!-- 2. Directed links between components (from owner/driver Holder to driven Reference) --&gt;
+    &lt;Links&gt;
+        &lt;Link Holder="Turbocharger" Reference="Engine" /&gt;
+        &lt;Link Holder="IgnitionKey" Reference="Idler" /&gt;
+        &lt;Link Holder="BatteryElectricCircuit" Reference="IgnitionElectricCircuit" Connected="false" /&gt;
+        &lt;Link Holder="CarElectrics" Reference="GearBox" StartIconGearBox="true" /&gt;
+    &lt;/Links&gt;
+    &lt;!-- 3. Telemetry and dashboard output channels --&gt;
+    &lt;OutputElements&gt;
+        &lt;Element Name="RPM" Type="Real" Component="Engine" /&gt;
+        &lt;Element Name="DashboardRPM" Type="Real" Component="CarElectrics" InternalName="RPM" /&gt;
+    &lt;/OutputElements&gt;
+    &lt;!-- 4. Internal states for instant initialization from the game --&gt;
+    &lt;StateElements&gt;
+        &lt;Element Name="FuelVolume" Type="Real" Component="FuelTank" InternalName="LiquidVolume" /&gt;
+    &lt;/StateElements&gt;
+    &lt;!-- 5. External control input channels --&gt;
+    &lt;InputElements&gt;
+        &lt;Element Name="Accelerator" Type="Real" /&gt;
+        &lt;Element Name="Ignition" Type="Integer" /&gt;
+    &lt;/InputElements&gt;
+    &lt;!-- 6. Routing of input channels to components --&gt;
+    &lt;InputProcessors&gt;
+        &lt;Processor Input="Accelerator" Component="AbsTcs" /&gt;
+        &lt;Processor Input="Accelerator" Component="Turbocharger" InternalName="Throttle" /&gt;
+        &lt;Processor Input="Ignition" Component="IgnitionKey" /&gt;
+    &lt;/InputProcessors&gt;
+&lt;/Vehicle&gt;</code></pre>
+<h3 id="step-by-step-recipe-converting-a-schema-to-a-true-enginediesel-with-turbocharger">Step-by-Step Recipe: Converting a Schema to a True <code>EngineDiesel</code> with <code>Turbocharger</code></h3>
+<p>All 6 standard schemas in <code>Common/Vehicles/MotorCars/Schemes/</code> use the gasoline <code>EngineGazoline</code> class without a turbocharger. To build a full turbodiesel for your mod:</p>
+<ol>
+    <li><strong>Copy a base schema</strong> (e.g., <code>AwdAuto.xml</code> and/or <code>AwdManual.xml</code>) from <code>Content/Common/Vehicles/MotorCars/Schemes/</code> into your mod folder <code>Plugins/Mods/Content/&lt;ModName&gt;/</code>.</li>
+    <li><strong>In <code>&lt;Components&gt;</code></strong>, replace the engine with <code>&lt;Component Name="Engine" Class="EngineDiesel" /&gt;</code> and add <code>&lt;Component Name="Turbocharger" Class="Turbocharger" /&gt;</code> (before <code>Idler</code> and <code>Engine</code>).</li>
+    <li><strong>In <code>&lt;Links&gt;</code>, be sure to remove <code>&lt;Link Holder="IgnitionElectricCircuit" Reference="Engine" /&gt;</code></strong> (a diesel engine does not use a spark ignition circuit; leaving this link will prevent the schema from loading!).</li>
+    <li><strong>In <code>&lt;Links&gt;</code>, keep <code>&lt;Link Holder="IgnitionKey" Reference="Idler" /&gt;</code></strong> (this cuts fuel supply when the key is turned to <code>0</code> to shut down the diesel engine) and add <strong><code>&lt;Link Holder="Turbocharger" Reference="Engine" /&gt;</code></strong>.</li>
+    <li><strong>In <code>&lt;InputProcessors&gt;</code></strong>, add <strong><code>&lt;Processor Input="Accelerator" Component="Turbocharger" InternalName="Throttle" /&gt;</code></strong>.</li>
+    <li><strong>Point <code>options.xml</code> and <code>Vehicle.ini</code> to your local schemas</strong> (<code>../Plugins/Mods/Content/&lt;ModName&gt;/AwdAuto.xml</code>) and add a <code>[Turbocharger]</code> section to <code>Vehicle.ini</code> (<code>MinRpm</code>, <code>RefRpm</code>, <code>RefCompressionRatio</code>, <code>LagTime = 0.08..0.10</code>).</li>
+</ol>
+<hr>
+<h2 id="5-csv-curve-table-formats-and-enginecsv-structure">5. <code>.csv</code> Curve Table Formats and <code>Engine.csv</code> Structure</h2>
+<p>In all <code>.csv</code> files, the cell delimiter is a <strong>semicolon <code>;</code></strong> and the decimal separator is <strong>strictly a dot <code>.</code></strong> (a comma such as <code>8,8</code> causes a read error!). Argument nodes must be strictly ascending with no duplicates.</p>
+<h3 id="51-standard-shared-tables-in-commonvehiclesmotorcarstables">5.1. Standard Shared Tables in <code>Common/Vehicles/MotorCars/Tables/</code></h3>
+<table>
+    <thead>
+        <tr>
+            <th>Table File in <code>Common/Vehicles/MotorCars/Tables/</code></th>
+            <th class="text-center">Format</th>
+            <th>Where Referenced in <code>Vehicle.ini</code> and What It Defines</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong><code>SpringProgression.csv</code></strong></td>
+            <td class="text-center">1D (2 rows)</td>
+            <td><code>[Suspension*]</code> $\rightarrow$ <code>ProgressionCurve</code>: relative spring compression <code>[0..1]</code> $\rightarrow$ stiffness multiplier <code>[1.0..2.5]</code>.</td>
+        </tr>
+        <tr>
+            <td><strong><code>EngineVibration.csv</code></strong></td>
+            <td class="text-center">1D (2 rows)</td>
+            <td><code>[Engine]</code> $\rightarrow$ <code>VibrationCurve</code>: normalized engine speed <code>RPM / IdleRpm</code> $\rightarrow$ ICE vibration amplitude.</td>
+        </tr>
+        <tr>
+            <td><strong><code>WheelForceLat.csv</code></strong></td>
+            <td class="text-center">1D (2 rows)</td>
+            <td><code>[Wheel*]</code> $\rightarrow$ <code>ForceCurveLateral</code>: tire lateral slip angle (deg., <code>[0..180]</code>) $\rightarrow$ lateral force at <code>ForceCurveLoad</code>.</td>
+        </tr>
+        <tr>
+            <td><strong><code>WheelForceLon.csv</code></strong></td>
+            <td class="text-center">1D (2 rows)</td>
+            <td><code>[Wheel*]</code> $\rightarrow$ <code>ForceCurveLongitudinal</code>: tire longitudinal slip (<code>%</code>, <code>[0..200]</code>) $\rightarrow$ longitudinal force at <code>ForceCurveLoad</code>.</td>
+        </tr>
+        <tr>
+            <td><strong><code>WheelAlignTorque.csv</code></strong></td>
+            <td class="text-center">1D (2 rows)</td>
+            <td><code>[Wheel*]</code> $\rightarrow$ <code>AligningTorqueCurve</code>: slip angle (deg.) $\rightarrow$ tire self-aligning torque. <em>Note: at the peak of <code>WheelForceLat.csv</code> (<code>10°</code>), the value in <code>WheelAlignTorque.csv</code> must be strictly <code>0</code>!</em></td>
+        </tr>
+        <tr>
+            <td><strong><code>WheelStaticAligningTorque.csv</code></strong></td>
+            <td class="text-center">1D (2 rows)</td>
+            <td><code>[Wheel*]</code> $\rightarrow$ <code>StaticAligningTorqueCurve</code>: normalized angle <code>[-1..1]</code> $\rightarrow$ static self-centering torque at standstill.</td>
+        </tr>
+        <tr>
+            <td><strong><code>WheelRollingResistance.csv</code></strong></td>
+            <td class="text-center">2D (matrix)</td>
+            <td><code>[Wheel*]</code> $\rightarrow$ <code>RollingResistanceCurves</code>: row 1 — relative tire pressure <code>P / WorkingPressure</code> (<code>[0..1.5]</code>); column 1 — surface looseness (<code>[0..1]</code>); cells — rolling resistance multiplier.</td>
+        </tr>
+        <tr>
+            <td><strong><code>WheelSagToCamberCurve.csv</code></strong></td>
+            <td class="text-center">1D (2 rows)</td>
+            <td><code>[Suspension*]</code> $\rightarrow$ <code>SagToCamberCurve</code>: suspension compression <code>[0..1]</code> $\rightarrow$ base wheel camber angle (deg.).</td>
+        </tr>
+        <tr>
+            <td><strong><code>WheelSteerToCamberCurve.csv</code></strong></td>
+            <td class="text-center">1D (2 rows)</td>
+            <td><code>[Suspension*]</code> $\rightarrow$ <code>SteerToCamberCurve</code>: wheel steer angle <code>[-30..30]</code> (deg.) $\rightarrow$ additional camber (deg.).</td>
+        </tr>
+        <tr>
+            <td><strong><code>WheelCamberToSlipAngle.csv</code></strong></td>
+            <td class="text-center">1D (2 rows)</td>
+            <td><code>[Wheel*]</code> $\rightarrow$ <code>CamberToSlipAngleCurve</code>: camber angle <code>[-5..5]</code> (deg.) $\rightarrow$ slip angle offset (deg.).</td>
+        </tr>
+    </tbody>
+</table>
+<h3 id="52-one-dimensional-table-format-1d-csv">5.2. One-Dimensional Table Format (1D <code>.csv</code>)</h3>
+<p>Consists of exactly <strong>2 rows</strong> with the same number of columns (at least 2 points):</p>
+<ul>
+    <li><strong>Row 1:</strong> argument values $X_0; X_1; \dots; X_{n-1}$ in ascending order.</li>
+    <li><strong>Row 2:</strong> function values $Y_0; Y_1; \dots; Y_{n-1}$.</li>
+</ul>
+<pre><code class="language-csv">0;0.55;0.7;0.85;0.95;1
+1;1;1.06;1.3;1.7;2.5</code></pre>
+<h3 id="53-exact-format-of-the-engine-table-enginecsv-powercurves">5.3. Exact Format of the Engine Table <code>Engine.csv</code> (<code>PowerCurves</code>)</h3>
+<p>The <code>Engine.csv</code> file, referenced via the <code>PowerCurves</code> parameter in <code>[Engine]</code>, combines a 2D map of indicated combustion torque with a 1D curve of mechanical friction losses (engine braking):</p>
+<ol>
+    <li><strong>Row 1 (<code>RPM</code> header):</strong> the first cell is the text <code>thr/rpm</code> (or <code>0</code>), followed by ascending <code>RPM</code> values (for example, <code>0; 50; 250; 500; ...; 5500</code>).</li>
+    <li><strong>Rows 2..M (torque map by throttle pedal position):</strong>
+<ul>
+    <li>The first cell of each row is the <strong>accelerator pedal percentage from <code>0</code> to <code>100</code></strong> (<code>0; 5; 10; 20; 40; 60; 80; 100</code>). On load, these values are automatically divided by <code>100.0</code> to become throttle opening fractions <code>[0.0 .. 1.0]</code>.</li>
+    <li>The remaining cells in the row are the indicated combustion torque in <strong>$\text{N}\cdot\text{m}$</strong> at the corresponding RPM.</li>
+</ul>
+</li>
+    <li><strong>Last row (immediately after the <code>100</code> row):</strong>
+<ul>
+    <li>The first cell is <code>0</code> (or <code>Friction</code>), and the remaining cells are the <strong>positive internal mechanical loss (engine braking) torque $F(\text{RPM}) &gt; 0$ in $\text{N}\cdot\text{m}$</strong> for each RPM column. The last column beyond the rev limit (<code>5500</code> or <code>8000 RPM</code>) typically uses a barrier value of <code>10000</code>.</li>
+</ul>
+</li>
+</ol>
+<pre><code class="language-csv">thr/rpm;0;50;250;500;750;1000;1500;2000;2500;3000;3500;4000;4500;5500
+0;0;0;0;0;0;0;0;0;0;0;0;0;0;0
+5;0;15;25;150;32;24;20;18;16;14;12;10;6;0
+10;0;18;38;180;58;46;42;38;35;31;27;22;14;0
+20;0;20;50;162;115;105;98;92;85;76;66;54;34;0
+40;0;20;62;168;172;178;175;165;152;138;122;100;65;1
+60;0;20;70;174;212;228;222;200;180;162;142;116;76;1.5
+80;0;20;76;180;242;252;240;202;182;162;141;115;78;2
+100;0;20;80;184;260;265;242;202;184;162;141;122;88;2.5
+0;12;15;20;24;28;35;48;58;68;78;88;98;110;10000</code></pre>
+<div class="alert alert-important">
+    <div class="alert-title">Important</div>
+<p><strong>Three essential rules for calculating <code>Engine.csv</code>:</strong></p>
+<ol>
+    <li><strong>Friction row subtraction from every row:</strong> On every simulation step, the engine physics model subtracts the last mechanical loss row $F(\text{RPM})$ from combustion torque <strong>even at 100% throttle</strong>:
+<p>$$T_{\text{flywheel}}(\text{Throttle}, \text{RPM}) = T_{\text{table}}(\text{Throttle}, \text{RPM}) - F(\text{RPM}).$$<br>
+Therefore, to obtain the rated flywheel torque $T_{\text{DIN}}(\text{RPM})$ (e.g., $440\text{ N}\cdot\text{m}$) on a naturally aspirated engine, the <code>100</code> row must contain the <strong>sum</strong> $T_{100}(\text{RPM}) = T_{\text{DIN}}(\text{RPM}) + F(\text{RPM})$.</p>
+</li>
+    <li><strong>Recalculating the table when using <code>Turbocharger</code>:</strong> If a <code>Turbocharger</code> component is connected to the engine, it multiplies the table's combustion torque (before friction subtraction!) by the boost ratio:
+<p>$$\text{ratio}(\text{RPM}, \text{thr}) = 1 + (\text{RefCompressionRatio} - 1)\sqrt{\frac{\max(0,\; \text{RPM}\cdot\text{thr} - \text{MinRpm})}{\text{RefRpm} - \text{MinRpm}}}.$$<br>
+Thus, when <code>Turbocharger</code> is present, each cell in rows <code>0..100</code> (with $\text{thr} = \text{percent}/100$) is computed as $\big(T_{\text{target}}(\text{RPM}, \text{thr}) + F(\text{RPM})\big) / \text{ratio}(\text{RPM}, \text{thr})$, while the last friction row $F(\text{RPM})$ is left un-divided!</p>
+</li>
+    <li><strong>Holding idle under load ("anti-stall hump" — <code>[Idler]</code> simulation quirk):</strong> In the current implementation, the <code>FuelControllerComputer</code> (<code>[Idler]</code>) idle controller operates open-loop — it chooses a throttle position solely to offset the engine's own internal friction $F(\text{IdleRpm})$ and does not add throttle when RPM sags below <code>IdleRpm</code> under external load (torque converter in <code>D</code>, clutch engagement, or alternator load). Therefore, in <code>Engine.csv</code>, the <code>5%</code> row at the <code>IdleRpm</code> column (<code>750 RPM</code>) is set slightly above friction $F(750)$, while the adjacent lower column (<code>500 RPM</code>) is given a steep torque rise (an "anti-stall hump" across the <code>5%–20%</code> rows) so that torque rises sharply whenever RPM dips under load, preventing stalls.</li>
+</ol>
+
+</div>
+<hr>
+<h2 id="6-tractor-trailer-coupling-vehicleattachment">6. Tractor-Trailer Coupling (<code>&lt;VehicleAttachment&gt;</code>)</h2>
+<p>To dynamically link a tractor (<code>Master</code>) and trailer (<code>Slave</code>), a separate coupling schema XML file with the root tag <strong><code>&lt;VehicleAttachment&gt;</code></strong> is used:</p>
+<pre><code class="language-xml">&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;VehicleAttachment&gt;
+    &lt;!-- MasterLinks: Holder is resolved in the tractor schema, Reference in the trailer schema --&gt;
+    &lt;MasterLinks&gt;
+        &lt;Link Holder="BatteryElectricCircuit" Reference="TrailerElectricCircuit" Connected="true" /&gt;
+        &lt;Link Holder="TractorMultiCircuitValve" Reference="TrailerAirReceiver" /&gt;
+    &lt;/MasterLinks&gt;
+
+    &lt;!-- SlaveLinks: Holder is resolved in the trailer schema, Reference in the tractor schema --&gt;
+    &lt;SlaveLinks&gt;
+    &lt;/SlaveLinks&gt;
+&lt;/VehicleAttachment&gt;</code></pre>
+<p>When coupled, all identically named control input channels (<code>Brake</code>, <code>ParkingBrake</code>, <code>LeftTurnLight</code>, <code>RightTurnLight</code>, <code>HazardLight</code>, <code>ParkingLights</code>, <code>LowBeam</code>) are automatically transmitted in sync from the tractor to every attached trailer section.</p>
+
+</body>
+</html>

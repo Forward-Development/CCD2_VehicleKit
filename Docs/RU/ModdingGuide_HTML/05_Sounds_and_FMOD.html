@@ -1,0 +1,534 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Модуль 5. Звуки автомобиля и работа с FMOD Studio</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({ startOnLoad: true });</script>
+    <style>
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 32px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1f2328;
+            background-color: #ffffff;
+        }
+        h1, h2, h3, h4 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        h1 {
+            font-size: 2em;
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid #d0d7de;
+        }
+        h2 {
+            font-size: 1.5em;
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid #d0d7de;
+        }
+        h3 {
+            font-size: 1.25em;
+        }
+        hr {
+            height: 0.25em;
+            padding: 0;
+            margin: 24px 0;
+            background-color: #d0d7de;
+            border: 0;
+        }
+        a {
+            color: #0969da;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 16px 0;
+        }
+        th, td {
+            border: 1px solid #d0d7de;
+            padding: 8px 12px;
+            text-align: left;
+            vertical-align: top;
+        }
+        th {
+            background: #f6f8fa;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background: #f6f8fa;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .text-right {
+            text-align: right;
+        }
+        code {
+            background: #eff1f3;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+            font-size: 85%;
+        }
+        pre {
+            background: #f6f8fa;
+            padding: 14px;
+            border-radius: 6px;
+            overflow-x: auto;
+            border: 1px solid #d0d7de;
+        }
+        pre code {
+            background: transparent;
+            padding: 0;
+            font-size: 100%;
+        }
+        pre.mermaid {
+            background: #ffffff;
+            text-align: center;
+        }
+        .alert {
+            padding: 12px 16px;
+            margin: 16px 0;
+            border-left: 4px solid;
+            border-radius: 6px;
+            background: #f6f8fa;
+        }
+        .alert-title {
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .alert p:last-child, .alert ul:last-child, .alert ol:last-child {
+            margin-bottom: 0;
+        }
+        .alert-note {
+            border-left-color: #0969da;
+            background-color: #ddf4ff;
+        }
+        .alert-note .alert-title { color: #0969da; }
+        .alert-tip {
+            border-left-color: #1a7f37;
+            background-color: #dafbe1;
+        }
+        .alert-tip .alert-title { color: #1a7f37; }
+        .alert-important {
+            border-left-color: #8250df;
+            background-color: #fbefff;
+        }
+        .alert-important .alert-title { color: #8250df; }
+        .alert-warning {
+            border-left-color: #9a6700;
+            background-color: #fff8c5;
+        }
+        .alert-warning .alert-title { color: #9a6700; }
+        .alert-caution {
+            border-left-color: #cf222e;
+            background-color: #ffebe9;
+        }
+        .alert-caution .alert-title { color: #cf222e; }
+        ul.checklist {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        ul.checklist li {
+            margin-bottom: 8px;
+        }
+        ul.checklist input[type="checkbox"] {
+            margin-right: 8px;
+        }
+        figure.doc-figure {
+            margin: 16px 0;
+            padding: 10px;
+            background: #f6f8fa;
+            border: 1px solid #d0d7de;
+            border-radius: 6px;
+            text-align: center;
+        }
+        figure.doc-figure img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            display: block;
+            margin: 0 auto;
+        }
+        figure.doc-figure figcaption {
+            margin-top: 8px;
+            font-size: 0.9em;
+            color: #57606a;
+        }
+    </style>
+</head>
+<body>
+<h1 id="модуль-5-звуки-автомобиля-и-работа-с-fmod-studio">Модуль 5. Звуки автомобиля и работа с FMOD Studio</h1>
+<p><strong>Навигация:</strong> <a href="./README.html">README</a> | <a href="./01_Minimal_Car_QuickStart.html">01. Минимальный автомобиль</a> | <a href="./02_Exterior_Lights_and_World.html">02. Экстерьер, свет и мир</a> | <a href="./03_Interior_Dashboard_Cameras_Seats.html">03. Салон, приборка и камеры</a> | <a href="./04_Mirrors_and_Wipers.html">04. Зеркала и дворники</a> | <strong>05. Звуки и FMOD</strong> | <a href="./06_Advanced_Specs_Logic_and_Reference.html">06. Комплектации, логика и шпаргалка</a></p>
+<hr>
+<p>В City Car Driving 2.0 предусмотрено <strong>3 уровня работы со звуками автомобиля</strong> — вы сами выбираете, на каком остановиться:</p>
+<table>
+    <thead>
+        <tr>
+            <th>Уровень</th>
+            <th>Что нужно делать</th>
+            <th>Результат</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>1. Базовый (по умолчанию)</strong></td>
+            <td>Ничего не настраивать.</td>
+            <td>Автомобиль уже имеет стандартный набор звуков, но их пространственные точки (двигатель, переключатели, колёса) могут не совпадать с габаритами вашей модели.</td>
+        </tr>
+        <tr>
+            <td><strong>2. Настройка в UE</strong></td>
+            <td>Расставить <code>SceneComponent</code> с <code>ControlBlock</code> <code>SoundEvent</code> в Акторе.</td>
+            <td>Вы точно задаёте 3D-положение звуков, дистанцию затухания и можете выбрать любой готовый звук из стандартных автомобилей игры (например, другой звук двигателя или селектора КПП).</td>
+        </tr>
+        <tr>
+            <td><strong>3. Свои звуки (FMOD Studio)</strong></td>
+            <td>Собрать собственный <code>.bank</code> и <code>GUIDs.txt</code> в <strong>FMOD Studio 2.03.14</strong>.</td>
+            <td>Полностью уникальное звучание двигателя, клаксона, поворотников и любых других узлов вашего автомобиля.</td>
+        </tr>
+    </tbody>
+</table>
+<hr>
+<h2 id="1-настройка-и-расстановка-звуков-в-unreal-engine-уровень-2">1. Настройка и расстановка звуков в Unreal Engine (Уровень 2)</h2>
+<p>Настройка звуков в Акторе работает через тот же механизм <code>ControlBlock</code>, что и остальные компоненты. <strong>Если звучание и положение каких-то стандартных звуков вас уже устраивают — их можно просто пропустить.</strong></p>
+<h3 id="11-как-добавить-звуковую-точку-в-актор-v_имямода">1.1. Как добавить звуковую точку в Актор <code>V_&lt;ИмяМода&gt;</code></h3>
+<ol>
+    <li>В дереве <strong>Components</strong> добавьте <strong><code>SceneComponent</code></strong> (<code>+ Add → Scene</code>) и расположите его в нужной точке автомобиля (например, двигатель — под капотом, <code>RainRoof</code> — в центре крыши, <code>Horn</code> — за решёткой радиатора, <code>Radio</code> — в месте магнитолы).</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m5_sound_scene_components.png" alt="Пример расстановки SceneComponent для звуков на Акторе" loading="lazy">
+    <figcaption>Пример расстановки SceneComponent для звуков на Акторе</figcaption>
+</figure>
+<ol>
+    <li>Добавьте на этот компонент <code>Asset User Data → Control Asset Data</code> → <strong><code>ControlBlock</code></strong> с именем <strong><code>SoundEvent</code></strong>.</li>
+    <li>Добавьте нужные свойства в <strong><code>Properties</code></strong>:</li>
+</ol>
+<table>
+    <thead>
+        <tr>
+            <th>Имя свойства</th>
+            <th>Тип</th>
+            <th class="text-center">Обязательно?</th>
+            <th>Описание</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong><code>Type</code></strong></td>
+            <td><code>Control Property String</code></td>
+            <td class="text-center"><strong>Да</strong></td>
+            <td>Тип аудиокомпонента (выбирается из таблицы в п. 1.2). Если указать <strong>только</strong> <code>Type</code>, вы просто перенесёте стандартный звук в точку этого <code>SceneComponent</code>.</td>
+        </tr>
+        <tr>
+            <td><strong><code>MinimumAttenuationDistance</code></strong></td>
+            <td><code>Control Property Float</code></td>
+            <td class="text-center">Нет</td>
+            <td>Минимальная дистанция затухания звука (если не указывать — берутся настройки из FMOD).</td>
+        </tr>
+        <tr>
+            <td><strong><code>MaximumAttenuationDistance</code></strong></td>
+            <td><code>Control Property Float</code></td>
+            <td class="text-center">Нет</td>
+            <td>Максимальная дистанция слышимости звука (если не указывать — берутся настройки из FMOD).</td>
+        </tr>
+        <tr>
+            <td><strong><code>Bank</code></strong></td>
+            <td><code>Control Property String</code></td>
+            <td class="text-center">Пара с <code>EventName</code></td>
+            <td>Имя звукового банка (для стандартных звуков игры — <code>Master</code>, для своих — имя вашего <code>.bank</code> без расширения). <strong>Указывается строго вместе с <code>EventName</code>!</strong></td>
+        </tr>
+        <tr>
+            <td><strong><code>EventName</code></strong></td>
+            <td><code>Control Property String</code></td>
+            <td class="text-center">Пара с <code>Bank</code></td>
+            <td>Полный путь к FMOD-событию (например, <code>event:/Vehicles/CarSounds/FME_RainRoof</code>). <strong>Указывается строго вместе с <code>Bank</code>!</strong></td>
+        </tr>
+    </tbody>
+</table>
+<figure class="doc-figure">
+    <img src="./images/m5_sound_event_cb.png" alt="Настройка ControlBlock SoundEvent с параметрами Type, Attenuation, Bank и EventName" loading="lazy">
+    <figcaption>Настройка ControlBlock SoundEvent с параметрами Type, Attenuation, Bank и EventName</figcaption>
+</figure>
+<hr>
+<h3 id="12-полный-справочник-стандартных-type-bank-и-eventname">1.2. Полный справочник стандартных <code>Type</code>, <code>Bank</code> и <code>EventName</code></h3>
+<div class="alert alert-warning">
+    <div class="alert-title">Внимание (WARNING)</div>
+<p><strong>Обратите внимание на точное написание:</strong><br>
+<code>SuspentionSound_FR</code> и <code>SuspentionSound_FL</code> пишутся через <strong><code>t</code></strong> (<code>Suspention</code>), а не <code>s</code>! Писать строго в таком виде.</p>
+
+</div>
+<table>
+    <thead>
+        <tr>
+            <th><code>Type</code></th>
+            <th>Описание</th>
+            <th><code>Bank</code></th>
+            <th>Доступные стандартные <code>EventName</code></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>EngineSound</code></td>
+            <td>Звук двигателя</td>
+            <td><code>Master</code></td>
+            <td><code>event:/Vehicles/UlgaresFolk/FME_UlgaresFolk_WholeEngine</code><br><code>event:/Vehicles/HangugEclauto/FME_HangugEclauto_WholeEngine</code><br><code>event:/Vehicles/UlgaresGroberolf/FME_UlgaresGroberolf_WholeEngine</code></td>
+        </tr>
+        <tr>
+            <td><code>VehicleRoomTone</code></td>
+            <td>Заполняющий фоновый звук пространства салона</td>
+            <td><code>Master</code></td>
+            <td><code>event:/Vehicles/CarSounds/FME_VehicleRoomTone</code></td>
+        </tr>
+        <tr>
+            <td><code>Shifter</code></td>
+            <td>Рычаг переключения передач</td>
+            <td><code>Master</code></td>
+            <td><code>event:/Vehicles/UlgaresFolk/FME_UlgaresFolk_Shifter</code><br><code>event:/Vehicles/HangugEclauto/FME_HangugEclauto_Shifter</code></td>
+        </tr>
+        <tr>
+            <td><code>LightBeam</code></td>
+            <td>Выключатель ближнего света</td>
+            <td><code>Master</code></td>
+            <td><code>event:/Vehicles/CarSounds/FME_Handle</code><br><code>event:/Vehicles/CarSounds/FME_Click</code></td>
+        </tr>
+        <tr>
+            <td><code>ParkingLight</code></td>
+            <td>Выключатель габаритного света</td>
+            <td><code>Master</code></td>
+            <td><code>event:/Vehicles/CarSounds/FME_Handle</code><br><code>event:/Vehicles/CarSounds/FME_Click</code></td>
+        </tr>
+        <tr>
+            <td><code>FrontFogLights</code></td>
+            <td>Выключатель передних противотуманных фар</td>
+            <td><code>Master</code></td>
+            <td><code>event:/Vehicles/CarSounds/FME_Handle</code><br><code>event:/Vehicles/CarSounds/FME_Click</code></td>
+        </tr>
+        <tr>
+            <td><code>RearFogLights</code></td>
+            <td>Выключатель задних противотуманных фонарей</td>
+            <td><code>Master</code></td>
+            <td><code>event:/Vehicles/CarSounds/FME_Handle</code><br><code>event:/Vehicles/CarSounds/FME_Click</code></td>
+        </tr>
+        <tr>
+            <td><code>WipersHandle</code></td>
+            <td>Переключатель дворников</td>
+            <td><code>Master</code></td>
+            <td><code>event:/Vehicles/CarSounds/FME_Handle</code><br><code>event:/Vehicles/CarSounds/FME_Click</code></td>
+        </tr>
+        <tr>
+            <td><code>Wipers</code></td>
+            <td>Звук работы щёток дворников</td>
+            <td><code>Master</code></td>
+            <td><code>event:/Vehicles/CarSounds/FME_Wipers</code></td>
+        </tr>
+        <tr>
+            <td><code>TurningLightHandle</code></td>
+            <td>Переключатель поворотников</td>
+            <td><code>Master</code></td>
+            <td><code>event:/Vehicles/CarSounds/FME_TurningLightHandle</code></td>
+        </tr>
+        <tr>
+            <td><code>TurningLightSignal</code></td>
+            <td>Щелчки реле поворотников</td>
+            <td><code>Master</code></td>
+            <td><code>event:/Vehicles/CarSounds/FME_TurningLightsSignal</code></td>
+        </tr>
+        <tr>
+            <td><code>SafetyBelt</code></td>
+            <td>Звук пристёгивания и отстёгивания ремня безопасности</td>
+            <td><code>Master</code></td>
+            <td><code>event:/Vehicles/CarSounds/FME_SafetyBelt</code></td>
+        </tr>
+        <tr>
+            <td><code>SafetyBeltWarning</code></td>
+            <td>Звук предупреждения о непристёгнутом ремне <em>(управляется в <code>Vehicle.ini</code>)</em></td>
+            <td><code>Master</code></td>
+            <td><code>event:/Vehicles/CarSounds/FME_SafetyBeltWarning</code></td>
+        </tr>
+        <tr>
+            <td><code>ParkingBrake</code></td>
+            <td>Звук ручного тормоза</td>
+            <td><code>Master</code></td>
+            <td><code>event:/Vehicles/CarSounds/FME_ParkingBrake</code></td>
+        </tr>
+        <tr>
+            <td><code>Horn</code></td>
+            <td>Звуковой сигнал (гудок)</td>
+            <td><code>Master</code></td>
+            <td><code>event:/Vehicles/CarSounds/FME_Horn</code></td>
+        </tr>
+        <tr>
+            <td><code>RainWindow</code></td>
+            <td>Звуки дождя по лобовому стеклу</td>
+            <td><code>Master</code></td>
+            <td><code>event:/Vehicles/CarSounds/FME_RainWindow</code></td>
+        </tr>
+        <tr>
+            <td><code>RainRoof</code></td>
+            <td>Звуки дождя по крыше автомобиля</td>
+            <td><code>Master</code></td>
+            <td><code>event:/Vehicles/CarSounds/FME_RainRoof</code></td>
+        </tr>
+        <tr>
+            <td><code>Wind</code></td>
+            <td>Аэродинамический шум ветра (с учётом скорости и поверхности)</td>
+            <td><code>Master</code></td>
+            <td><code>event:/Vehicles/CarSounds/FME_Wind</code></td>
+        </tr>
+        <tr>
+            <td><code>SuspentionSound_FR</code> / <code>SuspentionSound_FL</code></td>
+            <td>Звуки ударов в переднюю правую / левую подвеску</td>
+            <td><code>Master</code></td>
+            <td><code>event:/Vehicles/CarSounds/FME_SuspensionHit</code></td>
+        </tr>
+        <tr>
+            <td><code>TiresSound_FR</code> / <code>TiresSound_FL</code></td>
+            <td>Звуки шин на различных покрытиях (правое / левое колесо)</td>
+            <td><code>Master</code></td>
+            <td><code>event:/Vehicles/CarSounds/FME_Tires</code></td>
+        </tr>
+        <tr>
+            <td><code>Radio</code></td>
+            <td>3D-позиция радиомагнитолы в салоне</td>
+            <td><em>(не указывать)</em></td>
+            <td>Отдельного FMOD-события нет — звук задаётся логикой игры. Укажите только <code>Type = Radio</code> (и при желании дистанции затухания).</td>
+        </tr>
+    </tbody>
+</table>
+<hr>
+<h2 id="2-создание-собственных-звуков-в-fmod-studio-уровень-3">2. Создание собственных звуков в FMOD Studio (Уровень 3)</h2>
+<h3 id="21-что-потребуется-скачать">2.1. Что потребуется скачать</h3>
+<ol>
+    <li><strong>FMOD Studio версии <code>2.03.14</code></strong> (версия важна для совместимости банков с игрой!).</li>
+    <li>Репозиторий с двумя FMOD-проектами разработчиков:
+<ul>
+    <li><a href="https://github.com/Forward-Development/CCD2_VehicleKit_FMOD" target="_blank" rel="noopener">https://github.com/Forward-Development/CCD2_VehicleKit_FMOD</a></li>
+    <li><strong><code>Template_CCD2</code></strong> — чистый шаблонный проект, на базе которого вы будете собирать свой банк.</li>
+    <li><strong><code>Example_CCD2</code></strong> — проект-справочник со всеми примерами событий, которые можно заменить.</li>
+</ul>
+</li>
+</ol>
+<div class="alert alert-caution">
+    <div class="alert-title">Осторожно (CAUTION)</div>
+<p><strong>Никогда не собирайте свой мод напрямую внутри проекта <code>Example_CCD2</code>!</strong><br>
+Используйте <code>Example_CCD2</code> только как образец (смотреть используемые параметры, структуру и назначенные шины <code>Bus</code>). Всю рабочую сборку ведите исключительно в скопированном <strong><code>Template_CCD2</code></strong>, иначе возможны конфликты файлов с базовой игрой.</p>
+
+</div>
+<hr>
+<h3 id="22-пошаговый-пайплайн-создания-своего-звукового-банка">2.2. Пошаговый пайплайн создания своего звукового банка</h3>
+<pre class="mermaid">
+flowchart LR
+    F1["1. Копия Template_CCD2"] --&gt; F2["2. Новый уникальный Bank"]
+    F2 --&gt; F3["3. Событие + привязка к Bank + шина Mixer"]
+    F3 --&gt; F4["4. Замена аудиоассетов"]
+    F4 --&gt; F5["5. Build (F7) + Export GUIDs"]
+    F5 --&gt; F6["6. Копирование в AudioBanks/&lt;br/&gt;и CopyPath в UE"]
+</pre>
+<h4 id="шаг-1-подготовка-проекта">Шаг 1. Подготовка проекта</h4>
+<p>Скопируйте папку <strong><code>Template_CCD2</code></strong> в отдельную рабочую директорию и переименуйте проект под имя вашего мода (необязательно, но удобно). Откройте проект в FMOD Studio 2.03.14.</p>
+<h4 id="шаг-2-создание-уникального-bank">Шаг 2. Создание уникального <code>Bank</code></h4>
+<p>Создайте новый <strong>Bank</strong> с максимально уникальным именем (например, по имени вашего мода: <code>MyFirstCarBank</code>), чтобы избежать конфликтов с другими модами. К этому банку будут привязаны все ваши события.</p>
+<figure class="doc-figure">
+    <img src="./images/m5_fmod_create_bank_1.png" alt="Создание нового Bank в FMOD Studio — шаг 1" loading="lazy">
+    <figcaption>Создание нового Bank в FMOD Studio — шаг 1</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m5_fmod_create_bank_2.png" alt="Создание нового Bank в FMOD Studio — шаг 2" loading="lazy">
+    <figcaption>Создание нового Bank в FMOD Studio — шаг 2</figcaption>
+</figure>
+<h4 id="шаг-3-создание-события-по-образцу-из-example_ccd2">Шаг 3. Создание события по образцу из <code>Example_CCD2</code></h4>
+<ol>
+    <li>Создайте внутри вкладки <strong>Events</strong> папку с именем вашего Bank и размещайте все свои события в ней.</li>
+    <li>Можно скопировать готовое событие прямо из открытого рядом <code>Example_CCD2</code> и вставить в ваш проект — но обязательно дайте событию <strong>новое уникальное имя</strong>, отличное от примера.</li>
+</ol>
+<h4 id="шаг-4-назначение-события-в-ваш-bank">Шаг 4. Назначение события в ваш <code>Bank</code></h4>
+<p>Назначьте созданное событие в ваш новый Bank (<code>ПКМ по событию → Assign to Bank → &lt;ВашBank&gt;</code>). Также уберите его привязку к банку <code>Master</code> (чтобы не перезаписывать базовые ресурсы).</p>
+<figure class="doc-figure">
+    <img src="./images/m5_fmod_assign_bank_1.png" alt="Привязка события к новому Bank" loading="lazy">
+    <figcaption>Привязка события к новому Bank</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m5_fmod_assign_bank_2.png" alt="Проверка привязки события только к вашему Bank" loading="lazy">
+    <figcaption>Проверка привязки события только к вашему Bank</figcaption>
+</figure>
+<h4 id="шаг-5-привязка-события-к-нужной-шине-mixer-bus">Шаг 5. Привязка события к нужной шине (<code>Mixer / Bus</code>)</h4>
+<p>Чтобы в игре корректно работали ползунки громкости в настройках, откройте окно <strong>Mixer</strong> (<code>Ctrl + 2</code>) и перетащите ваше событие на ту же шину (<code>Bus</code>), на которой оно находилось в <code>Example_CCD2</code>. <em>(При копировании из <code>Example_CCD2</code> шина обычно подхватывается автоматически, но обязательно перепроверьте!)</em></p>
+<figure class="doc-figure">
+    <img src="./images/m5_fmod_mixer_bus.png" alt="Назначение события на правильную шину в окне Mixer" loading="lazy">
+    <figcaption>Назначение события на правильную шину в окне Mixer</figcaption>
+</figure>
+<h4 id="шаг-6-замена-звуковых-ассетов">Шаг 6. Замена звуковых ассетов</h4>
+<p>Подготовьте свои <code>.wav</code> / <code>.ogg</code> аудиофайлы в любом аудиоредакторе.</p>
+<ul>
+    <li><strong>Простой способ:</strong> просто перетащите ваш новый аудиофайл прямо поверх инструмента внутри скопированного FMOD-события.</li>
+    <li><strong>Продвинутый способ:</strong> вы можете переделать логику события под себя, <strong>но нельзя менять имена входных параметров, точки запуска и остановки</strong>, которые ожидает игра!</li>
+</ul>
+<figure class="doc-figure">
+    <img src="./images/m5_fmod_replace_asset.png" alt="Замена аудиоассета внутри FMOD-события перетаскиванием" loading="lazy">
+    <figcaption>Замена аудиоассета внутри FMOD-события перетаскиванием</figcaption>
+</figure>
+<h4 id="шаг-7-сборка-банка-build">Шаг 7. Сборка банка (<code>Build</code>)</h4>
+<p>Нажмите <strong><code>F7</code></strong> (или <strong><code>File → Build</code></strong>). Готовый файл <code>&lt;ВашBank&gt;.bank</code> появится в папке <code>\Build\Desktop\</code> вашего проекта FMOD.</p>
+<figure class="doc-figure">
+    <img src="./images/m5_fmod_build_bank.png" alt="Сборка звукового банка в FMOD Studio (File → Build / F7)" loading="lazy">
+    <figcaption>Сборка звукового банка в FMOD Studio (File → Build / F7)</figcaption>
+</figure>
+<h4 id="шаг-8-экспорт-guidstxt">Шаг 8. Экспорт <code>GUIDs.txt</code></h4>
+<p><strong>Обязательный шаг!</strong> В верхнем меню нажмите <strong><code>File → Export GUIDs</code></strong>. Файл <strong><code>GUIDs.txt</code></strong> появится в папке <code>\Build\</code> вашего проекта FMOD.</p>
+<figure class="doc-figure">
+    <img src="./images/m5_fmod_export_guids.png" alt="Экспорт GUIDs.txt в FMOD Studio (File → Export GUIDs)" loading="lazy">
+    <figcaption>Экспорт GUIDs.txt в FMOD Studio (File → Export GUIDs)</figcaption>
+</figure>
+<h4 id="шаг-9-перенос-банка-в-папку-мода">Шаг 9. Перенос банка в папку мода</h4>
+<ol>
+    <li>В Проводнике Windows откройте папку вашего мода <code>Plugins\Mods\Content\&lt;ИмяМода&gt;\</code> и создайте подпапку <strong><code>AudioBanks</code></strong> (если её ещё нет).</li>
+    <li>Скопируйте туда оба файла:
+<ul>
+    <li><code>&lt;ВашBank&gt;.bank</code> (из <code>\Build\Desktop\</code>)</li>
+    <li><code>GUIDs.txt</code> (из <code>\Build\</code>)</li>
+</ul>
+</li>
+</ol>
+<div class="alert alert-tip">
+    <div class="alert-title">Совет (TIP)</div>
+<p><strong>Один мод — один <code>Bank</code>:</strong><br>
+Лучше хранить все звуки одного автомобиля в одном общем банке. Если всё же используете несколько банков, объедините их файлы <code>GUIDs.txt</code> в один общий <code>GUIDs.txt</code> (главное, чтобы в нём присутствовали все строки со всеми вашими банками и событиями).</p>
+
+</div>
+<h4 id="шаг-10-прописывание-пути-события-в-unreal-engine">Шаг 10. Прописывание пути события в Unreal Engine</h4>
+<ol>
+    <li>В FMOD Studio нажмите <strong>ПКМ</strong> на вашем событии → <strong><code>Copy Path</code></strong>.</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m5_fmod_copy_path.png" alt="Копирование полного пути события через Copy Path в FMOD Studio" loading="lazy">
+    <figcaption>Копирование полного пути события через Copy Path в FMOD Studio</figcaption>
+</figure>
+<ol>
+    <li>В Unreal Engine откройте Актор <code>V_&lt;ИмяМода&gt;</code>, выберите нужный <code>SceneComponent</code> с <code>ControlBlock</code> <code>SoundEvent</code> и заполните:
+<ul>
+    <li><strong><code>Bank</code></strong> — имя вашего банка (без расширения <code>.bank</code>).</li>
+    <li><strong><code>EventName</code></strong> — вставьте скопированный путь (например, <code>event:/MyFirstCar/FME_MyHorn</code>).</li>
+</ul>
+</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m5_fmod_event_in_ue.png" alt="Указание кастомных Bank и EventName в ControlBlock SoundEvent" loading="lazy">
+    <figcaption>Указание кастомных Bank и EventName в ControlBlock SoundEvent</figcaption>
+</figure>
+<h4 id="шаг-11-сборка-pak">Шаг 11. Сборка <code>.pak</code></h4>
+<p>Сохраните Актор (<strong>Compile → Save All</strong>) и соберите мод через <code>build_mod_dlc.bat</code> — скрипт автоматически упакует папку <code>AudioBanks/</code> внутрь <code>.pak</code>.</p>
+<hr>
+<p><strong>Следующий шаг:</strong> переходите к <strong><a href="./06_Advanced_Specs_Logic_and_Reference.html">Модулю 6. Комплектации, физика, кастомная логика и сводная шпаргалка</a></strong>, чтобы оформить карточку автомобиля, добавить выбор комплектаций и получить единый справочник всех настроек.</p>
+
+</body>
+</html>

@@ -1,0 +1,356 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 6. Configurations, Deep Physics, Custom Logic &amp; Master Reference</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({ startOnLoad: true });</script>
+    <style>
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 32px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1f2328;
+            background-color: #ffffff;
+        }
+        h1, h2, h3, h4 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        h1 { font-size: 2em; padding-bottom: 0.3em; border-bottom: 1px solid #d0d7de; }
+        h2 { font-size: 1.5em; padding-bottom: 0.3em; border-bottom: 1px solid #d0d7de; }
+        h3 { font-size: 1.25em; }
+        hr { height: 0.25em; padding: 0; margin: 24px 0; background-color: #d0d7de; border: 0; }
+        a { color: #0969da; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+        th, td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; vertical-align: top; }
+        th { background: #f6f8fa; font-weight: 600; }
+        tr:nth-child(even) { background: #f6f8fa; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        code { background: #eff1f3; padding: 2px 5px; border-radius: 4px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 85%; }
+        pre { background: #f6f8fa; padding: 14px; border-radius: 6px; overflow-x: auto; border: 1px solid #d0d7de; }
+        pre code { background: transparent; padding: 0; font-size: 100%; }
+        pre.mermaid { background: #ffffff; text-align: center; }
+        .alert { padding: 12px 16px; margin: 16px 0; border-left: 4px solid; border-radius: 6px; background: #f6f8fa; }
+        .alert-title { font-weight: 600; margin-bottom: 6px; }
+        .alert p:last-child, .alert ul:last-child, .alert ol:last-child { margin-bottom: 0; }
+        .alert-note { border-left-color: #0969da; background-color: #ddf4ff; }
+        .alert-note .alert-title { color: #0969da; }
+        .alert-tip { border-left-color: #1a7f37; background-color: #dafbe1; }
+        .alert-tip .alert-title { color: #1a7f37; }
+        .alert-important { border-left-color: #8250df; background-color: #fbefff; }
+        .alert-important .alert-title { color: #8250df; }
+        .alert-warning { border-left-color: #9a6700; background-color: #fff8c5; }
+        .alert-warning .alert-title { color: #9a6700; }
+        .alert-caution { border-left-color: #cf222e; background-color: #ffebe9; }
+        .alert-caution .alert-title { color: #cf222e; }
+        ul.checklist { list-style-type: none; padding-left: 0; }
+        ul.checklist li { margin-bottom: 8px; }
+        ul.checklist input[type="checkbox"] { margin-right: 8px; }
+        figure.doc-figure { margin: 16px 0; padding: 10px; background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 6px; text-align: center; }
+        figure.doc-figure img { max-width: 100%; height: auto; border-radius: 4px; display: block; margin: 0 auto; }
+        figure.doc-figure figcaption { margin-top: 8px; font-size: 0.9em; color: #57606a; }
+    </style>
+</head>
+<body>
+<h1 id="module-6-configurations-deep-physics-custom-logic--master-reference">Module 6. Configurations, Deep Physics, Custom Logic &amp; Master Reference</h1>
+<p><strong>Navigation:</strong> <a href="./README.html">README</a> | <a href="./01_Minimal_Car_QuickStart.html">01. Minimal Car</a> | <a href="./02_Exterior_Lights_and_World.html">02. Exterior, Lights &amp; World</a> | <a href="./03_Interior_Dashboard_Cameras_Seats.html">03. Interior, Dashboard &amp; Cameras</a> | <a href="./04_Mirrors_and_Wipers.html">04. Mirrors &amp; Wipers</a> | <a href="./05_Sounds_and_FMOD.html">05. Sounds &amp; FMOD</a> | <strong>06. Specs, Logic &amp; Reference</strong></p>
+<hr>
+<p>This final module covers advanced vehicle card customization, switchable physics options, custom Blueprint logic, deep physics documentation links, and the <strong>all-in-one cheat sheet</strong> for every <code>ControlBlock</code>, <code>MI_Mod_*</code> parent material, and exact code identifier.</p>
+<hr>
+<h2 id="1-advanced-specifications-in-da_modname-pda_prototypedvehiclespecification">1. Advanced Specifications in <code>DA_&lt;ModName&gt;</code> (<code>PDA_PrototypedVehicleSpecification</code>)</h2>
+<p>You already set up the mandatory fields (<code>Name</code>, <code>Image</code>, <code>Class</code>, <code>EngineTypes</code>, <code>TransmissionTypes</code>) in <a href="./01_Minimal_Car_QuickStart.html#step-6-creating-the-vehicle-specification-pda_prototypedvehiclespecification">Module 1</a>. Under the <strong>Custom</strong> section, two more powerful lists are available:</p>
+<h3 id="11-vehicle-card-info-customspecifications">1.1. Vehicle Card Info (<code>CustomSpecifications</code>)</h3>
+<p>Displays cosmetic spec entries (drivetrain, top speed, payload capacity, horsepower, etc.) directly on the vehicle's garage card.</p>
+<ul>
+    <li>Currently, the <strong>first 5 entries</strong> in <code>CustomSpecifications</code> are displayed on the card.</li>
+    <li>Each entry has a <code>Name</code> (label) and a <code>Value</code>.</li>
+</ul>
+<figure class="doc-figure">
+    <img src="./images/m6_custom_specs_ue.png" alt="Configuring CustomSpecifications inside the Data Asset" loading="lazy">
+    <figcaption>Configuring CustomSpecifications inside the Data Asset</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m6_custom_specs_card.png" alt="How CustomSpecifications appear on the in-game vehicle card" loading="lazy">
+    <figcaption>How CustomSpecifications appear on the in-game vehicle card</figcaption>
+</figure>
+<h3 id="12-functional-switchable-options-multispecifications">1.2. Functional Switchable Options (<code>MultiSpecifications</code>)</h3>
+<p>Works just like <code>TransmissionTypes</code>, allowing players to <strong>switch your custom physics options right from the in-game vehicle setup menu</strong> — for example, tire types (summer/winter/sport), multiple engines, suspension trims, or tuning packages!</p>
+<p>How to wire <code>MultiSpecifications</code> to physics:</p>
+<ol>
+    <li>In <strong><code>DA_&lt;ModName&gt;</code> → <code>MultiSpecifications</code></strong>, add a new specification (e.g., <code>Name = "Tire Type"</code>), populate its <code>Values</code> array (e.g., <code>Summer</code>, <code>Sport</code>), enable <strong><code>Bound to Option</code></strong> on each value, and fill in <strong><code>Option Name</code></strong> and <strong><code>Option Value</code></strong>.</li>
+    <li>In your mod folder's <strong><code>options.xml</code></strong>, declare an option with matching names (set <code>SetSchema="false"</code>, since only one option — usually <code>TransmissionType</code> — may have <code>SetSchema="true"</code>):</li>
+</ol>
+<pre><code class="language-xml">&lt;Option Name="TireType" SetSchema="false"&gt;
+    &lt;OptionValue Value="Summer" /&gt;
+    &lt;OptionValue Value="Sport" /&gt;
+&lt;/Option&gt;</code></pre>
+<ol>
+    <li>In <strong><code>Vehicle.ini</code></strong>, add override sections formatted as <code>[ComponentName.OptionName.OptionValue]</code>:</li>
+</ol>
+<pre><code class="language-ini">[WheelFrontLeft.TireType.Sport]
+FrictionCoeff = 1.15</code></pre>
+<ol>
+    <li>Any <code>MultiSpecifications</code> bound to options <strong>automatically appear</strong> in the vehicle's in-game customization menu!</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m6_multi_specs_ue.png" alt="Configuring MultiSpecifications with Bound to Option" loading="lazy">
+    <figcaption>Configuring MultiSpecifications with Bound to Option</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m6_multi_specs_menu.png" alt="How MultiSpecifications appear in the in-game vehicle settings menu" loading="lazy">
+    <figcaption>How MultiSpecifications appear in the in-game vehicle settings menu</figcaption>
+</figure>
+<hr>
+<h2 id="2-deep-physics-tuning-vehiclelib">2. Deep Physics Tuning (<code>VehicleLib</code>)</h2>
+<p>Standard XML schemas and lookup tables live in the base project at:</p>
+<ul>
+    <li>Schemas: <strong><code>Content/Common/Vehicles/MotorCars/Schemes/</code></strong> (<code>AwdAuto.xml</code>, <code>AwdManual.xml</code>, <code>FwdAuto.xml</code>, <code>FwdManual.xml</code>, <code>RwdAuto.xml</code>, <code>RwdManual.xml</code>)</li>
+    <li>Curve tables: <strong><code>Content/Common/Vehicles/MotorCars/Tables/</code></strong> (<code>SpringProgression.csv</code>, <code>EngineVibration.csv</code>, <code>WheelForceLat.csv</code>, <code>WheelForceLon.csv</code>, etc.)</li>
+</ul>
+<div class="alert alert-important">
+    <div class="alert-title">Important</div>
+<p><strong>Rule for editing schemas and curve tables:</strong><br>
+Never edit files inside <code>Content/Common/Vehicles/MotorCars/</code> — changes there will NOT be packed into your <code>.pak</code>!<br>
+To customize any schema or curve table, <strong>copy it into your mod folder</strong> <code>Plugins/Mods/Content/&lt;ModName&gt;/</code> and point to it using <code>../Plugins/Mods/Content/&lt;ModName&gt;/&lt;File&gt;</code> in <code>Vehicle.ini</code> / <code>options.xml</code>.</p>
+
+</div>
+<p>For the full engineering reference covering all 46 physics component classes, tuning formulas, and I/O channels, see <strong><code>VehicleLib_MD</code></strong>:</p>
+<ul>
+    <li><strong><a href="../VehicleLib_HTML/README.html">README (VehicleLib)</a></strong> — file architecture, component index, and units</li>
+    <li><strong><a href="../VehicleLib_HTML/00_Quick_Start.html">00. Physics Quick Start</a></strong> — mass, CoM, suspension, <code>Engine.csv</code>, gearbox formulas, and 5 verification tests</li>
+    <li><strong><a href="../VehicleLib_HTML/01_Architecture_and_Config.html">01. Architecture &amp; Configs</a></strong> — custom XML schemas (e.g., <code>EngineDiesel + Turbocharger</code>) and <code>.csv</code> formats</li>
+    <li><strong><a href="../VehicleLib_HTML/02_Named_IO_and_States.html">02. Named I/O &amp; States</a></strong> — all <code>*Intensity</code> channels, inputs, and states</li>
+    <li><strong><a href="../VehicleLib_HTML/03_Components_TorqueTrain.html">03. TorqueTrain</a></strong> — engines, starter, clutch, torque converter, gearboxes, differentials, brakes, tires</li>
+    <li><strong><a href="../VehicleLib_HTML/04_Components_Electrics.html">04. Electrics</a></strong> — circuits, battery, <code>CarElectrics</code></li>
+    <li><strong><a href="../VehicleLib_HTML/05_Components_Chassis_and_Subsystems.html">05. Chassis &amp; Subsystems</a></strong> — suspension, steering, turbocharger, aerodynamics, ABS/TCS</li>
+</ul>
+<hr>
+<h2 id="3-custom-blueprint-logic">3. Custom Blueprint Logic</h2>
+<p>If you are familiar with Unreal Engine Blueprints and want to add custom behavior (active aero, extra animations, special effects, etc.):</p>
+<div class="alert alert-caution">
+    <div class="alert-title">Caution</div>
+<p><strong>Do NOT write custom logic directly in the Vehicle Actor's (<code>V_&lt;ModName&gt;</code>) Event Graph!</strong><br>
+Instead, create a dedicated <strong><code>ActorComponent</code></strong> (<code>RMB in Content Browser → Blueprint Class → Actor Component</code>), implement your logic inside it, and attach that component to your Vehicle Actor.<br>
+Make sure your custom component has <strong>NO <code>ControlBlock</code> (<code>Control Asset Data</code>)</strong> — it will then run normally without interference from the vehicle loader.</p>
+
+</div>
+<hr>
+<h2 id="4-master-cheat-sheet-reference">4. Master Cheat Sheet (Reference)</h2>
+<h3 id="41-exact-code-spellings-do-not-fix">4.1. Exact Code Spellings (Do NOT "Fix"!)</h3>
+<div class="alert alert-warning">
+    <div class="alert-title">Warning</div>
+<p>The following identifiers are hardcoded in the engine exactly as shown — copy them <strong>character for character</strong>:</p>
+<ul>
+    <li>Wiper <code>ControlBlock</code>: <strong><code>Wippers</code></strong> <em>(double <code>p</code>)</em></li>
+    <li>Suspension sound types: <strong><code>SuspentionSound_FR</code></strong>, <strong><code>SuspentionSound_FL</code></strong> <em>(spelled with <code>t</code>)</em></li>
+    <li>Speedometer needle backlight slot: <strong><code>SpeedometrArrow</code></strong> <em>(no <code>e</code> after <code>t</code>)</em></li>
+    <li>Parent materials: <strong><code>MI_Mod_Emissive_Ikons</code></strong> <em>(with <code>k</code>)</em>, <strong><code>MI_Mod_Stiches</code></strong> <em>(no <code>t</code>)</em></li>
+    <li>Rear axle in Actor &amp; <code>Vehicle.ini</code>: <strong><code>Back</code></strong> (<code>SuspensionBackLeft/Right</code>, <code>WheelBackLeft/Right</code>), <strong>NOT</strong> <code>Rear</code>!</li>
+</ul>
+
+</div>
+<hr>
+<h3 id="42-complete-controlblock-reference-table">4.2. Complete <code>ControlBlock</code> Reference Table</h3>
+<table>
+    <thead>
+        <tr>
+            <th><code>ControlBlock</code> Name</th>
+            <th>Attached To</th>
+            <th>Properties (name, type, values)</th>
+            <th class="text-center">Module</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong><code>Camera</code></strong></td>
+            <td><code>SceneComponent</code> / <code>CameraComponent</code></td>
+            <td><code>Type</code> (<code>String</code>: <code>ThirdPersonBack</code>, <code>ThirdPersonFront</code>, <code>FirstPerson</code>, <code>Windshield</code>, <code>TopDown</code>); opt. <code>ArmLength</code> (<code>Float</code>)</td>
+            <td class="text-center"><a href="./01_Minimal_Car_QuickStart.html">1</a>, <a href="./03_Interior_Dashboard_Cameras_Seats.html">3</a></td>
+        </tr>
+        <tr>
+            <td><strong><code>Light</code></strong></td>
+            <td><code>BP_ExportSpotLight</code> / <code>SpotLightComponent</code></td>
+            <td><code>PhysicsOutput</code> (<code>StringArray</code>: <code>LowBeamIntensity</code>, <code>HighBeamIntensity</code>, <code>StopLightIntensity</code>, etc.)</td>
+            <td class="text-center"><a href="./02_Exterior_Lights_and_World.html">2</a></td>
+        </tr>
+        <tr>
+            <td><strong><code>LogicBox</code></strong></td>
+            <td><code>BoxCollision</code></td>
+            <td><em>(none)</em></td>
+            <td class="text-center"><a href="./02_Exterior_Lights_and_World.html">2</a></td>
+        </tr>
+        <tr>
+            <td><strong><code>FuelTank</code></strong></td>
+            <td><code>SceneComponent</code> <em>(under zero-transform parent)</em></td>
+            <td><em>(none)</em></td>
+            <td class="text-center"><a href="./02_Exterior_Lights_and_World.html">2</a></td>
+        </tr>
+        <tr>
+            <td><strong><code>RainBlocker</code></strong></td>
+            <td><code>StaticMeshComponent</code> <em>(with <code>MM_Wireframe</code>)</em></td>
+            <td><em>(none)</em></td>
+            <td class="text-center"><a href="./02_Exterior_Lights_and_World.html">2</a></td>
+        </tr>
+        <tr>
+            <td><strong><code>SteeringWheel</code></strong></td>
+            <td><code>StaticMeshComponent</code> <em>(under <code>InteriorObjects</code>)</em></td>
+            <td><em>(none)</em></td>
+            <td class="text-center"><a href="./03_Interior_Dashboard_Cameras_Seats.html">3</a></td>
+        </tr>
+        <tr>
+            <td><strong><code>SpeedArrow</code></strong></td>
+            <td><code>StaticMeshComponent</code> <em>(needle at zero mark)</em></td>
+            <td><code>MaxAngle</code> (<code>Float</code>), <code>MaxValue</code> (<code>Float</code>)</td>
+            <td class="text-center"><a href="./03_Interior_Dashboard_Cameras_Seats.html">3</a></td>
+        </tr>
+        <tr>
+            <td><strong><code>RPMArrow</code></strong></td>
+            <td><code>StaticMeshComponent</code> <em>(needle at zero mark)</em></td>
+            <td><code>MaxAngle</code> (<code>Float</code>), <code>MaxValue</code> (<code>Float</code>)</td>
+            <td class="text-center"><a href="./03_Interior_Dashboard_Cameras_Seats.html">3</a></td>
+        </tr>
+        <tr>
+            <td><strong><code>FuelArrow</code></strong></td>
+            <td><code>StaticMeshComponent</code> <em>(needle at zero mark)</em></td>
+            <td><code>MaxAngle</code> (<code>Float</code>)</td>
+            <td class="text-center"><a href="./03_Interior_Dashboard_Cameras_Seats.html">3</a></td>
+        </tr>
+        <tr>
+            <td><strong><code>CoolantTemperatureArrow</code></strong></td>
+            <td><code>StaticMeshComponent</code> <em>(needle at zero mark)</em></td>
+            <td><code>MaxAngle</code> (<code>Float</code>), <code>MinValue</code> (<code>Float</code>), <code>MaxValue</code> (<code>Float</code>)</td>
+            <td class="text-center"><a href="./03_Interior_Dashboard_Cameras_Seats.html">3</a></td>
+        </tr>
+        <tr>
+            <td><strong><code>SalonLights</code></strong></td>
+            <td><code>SceneComponent</code> <em>(or copied <code>DashboardController</code>)</em></td>
+            <td>Key = physics channel (<code>*Intensity</code>), value = <code>StringArray</code> of material slot names</td>
+            <td class="text-center"><a href="./03_Interior_Dashboard_Cameras_Seats.html">3</a></td>
+        </tr>
+        <tr>
+            <td><strong><code>Seats</code></strong></td>
+            <td><code>StaticMeshComponent</code> <em>(with <code>&lt;Name&gt;_Landing</code> sockets)</em></td>
+            <td><code>Names</code> (<code>StringArray</code>, e.g., <code>["Seat0"]</code>), opt. <code>DriverIndex</code> (<code>Int</code>, e.g., <code>0</code>)</td>
+            <td class="text-center"><a href="./03_Interior_Dashboard_Cameras_Seats.html">3</a></td>
+        </tr>
+        <tr>
+            <td><strong><code>CarToy</code></strong></td>
+            <td><code>SceneComponent</code> <em>(or <code>SM_Cosmonaft_Anim</code>)</em></td>
+            <td><em>(none)</em></td>
+            <td class="text-center"><a href="./03_Interior_Dashboard_Cameras_Seats.html">3</a></td>
+        </tr>
+        <tr>
+            <td><strong><code>Mirror</code></strong></td>
+            <td><code>StaticMeshComponent</code> <em>(with <code>Camera</code> socket &amp; UV1)</em></td>
+            <td>opt. <code>FOV</code> (<code>Float</code>, rec. <code>20–40</code>)</td>
+            <td class="text-center"><a href="./04_Mirrors_and_Wipers.html">4</a></td>
+        </tr>
+        <tr>
+            <td><strong><code>Wippers</code></strong> <em>(double <code>p</code>!)</em></td>
+            <td><code>SkeletalMeshComponent</code> <em>(Animation Asset)</em></td>
+            <td><code>Side</code> (<code>String</code>: <code>Front</code> or <code>Rear</code>)</td>
+            <td class="text-center"><a href="./04_Mirrors_and_Wipers.html">4</a></td>
+        </tr>
+        <tr>
+            <td><strong><code>SoundEvent</code></strong></td>
+            <td><code>SceneComponent</code></td>
+            <td><code>Type</code> (<code>String</code>, req.); opt. <code>MinimumAttenuationDistance</code> / <code>MaximumAttenuationDistance</code> (<code>Float</code>); paired <code>Bank</code> (<code>String</code>) + <code>EventName</code> (<code>String</code>)</td>
+            <td class="text-center"><a href="./05_Sounds_and_FMOD.html">5</a></td>
+        </tr>
+    </tbody>
+</table>
+<hr>
+<h3 id="43-complete-reference-of-all-14-parent-materials-modmaterials">4.3. Complete Reference of All 14 Parent Materials (<code>ModMaterials</code>)</h3>
+<p>Project folder: <code>Content/Common/MasterMaterials/VehicleMaterials/ModMaterials/</code></p>
+<table>
+    <thead>
+        <tr>
+            <th>Material</th>
+            <th>Purpose</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>MI_Mod_CarPaint</code></td>
+            <td>Painted body panels (supports <code>Livery</code> texture with alpha mask).</td>
+        </tr>
+        <tr>
+            <td><code>MI_Mod_Exterior</code></td>
+            <td>Plastic, chrome, unpainted trim, wheel rims, brake calipers.</td>
+        </tr>
+        <tr>
+            <td><code>MI_Mod_Tyre</code></td>
+            <td>Rubber wheel tires.</td>
+        </tr>
+        <tr>
+            <td><code>MI_Mod_Glass</code></td>
+            <td>Vehicle windows and headlight lenses (clear or tinted).</td>
+        </tr>
+        <tr>
+            <td><code>MI_Mod_Emissive_Beam</code></td>
+            <td>Exterior illuminated elements (headlights, turn signals, brake lights).</td>
+        </tr>
+        <tr>
+            <td><code>MI_Mod_Wipers</code></td>
+            <td>Windshield wiper arms and blades.</td>
+        </tr>
+        <tr>
+            <td><code>MI_Mod_Vehicle_Interior</code></td>
+            <td>Cabin upholstery, dashboard, seats, and interior panels.</td>
+        </tr>
+        <tr>
+            <td><code>MI_Mod_PanelGlass</code></td>
+            <td>Instrument cluster protective glass.</td>
+        </tr>
+        <tr>
+            <td><code>MI_Mod_Stiches</code></td>
+            <td>Alpha-masked interior trim (seat stitching, steering wheel wrap).</td>
+        </tr>
+        <tr>
+            <td><code>MI_Mod_Mirror</code></td>
+            <td>Center rear-view mirror housing / dome.</td>
+        </tr>
+        <tr>
+            <td><code>MI_Mod_Emissive_Ikons</code></td>
+            <td>Illuminated dashboard warning icons.</td>
+        </tr>
+        <tr>
+            <td><code>MI_Mod_Emissive_Panel</code></td>
+            <td>Illuminated gauge elements (needles, scales).</td>
+        </tr>
+        <tr>
+            <td><code>MI_Mod_Emissive_Saloon</code></td>
+            <td>Backlit cabin buttons and switches (window switches, etc.).</td>
+        </tr>
+        <tr>
+            <td><code>MI_Mod_LicensePlate</code></td>
+            <td><strong>Not used</strong> in mods (leave the <code>LicensePlates</code> slot empty; the game assigns its dynamic plate material automatically).</td>
+        </tr>
+    </tbody>
+</table>
+<hr>
+<h2 id="5-final-pre-release-checklist-before-steam-workshop-upload">5. Final Pre-Release Checklist (Before Steam Workshop Upload)</h2>
+<ul class="checklist">
+    <li><input type="checkbox" disabled> All mod files live strictly inside <code>Plugins/Mods/Content/&lt;ModName&gt;/</code>, using Latin characters only and no spaces.</li>
+    <li><input type="checkbox" disabled> Every texture has <code>Virtual Texture Streaming</code> enabled (<code>VT</code> badge), all <code>MRA</code> maps use <code>Compression Settings = Masks (no sRGB)</code>, and <code>LFM_VehicleLightSpot</code> beam textures use <code>Alpha</code>.</li>
+    <li><input type="checkbox" disabled> Zero custom <code>Master Materials</code> are used — only <code>Material Instances</code> inheriting from <code>MI_Mod_*</code>.</li>
+    <li><input type="checkbox" disabled> The Actor and every single component have <code>Scale = (1.0, 1.0, 1.0)</code>.</li>
+    <li><input type="checkbox" disabled> Physical collision <code>BlockAllDynamic</code> is set <strong>only</strong> on <code>Body</code>; every other mesh (wheels, calipers, interior, glass, mirrors, wipers) uses <code>NoCollision</code> and has <code>Receives Decals</code> disabled.</li>
+    <li><input type="checkbox" disabled> All paths in <code>Vehicle.ini</code> and <code>options.xml</code> point to <code>../Plugins/Mods/Content/&lt;ModName&gt;/...</code> or <code>Common/...</code>, with no spaces before semicolons <code>;</code>.</li>
+    <li><input type="checkbox" disabled> All mirrors have a <code>Camera</code> socket, had <code>Generate UVs by Vertex Positions</code> executed, and were saved.</li>
+    <li><input type="checkbox" disabled> All UE assets are saved (<code>Ctrl + Shift + S</code>) and all Blueprints compiled cleanly (<strong>Compile</strong> with zero errors).</li>
+    <li><input type="checkbox" disabled> The mod was packaged via <code>build_mod_dlc.bat</code>, <code>\Saved\DLC\Windows\Mods.pak</code> was renamed to <code>&lt;ModName&gt;.pak</code>, and tested locally in <code>CityCarDriving2/Content/Paks/</code>.</li>
+    <li><input type="checkbox" disabled> The vehicle was tested in daylight, at night (lights &amp; dashboard), in rain (<code>RainBlocker</code> &amp; wipers), at a gas station (<code>FuelTank</code>), and across all camera views.</li>
+</ul>
+
+</body>
+</html>

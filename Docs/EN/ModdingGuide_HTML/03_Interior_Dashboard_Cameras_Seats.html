@@ -1,0 +1,553 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 3. Interior, Dashboard, Cameras &amp; Driver Seating</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <script>mermaid.initialize({ startOnLoad: true });</script>
+    <style>
+        body {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 32px;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #1f2328;
+            background-color: #ffffff;
+        }
+        h1, h2, h3, h4 {
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            line-height: 1.25;
+        }
+        h1 { font-size: 2em; padding-bottom: 0.3em; border-bottom: 1px solid #d0d7de; }
+        h2 { font-size: 1.5em; padding-bottom: 0.3em; border-bottom: 1px solid #d0d7de; }
+        h3 { font-size: 1.25em; }
+        hr { height: 0.25em; padding: 0; margin: 24px 0; background-color: #d0d7de; border: 0; }
+        a { color: #0969da; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        table { border-collapse: collapse; width: 100%; margin: 16px 0; }
+        th, td { border: 1px solid #d0d7de; padding: 8px 12px; text-align: left; vertical-align: top; }
+        th { background: #f6f8fa; font-weight: 600; }
+        tr:nth-child(even) { background: #f6f8fa; }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+        code { background: #eff1f3; padding: 2px 5px; border-radius: 4px; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 85%; }
+        pre { background: #f6f8fa; padding: 14px; border-radius: 6px; overflow-x: auto; border: 1px solid #d0d7de; }
+        pre code { background: transparent; padding: 0; font-size: 100%; }
+        pre.mermaid { background: #ffffff; text-align: center; }
+        .alert { padding: 12px 16px; margin: 16px 0; border-left: 4px solid; border-radius: 6px; background: #f6f8fa; }
+        .alert-title { font-weight: 600; margin-bottom: 6px; }
+        .alert p:last-child, .alert ul:last-child, .alert ol:last-child { margin-bottom: 0; }
+        .alert-note { border-left-color: #0969da; background-color: #ddf4ff; }
+        .alert-note .alert-title { color: #0969da; }
+        .alert-tip { border-left-color: #1a7f37; background-color: #dafbe1; }
+        .alert-tip .alert-title { color: #1a7f37; }
+        .alert-important { border-left-color: #8250df; background-color: #fbefff; }
+        .alert-important .alert-title { color: #8250df; }
+        .alert-warning { border-left-color: #9a6700; background-color: #fff8c5; }
+        .alert-warning .alert-title { color: #9a6700; }
+        .alert-caution { border-left-color: #cf222e; background-color: #ffebe9; }
+        .alert-caution .alert-title { color: #cf222e; }
+        ul.checklist { list-style-type: none; padding-left: 0; }
+        ul.checklist li { margin-bottom: 8px; }
+        ul.checklist input[type="checkbox"] { margin-right: 8px; }
+        figure.doc-figure { margin: 16px 0; padding: 10px; background: #f6f8fa; border: 1px solid #d0d7de; border-radius: 6px; text-align: center; }
+        figure.doc-figure img { max-width: 100%; height: auto; border-radius: 4px; display: block; margin: 0 auto; }
+        figure.doc-figure figcaption { margin-top: 8px; font-size: 0.9em; color: #57606a; }
+    </style>
+</head>
+<body>
+<h1 id="module-3-interior-dashboard-cameras--driver-seating">Module 3. Interior, Dashboard, Cameras &amp; Driver Seating</h1>
+<p><strong>Navigation:</strong> <a href="./README.html">README</a> | <a href="./01_Minimal_Car_QuickStart.html">01. Minimal Car</a> | <a href="./02_Exterior_Lights_and_World.html">02. Exterior, Lights &amp; World</a> | <strong>03. Interior, Dashboard &amp; Cameras</strong> | <a href="./04_Mirrors_and_Wipers.html">04. Mirrors &amp; Wipers</a> | <a href="./05_Sounds_and_FMOD.html">05. Sounds &amp; FMOD</a> | <a href="./06_Advanced_Specs_Logic_and_Reference.html">06. Specs, Logic &amp; Reference</a></p>
+<hr>
+<p>In this module, we build out the full cockpit experience:</p>
+<ul>
+    <li>import and shade the vehicle interior;</li>
+    <li>hook up the rotating steering wheel;</li>
+    <li>animate dashboard needles and warning lights;</li>
+    <li>place all 5 game cameras;</li>
+    <li>configure driver seating and the cabin toy mount.</li>
+</ul>
+<hr>
+<h2 id="1-interior-model--interiorobjects-container">1. Interior Model &amp; <code>InteriorObjects</code> Container</h2>
+<h3 id="11-preparing-the-interior-3d-model">1.1. Preparing the Interior 3D Model</h3>
+<figure class="doc-figure">
+    <img src="./images/m3_salon_3d_overview.png" alt="Overview of a prepared 3D interior model" loading="lazy">
+    <figcaption>Overview of a prepared 3D interior model</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m3_salon_3d_dashboard.png" alt="Dashboard detail and separated Material IDs for indicators" loading="lazy">
+    <figcaption>Dashboard detail and separated Material IDs for indicators</figcaption>
+</figure>
+<ol>
+    <li>The interior should be a <strong>single unified mesh</strong> (steering wheel, gauge needles, and reflective mirror surfaces are exported separately).</li>
+    <li>Orient the mesh along <strong><code>+X</code></strong> in the exact same world coordinates and centimeter scale (<code>1:1</code>) as <code>Body</code>.</li>
+    <li>Every element must have UV unwrapping on <strong>UV channel 0</strong>.</li>
+    <li>Each functional surface (upholstery, cluster glass, stitching, center mirror housing, every dashboard warning icon, and backlit buttons) needs its own <strong>Material ID (material slot)</strong>.</li>
+    <li>Dashboard warning icons and illuminated control markings are modeled as separate mesh elements with their own Material IDs on UV channel 0.</li>
+</ol>
+<h3 id="12-importing-the-interior-in-ue-58">1.2. Importing the Interior in UE 5.8</h3>
+<ol>
+    <li>Import the interior <code>.fbx</code> into <code>MyFirstCar/Meshes/</code>.</li>
+    <li>Set <strong><code>Material Import Method = Do Not Create Material</code></strong> and <strong><code>Build Nanite = False</code></strong>.</li>
+    <li>Because the interior component uses <strong><code>NoCollision</code></strong> on the Actor (only <code>Body</code> has physical collision), you can leave <code>Generate Missing Collision</code> unchecked.</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m3_salon_import.png" alt="Interior Static Mesh import settings" loading="lazy">
+    <figcaption>Interior Static Mesh import settings</figcaption>
+</figure>
+<h3 id="13-interior-materials-mi_mod_">1.3. Interior Materials (<code>MI_Mod_*</code>)</h3>
+<p>All interior textures must also have <strong><code>Virtual Texture Streaming = True</code></strong> (and <code>Masks (no sRGB)</code> for <code>MRA</code> maps). Create Material Instances from <code>Content/Common/MasterMaterials/VehicleMaterials/ModMaterials/</code>:</p>
+<table>
+    <thead>
+        <tr>
+            <th>Interior Element</th>
+            <th>Parent Material</th>
+            <th>Notes</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Upholstery, dashboard, seats, trim</td>
+            <td><strong><code>MI_Mod_Vehicle_Interior</code></strong></td>
+            <td>Primary PBR interior shader.</td>
+        </tr>
+        <tr>
+            <td>Instrument cluster cover glass</td>
+            <td><strong><code>MI_Mod_PanelGlass</code></strong></td>
+            <td>Transparent protective glass over the gauges.</td>
+        </tr>
+        <tr>
+            <td>Alpha-masked trim (steering wheel wrap, seat stitching)</td>
+            <td><strong><code>MI_Mod_Stiches</code></strong> <em>(note spelling: no <code>t</code>)</em></td>
+            <td>Supports opacity masks.</td>
+        </tr>
+        <tr>
+            <td>Center rear-view mirror housing / dome</td>
+            <td><strong><code>MI_Mod_Mirror</code></strong></td>
+            <td>Used for the center mirror casing/housing (not the reflective glass!).</td>
+        </tr>
+        <tr>
+            <td>Dashboard warning icons</td>
+            <td><strong><code>MI_Mod_Emissive_Ikons</code></strong> <em>(spelled with <code>k</code>)</em></td>
+            <td>Recommended to reuse the provided <code>T_Dashboard_D</code> / <code>T_Dashboard_E</code> / <code>T_DashboardMask</code> atlas from <code>CieBensVGruppe/Textures/</code>.</td>
+        </tr>
+        <tr>
+            <td>Illuminated gauges &amp; needles</td>
+            <td><strong><code>MI_Mod_Emissive_Panel</code></strong></td>
+            <td>For needles (<code>SpeedometrArrow</code>, <code>RPMArrow</code>, etc.) and dials (<code>Dashboard</code>).</td>
+        </tr>
+        <tr>
+            <td>Backlit cabin buttons &amp; switches</td>
+            <td><strong><code>MI_Mod_Emissive_Saloon</code></strong></td>
+            <td>Window switches, climate buttons, etc.</td>
+        </tr>
+    </tbody>
+</table>
+<figure class="doc-figure">
+    <img src="./images/m3_mat_interior.png" alt="MI_Mod_Vehicle_Interior parameters" loading="lazy">
+    <figcaption>MI_Mod_Vehicle_Interior parameters</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m3_mat_panelglass.png" alt="MI_Mod_PanelGlass parameters" loading="lazy">
+    <figcaption>MI_Mod_PanelGlass parameters</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m3_mat_stiches.png" alt="MI_Mod_Stiches parameters" loading="lazy">
+    <figcaption>MI_Mod_Stiches parameters</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m3_mat_mirror_housing.png" alt="MI_Mod_Mirror parameters (center mirror housing)" loading="lazy">
+    <figcaption>MI_Mod_Mirror parameters (center mirror housing)</figcaption>
+</figure>
+<h3 id="14-placing-the-interior-in-the-actor-interiorobjects">1.4. Placing the Interior in the Actor (<code>InteriorObjects</code>)</h3>
+<ol>
+    <li>Open your Actor <code>V_&lt;ModName&gt;</code>.</li>
+    <li>Select <code>DefaultSceneRoot</code> → click <strong><code>+ Add</code></strong> → <strong>Scene</strong> and name it strictly <strong><code>InteriorObjects</code></strong> (<code>Location = 0, 0, 0</code>, <code>Rotation = 0, 0, 0</code>).</li>
+    <li>Add a child <code>StaticMeshComponent</code> under <code>InteriorObjects</code> with your interior mesh (<code>Collision Presets = NoCollision</code>, <code>Receives Decals = False</code>). Keep other cabin elements (steering wheel, gauge needles, etc.) organized under <code>InteriorObjects</code>.</li>
+</ol>
+<hr>
+<h2 id="2-steering-wheel-steeringwheel">2. Steering Wheel (<code>SteeringWheel</code>)</h2>
+<ol>
+    <li><strong>3D model setup:</strong> place the pivot at the rotation center <code>(0, 0, 0)</code> with the face of the steering wheel pointing along <strong><code>+Z</code></strong> (rotation axis is <strong><code>Z</code></strong>). Import with no collision and no auto-created materials.</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m3_steering_wheel_axes.png" alt="3D steering wheel model orientation" loading="lazy">
+    <figcaption>3D steering wheel model orientation</figcaption>
+</figure>
+<ol>
+    <li><strong>Actor setup:</strong>
+<ul>
+    <li>Under <code>InteriorObjects</code>, add a <code>StaticMeshComponent</code> with your steering wheel mesh (<code>NoCollision</code>).</li>
+    <li>Position and rotate it onto the steering column.</li>
+    <li>Attach a <strong><code>ControlBlock</code></strong> named <strong><code>SteeringWheel</code></strong> (no properties required).</li>
+</ul>
+</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m3_steering_wheel_cb.png" alt="ControlBlock SteeringWheel configuration" loading="lazy">
+    <figcaption>ControlBlock SteeringWheel configuration</figcaption>
+</figure>
+<hr>
+<h2 id="3-dashboard-dashboard-needles--warning-icons">3. Dashboard (<code>Dashboard</code>): Needles &amp; Warning Icons</h2>
+<h3 id="31-dashboard-needles">3.1. Dashboard Needles</h3>
+<ol>
+    <li><strong>3D model setup:</strong>
+<ul>
+    <li>Place the pivot at the needle's rotation hub <code>(0, 0, 0)</code>.</li>
+    <li>The front face of the needle points toward the viewer along <strong><code>+Z</code></strong>, and the needle tip points along <strong><code>+X</code></strong>.</li>
+</ul>
+</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m3_arrow_axes.png" alt="3D gauge needle orientation (+Z facing viewer, +X pointing direction)" loading="lazy">
+    <figcaption>3D gauge needle orientation (+Z facing viewer, +X pointing direction)</figcaption>
+</figure>
+<ol>
+    <li><strong>Actor placement:</strong>
+<ul>
+    <li>Add a <code>StaticMeshComponent</code> for each needle (under <code>InteriorObjects</code>, <code>NoCollision</code>).</li>
+    <li>Set <code>Location</code> and <code>Rotation</code> so each needle <strong>points directly at the zero (minimum) mark on its dial</strong>.</li>
+</ul>
+</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m3_arrow_zero_position.png" alt="Positioning a gauge needle at zero on the dial" loading="lazy">
+    <figcaption>Positioning a gauge needle at zero on the dial</figcaption>
+</figure>
+<ol>
+    <li><strong><code>ControlBlock</code> settings for each needle:</strong></li>
+</ol>
+<table>
+    <thead>
+        <tr>
+            <th>Gauge Needle</th>
+            <th><code>ControlBlock</code> Name</th>
+            <th>Properties (all <strong><code>Control Property Float</code></strong>)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>Speedometer</strong></td>
+            <td><code>SpeedArrow</code></td>
+            <td>• <code>MaxAngle</code> — sweep angle (degrees) from zero to max scale<br>• <code>MaxValue</code> — maximum speed on the dial (e.g., <code>260.0</code>)</td>
+        </tr>
+        <tr>
+            <td><strong>Tachometer (RPM)</strong></td>
+            <td><code>RPMArrow</code></td>
+            <td>• <code>MaxAngle</code> — sweep angle to max scale (e.g., <code>237.0</code>)<br>• <code>MaxValue</code> — maximum RPM on the dial (e.g., <code>6000.0</code>)</td>
+        </tr>
+        <tr>
+            <td><strong>Fuel Level</strong></td>
+            <td><code>FuelArrow</code></td>
+            <td>• <code>MaxAngle</code> — sweep angle from empty to full</td>
+        </tr>
+        <tr>
+            <td><strong>Coolant Temperature</strong></td>
+            <td><code>CoolantTemperatureArrow</code></td>
+            <td>• <code>MaxAngle</code> — sweep angle from min to max scale<br>• <code>MinValue</code> — minimum dial temperature (e.g., <code>50.0</code>)<br>• <code>MaxValue</code> — maximum dial temperature (e.g., <code>130.0</code>)</td>
+        </tr>
+    </tbody>
+</table>
+<p><em>(See <a href="./01_Minimal_Car_QuickStart.html#45-learning-controlblock-and-adding-a-basic-camera-thirdpersonback">Module 1</a> for a screenshot of <code>RPMArrow</code> configured in Asset User Data.)</em></p>
+<h3 id="32-dashboard-indicators--backlighting-salonlights">3.2. Dashboard Indicators &amp; Backlighting (<code>SalonLights</code>)</h3>
+<p>Two steps wire up your dashboard warning lights:</p>
+<h4 id="step-1-assign-matching-slot-names-on-your-interior-mesh">Step 1. Assign Matching <code>Slot Name</code>s on Your Interior Mesh</h4>
+<p>For icons, you can reuse <code>T_Dashboard_D</code> (diffuse) and <code>T_DashboardMask</code> / <code>T_Dashboard_E</code> from <code>CieBensVGruppe/Textures/</code> with <strong><code>MI_Mod_Emissive_Ikons</code></strong>.</p>
+<figure class="doc-figure">
+    <img src="./images/m3_dashboard_icons_diffuse.png" alt="Dashboard indicator color atlas T_Dashboard_D" loading="lazy">
+    <figcaption>Dashboard indicator color atlas T_Dashboard_D</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m3_dashboard_icons_mask.png" alt="Dashboard indicator emissive mask" loading="lazy">
+    <figcaption>Dashboard indicator emissive mask</figcaption>
+</figure>
+<p>Open your interior (and needle) Static Meshes and set the <strong><code>Slot Name</code></strong> values in <strong>Material Slots</strong> using the reference table below.</p>
+<figure class="doc-figure">
+    <img src="./images/m3_dashboard_material_slots.png" alt="Assigning indicator Slot Names on the interior Static Mesh" loading="lazy">
+    <figcaption>Assigning indicator Slot Names on the interior Static Mesh</figcaption>
+</figure>
+<h4 id="step-2-add-controlblock-salonlights-or-copy-dashboardcontroller">Step 2. Add <code>ControlBlock</code> <code>SalonLights</code> (or Copy <code>DashboardController</code>)</h4>
+<div class="alert alert-tip">
+    <div class="alert-title">Tip</div>
+<p><strong>Fastest option for beginners:</strong><br>
+If you don't need custom indicator mappings, open <code>V_CieBensVGruppe</code>, select <strong><code>DashboardController</code></strong> in the <code>Components</code> tree, press <strong><code>Ctrl + C</code></strong>, open your <code>V_&lt;ModName&gt;</code>, and press <strong><code>Ctrl + V</code></strong>! All 23 standard mappings are already configured — you only need matching <code>Slot Name</code>s on your interior mesh.</p>
+
+</div>
+<p>To set it up manually:</p>
+<ol>
+    <li>Add an empty <code>SceneComponent</code> (or select your interior mesh) and attach a <strong><code>ControlBlock</code></strong> named <strong><code>SalonLights</code></strong>.</li>
+    <li>In <code>Properties</code>, add key-value entries:
+<ul>
+    <li><strong>Key (left):</strong> physics output channel name (<code>*Intensity</code>).</li>
+    <li><strong>Value (right):</strong> type <strong><code>Control Property String Array</code></strong>, with one or more material <strong><code>Slot Name</code></strong>s in <code>Values</code>.</li>
+</ul>
+</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m3_salonlights_cb.png" alt="Configuring ControlBlock SalonLights with material slot name arrays" loading="lazy">
+    <figcaption>Configuring ControlBlock SalonLights with material slot name arrays</figcaption>
+</figure>
+<h4 id="complete-dashboard-indicators--backlighting-table-salonlights">Complete Dashboard Indicators &amp; Backlighting Table (<code>SalonLights</code>)</h4>
+<div class="alert alert-warning">
+    <div class="alert-title">Warning</div>
+<p>Note the exact slot spelling <strong><code>SpeedometrArrow</code></strong> (missing the <code>e</code> after <code>t</code>) — write it verbatim!</p>
+
+</div>
+<table>
+    <thead>
+        <tr>
+            <th>Physics Parameter (key in <code>SalonLights</code>)</th>
+            <th>Recommended Material <code>Slot Name</code></th>
+            <th>Purpose</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><code>LowBeamIconIntensity</code></td>
+            <td><code>LowBeamIcon</code></td>
+            <td>Low-beam headlight indicator</td>
+        </tr>
+        <tr>
+            <td><code>HighBeamIconIntensity</code></td>
+            <td><code>HighBeamIcon</code></td>
+            <td>High-beam headlight indicator</td>
+        </tr>
+        <tr>
+            <td><code>ParkingLightsIntensity</code></td>
+            <td><code>ParkingLightsIcon</code></td>
+            <td>Parking lights indicator</td>
+        </tr>
+        <tr>
+            <td><code>FrontFogLightsIntensity</code></td>
+            <td><code>FrontFogLightsIcon</code></td>
+            <td>Front fog lights indicator</td>
+        </tr>
+        <tr>
+            <td><code>RearFogLightsIntensity</code></td>
+            <td><code>RearFogLightsIcon</code></td>
+            <td>Rear fog lights indicator</td>
+        </tr>
+        <tr>
+            <td><code>LeftTurnLightIconIntensity</code></td>
+            <td><code>LeftTurnLightIcon</code> <em>(or shared <code>TurnLightIcon</code>)</em></td>
+            <td>Left turn signal / hazard indicator</td>
+        </tr>
+        <tr>
+            <td><code>RightTurnLightIconIntensity</code></td>
+            <td><code>RightTurnLightIcon</code> <em>(or shared <code>TurnLightIcon</code>)</em></td>
+            <td>Right turn signal / hazard indicator</td>
+        </tr>
+        <tr>
+            <td><code>HazardLightIconIntensity</code></td>
+            <td><code>HazardLightIcon</code></td>
+            <td>Hazard button indicator</td>
+        </tr>
+        <tr>
+            <td><code>SafetyBeltIconIntensity</code></td>
+            <td><code>SafetyBeltIcon</code></td>
+            <td>Unfastened seatbelt warning</td>
+        </tr>
+        <tr>
+            <td><code>ParkingBrakeIconIntensity</code></td>
+            <td><code>ParkingBrakeIcon</code></td>
+            <td>Parking brake engaged indicator</td>
+        </tr>
+        <tr>
+            <td><code>BatteryIconIntensity</code></td>
+            <td><code>BatteryIcon</code></td>
+            <td>Battery discharge / alternator warning</td>
+        </tr>
+        <tr>
+            <td><code>FuelIconIntensity</code></td>
+            <td><code>FuelIcon</code></td>
+            <td>Low fuel reserve warning</td>
+        </tr>
+        <tr>
+            <td><code>OilIconIntensity</code></td>
+            <td><code>OilIcon</code></td>
+            <td>Low engine oil pressure warning</td>
+        </tr>
+        <tr>
+            <td><code>OverheatIconIntensity</code></td>
+            <td><code>OverheatIcon</code></td>
+            <td>Engine coolant overheat warning</td>
+        </tr>
+        <tr>
+            <td><code>EmergencyStopIconIntensity</code></td>
+            <td><code>EmergencyStopIcon</code></td>
+            <td>Critical "STOP" lamp (stop and shut off engine immediately)</td>
+        </tr>
+        <tr>
+            <td><code>PowerSteeringIconIntensity</code></td>
+            <td><code>PowerSteeringIcon</code></td>
+            <td>Power steering fault indicator</td>
+        </tr>
+        <tr>
+            <td><code>AbsActiveIconIntensity</code></td>
+            <td><code>AbsIcon</code></td>
+            <td>ABS active / self-check indicator</td>
+        </tr>
+        <tr>
+            <td><code>AbsDisableIconIntensity</code></td>
+            <td><code>AbsIcon</code></td>
+            <td>ABS disabled / fault indicator</td>
+        </tr>
+        <tr>
+            <td><code>TcsActiveIconIntensity</code></td>
+            <td><code>TCSActiveIcon</code></td>
+            <td>Traction/stability control (TCS/ESP) active indicator</td>
+        </tr>
+        <tr>
+            <td><code>TcsDisableIconIntensity</code></td>
+            <td><code>TCSDisableIcon</code></td>
+            <td>Traction/stability control (TCS/ESP) disabled indicator</td>
+        </tr>
+        <tr>
+            <td><code>AirbagIconIntensity</code></td>
+            <td><code>AirbagIcon</code></td>
+            <td>Airbag indicator (ignition self-check)</td>
+        </tr>
+        <tr>
+            <td><code>ExhaustSystemIconIntensity</code></td>
+            <td><code>ExhaustSystemIcon</code></td>
+            <td>Exhaust system / Check Engine indicator</td>
+        </tr>
+        <tr>
+            <td><code>CheckIconsIntensity</code></td>
+            <td><code>CheckIcons</code></td>
+            <td>Ignition self-check channel for decorative warning icons without dedicated logic</td>
+        </tr>
+        <tr>
+            <td><code>DashboardIntensity</code></td>
+            <td><code>Dashboard</code>, <code>SpeedometrArrow</code>, <code>RPMArrow</code>, <code>FuelArrow</code>, <code>TemperatureArrow</code>, <code>InteriorButton</code>, <code>MainDisplay</code>, <code>SecondDisplay</code></td>
+            <td>General dashboard, needle, cabin button, and display backlighting</td>
+        </tr>
+    </tbody>
+</table>
+<div class="alert alert-note">
+    <div class="alert-title">Note</div>
+<p><strong>In-Car Monitors / Infotainment Screens:</strong><br>
+There is currently no dedicated interactive monitor workflow for modded vehicles (you can illuminate static screens using the <code>MainDisplay</code> / <code>SecondDisplay</code> slots).</p>
+
+</div>
+<hr>
+<h2 id="4-vehicle-cameras">4. Vehicle Cameras</h2>
+<p>All cameras follow the same pattern: add a component in <code>V_&lt;ModName&gt;</code>, position/orient it, and attach a <strong><code>ControlBlock</code></strong> named <strong><code>Camera</code></strong>.</p>
+<table>
+    <thead>
+        <tr>
+            <th>Camera Type (<code>Type</code>, <code>String</code>)</th>
+            <th>Component Type</th>
+            <th>Optional Properties</th>
+            <th>Placement</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong><code>ThirdPersonBack</code></strong></td>
+            <td><code>SceneComponent</code></td>
+            <td><code>ArmLength</code> (<code>Float</code>, e.g., <code>600.0</code>)</td>
+            <td>Location defines the orbit pivot (typically vehicle center). Rear chase view.</td>
+        </tr>
+        <tr>
+            <td><strong><code>ThirdPersonFront</code></strong></td>
+            <td><code>SceneComponent</code></td>
+            <td><code>ArmLength</code> (<code>Float</code>)</td>
+            <td>Location defines the orbit pivot. Front chase view.</td>
+        </tr>
+        <tr>
+            <td><strong><code>FirstPerson</code></strong></td>
+            <td><code>CameraComponent</code> or <code>SceneComponent</code></td>
+            <td>None</td>
+            <td>Driver eye position and rotation inside the cabin (<code>CameraComponent</code> gives a live preview in UE).</td>
+        </tr>
+        <tr>
+            <td><strong><code>Windshield</code></strong></td>
+            <td><code>CameraComponent</code> or <code>SceneComponent</code></td>
+            <td>None</td>
+            <td>Windshield / hood view position and rotation.</td>
+        </tr>
+        <tr>
+            <td><strong><code>TopDown</code></strong></td>
+            <td><code>SceneComponent</code></td>
+            <td><code>ArmLength</code> (<code>Float</code>)</td>
+            <td>Place strictly at the center of the vehicle (top-down view).</td>
+        </tr>
+    </tbody>
+</table>
+<figure class="doc-figure">
+    <img src="./images/m1_camera_thirdperson_cb.png" alt="ThirdPersonBack camera and ControlBlock Camera (use the correct spelling ArmLength)" loading="lazy">
+    <figcaption>ThirdPersonBack camera and ControlBlock Camera (use the correct spelling ArmLength)</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m3_camera_firstperson.png" alt="FirstPerson camera placement (driver eye level)" loading="lazy">
+    <figcaption>FirstPerson camera placement (driver eye level)</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m3_camera_windshield.png" alt="Windshield camera placement" loading="lazy">
+    <figcaption>Windshield camera placement</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m3_camera_topdown.png" alt="TopDown camera placement at vehicle center" loading="lazy">
+    <figcaption>TopDown camera placement at vehicle center</figcaption>
+</figure>
+<hr>
+<h2 id="5-driver-seating-seats">5. Driver Seating (<code>Seats</code>)</h2>
+<p>Currently, only the driver seat is supported in modded vehicles. It uses a <strong>socket on the seat/interior Static Mesh</strong> paired with <strong><code>ControlBlock</code> <code>Seats</code></strong>.</p>
+<h3 id="step-1-create-the-_landing-socket-on-the-static-mesh">Step 1. Create the <code>_Landing</code> Socket on the Static Mesh</h3>
+<ol>
+    <li>Double-click the Static Mesh containing the driver's seat (usually the interior mesh).</li>
+    <li>Open <strong>Window → Socket Manager</strong>.</li>
+    <li>Click <strong><code>+</code></strong> (Create Socket) and name it <strong><code>&lt;SeatSetName&gt;_Landing</code></strong>, e.g., <strong><code>Seat0_Landing</code></strong>.
+<ul>
+    <li><code>&lt;SeatSetName&gt;</code> — any Latin identifier you choose (e.g., <code>Seat0</code>).</li>
+    <li><code>_Landing</code> — required suffix (currently <strong>only</strong> <code>_Landing</code> is used).</li>
+</ul>
+</li>
+    <li>Position the socket in the crease where the seat cushion meets the backrest, with the <strong>red <code>+X</code> axis</strong> pointing forward parallel to the seat cushion (toward the steering wheel) and <strong>blue <code>+Z</code></strong> pointing up.</li>
+    <li>Click <strong>Save</strong>.</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m3_seat_socket_front.png" alt="Seat0_Landing socket placement — front view" loading="lazy">
+    <figcaption>Seat0_Landing socket placement — front view</figcaption>
+</figure>
+<figure class="doc-figure">
+    <img src="./images/m3_seat_socket_side.png" alt="Seat0_Landing socket placement — side view" loading="lazy">
+    <figcaption>Seat0_Landing socket placement — side view</figcaption>
+</figure>
+<h3 id="step-2-add-controlblock-seats-on-the-actor">Step 2. Add <code>ControlBlock</code> <code>Seats</code> on the Actor</h3>
+<ol>
+    <li>Open <code>V_&lt;ModName&gt;</code> and select the <code>StaticMeshComponent</code> whose mesh holds <code>Seat0_Landing</code>.</li>
+    <li>Add <code>Asset User Data → Control Asset Data</code> → <strong><code>ControlBlock</code></strong> named <strong><code>Seats</code></strong>:
+<ul>
+    <li>Property 1: name <strong><code>Names</code></strong>, type <strong><code>Control Property String Array</code></strong> → add <strong><code>Seat0</code></strong> (just the set prefix, <strong>without</strong> <code>_Landing</code>!).</li>
+    <li>Property 2 <em>(if this mesh contains the driver seat)</em>: name <strong><code>DriverIndex</code></strong>, type <strong><code>Control Property Int</code></strong> → index of the driver seat in <code>Names</code> (<code>0</code> for <code>Index [0]</code>).</li>
+</ul>
+</li>
+    <li>Click <strong>Compile</strong> and <strong>Save</strong>.</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m3_seat_cb.png" alt="ControlBlock Seats with Names and DriverIndex" loading="lazy">
+    <figcaption>ControlBlock Seats with Names and DriverIndex</figcaption>
+</figure>
+<hr>
+<h2 id="6-cabin-toy-mount-cartoy">6. Cabin Toy Mount (<code>CarToy</code>)</h2>
+<p>To let players place workshop dashboard toys inside your vehicle:</p>
+<ol>
+    <li>In <code>V_&lt;ModName&gt;</code>, add any component inheriting from <code>SceneComponent</code> (for easy visual alignment, use the included astronaut preview mesh <strong><code>SM_Cosmonaft_Anim</code></strong> from <code>Content/Common/Enviroment/Cosmonaft/</code> — it helps judge scale and orientation in the editor and is automatically hidden in-game!).</li>
+    <li>Set <code>NoCollision</code>, place it on the dashboard, and attach a <strong><code>ControlBlock</code></strong> named <strong><code>CarToy</code></strong> (no properties needed).</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m3_cartoy_cosmonaft.png" alt="Placing the CarToy mount using the SM_Cosmonaft_Anim preview asset" loading="lazy">
+    <figcaption>Placing the CarToy mount using the SM_Cosmonaft_Anim preview asset</figcaption>
+</figure>
+<hr>
+<p><strong>Next step:</strong> continue to <strong><a href="./04_Mirrors_and_Wipers.html">Module 4. Mirrors &amp; Wipers</a></strong> to add live rear-view mirrors and animated wipers.</p>
+
+</body>
+</html>

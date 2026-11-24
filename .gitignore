@@ -3,6 +3,11 @@ Build/Windows
 DerivedDataCache/
 Intermediate/
 Saved/
+
+# Prebuilt Installed plugin SimulatorMinimal
+!Plugins/SimulatorMinimal/Binaries/
+!Plugins/SimulatorMinimal/Binaries/**
+Plugins/SimulatorMinimal/Binaries/**/*.pdb
 .vs/
 .idea/
 *.VC.db

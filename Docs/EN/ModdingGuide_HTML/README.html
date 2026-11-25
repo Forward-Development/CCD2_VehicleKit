@@ -145,9 +145,10 @@ Alongside this guide sits the complete engineering reference for vehicle physics
     <li>A standard <strong>UE 5.8 installation from the Epic Games Store is all you need</strong> to create and package mods (including running <code>build_mod_dlc.bat</code>) — you do not need to install Visual Studio or extra SDKs.</li>
 </ul>
 </li>
-    <li><strong>Template project <code>CCD2_VehicleKit</code></strong> — download from GitHub:
+    <li><strong>Template project <code>CCD2_VehicleKit</code></strong> — download <strong><code>CCD2_VehicleKit.zip</code></strong> from GitHub Releases <em>(or clone with Git LFS)</em>:
 <ul>
-    <li><a href="https://github.com/Forward-Development/CCD2_VehicleKit/tree/main" target="_blank" rel="noopener">https://github.com/Forward-Development/CCD2_VehicleKit/tree/main</a></li>
+    <li><a href="https://github.com/Forward-Development/CCD2_VehicleKit/releases/latest" target="_blank" rel="noopener">https://github.com/Forward-Development/CCD2_VehicleKit/releases/latest</a></li>
+    <li><strong>Do NOT use <code>Code → Download ZIP</code> or <code>Source code (zip)</code></strong> — those archives omit Git LFS binaries (<code>.dll</code>, <code>.uasset</code>, <code>.umap</code>) and will cause <code>UnrealEditor.exe - Bad Image (0xc000012f)</code>.</li>
     <li>Extract the project to a <strong>short path using Latin characters only and no spaces</strong>, e.g. <code>D:\Modding\CCD2_VehicleKit\</code>.</li>
 </ul>
 </li>

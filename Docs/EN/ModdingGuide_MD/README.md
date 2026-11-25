@@ -42,8 +42,9 @@ flowchart LR
 
 1. **Unreal Engine 5.8** — download and install via **Epic Games Launcher** (*Unreal Engine → Library → Engine Versions → `+` → 5.8*).
    - A standard **UE 5.8 installation from the Epic Games Store is all you need** to create and package mods (including running `build_mod_dlc.bat`) — you do not need to install Visual Studio or extra SDKs.
-2. **Template project `CCD2_VehicleKit`** — download from GitHub:
-   - <https://github.com/Forward-Development/CCD2_VehicleKit/tree/main>
+2. **Template project `CCD2_VehicleKit`** — download **`CCD2_VehicleKit.zip`** from GitHub Releases *(or clone with Git LFS)*:
+   - <https://github.com/Forward-Development/CCD2_VehicleKit/releases/latest>
+   - **Do NOT use `Code → Download ZIP` or `Source code (zip)`** — those archives omit Git LFS binaries (`.dll`, `.uasset`, `.umap`) and will cause `UnrealEditor.exe - Bad Image (0xc000012f)`.
    - Extract the project to a **short path using Latin characters only and no spaces**, e.g. `D:\Modding\CCD2_VehicleKit\`.
 3. **3D Editor** (Blender, 3ds Max, Maya, or any software capable of `.fbx` export).
 4. *(Module 5 only, if you want fully custom sounds)* **FMOD Studio 2.03.14** and template projects:

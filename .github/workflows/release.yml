@@ -1,0 +1,145 @@
+name: Release ZIP
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release tag (e.g. v1.0.0)'
+        required: true
+        type: string
+      title:
+        description: 'Release title (optional, defaults to "CCD2_VehicleKit <tag>")'
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository (with Git LFS)
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Verify Git LFS binaries
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          for dll in \
+            "Plugins/SimulatorMinimal/Binaries/Win64/UnrealEditor-SimulatorMinimal.dll" \
+            "Plugins/SimulatorMinimal/Binaries/Win64/UnrealEditor-SimulatorMinimalEditor.dll"; do
+            if [ ! -f "$dll" ]; then
+              echo "::error::Missing required DLL: $dll"
+              exit 1
+            fi
+            magic=$(head -c 2 "$dll" | od -An -tx1 | tr -d ' \n')
+            if [ "$magic" != "4d5a" ]; then
+              echo "::error::$dll is not a valid Windows PE binary (magic=$magic). Git LFS checkout failed."
+              exit 1
+            fi
+          done
+
+          bad_count=0
+          while IFS= read -r file; do
+            [ -z "$file" ] && continue
+            if [ ! -f "$file" ]; then
+              echo "::error::Missing LFS file: $file"
+              bad_count=$((bad_count + 1))
+              continue
+            fi
+            header=$(LC_ALL=C head -c 42 "$file" | tr -d '\0')
+            if [ "$header" = "version https://git-lfs.github.com/spec/v1" ]; then
+              echo "::error::Unresolved Git LFS pointer found: $file"
+              bad_count=$((bad_count + 1))
+            fi
+          done < <(git lfs ls-files --name-only)
+
+          if [ "$bad_count" -gt 0 ]; then
+            echo "::error::Found $bad_count missing or unresolved Git LFS file(s)."
+            exit 1
+          fi
+
+          echo "All Git LFS binaries verified successfully."
+
+      - name: Package CCD2_VehicleKit.zip
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          STAGE_DIR="${RUNNER_TEMP}/release_stage/CCD2_VehicleKit"
+          ZIP_PATH="${RUNNER_TEMP}/CCD2_VehicleKit.zip"
+
+          rm -rf "${RUNNER_TEMP}/release_stage" "${ZIP_PATH}"
+          mkdir -p "${STAGE_DIR}"
+
+          rsync -a \
+            --exclude='/.git' \
+            --exclude='/.github' \
+            --exclude='/.gitattributes' \
+            --exclude='/.gitignore' \
+            ./ "${STAGE_DIR}/"
+
+          (cd "${RUNNER_TEMP}/release_stage" && zip -r -q -5 "${ZIP_PATH}" CCD2_VehicleKit)
+          ls -lh "${ZIP_PATH}"
+
+      - name: Publish GitHub Release
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EVENT_NAME: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
+          INPUT_TAG: ${{ inputs.tag }}
+          INPUT_TITLE: ${{ inputs.title }}
+        run: |
+          set -euo pipefail
+
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            TAG="$INPUT_TAG"
+          else
+            TAG="$REF_NAME"
+          fi
+
+          if [ -z "$TAG" ] || [[ "$TAG" =~ [[:space:]] ]]; then
+            echo "::error::Invalid release tag: '${TAG}'"
+            exit 1
+          fi
+
+          TITLE="${INPUT_TITLE:-CCD2_VehicleKit ${TAG}}"
+          ZIP_PATH="${RUNNER_TEMP}/CCD2_VehicleKit.zip"
+          NOTES_FILE="${RUNNER_TEMP}/release_notes.md"
+
+          cat > "${NOTES_FILE}" <<'EOF'
+          ## Download
+
+          Download **`CCD2_VehicleKit.zip`** from the **Assets** section below.
+
+          > [!IMPORTANT]
+          > **Do NOT use `Source code (zip)` or `Code → Download ZIP`!**
+          > GitHub's auto-generated source archives do not include Git LFS binary files (`.dll`, `.uasset`, `.umap`), which causes `UnrealEditor.exe - Bad Image (0xc000012f)` on launch.
+
+          ### Quick Start
+          1. Extract `CCD2_VehicleKit.zip` to a short Latin-only path without spaces (e.g., `D:\Modding\CCD2_VehicleKit\`).
+          2. Open `CityCarDriving2.uproject` with **Unreal Engine 5.8** (Epic Games Launcher).
+          EOF
+
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "Release $TAG already exists — updating asset CCD2_VehicleKit.zip..."
+            gh release upload "$TAG" "${ZIP_PATH}" --clobber
+          else
+            echo "Creating release $TAG (${TITLE})..."
+            gh release create "$TAG" "${ZIP_PATH}" \
+              --target "${GITHUB_SHA}" \
+              --title "${TITLE}" \
+              --notes-file "${NOTES_FILE}"
+          fi

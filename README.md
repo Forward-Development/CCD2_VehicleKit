@@ -26,7 +26,8 @@ It includes a fully configured sample vehicle (`CieBensVGruppe`), pre-built pare
 ### Quick Start (5 Steps)
 
 1. **Install Unreal Engine 5.8** from the Epic Games Launcher *(no Visual Studio or extra SDKs required)*.
-2. **Download `CCD2_VehicleKit`** into a short path using Latin characters only and no spaces (e.g., `D:\Modding\CCD2_VehicleKit\`).
+2. **Download [`CCD2_VehicleKit.zip`](https://github.com/Forward-Development/CCD2_VehicleKit/releases/latest)** from the **Releases** page *(or clone with [Git LFS](https://git-lfs.com/): `git lfs install && git clone https://github.com/Forward-Development/CCD2_VehicleKit.git`)* and extract into a short path using Latin characters only and no spaces (e.g., `D:\Modding\CCD2_VehicleKit\`).
+   > **Do NOT use `Code → Download ZIP` or `Source code (zip)`!** GitHub's auto-generated ZIP archives do not include Git LFS binary files (`.dll`, `.uasset`, `.umap`), which causes `UnrealEditor.exe - Bad Image (0xc000012f)` on launch.
 3. **Open `CityCarDriving2.uproject`** and enable **`Settings → Show Plugin Content`** in the Content Browser to access `Plugins/Mods Content/`.
 4. **Follow [Module 1 — Minimal Car Quick Start](./Docs/EN/ModdingGuide_MD/01_Minimal_Car_QuickStart.md)** to assemble a drivable vehicle (body + 4 wheels).
 5. **Run [`build_mod_dlc.bat`](./build_mod_dlc.bat)**, rename `\Saved\DLC\Windows\Mods.pak` to `<YourModName>.pak`, and test locally in `<GameDir>\CityCarDriving2\Content\Paks\`.
@@ -94,7 +95,8 @@ CCD2_VehicleKit/
 ### Быстрый старт (5 шагов)
 
 1. **Установите Unreal Engine 5.8** через Epic Games Launcher *(Visual Studio и дополнительные SDK не требуются)*.
-2. **Скачайте `CCD2_VehicleKit`** в папку с коротким путём на латинице и без пробелов (например, `D:\Modding\CCD2_VehicleKit\`).
+2. **Скачайте [`CCD2_VehicleKit.zip`](https://github.com/Forward-Development/CCD2_VehicleKit/releases/latest)** со страницы **Releases** *(или склонируйте с установленным [Git LFS](https://git-lfs.com/): `git lfs install && git clone https://github.com/Forward-Development/CCD2_VehicleKit.git`)* и распакуйте в папку с коротким путём на латинице и без пробелов (например, `D:\Modding\CCD2_VehicleKit\`).
+   > **Не используйте `Code → Download ZIP` и `Source code (zip)`!** Автоматические ZIP-архивы GitHub не включают бинарные файлы Git LFS (`.dll`, `.uasset`, `.umap`), из-за чего при запуске возникает ошибка `UnrealEditor.exe - Bad Image (0xc000012f)`.
 3. **Откройте `CityCarDriving2.uproject`** и включите **`Settings → Show Plugin Content`** в Content Browser, чтобы увидеть `Plugins/Mods Content/`.
 4. **Пройдите [Модуль 1 — Минимальный автомобиль](./Docs/RU/ModdingGuide_MD/01_Minimal_Car_QuickStart.md)**, чтобы собрать и запустить в игре минимально рабочую машину (кузов + 4 колеса).
 5. **Запустите [`build_mod_dlc.bat`](./build_mod_dlc.bat)**, переименуйте `\Saved\DLC\Windows\Mods.pak` в `<ИмяМода>.pak` и проверьте локально в `<ПапкаИгры>\CityCarDriving2\Content\Paks\`.

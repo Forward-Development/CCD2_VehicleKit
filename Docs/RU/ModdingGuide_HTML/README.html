@@ -252,9 +252,10 @@ flowchart LR
     <li>Для создания и упаковки модов (включая запуск <code>build_mod_dlc.bat</code>) <strong>достаточно стандартной установки UE 5.8 из Epic Games Store</strong> — Visual Studio или сторонние SDK устанавливать не нужно.</li>
 </ul>
 </li>
-    <li><strong>Шаблонный проект <code>CCD2_VehicleKit</code></strong> — скачайте с GitHub:
+    <li><strong>Шаблонный проект <code>CCD2_VehicleKit</code></strong> — скачайте <strong><code>CCD2_VehicleKit.zip</code></strong> со страницы GitHub Releases <em>(или склонируйте с Git LFS)</em>:
 <ul>
-    <li><a href="https://github.com/Forward-Development/CCD2_VehicleKit/tree/main" target="_blank" rel="noopener">https://github.com/Forward-Development/CCD2_VehicleKit/tree/main</a></li>
+    <li><a href="https://github.com/Forward-Development/CCD2_VehicleKit/releases/latest" target="_blank" rel="noopener">https://github.com/Forward-Development/CCD2_VehicleKit/releases/latest</a></li>
+    <li><strong>Не используйте <code>Code → Download ZIP</code> и <code>Source code (zip)</code></strong> — в этих архивах нет бинарных файлов Git LFS (<code>.dll</code>, <code>.uasset</code>, <code>.umap</code>), из-за чего возникает ошибка <code>UnrealEditor.exe - Bad Image (0xc000012f)</code>.</li>
     <li>Распакуйте проект в папку с <strong>коротким путём на латинице и без пробелов</strong>, например <code>D:\Modding\CCD2_VehicleKit\</code>.</li>
 </ul>
 </li>

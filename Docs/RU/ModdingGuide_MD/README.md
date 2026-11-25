@@ -42,8 +42,9 @@ flowchart LR
 
 1. **Unreal Engine 5.8** — скачайте и установите через **Epic Games Launcher** (вкладка *Unreal Engine → Library → Engine Versions → `+` → 5.8*).
    - Для создания и упаковки модов (включая запуск `build_mod_dlc.bat`) **достаточно стандартной установки UE 5.8 из Epic Games Store** — Visual Studio или сторонние SDK устанавливать не нужно.
-2. **Шаблонный проект `CCD2_VehicleKit`** — скачайте с GitHub:
-   - <https://github.com/Forward-Development/CCD2_VehicleKit/tree/main>
+2. **Шаблонный проект `CCD2_VehicleKit`** — скачайте **`CCD2_VehicleKit.zip`** со страницы GitHub Releases *(или склонируйте с Git LFS)*:
+   - <https://github.com/Forward-Development/CCD2_VehicleKit/releases/latest>
+   - **Не используйте `Code → Download ZIP` и `Source code (zip)`** — в этих архивах нет бинарных файлов Git LFS (`.dll`, `.uasset`, `.umap`), из-за чего возникает ошибка `UnrealEditor.exe - Bad Image (0xc000012f)`.
    - Распакуйте проект в папку с **коротким путём на латинице и без пробелов**, например `D:\Modding\CCD2_VehicleKit\`.
 3. **3D-редактор** (Blender, 3ds Max, Maya или любой другой с экспортом в `.fbx`).
 4. *(Только для Модуля 5, если хотите полностью свои звуки)* **FMOD Studio 2.03.14** и шаблоны проектов:

@@ -155,7 +155,7 @@ However, <strong>in future updates</strong> (when raindrop rendering and wiper c
 </figure>
 <ol>
     <li>Place the <strong>Pivot</strong> at the exact wheel hub center (matching the wheel's pivot). Wheel rotation axis is <strong><code>Y</code></strong>.</li>
-    <li>Import into UE just like wheels: <strong><code>Generate Missing Collision = False</code></strong>, <strong><code>Do Not Create Material</code></strong>.</li>
+    <li>Import into UE just like wheels: <strong><code>Import Collisions</code> = OFF</strong>, <strong><code>Fallback Collision Type</code> = OFF (<code>None</code>)</strong>, <strong><code>Import Materials</code> = OFF</strong>, <strong><code>Build Nanite</code> = OFF</strong>.</li>
     <li>Assign a Material Instance inheriting from <strong><code>MI_Mod_Exterior</code></strong>.</li>
 </ol>
 <h3 id="22-attaching-in-actor-v_modname">2.2. Attaching in Actor <code>V_&lt;ModName&gt;</code></h3>

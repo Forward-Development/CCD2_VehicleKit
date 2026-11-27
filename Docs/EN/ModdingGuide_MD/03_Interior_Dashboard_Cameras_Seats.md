@@ -28,10 +28,8 @@ In this module, we build out the full cockpit experience:
 
 ### 1.2. Importing the Interior in UE 5.8
 1. Import the interior `.fbx` into `MyFirstCar/Meshes/`.
-2. Set **`Material Import Method = Do Not Create Material`** and **`Build Nanite = False`**.
-3. Because the interior component uses **`NoCollision`** on the Actor (only `Body` has physical collision), you can leave `Generate Missing Collision` unchecked.
-
-![Interior Static Mesh import settings](./images/m3_salon_import.png)
+2. Disable **`Import Materials`** (uncheck) and **`Build Nanite`** (`False`).
+3. Because the interior component uses **`NoCollision`** on the Actor (only `Body` has physical collision), you can disable **`Import Collisions`** and **`Fallback Collision Type`** (`False` / `None`).
 
 ### 1.3. Interior Materials (`MI_Mod_*`)
 All interior textures must also have **`Virtual Texture Streaming = True`** (and `Masks (no sRGB)` for `MRA` maps). Create Material Instances from `Content/Common/MasterMaterials/VehicleMaterials/ModMaterials/`:

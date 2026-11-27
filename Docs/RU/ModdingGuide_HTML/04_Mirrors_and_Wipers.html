@@ -193,7 +193,7 @@
 </ul>
 <p><em>(Это требование необходимо для работы скрипта автоматической генерации UV-координат, который проецирует вершины по осям <code>X</code> и <code>Y</code>.)</em></p>
 </li>
-    <li><strong>Импорт в UE:</strong> аналогично колёсам — <strong><code>Generate Missing Collision = False</code></strong>, <strong><code>Material Import Method = Do Not Create Material</code></strong>, <strong><code>Build Nanite = False</code></strong>.</li>
+    <li><strong>Импорт в UE:</strong> аналогично колёсам — <strong><code>Import Collisions</code> = выключено</strong>, <strong><code>Fallback Collision Type</code> = выключено (<code>None</code>)</strong>, <strong><code>Import Materials</code> = выключено</strong>, <strong><code>Build Nanite</code> = выключено</strong>.</li>
     <li><strong>Материал:</strong> материал на отражающую поверхность <strong>можно не назначать</strong> — игра подставит динамический материал отражения автоматически. <em>(Напоминание: <code>MI_Mod_Mirror</code> используется только для корпуса/плафона салонного зеркала, а не для отражающего стекла.)</em></li>
 </ol>
 <h3 id="12-настройка-сокета-camera-и-генерация-uv-в-ue">1.2. Настройка сокета <code>Camera</code> и генерация UV в UE</h3>
@@ -259,7 +259,7 @@
     <li>Импортируйте <code>.fbx</code> с дворниками в <code>MyFirstCar/Meshes/</code>. В окне импорта:
 <ul>
     <li>Включите <strong><code>Skeletal Mesh</code></strong> и <strong><code>Import Animations</code></strong>.</li>
-    <li>Выключите <strong><code>Generate Missing Collision</code></strong> / создание Physics Asset при необходимости и выберите <strong><code>Material Import Method = Do Not Create Material</code></strong>.</li>
+    <li>Выключите <strong><code>Import Collisions</code></strong> / <strong><code>Fallback Collision Type</code></strong> / создание Physics Asset при необходимости и снимите галочку <strong><code>Import Materials</code></strong>.</li>
     <li>В результате в папке появятся <code>Skeletal Mesh</code>, <code>Skeleton</code> и <code>Animation Sequence</code>.</li>
 </ul>
 </li>

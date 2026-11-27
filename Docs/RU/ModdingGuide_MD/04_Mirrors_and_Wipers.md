@@ -22,7 +22,7 @@
    - **Ось `+Z`** определяет направление отражающей поверхности (лицевая нормаль зеркала смотрит строго вверх по `+Z`, само стекло лежит в плоскости `XY`!).
    - **Ось `+Y`** определяет направление **вниз** вдоль зеркала.
    *(Это требование необходимо для работы скрипта автоматической генерации UV-координат, который проецирует вершины по осям `X` и `Y`.)*
-3. **Импорт в UE:** аналогично колёсам — **`Generate Missing Collision = False`**, **`Material Import Method = Do Not Create Material`**, **`Build Nanite = False`**.
+3. **Импорт в UE:** аналогично колёсам — **`Import Collisions` = выключено**, **`Fallback Collision Type` = выключено (`None`)**, **`Import Materials` = выключено**, **`Build Nanite` = выключено**.
 4. **Материал:** материал на отражающую поверхность **можно не назначать** — игра подставит динамический материал отражения автоматически. *(Напоминание: `MI_Mod_Mirror` используется только для корпуса/плафона салонного зеркала, а не для отражающего стекла.)*
 
 ### 1.2. Настройка сокета `Camera` и генерация UV в UE
@@ -74,7 +74,7 @@
 ### 2.2. Импорт и материал дворников
 1. Импортируйте `.fbx` с дворниками в `MyFirstCar/Meshes/`. В окне импорта:
    - Включите **`Skeletal Mesh`** и **`Import Animations`**.
-   - Выключите **`Generate Missing Collision`** / создание Physics Asset при необходимости и выберите **`Material Import Method = Do Not Create Material`**.
+   - Выключите **`Import Collisions`** / **`Fallback Collision Type`** / создание Physics Asset при необходимости и снимите галочку **`Import Materials`**.
    - В результате в папке появятся `Skeletal Mesh`, `Skeleton` и `Animation Sequence`.
 2. Создайте `Material Instance` от родительского материала **`MI_Mod_Wipers`** (`Content/Common/MasterMaterials/VehicleMaterials/ModMaterials/MI_Mod_Wipers`) и назначьте его в слот материала на `Skeletal Mesh`.
 

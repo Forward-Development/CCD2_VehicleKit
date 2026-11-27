@@ -28,10 +28,8 @@
 
 ### 1.2. Импорт салона в UE 5.8
 1. Импортируйте `.fbx` салона в `MyFirstCar/Meshes/`.
-2. Выставьте **`Material Import Method = Do Not Create Material`** и **`Build Nanite = False`**.
-3. В Акторе у меша салона всё равно выставляется **`NoCollision`** (физическая коллизия нужна только на `Body`), поэтому `Generate Missing Collision` можно отключить.
-
-![Настройки импорта Static Mesh салона](./images/m3_salon_import.png)
+2. Отключите **`Import Materials`** (снимите галочку) и **`Build Nanite`** (`False`).
+3. В Акторе у меша салона всё равно выставляется **`NoCollision`** (физическая коллизия нужна только на `Body`), поэтому **`Import Collisions`** и **`Fallback Collision Type`** можно выключить (`False` / `None`).
 
 ### 1.3. Материалы салона (`MI_Mod_*`)
 Все текстуры салона также должны иметь **`Virtual Texture Streaming = True`** (и `Masks (no sRGB)` для `MRA`-карт). Создавайте `Material Instance` от следующих родительских материалов из `Content/Common/MasterMaterials/VehicleMaterials/ModMaterials/`:

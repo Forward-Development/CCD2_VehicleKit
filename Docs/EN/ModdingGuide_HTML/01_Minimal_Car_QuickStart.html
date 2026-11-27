@@ -207,41 +207,54 @@ In Unreal Engine, 1 unit = <strong>1 centimeter</strong>, the front of the car f
 <ol>
     <li>Open your <code>MyFirstCar/Meshes</code> folder in the Content Browser.</li>
     <li>Drag and drop your body <code>.fbx</code> file from Explorer into the Content Browser (or click <strong>Import</strong>).</li>
-    <li>In the import dialog, verify these key settings:
+    <li>In the import dialog (UE 5.8 Interchange), verify these key settings:
 <ul>
-    <li><strong><code>Generate Missing Collision</code></strong> — <strong>ON</strong> (if you did not author custom <code>UCX_</code> collision in your 3D editor; the body requires collision for impacts!).</li>
-    <li><strong><code>Material Import Method</code></strong> — select <strong><code>Do Not Create Material</code></strong> (so UE doesn't auto-generate incompatible base materials).</li>
+    <li><strong><code>Import Collisions</code></strong> — <strong>ON</strong> if you authored custom <code>UCX_</code> collision in your 3D editor; if not, you can uncheck it (the body requires collision for impacts, and it is best generated in the Static Mesh Editor — see below).</li>
+    <li><strong><code>Fallback Collision Type</code></strong> <em>(replaces the old <code>Generate Missing Collision</code> setting from UE 5.1)</em> — you can leave the default <strong><code>18DOP Simplified</code></strong> or turn it <strong>OFF</strong> (<code>None</code>), as none of the built-in presets fit a car shape well. It is better to generate the body collision manually via <strong><code>Auto Convex Collision</code></strong> after import.</li>
+    <li><strong><code>Import Materials</code></strong> — <strong>OFF</strong> (uncheck so UE doesn't auto-generate incompatible base materials).</li>
     <li><strong><code>Build Nanite</code></strong> — <strong>OFF</strong> (Nanite is disabled in this project).</li>
-    <li><strong><code>Import Uniform Scale</code></strong> — leave at <strong><code>1.0</code></strong>.</li>
+    <li><strong><code>Offset Uniform Scale</code></strong> and <strong><code>Build Scale</code></strong> — leave both at <strong><code>1.0</code></strong> (default).</li>
 </ul>
 </li>
 </ol>
-<figure class="doc-figure">
-    <img src="./images/m1_import_body_1.png" alt="Body Static Mesh import options — top section" loading="lazy">
-    <figcaption>Body Static Mesh import options — top section</figcaption>
-</figure>
-<figure class="doc-figure">
-    <img src="./images/m1_import_body_2.png" alt="Body Static Mesh import options — transform and mesh settings" loading="lazy">
-    <figcaption>Body Static Mesh import options — transform and mesh settings</figcaption>
-</figure>
-<figure class="doc-figure">
-    <img src="./images/m1_import_materials_none.png" alt="Import options — selecting Do Not Create Material" loading="lazy">
-    <figcaption>Import options — selecting Do Not Create Material</figcaption>
-</figure>
 <ol>
     <li>Click <strong>Import All</strong>.</li>
     <li><strong>Quick size check after import:</strong> double-click the imported body mesh. In the top-left of the 3D viewport, check <strong><code>Approx Size</code></strong>. A regular passenger car should read around <code>450 × 180 × 150</code> (centimeters). If it reads <code>4 × 2 × 1</code>, the model exported 100x too small — return to Step 2.1!</li>
 </ol>
+<h4 id="generating-body-collision-auto-convex-collision">Generating Body Collision (<code>Auto Convex Collision</code>)</h4>
+<p>If you did not author custom <code>UCX_</code> collision in your 3D editor, generate clean convex collision directly inside the open Body Static Mesh Editor:</p>
+<ol>
+    <li>If a fallback collision (such as <code>18DOP Simplified</code>) was created during import and you want to remove it, select the collision shape in the viewport and press <strong><code>Delete</code></strong> (or use <strong><code>Collision → Remove Collision</code></strong>).</li>
+    <li>In the top toolbar, open <strong><code>Collision</code></strong> and choose <strong><code>Auto Convex Collision</code></strong>.</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m1_collision_menu.png" alt="Collision menu — selecting Auto Convex Collision" loading="lazy">
+    <figcaption>Collision menu — selecting Auto Convex Collision</figcaption>
+</figure>
+<ol>
+    <li>The <strong><code>Convex Decomposition</code></strong> panel opens with three parameters:
+<ul>
+    <li><strong><code>Hull Count</code></strong> — for passenger cars, there is no reason to set this higher than <strong><code>1</code></strong>. If the vehicle has an open truck bed or other pronounced concave areas, you can increase this number.</li>
+    <li><strong><code>Max Hull Verts</code></strong> — typically between <code>16</code> and <code>32</code>; the optimal value is <strong><code>24</code></strong>.</li>
+    <li><strong><code>Hull Precision</code></strong> — can be left at the default <strong><code>100000</code></strong>.</li>
+</ul>
+</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m1_collision_convex_decomposition.png" alt="Convex Decomposition panel for body auto-collision settings" loading="lazy">
+    <figcaption>Convex Decomposition panel for body auto-collision settings</figcaption>
+</figure>
+<ol>
+    <li>Click <strong><code>Apply</code></strong> and save the asset (<strong>Save</strong> / <code>Ctrl + S</code>).<br>
+<em>(Any collision shape can be removed at any time by selecting it in the 3D viewport and pressing <strong><code>Delete</code></strong>.)</em></li>
+</ol>
 <h3 id="32-importing-the-wheels-wheel">3.2. Importing the Wheels (<code>Wheel</code>)</h3>
 <p>Import the wheels into <code>MyFirstCar/Meshes</code> the same way, <strong>with one critical difference</strong>:</p>
 <ul>
-    <li><strong><code>Generate Missing Collision</code></strong> — must be <strong>OFF</strong>! Wheel meshes must <strong>NOT</strong> have collision (road contact is simulated via <code>WheelRaycast</code> in <code>VehicleLib</code>).</li>
-    <li><strong><code>Material Import Method</code></strong> — <strong><code>Do Not Create Material</code></strong>.</li>
+    <li><strong><code>Import Collisions</code></strong> and <strong><code>Fallback Collision Type</code></strong> — must be <strong>OFF</strong> (<code>False</code> / <code>None</code>)! Wheel meshes must <strong>NOT</strong> have collision (road contact is simulated via <code>WheelRaycast</code> in <code>VehicleLib</code>).</li>
+    <li><strong><code>Import Materials</code></strong> — <strong>OFF</strong>.</li>
+    <li><strong><code>Build Nanite</code></strong> — <strong>OFF</strong>.</li>
 </ul>
-<figure class="doc-figure">
-    <img src="./images/m1_import_wheel_nocollision.png" alt="Wheel import settings — Generate Missing Collision disabled" loading="lazy">
-    <figcaption>Wheel import settings — Generate Missing Collision disabled</figcaption>
-</figure>
 <h3 id="33-textures--basic-materials">3.3. Textures &amp; Basic Materials</h3>
 <div class="alert alert-caution">
     <div class="alert-title">Caution</div>

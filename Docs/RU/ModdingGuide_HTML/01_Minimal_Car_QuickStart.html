@@ -314,41 +314,54 @@ PowerCurves = ../Plugins/Mods/Content/MyFirstCar/Engine.csv</code></pre>
 <ol>
     <li>В Content Browser откройте вашу папку <code>MyFirstCar/Meshes</code>.</li>
     <li>Перетащите <code>.fbx</code>-файл кузова из Проводника прямо в окно Content Browser (или нажмите кнопку <strong>Import</strong>).</li>
-    <li>В открывшемся окне импорта обязательно проверьте:
+    <li>В открывшемся окне импорта (Interchange в UE 5.8) обязательно проверьте:
 <ul>
-    <li><strong><code>Generate Missing Collision</code></strong> — <strong>ВКЛЮЧИТЬ</strong> (если вы не делали собственную <code>UCX_</code>-коллизию в 3D-редакторе; кузову обязательно нужна коллизия для столкновений!).</li>
-    <li><strong><code>Material Import Method</code></strong> — выберите <strong><code>Do Not Create Material</code></strong> (чтобы UE не создавал несовместимые базовые материалы автоматически).</li>
+    <li><strong><code>Import Collisions</code></strong> — <strong>ВКЛЮЧИТЬ</strong>, если вы делали собственную <code>UCX_</code>-коллизию в 3D-редакторе; если не делали — галочку можно <strong>ВЫКЛЮЧИТЬ</strong> (кузову обязательно нужна коллизия для столкновений, и её лучше сгенерировать в редакторе Static Mesh — см. ниже).</li>
+    <li><strong><code>Fallback Collision Type</code></strong> <em>(замена старой настройки <code>Generate Missing Collision</code> из UE 5.1)</em> — можно оставить по умолчанию <strong><code>18DOP Simplified</code></strong> либо <strong>выключить вовсе</strong> (<code>None</code>), так как среди имеющихся вариантов нет подходящего под форму автомобиля. Оптимальную коллизию кузова лучше создать вручную через <strong><code>Auto Convex Collision</code></strong> после импорта.</li>
+    <li><strong><code>Import Materials</code></strong> — <strong>ВЫКЛЮЧИТЬ</strong> (снять галочку, чтобы UE не создавал несовместимые базовые материалы автоматически).</li>
     <li><strong><code>Build Nanite</code></strong> — <strong>ВЫКЛЮЧИТЬ</strong> (Nanite в проекте отключён).</li>
-    <li><strong><code>Import Uniform Scale</code></strong> — оставьте <strong><code>1.0</code></strong>.</li>
+    <li><strong><code>Offset Uniform Scale</code></strong> и <strong><code>Build Scale</code></strong> — оставьте <strong><code>1.0</code></strong> (стоят по умолчанию).</li>
 </ul>
 </li>
 </ol>
-<figure class="doc-figure">
-    <img src="./images/m1_import_body_1.png" alt="Окно импорта Static Mesh кузова — верхняя часть" loading="lazy">
-    <figcaption>Окно импорта Static Mesh кузова — верхняя часть</figcaption>
-</figure>
-<figure class="doc-figure">
-    <img src="./images/m1_import_body_2.png" alt="Окно импорта Static Mesh кузова — трансформация и настройки" loading="lazy">
-    <figcaption>Окно импорта Static Mesh кузова — трансформация и настройки</figcaption>
-</figure>
-<figure class="doc-figure">
-    <img src="./images/m1_import_materials_none.png" alt="Окно импорта — выбор Do Not Create Material" loading="lazy">
-    <figcaption>Окно импорта — выбор Do Not Create Material</figcaption>
-</figure>
 <ol>
     <li>Нажмите <strong>Import All</strong>.</li>
     <li><strong>Быстрая проверка размера после импорта:</strong> дважды кликните на импортированный меш кузова. В левом верхнем углу 3D-окна посмотрите строку <strong><code>Approx Size</code></strong>. Для обычного легкового авто цифры должны быть порядка <code>450 × 180 × 150</code> (в сантиметрах). Если видите <code>4 × 2 × 1</code> — модель экспортировалась в 100 раз меньше, вернитесь к Шагу 2.1!</li>
 </ol>
+<h4 id="генерация-коллизии-кузова-auto-convex-collision">Генерация коллизии кузова (<code>Auto Convex Collision</code>)</h4>
+<p>Если у вас нет готовой <code>UCX_</code>-коллизии из 3D-редактора, создайте точную выпуклую коллизию прямо в открытом окне Static Mesh кузова:</p>
+<ol>
+    <li>Если на импорте создалась временная коллизия (например, <code>18DOP Simplified</code>), при необходимости её можно удалить: выделите коллизию в окне просмотра и нажмите <strong><code>Delete</code></strong> (или выберите <strong><code>Collision → Remove Collision</code></strong>).</li>
+    <li>На верхней панели откройте меню <strong><code>Collision</code></strong> и выберите <strong><code>Auto Convex Collision</code></strong>.</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m1_collision_menu.png" alt="Меню Collision — выбор Auto Convex Collision" loading="lazy">
+    <figcaption>Меню Collision — выбор Auto Convex Collision</figcaption>
+</figure>
+<ol>
+    <li>Откроется панель <strong><code>Convex Decomposition</code></strong> с тремя параметрами:
+<ul>
+    <li><strong><code>Hull Count</code></strong> — для легковых автомобилей не имеет смысла ставить больше <strong><code>1</code></strong>. Если присутствует открытый кузов (например, пикап) или иные вогнутые части, данное число можно увеличить.</li>
+    <li><strong><code>Max Hull Verts</code></strong> — обычно от <code>16</code> до <code>32</code>. Оптимальное значение — <strong><code>24</code></strong>.</li>
+    <li><strong><code>Hull Precision</code></strong> — можно оставлять значение по умолчанию <strong><code>100000</code></strong>.</li>
+</ul>
+</li>
+</ol>
+<figure class="doc-figure">
+    <img src="./images/m1_collision_convex_decomposition.png" alt="Панель Convex Decomposition для настройки автоколлизии кузова" loading="lazy">
+    <figcaption>Панель Convex Decomposition для настройки автоколлизии кузова</figcaption>
+</figure>
+<ol>
+    <li>Нажмите <strong><code>Apply</code></strong> и сохраните ассет (<strong>Save</strong> / <code>Ctrl + S</code>).<br>
+<em>(Любую созданную коллизию можно удалить, выделив её в 3D-окне и нажав <strong><code>Delete</code></strong>.)</em></li>
+</ol>
 <h3 id="32-импорт-колёс-wheel">3.2. Импорт колёс (<code>Wheel</code>)</h3>
 <p>Импорт колёс выполняется точно так же в папку <code>MyFirstCar/Meshes</code>, <strong>но с одним критическим отличием</strong>:</p>
 <ul>
-    <li><strong><code>Generate Missing Collision</code></strong> — обязательно <strong>ВЫКЛЮЧИТЬ</strong>! У моделей колёс <strong>не должно быть коллизии</strong> (физический контакт с дорогой считает система <code>WheelRaycast</code> из <code>VehicleLib</code>).</li>
-    <li><strong><code>Material Import Method</code></strong> — <strong><code>Do Not Create Material</code></strong>.</li>
+    <li><strong><code>Import Collisions</code></strong> и <strong><code>Fallback Collision Type</code></strong> — обязательно <strong>ВЫКЛЮЧИТЬ</strong> (<code>False</code> / <code>None</code>)! У моделей колёс <strong>не должно быть коллизии</strong> (физический контакт с дорогой считает система <code>WheelRaycast</code> из <code>VehicleLib</code>).</li>
+    <li><strong><code>Import Materials</code></strong> — <strong>ВЫКЛЮЧИТЬ</strong>.</li>
+    <li><strong><code>Build Nanite</code></strong> — <strong>ВЫКЛЮЧИТЬ</strong>.</li>
 </ul>
-<figure class="doc-figure">
-    <img src="./images/m1_import_wheel_nocollision.png" alt="Настройки импорта колеса — коллизия выключена" loading="lazy">
-    <figcaption>Настройки импорта колеса — коллизия выключена</figcaption>
-</figure>
 <h3 id="33-настройка-текстур-и-базовых-материалов">3.3. Настройка текстур и базовых материалов</h3>
 <div class="alert alert-caution">
     <div class="alert-title">Осторожно (CAUTION)</div>

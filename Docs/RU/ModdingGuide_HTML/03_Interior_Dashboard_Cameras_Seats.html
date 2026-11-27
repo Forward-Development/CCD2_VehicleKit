@@ -200,13 +200,9 @@
 <h3 id="12-импорт-салона-в-ue-58">1.2. Импорт салона в UE 5.8</h3>
 <ol>
     <li>Импортируйте <code>.fbx</code> салона в <code>MyFirstCar/Meshes/</code>.</li>
-    <li>Выставьте <strong><code>Material Import Method = Do Not Create Material</code></strong> и <strong><code>Build Nanite = False</code></strong>.</li>
-    <li>В Акторе у меша салона всё равно выставляется <strong><code>NoCollision</code></strong> (физическая коллизия нужна только на <code>Body</code>), поэтому <code>Generate Missing Collision</code> можно отключить.</li>
+    <li>Отключите <strong><code>Import Materials</code></strong> (снимите галочку) и <strong><code>Build Nanite</code></strong> (<code>False</code>).</li>
+    <li>В Акторе у меша салона всё равно выставляется <strong><code>NoCollision</code></strong> (физическая коллизия нужна только на <code>Body</code>), поэтому <strong><code>Import Collisions</code></strong> и <strong><code>Fallback Collision Type</code></strong> можно выключить (<code>False</code> / <code>None</code>).</li>
 </ol>
-<figure class="doc-figure">
-    <img src="./images/m3_salon_import.png" alt="Настройки импорта Static Mesh салона" loading="lazy">
-    <figcaption>Настройки импорта Static Mesh салона</figcaption>
-</figure>
 <h3 id="13-материалы-салона-mi_mod_">1.3. Материалы салона (<code>MI_Mod_*</code>)</h3>
 <p>Все текстуры салона также должны иметь <strong><code>Virtual Texture Streaming = True</code></strong> (и <code>Masks (no sRGB)</code> для <code>MRA</code>-карт). Создавайте <code>Material Instance</code> от следующих родительских материалов из <code>Content/Common/MasterMaterials/VehicleMaterials/ModMaterials/</code>:</p>
 <table>

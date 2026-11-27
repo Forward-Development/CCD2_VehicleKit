@@ -262,7 +262,7 @@
 </figure>
 <ol>
     <li>В 3D-редакторе поставьте <strong>пивот</strong> модели строго в центре относительно точки крепления колеса (совпадает с центром колеса). Ось вращения колеса — <strong><code>Y</code></strong>.</li>
-    <li>Импортируйте в UE так же, как колесо: <strong><code>Generate Missing Collision = False</code></strong>, <strong><code>Do Not Create Material</code></strong>.</li>
+    <li>Импортируйте в UE так же, как колесо: <strong><code>Import Collisions</code> = выключено</strong>, <strong><code>Fallback Collision Type</code> = выключено (<code>None</code>)</strong>, <strong><code>Import Materials</code> = выключено</strong>, <strong><code>Build Nanite</code> = выключено</strong>.</li>
     <li>Назначьте материал от родительского <strong><code>MI_Mod_Exterior</code></strong>.</li>
 </ol>
 <h3 id="22-подключение-в-акторе-v_имямода">2.2. Подключение в Акторе <code>V_&lt;ИмяМода&gt;</code></h3>

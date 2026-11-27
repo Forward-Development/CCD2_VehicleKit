@@ -127,27 +127,38 @@ Recommendations for exporting **FBX** from **Blender**:
 ### 3.1. Importing the Body (`Body`)
 1. Open your `MyFirstCar/Meshes` folder in the Content Browser.
 2. Drag and drop your body `.fbx` file from Explorer into the Content Browser (or click **Import**).
-3. In the import dialog, verify these key settings:
-   - **`Generate Missing Collision`** — **ON** (if you did not author custom `UCX_` collision in your 3D editor; the body requires collision for impacts!).
-   - **`Material Import Method`** — select **`Do Not Create Material`** (so UE doesn't auto-generate incompatible base materials).
+3. In the import dialog (UE 5.8 Interchange), verify these key settings:
+   - **`Import Collisions`** — **ON** if you authored custom `UCX_` collision in your 3D editor; if not, you can uncheck it (the body requires collision for impacts, and it is best generated in the Static Mesh Editor — see below).
+   - **`Fallback Collision Type`** *(replaces the old `Generate Missing Collision` setting from UE 5.1)* — you can leave the default **`18DOP Simplified`** or turn it **OFF** (`None`), as none of the built-in presets fit a car shape well. It is better to generate the body collision manually via **`Auto Convex Collision`** after import.
+   - **`Import Materials`** — **OFF** (uncheck so UE doesn't auto-generate incompatible base materials).
    - **`Build Nanite`** — **OFF** (Nanite is disabled in this project).
-   - **`Import Uniform Scale`** — leave at **`1.0`**.
-
-![Body Static Mesh import options — top section](./images/m1_import_body_1.png)
-
-![Body Static Mesh import options — transform and mesh settings](./images/m1_import_body_2.png)
-
-![Import options — selecting Do Not Create Material](./images/m1_import_materials_none.png)
+   - **`Offset Uniform Scale`** and **`Build Scale`** — leave both at **`1.0`** (default).
 
 4. Click **Import All**.
 5. **Quick size check after import:** double-click the imported body mesh. In the top-left of the 3D viewport, check **`Approx Size`**. A regular passenger car should read around `450 × 180 × 150` (centimeters). If it reads `4 × 2 × 1`, the model exported 100x too small — return to Step 2.1!
 
+#### Generating Body Collision (`Auto Convex Collision`)
+If you did not author custom `UCX_` collision in your 3D editor, generate clean convex collision directly inside the open Body Static Mesh Editor:
+1. If a fallback collision (such as `18DOP Simplified`) was created during import and you want to remove it, select the collision shape in the viewport and press **`Delete`** (or use **`Collision → Remove Collision`**).
+2. In the top toolbar, open **`Collision`** and choose **`Auto Convex Collision`**.
+
+![Collision menu — selecting Auto Convex Collision](./images/m1_collision_menu.png)
+
+3. The **`Convex Decomposition`** panel opens with three parameters:
+   - **`Hull Count`** — for passenger cars, there is no reason to set this higher than **`1`**. If the vehicle has an open truck bed or other pronounced concave areas, you can increase this number.
+   - **`Max Hull Verts`** — typically between `16` and `32`; the optimal value is **`24`**.
+   - **`Hull Precision`** — can be left at the default **`100000`**.
+
+![Convex Decomposition panel for body auto-collision settings](./images/m1_collision_convex_decomposition.png)
+
+4. Click **`Apply`** and save the asset (**Save** / `Ctrl + S`).
+*(Any collision shape can be removed at any time by selecting it in the 3D viewport and pressing **`Delete`**.)*
+
 ### 3.2. Importing the Wheels (`Wheel`)
 Import the wheels into `MyFirstCar/Meshes` the same way, **with one critical difference**:
-- **`Generate Missing Collision`** — must be **OFF**! Wheel meshes must **NOT** have collision (road contact is simulated via `WheelRaycast` in `VehicleLib`).
-- **`Material Import Method`** — **`Do Not Create Material`**.
-
-![Wheel import settings — Generate Missing Collision disabled](./images/m1_import_wheel_nocollision.png)
+- **`Import Collisions`** and **`Fallback Collision Type`** — must be **OFF** (`False` / `None`)! Wheel meshes must **NOT** have collision (road contact is simulated via `WheelRaycast` in `VehicleLib`).
+- **`Import Materials`** — **OFF**.
+- **`Build Nanite`** — **OFF**.
 
 ### 3.3. Textures & Basic Materials
 

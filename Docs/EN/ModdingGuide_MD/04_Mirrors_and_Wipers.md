@@ -22,7 +22,7 @@ Mirror reflections in City Car Driving 2.0 are powered by render cameras bound t
    - **`+Z` axis** defines the reflective face normal (pointing straight up along `+Z`, with the mirror surface lying in the `XY` plane!).
    - **`+Y` axis** points **downward** along the mirror glass.
    *(This alignment is required by the UV generation script, which projects vertex `X` and `Y` coordinates.)*
-3. **Import into UE:** same as wheels — **`Generate Missing Collision = False`**, **`Material Import Method = Do Not Create Material`**, **`Build Nanite = False`**.
+3. **Import into UE:** same as wheels — **`Import Collisions` = OFF**, **`Fallback Collision Type` = OFF (`None`)**, **`Import Materials` = OFF**, **`Build Nanite` = OFF**.
 4. **Material:** **leave the material unassigned** on the reflective surface — the game automatically assigns the live reflection material. *(Reminder: `MI_Mod_Mirror` is only for the center mirror housing, not the reflective glass.)*
 
 ### 1.2. Adding the `Camera` Socket & Generating UVs in UE
@@ -74,7 +74,7 @@ Wipers in City Car Driving 2.0 are driven by **skeletal animation**.
 ### 2.2. Importing & Assigning Material
 1. Import the wiper `.fbx` into `MyFirstCar/Meshes/`. In the import dialog:
    - Enable **`Skeletal Mesh`** and **`Import Animations`**.
-   - Disable **`Generate Missing Collision`** and set **`Material Import Method = Do Not Create Material`**.
+   - Disable **`Import Collisions`** / **`Fallback Collision Type`** / Physics Asset creation if not needed, and uncheck **`Import Materials`**.
    - This creates a `Skeletal Mesh`, `Skeleton`, and `Animation Sequence`.
 2. Create a Material Instance from **`MI_Mod_Wipers`** (`Content/Common/MasterMaterials/VehicleMaterials/ModMaterials/MI_Mod_Wipers`) and assign it to the `Skeletal Mesh`.
 

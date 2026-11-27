@@ -65,7 +65,7 @@ If your vehicle has visible brake calipers or steering knuckles that should move
 ![Brake caliper 3D model pivot and axes](./images/m2_suspension_3d_pivot.png)
 
 1. Place the **Pivot** at the exact wheel hub center (matching the wheel's pivot). Wheel rotation axis is **`Y`**.
-2. Import into UE just like wheels: **`Generate Missing Collision = False`**, **`Do Not Create Material`**.
+2. Import into UE just like wheels: **`Import Collisions` = OFF**, **`Fallback Collision Type` = OFF (`None`)**, **`Import Materials` = OFF**, **`Build Nanite` = OFF**.
 3. Assign a Material Instance inheriting from **`MI_Mod_Exterior`**.
 
 ### 2.2. Attaching in Actor `V_<ModName>`

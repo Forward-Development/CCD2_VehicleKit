@@ -86,7 +86,7 @@
 </ul>
 <p><em>(This alignment is required by the UV generation script, which projects vertex <code>X</code> and <code>Y</code> coordinates.)</em></p>
 </li>
-    <li><strong>Import into UE:</strong> same as wheels — <strong><code>Generate Missing Collision = False</code></strong>, <strong><code>Material Import Method = Do Not Create Material</code></strong>, <strong><code>Build Nanite = False</code></strong>.</li>
+    <li><strong>Import into UE:</strong> same as wheels — <strong><code>Import Collisions</code> = OFF</strong>, <strong><code>Fallback Collision Type</code> = OFF (<code>None</code>)</strong>, <strong><code>Import Materials</code> = OFF</strong>, <strong><code>Build Nanite</code> = OFF</strong>.</li>
     <li><strong>Material:</strong> <strong>leave the material unassigned</strong> on the reflective surface — the game automatically assigns the live reflection material. <em>(Reminder: <code>MI_Mod_Mirror</code> is only for the center mirror housing, not the reflective glass.)</em></li>
 </ol>
 <h3 id="12-adding-the-camera-socket--generating-uvs-in-ue">1.2. Adding the <code>Camera</code> Socket &amp; Generating UVs in UE</h3>
@@ -152,7 +152,7 @@
     <li>Import the wiper <code>.fbx</code> into <code>MyFirstCar/Meshes/</code>. In the import dialog:
 <ul>
     <li>Enable <strong><code>Skeletal Mesh</code></strong> and <strong><code>Import Animations</code></strong>.</li>
-    <li>Disable <strong><code>Generate Missing Collision</code></strong> and set <strong><code>Material Import Method = Do Not Create Material</code></strong>.</li>
+    <li>Disable <strong><code>Import Collisions</code></strong> / <strong><code>Fallback Collision Type</code></strong> / Physics Asset creation if not needed, and uncheck <strong><code>Import Materials</code></strong>.</li>
     <li>This creates a <code>Skeletal Mesh</code>, <code>Skeleton</code>, and <code>Animation Sequence</code>.</li>
 </ul>
 </li>
